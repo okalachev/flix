@@ -1,6 +1,10 @@
 // Copyright (c) 2023 Oleg Kalachev <okalachev@gmail.com>
 // Repository: https://github.com/okalachev/flix
 
+// https://habr.com/ru/company/first/blog/664922/
+// esc: https://aliexpress.com/item/4000280617058.html (KINGDUO Micro Mini 4A 1S Brushed Esc 3.6-6V)
+// motor: https://aliexpress.com/item/32731613504.html (8520 3.7V)
+
 #define MOTOR_0_PIN 12
 #define MOTOR_1_PIN 13
 #define MOTOR_2_PIN 14
