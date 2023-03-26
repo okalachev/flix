@@ -10,7 +10,7 @@
 * In-RAM logging.
 * Command line interface through USB port.
 * Wi-Fi support.
-* ESCs with reverse support.
+* ESCs with reverse mode support.
 * *Textbook and videos for students on writing a flight controller\*.*
 * *MAVLink support\*.*
 * *Position control and autonomous flights using external camera\**.
