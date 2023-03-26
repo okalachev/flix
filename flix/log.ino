@@ -30,7 +30,7 @@ void logData()
 	logBuffer[logPointer][10] = thrustTarget;
 
 	logPointer++;
-	if (logPointer >= 2000) {
+	if (logPointer >= LOG_SIZE) {
 		logPointer = 0;
 	}
 }
