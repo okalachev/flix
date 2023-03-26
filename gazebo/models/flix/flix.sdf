@@ -1,0 +1,172 @@
+<?xml version="1.0"?>
+<sdf version="1.5">
+	<model name="flix">
+		<static>false</static>
+		<link name="body">
+			<inertial>
+				<mass>0.065</mass>
+				<inertia>
+					<ixx>3.55E-5</ixx>
+					<iyy>4.23E-5</iyy>
+					<izz>7.47E-5</izz>
+				</inertia>
+			</inertial>
+			<collision name="collision">
+				<geometry>
+					<box>
+						<size>0.125711 0.125711 0.022</size>
+					</box>
+				</geometry>
+			</collision>
+			<visual name="body">
+				<geometry>
+					<mesh><uri>model://flix/flix.dae</uri></mesh>
+					<!-- <box>
+						<size>0.125711 0.125711 0.022</size>
+					</box> -->
+					<!-- led -->
+				</geometry>
+			</visual>
+			<!-- motors visual -->
+			<!-- <visual name="prop0">
+				<geometry>
+					<mesh><uri>model://flix/prop.dae</uri></mesh>
+				</geometry>
+				<pose relative_to="body">-0.035355 0.035355 0.011 0 0 0</pose>
+			</visual>
+			<visual name="prop1">
+				<geometry>
+					<mesh><uri>model://flix/prop.dae</uri></mesh>
+				</geometry>
+				<pose relative_to="body">-0.035355 -0.035355 0.011 0 0 1</pose>
+			</visual>
+			<visual name="prop2">
+				<geometry>
+					<mesh><uri>model://flix/prop.dae</uri></mesh>
+				</geometry>
+				<pose relative_to="body">0.035355 -0.035355 0.011 0 0 0</pose>
+			</visual>
+			<visual name="prop3">
+				<geometry>
+					<mesh><uri>model://flix/prop.dae</uri></mesh>
+				</geometry>
+				<pose relative_to="body">0.035355 0.035355 0.011 0 0 0</pose>
+			</visual> -->
+			<sensor name="imu" type="imu">
+				<always_on>1</always_on>
+				<visualize>1</visualize>
+				<update_rate>1000</update_rate>
+				<imu>
+					<angular_velocity>
+						<x>
+							<noise type="gaussian">
+								<mean>0.0</mean>
+								<stddev>1.5e-2</stddev>
+								<!-- <bias_mean>0.0000075</bias_mean>
+								<bias_stddev>0.0000008</bias_stddev> -->
+							</noise>
+						</x>
+						<y>
+							<noise type="gaussian">
+								<mean>0.0</mean>
+								<stddev>1.5e-2</stddev>
+								<!-- <bias_mean>0.0000075</bias_mean>
+								<bias_stddev>0.0000008</bias_stddev> -->
+							</noise>
+						</y>
+						<z>
+							<noise type="gaussian">
+								<mean>0.0</mean>
+								<stddev>1.5e-2</stddev>
+								<!-- <bias_mean>0.0000075</bias_mean>
+								<bias_stddev>0.0000008</bias_stddev> -->
+							</noise>
+						</z>
+					</angular_velocity>
+					<linear_acceleration>
+						<x>
+							<noise type="gaussian">
+								<mean>0.0</mean>
+								<stddev>3.5e-1</stddev>
+								<!-- <bias_mean>0.1</bias_mean>
+								<bias_stddev>0.001</bias_stddev> -->
+							</noise>
+						</x>
+						<y>
+							<noise type="gaussian">
+								<mean>0.0</mean>
+								<stddev>3.5e-1</stddev>
+								<!-- <bias_mean>0.1</bias_mean>
+								<bias_stddev>0.001</bias_stddev> -->
+							</noise>
+						</y>
+						<z>
+							<noise type="gaussian">
+								<mean>0.0</mean>
+								<stddev>3.5e-1</stddev>
+								<!-- <bias_mean>0.1</bias_mean>
+								<bias_stddev>0.001</bias_stddev> -->
+							</noise>
+						</z>
+					</linear_acceleration>
+				</imu>
+
+			</sensor>
+		</link>
+
+		<!-- <link name="imu_link">
+			<inertial>
+				<mass>0.001</mass>
+				<inertia>
+					<ixx>1e-05</ixx>
+					<ixy>0</ixy>
+					<ixz>0</ixz>
+					<iyy>1e-05</iyy>
+					<iyz>0</iyz>
+					<izz>1e-05</izz>
+				</inertia>
+			</inertial>
+			<sensor name="imu" type="imu">
+				<always_on>1</always_on>
+				<visualize>1</visualize>
+				<update_rate>50</update_rate>
+			</sensor>
+		</link>
+		<joint name="hokuyo_joint" type="fixed">
+			<child>imu_link</child>
+			<parent>body</parent>
+		</joint> -->
+
+		<!-- <link name="motor0"></link>
+		<link name="motor1"></link>
+		<link name="motor2"></link>
+		<link name="motor3"></link>
+
+		<joint name="motor0_joint" type="fixed">
+			<parent>body</parent>
+			<child>motor0</child>
+			<pose relative_to="body">-0.035355 0.035355 0 0 0 0</pose>
+		</joint>
+		<joint name="motor1_joint" type="fixed">
+			<parent>body</parent>
+			<child>motor1</child>
+			<pose relative_to="body">-0.035355 -0.035355 0 0 0 0</pose>
+		</joint>
+		<joint name="motor2_joint" type="fixed">
+			<parent>body</parent>
+			<child>motor2</child>
+			<pose relative_to="body">0.035355 -0.035355 0 0 0 0</pose>
+		</joint>
+		<joint name="motor3_joint" type="fixed">
+			<parent>body</parent>
+			<child>motor3</child>
+			<pose relative_to="body">0.035355 0.035355 0 0 0 0</pose>
+		</joint> -->
+
+		<plugin name="flix" filename="libflix.so">
+			<always_on>1</always_on>
+			<robotNamespace></robotNamespace>
+			<visualize>1</visualize>
+		</plugin>
+	</model>
+</sdf>

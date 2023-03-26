@@ -1,0 +1,5 @@
+board_manager:
+  additional_urls:
+    - https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json
+library:
+  enable_unsafe_install: true

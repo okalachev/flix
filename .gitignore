@@ -1,0 +1,4 @@
+*.hex
+*.elf
+gazebo/build/
+tools/log/

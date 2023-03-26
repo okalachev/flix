@@ -1,0 +1,30 @@
+name: Build
+
+on:
+  push:
+    branches: [ '*' ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Install Arduino CLI
+      uses: arduino/setup-arduino-cli@v1.1.1
+    - name: Install dependencies
+      run: make dependencies
+    - name: Build firmware
+      run: make
+
+  build_simulator:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Install Gazebo
+      run: curl -sSL http://get.gazebosim.org | sh
+    - name: Install SDL2
+      run: sudo apt-get install libsdl2-dev
+    - name: Build simulator
+      run: make build_simulator
