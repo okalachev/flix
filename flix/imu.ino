@@ -5,6 +5,8 @@
 
 #define IMU_CS_PIN 4 // chip-select pin for IMU SPI connection
 
+const bool CALIBRATE_GYRO_ON_START = false;
+
 MPU9250 IMU(SPI, IMU_CS_PIN);
 
 void setupIMU()
@@ -19,16 +21,16 @@ void setupIMU()
 		}
 	}
 
-	calibrating = true;
-	calibrateGyro();
-	// loadGyroCal();
-	// calibrateAccel();
+	if (CALIBRATE_GYRO_ON_START) {
+		calibrateGyro();
+	} else {
+		loadGyroCal();
+	}
+
 	loadAccelCal();
 
 	IMU.setSrd(0); // set sample rate to 1000 Hz
 	// NOTE: very important, without the above the rate would be terrible 50 Hz
-
-	calibrating = false;
 }
 
 bool readIMU()
@@ -52,6 +54,7 @@ bool readIMU()
 
 static void calibrateGyro()
 {
+	calibrating = true;
 	Serial.println("Calibrating gyro, stand still");
 	delay(500);
 	int status = IMU.calibrateGyro();
@@ -61,6 +64,7 @@ static void calibrateGyro()
 	Serial.print(IMU.getGyroBiasY_rads(), 10); Serial.print(" ");
 	Serial.println(IMU.getGyroBiasZ_rads(), 10);
 	IMU.setSrd(0);
+	calibrating = false;
 }
 
 static void calibrateAccel()
@@ -96,9 +100,9 @@ static void loadAccelCal()
 
 static void loadGyroCal()
 {
-	IMU.setGyroBiasX_rads(-0.0175771303);
-	IMU.setGyroBiasY_rads(-0.0298212003);
-	IMU.setGyroBiasZ_rads(0.0148300380);
+	IMU.setGyroBiasX_rads(-0.0185128022);
+	IMU.setGyroBiasY_rads(-0.0262369743);
+	IMU.setGyroBiasZ_rads(0.0163032326);
 }
 
 // Accel bias: 0.0463809967 0.0463809967 0.1486964226
