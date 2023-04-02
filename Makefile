@@ -1,17 +1,17 @@
 SKETCH = flix
-BOARD := esp32:esp32:d1_mini32
-FILE = arduino.avr.nano
-PORT := /dev/cu.usbserial-01E2D770
+BOARD = esp32:esp32:d1_mini32
+PORT := $(wildcard /dev/serial/by-id/usb-Silicon_Labs_CP2104_USB_to_UART_Bridge_Controller_* /dev/cu.usbserial-*) # TODO: CH9102X?
+PORT := $(strip $(PORT))
 
 build:
 # arduino-cli compile --fqbn $(BOARD) --build-path $(SKETCH)/build --build-cache-path $(SKETCH)/cache $(SKETCH)
 	arduino-cli compile --fqbn $(BOARD) $(SKETCH)
 
 upload: build
-	arduino-cli upload --fqbn $(BOARD) -p $(PORT) $(SKETCH)
+	arduino-cli upload --fqbn $(BOARD) -p '$(PORT)' $(SKETCH)
 
 monitor:
-	arduino-cli monitor -p $(PORT) -c baudrate=115200
+	arduino-cli monitor -p '$(PORT)' -c baudrate=115200
 
 dependencies:
 	arduino-cli core update-index
@@ -37,4 +37,4 @@ grab_log:
 clean:
 	rm -rf gazebo/plugin/build $(SKETCH)/build $(SKETCH)/cache
 
-.PHONY: build upload monitor upload_and_monitor dependencies cmake build_simulator simulator grab_log clean
+.PHONY: build upload monitor dependencies cmake build_simulator simulator grab_log clean
