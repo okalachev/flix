@@ -18,6 +18,19 @@ jobs:
     - name: Build firmware
       run: make
 
+  build_windows:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Install Arduino CLI
+      run: choco install arduino-cli
+    - name: Install Make
+      run: choco install make
+    - name: Install dependencies
+      run: make dependencies
+    - name: Build firmware
+      run: make
+
   build_simulator:
     runs-on: ubuntu-latest
     steps:
