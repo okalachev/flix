@@ -20,6 +20,7 @@ const char* motd =
 "|  |     |  `----.|  |  /  .  \\\n"
 "|__|     |_______||__| /__/ \\__\\\n\n"
 "Commands:\n\n"
+"help - show help\n"
 "show - show all parameters\n"
 "<name> <value> - set parameter\n"
 "ps - show pitch/roll/yaw\n"
@@ -30,7 +31,7 @@ const char* motd =
 "log - dump in-RAM log\n"
 "cg - calibrate gyro\n"
 "fullmot <n> - test motor on all signals\n"
-"wifi - start wi-fi access point\n\n";
+"wifi - start wi-fi access point\n";
 
 bool showMotd = true;
 
@@ -57,7 +58,9 @@ static const struct Param {
 
 static void doCommand()
 {
-	if (command == "show") {
+	if (command == "help" || command == "motd") {
+		Serial.println(motd);
+	} else if (command == "show") {
 		showTable();
 	} else if (command == "ps") {
 		Vector a = attitude.toEulerZYX();
@@ -121,7 +124,7 @@ static void doCommand()
 				return;
 			}
 		}
-		Serial.println("Invalid command: '" + command + "'");
+		Serial.println("Invalid command: " + command);
 	}
 }
 
