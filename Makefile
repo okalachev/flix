@@ -8,15 +8,15 @@ build:
 	arduino-cli compile --fqbn $(BOARD) $(SKETCH)
 
 upload: build
-	arduino-cli upload --fqbn $(BOARD) -p '$(PORT)' $(SKETCH)
+	arduino-cli upload --fqbn $(BOARD) -p "$(PORT)" $(SKETCH)
 
 monitor:
-	arduino-cli monitor -p '$(PORT)' -c baudrate=115200
+	arduino-cli monitor -p "$(PORT)" -c baudrate=115200
 
 dependencies:
 	arduino-cli core update-index
 	arduino-cli core install esp32:esp32
-	arduino-cli lib install 'Bolder Flight Systems SBUS'@1.0.1
+	arduino-cli lib install "Bolder Flight Systems SBUS"@1.0.1
 	arduino-cli lib install --git-url https://github.com/okalachev/MPU9250.git
 
 gazebo/build cmake: gazebo/CMakeLists.txt
