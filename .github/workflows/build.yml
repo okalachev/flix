@@ -18,6 +18,17 @@ jobs:
     - name: Build firmware
       run: make
 
+  build_macos:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Install Arduino CLI
+      run: brew install arduino-cli
+    - name: Install dependencies
+      run: make dependencies
+    - name: Build firmware
+      run: make
+
   build_windows:
     runs-on: windows-latest
     steps:
