@@ -13,8 +13,6 @@ jobs:
     - uses: actions/checkout@v3
     - name: Install Arduino CLI
       uses: arduino/setup-arduino-cli@v1.1.1
-    - name: Install dependencies
-      run: make dependencies
     - name: Build firmware
       run: make
 
@@ -24,8 +22,6 @@ jobs:
     - uses: actions/checkout@v3
     - name: Install Arduino CLI
       run: brew install arduino-cli
-    - name: Install dependencies
-      run: make dependencies
     - name: Build firmware
       run: make
 
@@ -37,8 +33,6 @@ jobs:
       run: choco install arduino-cli
     - name: Install Make
       run: choco install make
-    - name: Install dependencies
-      run: make dependencies
     - name: Build firmware
       run: make
 

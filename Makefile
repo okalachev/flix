@@ -3,7 +3,7 @@ BOARD = esp32:esp32:d1_mini32
 PORT := $(wildcard /dev/serial/by-id/usb-Silicon_Labs_CP2104_USB_to_UART_Bridge_Controller_* /dev/serial/by-id/usb-1a86_USB_Single_Serial_* /dev/cu.usbserial-*)
 PORT := $(strip $(PORT))
 
-build:
+build: .dependencies
 # arduino-cli compile --fqbn $(BOARD) --build-path $(SKETCH)/build --build-cache-path $(SKETCH)/cache $(SKETCH)
 	arduino-cli compile --fqbn $(BOARD) $(SKETCH)
 
@@ -13,11 +13,12 @@ upload: build
 monitor:
 	arduino-cli monitor -p "$(PORT)" -c baudrate=115200
 
-dependencies:
+dependencies .dependencies:
 	arduino-cli core update-index --config-file arduino-cli.yaml
 	arduino-cli core install esp32:esp32@2.0.7 --config-file arduino-cli.yaml
 	arduino-cli lib install "Bolder Flight Systems SBUS"@1.0.1
 	arduino-cli lib install --git-url https://github.com/okalachev/MPU9250.git --config-file arduino-cli.yaml
+	touch .dependencies
 
 gazebo/build cmake: gazebo/CMakeLists.txt
 	mkdir -p gazebo/build

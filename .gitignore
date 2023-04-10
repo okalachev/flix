@@ -2,3 +2,4 @@
 *.elf
 gazebo/build/
 tools/log/
+.dependencies
