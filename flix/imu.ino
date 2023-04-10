@@ -1,6 +1,7 @@
 // Copyright (c) 2023 Oleg Kalachev <okalachev@gmail.com>
 // Repository: https://github.com/okalachev/flix
 
+#include <SPI.h>
 #include <MPU9250.h>
 
 #define IMU_CS_PIN 4 // chip-select pin for IMU SPI connection
