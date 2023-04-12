@@ -33,7 +33,7 @@ simulator: build_simulator
 	gazebo --verbose ${CURDIR}/gazebo/flix.world
 
 grab_log:
-	tools/grab_log.py
+	PORT=$(PORT) tools/grab_log.py
 
 clean:
 	rm -rf gazebo/plugin/build $(SKETCH)/build $(SKETCH)/cache
