@@ -36,6 +36,6 @@ grab_log:
 	PORT=$(PORT) tools/grab_log.py
 
 clean:
-	rm -rf gazebo/plugin/build $(SKETCH)/build $(SKETCH)/cache
+	rm -rf gazebo/build $(SKETCH)/build $(SKETCH)/cache .dependencies
 
 .PHONY: build upload monitor dependencies cmake build_simulator simulator grab_log clean
