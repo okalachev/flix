@@ -2,6 +2,8 @@
 
 **flix** (*flight + X*) — making an open source ESP32-based quadcopter from scratch.
 
+<img src="docs/img/flix.jpg" width=500>
+
 ## Features
 
 * Very simple and clear source code.
