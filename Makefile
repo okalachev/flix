@@ -1,14 +1,13 @@
-SKETCH = flix
+SRC := $(wildcard flix/*.ino flix/*.cpp flix/*.hpp)
 BOARD = esp32:esp32:d1_mini32
 PORT := $(wildcard /dev/serial/by-id/usb-Silicon_Labs_CP2104_USB_to_UART_Bridge_Controller_* /dev/serial/by-id/usb-1a86_USB_Single_Serial_* /dev/cu.usbserial-*)
 PORT := $(strip $(PORT))
 
 build: .dependencies
-# arduino-cli compile --fqbn $(BOARD) --build-path $(SKETCH)/build --build-cache-path $(SKETCH)/cache $(SKETCH)
-	arduino-cli compile --fqbn $(BOARD) $(SKETCH)
+	arduino-cli compile --fqbn $(BOARD) flix
 
 upload: build
-	arduino-cli upload --fqbn $(BOARD) -p "$(PORT)" $(SKETCH)
+	arduino-cli upload --fqbn $(BOARD) -p "$(PORT)" flix
 
 monitor:
 	arduino-cli monitor -p "$(PORT)" -c baudrate=115200
@@ -36,6 +35,6 @@ grab_log:
 	PORT=$(PORT) tools/grab_log.py
 
 clean:
-	rm -rf gazebo/build $(SKETCH)/build $(SKETCH)/cache .dependencies
+	rm -rf gazebo/build flix/build flix/cache .dependencies
 
 .PHONY: build upload monitor dependencies cmake build_simulator simulator grab_log clean
