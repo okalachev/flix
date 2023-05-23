@@ -64,36 +64,21 @@ static void doCommand()
 		showTable();
 	} else if (command == "ps") {
 		Vector a = attitude.toEulerZYX();
-		Serial.println("roll: " + String(a.x * RAD_TO_DEG, 2) +
-			" pitch: " + String(a.y * RAD_TO_DEG, 2) +
-			" yaw: " + String(a.z * RAD_TO_DEG, 2));
+		Serial.printf("roll: %f pitch: %f yaw: %f\n", a.x * RAD_TO_DEG, a.y * RAD_TO_DEG, a.z * RAD_TO_DEG);
 	} else if (command == "psq") {
-		Serial.println("qx: " + String(attitude.x) +
-			" qy: " + String(attitude.y) +
-			" qz: " + String(attitude.z) +
-			" qw: " + String(attitude.w));
+		Serial.printf("qx: %f qy: %f qz: %f qw: %f\n", attitude.x, attitude.y, attitude.z, attitude.w);
 	} else if (command == "imu") {
-		Serial.println("gyro bias " + String(IMU.getGyroBiasX_rads()) + " "
-			+ String(IMU.getGyroBiasY_rads()) + " "
-			+ String(IMU.getGyroBiasZ_rads()));
+		Serial.printf("gyro bias %f %f %f\n", IMU.getGyroBiasX_rads(), IMU.getGyroBiasY_rads(), IMU.getGyroBiasZ_rads());
 	} else if (command == "rc") {
-		Serial.println("RAW throttle " + String(channels[RC_CHANNEL_THROTTLE]) +
-			" yaw " + String(channels[RC_CHANNEL_YAW]) +
-			" pitch " + String(channels[RC_CHANNEL_PITCH]) +
-			" roll " + String(channels[RC_CHANNEL_ROLL]) +
-			" aux " + String(channels[RC_CHANNEL_AUX]) +
-			" mode " + String(channels[RC_CHANNEL_MODE]));
-		Serial.println("CONTROL throttle " + String(controls[RC_CHANNEL_THROTTLE]) +
-			" yaw " + String(controls[RC_CHANNEL_YAW]) +
-			" pitch " + String(controls[RC_CHANNEL_PITCH]) +
-			" roll " + String(controls[RC_CHANNEL_ROLL]) +
-			" aux " + String(controls[RC_CHANNEL_AUX]) +
-			" mode " + String(controls[RC_CHANNEL_MODE]));
+		Serial.printf("RAW throttle %d yaw %d pitch %d roll %d aux %d mode %d\n",
+			channels[RC_CHANNEL_THROTTLE], channels[RC_CHANNEL_YAW], channels[RC_CHANNEL_PITCH],
+			channels[RC_CHANNEL_ROLL], channels[RC_CHANNEL_AUX], channels[RC_CHANNEL_MODE]);
+		Serial.printf("CONTROL throttle %f yaw %f pitch %f roll %f aux %f mode %f\n",
+			controls[RC_CHANNEL_THROTTLE], controls[RC_CHANNEL_YAW], controls[RC_CHANNEL_PITCH],
+			controls[RC_CHANNEL_ROLL], controls[RC_CHANNEL_AUX], controls[RC_CHANNEL_MODE]);
 	} else if (command == "mot") {
-		Serial.println("MOTOR front-right " + String(motors[MOTOR_FRONT_RIGHT]) +
-			" front-left " + String(motors[MOTOR_FRONT_LEFT]) +
-			" rear-right " + String(motors[MOTOR_REAR_RIGHT]) +
-			" rear-left " + String(motors[MOTOR_REAR_LEFT]));
+		Serial.printf("MOTOR front-right %f front-left %f rear-right %f rear-left %f\n",
+			motors[MOTOR_FRONT_RIGHT], motors[MOTOR_FRONT_LEFT], motors[MOTOR_REAR_RIGHT], motors[MOTOR_REAR_LEFT]);
 	} else if (command == "log") {
 		dumpLog();
 	} else if (command == "cg") {
@@ -110,9 +95,7 @@ static void doCommand()
 		fullMotorTest(value.toInt());
 	} else {
 		float val = value.toFloat();
-		if (!isfinite(val)) {
-			Serial.println("Invalid value: " + value);
-		}
+		// TODO: on error returns 0, check invalid value
 
 		for (uint8_t i = 0; i < sizeof(params) / sizeof(params[0]); i++) {
 			if (command == params[i].name) {
@@ -139,7 +122,7 @@ static void showTable()
 
 static void cliTestMotor(uint8_t n)
 {
-	Serial.println("Testing motor " + String(n));
+	Serial.printf("Testing motor %d\n", n);
 	motors[n] = 1;
 	sendMotors();
 	delay(5000);
