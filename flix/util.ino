@@ -22,5 +22,3 @@ float randomFloat(float min, float max)
 {
 	return min + (max - min) * (float)rand() / RAND_MAX;
 }
-
-}
