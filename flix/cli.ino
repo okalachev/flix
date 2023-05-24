@@ -2,7 +2,7 @@
 // Repository: https://github.com/okalachev/flix
 
 #include <MPU9250.h>
-#include "pid.hpp"
+#include "pid.h"
 
 static String command;
 static String value;

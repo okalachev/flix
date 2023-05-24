@@ -1,8 +1,8 @@
 // Copyright (c) 2023 Oleg Kalachev <okalachev@gmail.com>
 // Repository: https://github.com/okalachev/flix
 
-#include "quaternion.hpp"
-#include "vector.hpp"
+#include "quaternion.h"
+#include "vector.h"
 
 #define ONE_G 9.807f
 #define ACC_MIN 0.9f

@@ -3,9 +3,9 @@
 
 #pragma diag_suppress 144, 513
 
-#include "pid.hpp"
-#include "vector.hpp"
-#include "quaternion.hpp"
+#include "pid.h"
+#include "vector.h"
+#include "quaternion.h"
 
 #define PITCHRATE_P 0.05
 #define PITCHRATE_I 0.2

@@ -1,8 +1,8 @@
 // Copyright (c) 2023 Oleg Kalachev <okalachev@gmail.com>
 // Repository: https://github.com/okalachev/flix
 
-#include "vector.hpp"
-#include "quaternion.hpp"
+#include "vector.h"
+#include "quaternion.h"
 
 #define SERIAL_BAUDRATE 115200
 

@@ -35,7 +35,7 @@
 #include <fstream>
 
 #include "Arduino.h"
-#include "flix.hpp"
+#include "flix.h"
 #include "util.ino"
 #include "joystick.h"
 #include "time.ino"
