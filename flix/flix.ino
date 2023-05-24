@@ -21,7 +21,6 @@
 #define MOTOR_FRONT_RIGHT 2
 #define MOTOR_REAR_RIGHT 1
 
-uint32_t startTime; // system startup time
 uint32_t stepTime; // current step time
 uint32_t steps; // total steps count
 float stepsPerSecond; // steps per last second
@@ -33,7 +32,6 @@ float motors[4]; // normalized motors thrust in range [-1..1]
 Vector rates; // angular rates, rad/s
 Vector acc; // accelerometer data, m/s/s
 Quaternion attitude; // estimated attitude
-bool calibrating; // flag we're calibrating
 
 void setup()
 {

@@ -55,17 +55,12 @@ bool readIMU()
 
 static void calibrateGyro()
 {
-	calibrating = true;
 	Serial.println("Calibrating gyro, stand still");
 	delay(500);
 	int status = IMU.calibrateGyro();
 	Serial.printf("Calibration status: %d\n", status);
-	Serial.print("Gyro bias: ");
-	Serial.print(IMU.getGyroBiasX_rads(), 10); Serial.print(" ");
-	Serial.print(IMU.getGyroBiasY_rads(), 10); Serial.print(" ");
-	Serial.println(IMU.getGyroBiasZ_rads(), 10);
 	IMU.setSrd(0);
-	calibrating = false;
+	printIMUCal();
 }
 
 static void calibrateAccel()
@@ -82,14 +77,7 @@ static void calibrateAccel()
 	IMU.calibrateAccel();
 	Serial.println("Cal accel: upside down"); delay(300);
 	IMU.calibrateAccel();
-	Serial.print("Accel bias: ");
-	Serial.print(IMU.getAccelBiasX_mss(), 10); Serial.print(" ");
-	Serial.print(IMU.getAccelBiasY_mss(), 10); Serial.print(" ");
-	Serial.println(IMU.getAccelBiasZ_mss(), 10);
-	Serial.print("Accel scale: ");
-	Serial.print(IMU.getAccelScaleFactorX(), 10); Serial.print(" ");
-	Serial.print(IMU.getAccelScaleFactorY(), 10); Serial.print(" ");
-	Serial.println(IMU.getAccelScaleFactorZ(), 10);
+	printIMUCal();
 }
 
 static void loadAccelCal()
@@ -104,6 +92,13 @@ static void loadGyroCal()
 	IMU.setGyroBiasX_rads(-0.0185128022);
 	IMU.setGyroBiasY_rads(-0.0262369743);
 	IMU.setGyroBiasZ_rads(0.0163032326);
+}
+
+void printIMUCal()
+{
+	Serial.printf("gyro bias: %f %f %f\n", IMU.getGyroBiasX_rads(), IMU.getGyroBiasY_rads(), IMU.getGyroBiasZ_rads());
+	Serial.printf("accel bias: %f %f %f\n", IMU.getAccelBiasX_mss(), IMU.getAccelBiasY_mss(), IMU.getAccelBiasZ_mss());
+	Serial.printf("accel scale: %f %f %f\n", IMU.getAccelScaleFactorX(), IMU.getAccelScaleFactorY(), IMU.getAccelScaleFactorZ());
 }
 
 // Accel bias: 0.0463809967 0.0463809967 0.1486964226

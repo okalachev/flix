@@ -21,7 +21,7 @@ void sendMavlink()
 
 		mavlink_msg_heartbeat_pack(SYSTEM_ID, MAV_COMP_ID_AUTOPILOT1, &msg, MAV_TYPE_QUADROTOR,
 			MAV_AUTOPILOT_GENERIC, MAV_MODE_FLAG_MANUAL_INPUT_ENABLED | MAV_MODE_FLAG_SAFETY_ARMED,
-			0, calibrating ? MAV_STATE_CALIBRATING : MAV_STATE_STANDBY);
+			0, MAV_STATE_STANDBY);
 		sendMessage(&msg);
 
 		// params test

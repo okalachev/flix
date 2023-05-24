@@ -140,11 +140,6 @@ public:
 		const double maxThrust = 0.03 * ONE_G; // 30 g, https://www.youtube.com/watch?v=VtKI4Pjx8Sk
 		// 65 mm prop ~40 g
 
-		// std::cout << "fr: " << motors[MOTOR_FRONT_RIGHT]
-		// 	<< " fl: " << motors[MOTOR_FRONT_LEFT]
-		// 	<< " rr: " << motors[MOTOR_REAR_RIGHT]
-		// 	<< " rl: " << motors[MOTOR_REAR_LEFT] << std::endl;
-
 		const float scale0 = 1.0, scale1 = 1.1, scale2 = 0.9, scale3 = 1.05;
 		const float minThrustRel = 0;
 

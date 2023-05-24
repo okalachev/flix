@@ -1,7 +1,6 @@
 // Copyright (c) 2023 Oleg Kalachev <okalachev@gmail.com>
 // Repository: https://github.com/okalachev/flix
 
-#include <MPU9250.h>
 #include "pid.h"
 
 static String command;
@@ -9,7 +8,6 @@ static String value;
 static bool parsingCommand = true;
 
 extern PID rollRatePID, pitchRatePID, yawRatePID, rollPID, pitchPID;
-extern MPU9250 IMU;
 
 const char* motd =
 "\nWelcome to\n"
@@ -68,7 +66,7 @@ static void doCommand()
 	} else if (command == "psq") {
 		Serial.printf("qx: %f qy: %f qz: %f qw: %f\n", attitude.x, attitude.y, attitude.z, attitude.w);
 	} else if (command == "imu") {
-		Serial.printf("gyro bias %f %f %f\n", IMU.getGyroBiasX_rads(), IMU.getGyroBiasY_rads(), IMU.getGyroBiasZ_rads());
+		printIMUCal();
 	} else if (command == "rc") {
 		Serial.printf("RAW throttle %d yaw %d pitch %d roll %d aux %d mode %d\n",
 			channels[RC_CHANNEL_THROTTLE], channels[RC_CHANNEL_YAW], channels[RC_CHANNEL_PITCH],
