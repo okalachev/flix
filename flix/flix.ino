@@ -35,14 +35,10 @@ Vector acc; // accelerometer data, m/s/s
 Quaternion attitude; // estimated attitude
 bool calibrating; // flag we're calibrating
 
-void setupDebug();
-void lowPowerMode();
-
 void setup()
 {
 	Serial.begin(SERIAL_BAUDRATE);
 	Serial.println("Initializing flix");
-	setupTime();
 	setupLED();
 	setupMotors();
 	setLED(true);

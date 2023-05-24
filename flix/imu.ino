@@ -59,7 +59,7 @@ static void calibrateGyro()
 	Serial.println("Calibrating gyro, stand still");
 	delay(500);
 	int status = IMU.calibrateGyro();
-	Serial.println("Calibration status: " + String(status));
+	Serial.printf("Calibration status: %d\n", status);
 	Serial.print("Gyro bias: ");
 	Serial.print(IMU.getGyroBiasX_rads(), 10); Serial.print(" ");
 	Serial.print(IMU.getGyroBiasY_rads(), 10); Serial.print(" ");

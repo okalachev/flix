@@ -7,11 +7,6 @@ const uint32_t S = 1000000;
 static uint32_t stepsPerSecondCurrent;
 static uint32_t stepsPerSecondCurrentLast;
 
-void setupTime()
-{
-	startTime = micros();
-}
-
 void step() {
 	steps++;
 	auto time = micros();
