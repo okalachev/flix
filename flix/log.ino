@@ -1,6 +1,8 @@
 // Copyright (c) 2023 Oleg Kalachev <okalachev@gmail.com>
 // Repository: https://github.com/okalachev/flix
 
+// In-RAM logging
+
 const int LOG_RATE = 100;
 const int LOG_DURATION = 10;
 const int LOG_PERIOD = 1000000 / LOG_RATE;

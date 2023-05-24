@@ -1,6 +1,8 @@
 // Copyright (c) 2023 Oleg Kalachev <okalachev@gmail.com>
 // Repository: https://github.com/okalachev/flix
 
+// Estimation of attitude from gyro and accelerometer
+
 #include "quaternion.h"
 #include "vector.h"
 

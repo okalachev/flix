@@ -1,6 +1,7 @@
-// Lightweight vector library
 // Copyright (c) 2023 Oleg Kalachev <okalachev@gmail.com>
 // Repository: https://github.com/okalachev/flix
+
+// Lightweight vector library
 
 #pragma once
 
