@@ -45,4 +45,4 @@ void setLED(bool on) {};
 void calibrateGyro() {};
 void fullMotorTest(int n) {};
 void sendMotors() {};
-void printIMUCal() { Serial.print("N/A"); };
+void printIMUCal() { Serial.print("cal: N/A\n"); };
