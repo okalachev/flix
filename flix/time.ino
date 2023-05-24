@@ -26,21 +26,3 @@ void step() {
 		stepsPerSecondCurrentLast = time;
 	}
 }
-
-void _step() {
-	steps++;
-	auto currentStepTime = micros();
-	if (stepTime == 0) {
-		stepTime = currentStepTime;
-	}
-	dt = (currentStepTime - stepTime) / 1000000.0;
-	stepTime = currentStepTime;
-
-	// compute steps per second, TODO: move to func
-	stepsPerSecondCurrent++;
-	if (stepTime - stepsPerSecondCurrentLast >= 1000000) {
-		stepsPerSecond = stepsPerSecondCurrent;
-		stepsPerSecondCurrent = 0;
-		stepsPerSecondCurrentLast = stepTime;
-	}
-}

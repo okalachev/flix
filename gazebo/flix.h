@@ -30,7 +30,6 @@ Quaternion attitude;
 void control();
 void interpretRC();
 static void controlAttitude();
-static void controlAttitudeAlter();
 static void controlManual();
 static void controlRate();
 void desaturate(float& a, float& b, float& c, float& d);

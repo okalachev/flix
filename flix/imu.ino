@@ -17,7 +17,7 @@ void setupIMU()
 	auto status = IMU.begin();
 	if (status < 0) {
 		while (true) {
-			Serial.print("IMU begin error: "); Serial.println(status);
+			Serial.printf("IMU begin error: %d\n", status);
 			delay(1000);
 		}
 	}
