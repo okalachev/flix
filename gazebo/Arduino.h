@@ -1,6 +1,5 @@
 // Copyright (c) 2023 Oleg Kalachev <okalachev@gmail.com>
 // Repository: https://github.com/okalachev/flix
-// Distributed under the MIT License (https://opensource.org/licenses/MIT)
 
 // Partial implementation of Arduino API for simulation
 
