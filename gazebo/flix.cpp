@@ -34,12 +34,15 @@
 #include <iostream>
 #include <fstream>
 
-#include "arduino.hpp"
+#include "Arduino.h"
 #include "flix.hpp"
-#include "turnigy.hpp"
 #include "util.ino"
+#include "time.ino"
+#include "turnigy.hpp"
 #include "estimate.ino"
 #include "control.ino"
+#include "log.ino"
+#include "cli.ino"
 
 using ignition::math::Vector3d;
 using ignition::math::Pose3d;
@@ -52,13 +55,17 @@ Pose3d flu2frd(const Pose3d& p)
 	                              p.Rot().W(), p.Rot().X(), -p.Rot().Y(), -p.Rot().Z());
 }
 
+Vector flu2frd(const Vector3d& v)
+{
+	return Vector(v.X(), -v.Y(), -v.Z());
+}
+
 class ModelFlix : public ModelPlugin
 {
 private:
 	physics::ModelPtr model, estimateModel;
 	physics::LinkPtr body;
 	sensors::ImuSensorPtr imu;
-	common::Time _stepTime;
 	event::ConnectionPtr updateConnection, resetConnection;
 	transport::NodePtr nodeHandle;
 	transport::PublisherPtr motorPub[4];
@@ -78,13 +85,6 @@ public:
 
 		this->estimateModel = model->GetWorld()->ModelByName("flix_estimate");
 
-		// auto scene = rendering::get_scene();
-		// motorVisual[0] = scene->GetVisual("motor0");
-		// motorVisual[1] = scene->GetVisual("motor1");
-		// motorVisual[2] = scene->GetVisual("motor2");
-		// motorVisual[3] = scene->GetVisual("motor3");
-		// motorVisual[0] = model->GetVisual("motor0");
-
 		this->updateConnection = event::Events::ConnectWorldUpdateBegin(
 			std::bind(&ModelFlix::OnUpdate, this));
 
@@ -92,6 +92,8 @@ public:
 			std::bind(&ModelFlix::OnReset, this));
 
 		initNode();
+
+		Serial.begin(0);
 
 		gzmsg << "Flix plugin loaded" << endl;
 	}
@@ -105,92 +107,28 @@ public:
 
 	void OnUpdate()
 	{
-		// this->model->SetLinearVel(ignition::math::Vector3d(.3, 0, 0));
+		__micros = model->GetWorld()->SimTime().Double() * 1000000;
+		step();
 
-		// this->model->GetLink("body")->AddForce(ignition::math::Vector3d(0.0, 0.0, 1.96));
-		// this->model->GetLink("body")->SetTorque(1.0, ignition::math::Vector3d(1.0, 0.0, 0.0);
+		// read imu
+		rates = flu2frd(imu->AngularVelocity());
+		acc = flu2frd(imu->LinearAcceleration());
 
-		// this->model->GetLink("motor0")->AddForce(ignition::math::Vector3d(0.0, 0.0, 1.96/4));
-		// this->model->GetLink("motor1")->AddForce(ignition::math::Vector3d(0.0, 0.0, 1.96/4));
-		// this->model->GetLink("motor2")->AddForce(ignition::math::Vector3d(0.0, 0.0, 1.96/4));
-		// this->model->GetLink("motor3")->AddForce(ignition::math::Vector3d(0.0, 0.0, 1.96/4))
-
-		// === GROUNDTRUTH ORIENTATION ===
-		// auto pose = flu2frd(this->model->WorldPose());
-		// attitude = Quaternion(pose.Rot().W(), pose.Rot().X(), pose.Rot().Y(), pose.Rot().Z());
-		// auto vel = this->model->RelativeAngularVel();
-		// rates = Vector(vel.X(), -vel.Y(), -vel.Z()); // flu to frd
-
-		// === GROUNDTRUTH POSITION ===
-		// auto pose = flu2frd(this->model->WorldPose());
-		// position = Vector(pose.Pos().X(), pose.Pos().Y(), pose.Pos().Z());
-		// auto vel = this->model->RelativeLinearVel();
-		// velocity = Vector(vel.X(), -vel.Y(), -vel.Z());
-
-		/// == IMU ===
-		auto imuRates = imu->AngularVelocity();
-		rates = Vector(imuRates.X(), -imuRates.Y(), -imuRates.Z()); // flu to frd
-		auto imuAccel = imu->LinearAcceleration();
-		acc = Vector(imuAccel.X(), -imuAccel.Y(), -imuAccel.Z()); // flu to frd
-
-		// gazebo::common::Time curTime = this->dataPtr->model->GetWorld()->SimTime();
-
-		turnigyGet();
+		// read rc
+		joystickGet();
 		controls[RC_CHANNEL_MODE] = 1; // 0 acro, 1 stab
 		controls[RC_CHANNEL_AUX] = 1; // armed
-		// std::cout << "yaw: " << yaw << " pitch: " << pitch << " roll: " << roll << " throttle: " << throttle << std::endl;
-
-		if (std::isnan(dt)) {
-			// first step
-			dt = 0;
-		} else {
-			dt = (this->model->GetWorld()->SimTime() - _stepTime).Double();
-		}
-		_stepTime = this->model->GetWorld()->SimTime();
-		stepTime = _stepTime.Double() * 1000000;
-		// std::cout << "dt: " << dt << std::endl;
 
 		estimate();
 
-		// fix yaw
+		// correct yaw to the actual yaw
 		attitude.setYaw(-this->model->WorldPose().Yaw());
-		// Serial.print("attitude: "); Serial.println(attitude);
-		// controlMission();
-		// controlPosition();
-
-		// auto pose = flu2frd(this->model->WorldPose());
 
 		control();
+		parseInput();
+
 		applyMotorsThrust();
 		updateEstimatePose();
-		// autotune();
-
-		/*
-		working:
-		const double max_thrust = 2.2;
-		double thrust = max_thrust * throttle;
-
-		// rate setpoint
-		double rx = roll * 0.1;
-		double ry = -pitch * 0.1;
-		double rz = yaw * 0.1;
-
-		// this->model->GetLink("body")->AddForce(ignition::math::Vector3d(0.0, 0.0, 2.5 * throttle));
-
-		const double d = 0.035355;
-		double front_left = thrust + ry + rx;
-		double front_right = thrust + ry - rx;
-		double rear_left = thrust - ry + rx;
-		double rear_right = thrust - ry - rx;
-
-		if (throttle < 0.1) return;
-
-		this->body->AddLinkForce(ignition::math::Vector3d(0.0, 0.0, front_left), ignition::math::Vector3d(d, d, 0.0));
-		this->body->AddLinkForce(ignition::math::Vector3d(0.0, 0.0, front_right), ignition::math::Vector3d(d, -d, 0.0));
-		this->body->AddLinkForce(ignition::math::Vector3d(0.0, 0.0, rear_left), ignition::math::Vector3d(-d, d, 0.0));
-		this->body->AddLinkForce(ignition::math::Vector3d(0.0, 0.0, rear_right), ignition::math::Vector3d(-d, -d, 0.0));
-		*/
-
 		publishTopics();
 		logData();
 	}
@@ -220,8 +158,6 @@ public:
 		if (motors[MOTOR_FRONT_RIGHT] < 0.001) mfr = 0;
 		if (motors[MOTOR_REAR_LEFT] < 0.001) mrl = 0;
 		if (motors[MOTOR_REAR_RIGHT] < 0.001) mrr = 0;
-
-		// const float scale0 = 1.0, scale1 = 1.0, scale2 = 1.0, scale3 = 1.0;
 
 		// TODO: min_thrust
 

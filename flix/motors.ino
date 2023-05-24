@@ -128,4 +128,5 @@ static float thrustToMotorInput(uint8_t n, float thrust)
 			return mapff(thrust, 0, 1, motorThrust[n][i-1], motorThrust[n][i]);
 		}
 	}
+	return 1;
 }

@@ -12,5 +12,7 @@ set(FLIX_SOURCE_DIR ../flix)
 include_directories(${FLIX_SOURCE_DIR})
 file(GLOB_RECURSE FLIX_INO_FILES ${FLIX_SOURCE_DIR}/*.ino)
 
+set(CMAKE_BUILD_TYPE RelWithDebInfo)
 add_library(flix SHARED flix.cpp)
 target_link_libraries(flix ${GAZEBO_LIBRARIES} ${SDL2_LIBRARIES})
+target_include_directories(flix PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
