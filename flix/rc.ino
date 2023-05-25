@@ -14,8 +14,6 @@ void setupRC()
 	RC.begin();
 }
 
-static uint32_t lastReadRC = 0;
-
 void readRC()
 {
 	bool failSafe, lostFrame;
@@ -23,7 +21,6 @@ void readRC()
 		if (failSafe) { rcFailSafe++; return; } // TODO: NOT TESTED YET
 		if (lostFrame) { rcLostFrame++; return; }
 		normalizeRC();
-		lastReadRC = stepTime;
 	}
 }
 

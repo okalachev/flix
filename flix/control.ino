@@ -3,8 +3,6 @@
 
 // Flight control
 
-#pragma diag_suppress 144, 513
-
 #include "pid.h"
 #include "vector.h"
 #include "quaternion.h"
