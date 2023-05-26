@@ -15,11 +15,9 @@
 #define MOTOR_FRONT_RIGHT 2
 #define MOTOR_REAR_RIGHT 1
 
-uint32_t startTime;
-uint32_t stepTime;
-uint32_t steps;
-float stepsPerSecond;
+float t;
 float dt;
+float loopFreq;
 float motors[4];
 int16_t channels[16]; // raw rc channels WARNING: unsigned on hardware
 float controls[RC_CHANNELS];
@@ -27,7 +25,8 @@ Vector acc;
 Vector rates;
 Quaternion attitude;
 
-// control
+// declarations
+void computeLoopFreq();
 void control();
 void interpretRC();
 static void controlAttitude();

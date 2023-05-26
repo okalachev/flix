@@ -5,21 +5,22 @@
 
 const int LOG_RATE = 100;
 const int LOG_DURATION = 10;
-const int LOG_PERIOD = 1000000 / LOG_RATE;
+const float LOG_PERIOD = 1 / LOG_RATE;
 const int LOG_SIZE = LOG_DURATION * LOG_RATE;
 const int LOG_COLUMNS = 14;
 
 static float logBuffer[LOG_SIZE][LOG_COLUMNS]; // * 4 (float)
 static int logPointer = 0;
-static uint32_t lastLog = 0;
 
 void logData()
 {
 	if (!armed) return;
-	if (stepTime - lastLog < LOG_PERIOD) return;
-	lastLog = stepTime;
 
-	logBuffer[logPointer][0] = stepTime;
+	static float logTime = 0;
+	if (t - logTime < LOG_PERIOD) return;
+	logTime = t;
+
+	logBuffer[logPointer][0] = t;
 	logBuffer[logPointer][1] = rates.x;
 	logBuffer[logPointer][2] = rates.y;
 	logBuffer[logPointer][3] = rates.z;

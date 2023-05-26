@@ -1,28 +1,25 @@
 // Copyright (c) 2023 Oleg Kalachev <okalachev@gmail.com>
 // Repository: https://github.com/okalachev/flix
 
-const uint32_t MS = 1000;
-const uint32_t S = 1000000;
+#define FREQ_WINDOW 1
 
-static uint32_t stepsPerSecondCurrent;
-static uint32_t stepsPerSecondCurrentLast;
+void step()
+{
+	float now = micros() / 1000000.0;
+	dt = now - t; // dt is NAN on first step
+	t = now;
 
-void step() {
-	steps++;
-	auto time = micros();
+	computeLoopFreq();
+}
 
-	if (stepTime == 0) { // first step
-		stepTime = time;
-	}
-
-	dt = (time - stepTime) / 1000000.0;
-	stepTime = time;
-
-	// compute steps per seconds
-	stepsPerSecondCurrent++;
-	if (time - stepsPerSecondCurrentLast >= 1000000) {
-		stepsPerSecond = stepsPerSecondCurrent;
-		stepsPerSecondCurrent = 0;
-		stepsPerSecondCurrentLast = time;
+void computeLoopFreq()
+{
+	static float windowStart = 0;
+	static uint32_t freq = 0;
+	freq++;
+	if (t - windowStart >= FREQ_WINDOW) {
+		loopFreq = freq;
+		windowStart = t;
+		freq = 0;
 	}
 }

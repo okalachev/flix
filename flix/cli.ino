@@ -53,7 +53,7 @@ static const struct Param {
 	{"yi", &yawRatePID.i, nullptr},
 	{"yd", &yawRatePID.d, nullptr},
 
-	{"ss", &stepsPerSecond, nullptr},
+	{"ss", &loopFreq, nullptr},
 	// {"m", &mode, nullptr},
 };
 

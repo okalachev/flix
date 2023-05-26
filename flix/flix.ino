@@ -21,10 +21,9 @@
 #define MOTOR_FRONT_RIGHT 2
 #define MOTOR_REAR_RIGHT 1
 
-uint32_t stepTime; // current step time
-uint32_t steps; // total steps count
-float stepsPerSecond; // steps per last second
-float dt; // time delta from previous step
+float t = NAN; // current step time, s
+float dt; // time delta from previous step, s
+float loopFreq; // loop frequency, Hz
 uint16_t channels[16]; // raw rc channels
 float controls[RC_CHANNELS]; // normalized controls in range [-1..1] ([0..1] for throttle)
 uint32_t rcFailSafe, rcLostFrame;
