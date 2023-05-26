@@ -7,14 +7,12 @@
 
 #pragma once
 
-#include <iostream>
 #include <cmath>
 #include <string>
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/poll.h>
 
-using std::cout;
 using std::max;
 using std::min;
 using std::isfinite;

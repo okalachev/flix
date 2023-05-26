@@ -34,8 +34,6 @@ static void controlManual();
 static void controlRate();
 void desaturate(float& a, float& b, float& c, float& d);
 static void indicateSaturation();
-
-// cli
 static void showTable();
 static void cliTestMotor(uint8_t n);
 
@@ -45,4 +43,4 @@ void calibrateGyro() { printf("Skip gyro calibrating\n"); };
 void calibrateAccel() { printf("Skip accel calibrating\n"); };
 void fullMotorTest(int n) {};
 void sendMotors() {};
-void printIMUCal() { Serial.print("cal: N/A\n"); };
+void printIMUCal() { printf("cal: N/A\n"); };
