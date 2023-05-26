@@ -30,6 +30,7 @@ const char* motd =
 "mot - show motor data\n"
 "log - dump in-RAM log\n"
 "cg - calibrate gyro\n"
+"ca - calibrate accel\n"
 "fullmot <n> - test motor on all signals\n"
 "wifi - start wi-fi access point\n";
 
@@ -85,6 +86,8 @@ static void doCommand()
 		dumpLog();
 	} else if (command == "cg") {
 		calibrateGyro();
+	} else if (command == "ca") {
+		calibrateAccel();
 	} else if (command == "mfr") {
 		cliTestMotor(MOTOR_FRONT_RIGHT);
 	} else if (command == "mfl") {

@@ -4,6 +4,7 @@
 // Declarations of some functions and variables in Arduino code
 
 #include <cmath>
+#include <stdio.h>
 #include "vector.h"
 #include "quaternion.h"
 
@@ -41,7 +42,8 @@ static void cliTestMotor(uint8_t n);
 
 // mocks
 void setLED(bool on) {};
-void calibrateGyro() {};
+void calibrateGyro() { printf("Skip gyro calibrating\n"); };
+void calibrateAccel() { printf("Skip accel calibrating\n"); };
 void fullMotorTest(int n) {};
 void sendMotors() {};
 void printIMUCal() { Serial.print("cal: N/A\n"); };
