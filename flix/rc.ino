@@ -18,8 +18,8 @@ void readRC()
 {
 	bool failSafe, lostFrame;
 	if (RC.read(channels, &failSafe, &lostFrame)) {
-		if (failSafe) { rcFailSafe++; return; } // TODO: NOT TESTED YET
-		if (lostFrame) { rcLostFrame++; return; }
+		if (failSafe) { return; } // TODO:
+		if (lostFrame) { return; }
 		normalizeRC();
 	}
 }

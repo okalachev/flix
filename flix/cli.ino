@@ -5,10 +5,6 @@
 
 #include "pid.h"
 
-static String command;
-static String value;
-static bool parsingCommand = true;
-
 extern PID rollRatePID, pitchRatePID, yawRatePID, rollPID, pitchPID;
 
 const char* motd =
@@ -34,8 +30,6 @@ const char* motd =
 "fullmot <n> - test motor on all signals\n"
 "wifi - start wi-fi access point\n";
 
-bool showMotd = true;
-
 static const struct Param {
 	const char* name;
 	float* value;
@@ -57,7 +51,7 @@ static const struct Param {
 	// {"m", &mode, nullptr},
 };
 
-static void doCommand()
+static void doCommand(String& command, String& value)
 {
 	if (command == "help" || command == "motd") {
 		Serial.println(motd);
@@ -138,6 +132,11 @@ static void cliTestMotor(uint8_t n)
 
 void parseInput()
 {
+	static bool showMotd = true;
+	static String command;
+	static String value;
+	static bool parsingCommand = true;
+
 	if (showMotd) {
 		Serial.println(motd);
 		showMotd = false;
@@ -148,7 +147,7 @@ void parseInput()
 		if (c == '\n') {
 			parsingCommand = true;
 			if (!command.isEmpty()) {
-				doCommand();
+				doCommand(command, value);
 			}
 			command.clear();
 			value.clear();

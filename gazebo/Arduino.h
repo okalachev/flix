@@ -36,9 +36,9 @@ class __FlashStringHelper;
 // https://www.arduino.cc/reference/en/language/variables/data-types/stringobject/
 class String: public std::string {
 public:
-	long toInt() { return atol(this->c_str()); }
-	float toFloat() { return atof(this->c_str()); }
-	bool isEmpty() { return this->empty(); }
+	long toInt() const { return atol(this->c_str()); }
+	float toFloat() const { return atof(this->c_str()); }
+	bool isEmpty() const { return this->empty(); }
 };
 
 class Print;
