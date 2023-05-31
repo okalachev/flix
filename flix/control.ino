@@ -3,9 +3,9 @@
 
 // Flight control
 
-#include "pid.h"
 #include "vector.h"
 #include "quaternion.h"
+#include "pid.h"
 
 #define PITCHRATE_P 0.05
 #define PITCHRATE_I 0.2
@@ -22,7 +22,7 @@
 #define ROLL_P 4.5
 #define ROLL_I 0
 #define ROLL_D 0
-#define PITCH_P ROLL_P // 8
+#define PITCH_P ROLL_P
 #define PITCH_I ROLL_I
 #define PITCH_D ROLL_D
 #define YAW_P 3
