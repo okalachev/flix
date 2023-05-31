@@ -20,20 +20,11 @@ public:
 
 	float update(float error, float dt)
 	{
-		if (!isfinite(error) || !isfinite(dt)) {
-			// TODO: brutal way to remove glitches
-			Serial.println("nan in error or dt");
-			return NAN;
-		}
-
-		if (dt > 0) {
-			// calculate integral if dt is valid
-			integral += error * dt;
-			if (isfinite(prevError)) {
-				// calculate derivative if both dt and prevError are valid
-				float _derivative = (error - prevError) / dt;
-				derivative = derivative * 0.8 + 0.2 * _derivative; // lpf WARNING:
-			}
+		integral += error * dt;
+		if (isfinite(prevError) && dt > 0) {
+			// calculate derivative if both dt and prevError are valid
+			float _derivative = (error - prevError) / dt;
+			derivative = derivative * 0.8 + 0.2 * _derivative; // lpf WARNING:
 		}
 
 		prevError = error;

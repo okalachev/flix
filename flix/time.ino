@@ -1,13 +1,15 @@
 // Copyright (c) 2023 Oleg Kalachev <okalachev@gmail.com>
 // Repository: https://github.com/okalachev/flix
 
-#define FREQ_WINDOW 1
-
 void step()
 {
 	float now = micros() / 1000000.0;
-	dt = now - t; // dt is NAN on first step
+	dt = now - t;
 	t = now;
+
+	if (isnan(dt)) {
+		dt = 0; // assume dt to be zero on first step
+	}
 
 	computeLoopFreq();
 }
@@ -17,7 +19,7 @@ void computeLoopFreq()
 	static float windowStart = 0;
 	static uint32_t freq = 0;
 	freq++;
-	if (t - windowStart >= FREQ_WINDOW) {
+	if (t - windowStart >= 1) { // 1 second window
 		loopFreq = freq;
 		windowStart = t;
 		freq = 0;

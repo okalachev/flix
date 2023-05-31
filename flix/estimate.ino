@@ -13,50 +13,36 @@
 
 void estimate()
 {
-	if (dt == 0) {
-		return;
-	}
+	applyGyro();
+	applyAcc();
+	signalizeHorizontality();
+}
 
+void applyGyro()
+{
 	// applying gyro
 	attitude *= Quaternion::fromAngularRates(rates * dt);
 	attitude.normalize();
+}
 
-	// test should we apply acc
+void applyAcc()
+{
+	// test should we apply accelerometer gravity correction
 	float accNorm = acc.norm();
 	if (accNorm < ACC_MIN * ONE_G || accNorm > ACC_MAX * ONE_G) {
-		// use acc only when we're not accelerating
+		// use accelerometer only when we're not accelerating
 		return;
 	}
 
+	// calculate accelerometer correction
 	Vector up = attitude.rotate(Vector(0, 0, -1));
 	Vector accCorrDirection = Vector::angularRatesBetweenVectors(acc, up);
 	accCorrDirection.normalize();
-
-	if (!accCorrDirection.finite()) {
-		return;
-	}
-
 	Vector accCorr = accCorrDirection * Vector::angleBetweenVectors(up, acc) * dt * WEIGHT_ACC;
 
-	if (!accCorr.finite()) {
-		return; // TODO
-	}
-
+	// apply correction
 	attitude *= Quaternion::fromAngularRates(accCorr);
 	attitude.normalize();
-
-	if (!attitude.finite()) {
-		Serial.print("dt "); Serial.println(dt, 15);
-		Serial.print("up "); Serial.println(up);
-		Serial.print("acc "); Serial.println(acc);
-		Serial.print("acc norm "); Serial.println(acc.norm());
-		Serial.print("upp norm "); Serial.println(up.norm());
-		Serial.print("acc dot up "); Serial.println(Vector::dot(up, acc), 15);
-		Serial.print("acc cor ang "); Serial.println(Vector::angleBetweenVectors(up, acc), 15);
-		Serial.print("acc corr dir "); Serial.println(accCorrDirection);
-		Serial.print("acc cor "); Serial.println(accCorr);
-		Serial.print("att "); Serial.println(attitude);
-	}
 }
 
 void signalizeHorizontality()

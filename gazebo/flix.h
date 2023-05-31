@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include "vector.h"
 #include "quaternion.h"
+#include "Arduino.h"
 
 #define RC_CHANNELS 6
 
@@ -15,7 +16,7 @@
 #define MOTOR_FRONT_RIGHT 2
 #define MOTOR_REAR_RIGHT 1
 
-float t;
+float t = NAN;
 float dt;
 float loopFreq;
 float motors[4];
@@ -27,6 +28,9 @@ Quaternion attitude;
 
 // declarations
 void computeLoopFreq();
+void applyGyro();
+void applyAcc();
+void signalizeHorizontality();
 void control();
 void interpretRC();
 static void controlAttitude();

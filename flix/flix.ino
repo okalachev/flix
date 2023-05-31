@@ -62,5 +62,4 @@ void loop()
 	sendMavlink();
 #endif
 	logData();
-	signalizeHorizontality();
 }
