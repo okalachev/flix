@@ -9,8 +9,8 @@
 #define PERIOD_SLOW 1000000 // us
 #define PERIOD_FAST 100000 // us
 
-static uint32_t lastSlow;
-static uint32_t lastFast;
+uint32_t lastSlow;
+uint32_t lastFast;
 
 void sendMavlink()
 {
@@ -60,7 +60,7 @@ void sendMavlink()
 	}
 }
 
-static inline void sendMessage(const void *msg)
+inline void sendMessage(const void *msg)
 {
 	uint8_t buf[MAVLINK_MAX_PACKET_LEN];
 	uint16_t len = mavlink_msg_to_send_buffer(buf, (mavlink_message_t *)msg);

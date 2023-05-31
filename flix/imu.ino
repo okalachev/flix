@@ -53,7 +53,7 @@ bool readIMU()
 	return rates != lastRates;
 }
 
-static void calibrateGyro()
+void calibrateGyro()
 {
 	Serial.println("Calibrating gyro, stand still");
 	delay(500);
@@ -63,7 +63,7 @@ static void calibrateGyro()
 	printIMUCal();
 }
 
-static void calibrateAccel()
+void calibrateAccel()
 {
 	Serial.println("Cal accel: place level"); delay(3000);
 	IMU.calibrateAccel();
@@ -80,14 +80,14 @@ static void calibrateAccel()
 	printIMUCal();
 }
 
-static void loadAccelCal()
+void loadAccelCal()
 {
 	IMU.setAccelCalX(-0.0048542023, 1.0008112192);
 	IMU.setAccelCalY(0.0521845818, 0.9985780716);
 	IMU.setAccelCalZ(0.5754694939, 1.0045746565);
 }
 
-static void loadGyroCal()
+void loadGyroCal()
 {
 	IMU.setGyroBiasX_rads(-0.0185128022);
 	IMU.setGyroBiasY_rads(-0.0262369743);

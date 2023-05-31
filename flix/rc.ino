@@ -3,10 +3,10 @@
 
 #include <SBUS.h>
 
-static const uint16_t channelNeutral[] = {995, 883, 200, 972, 512, 512};
-static const uint16_t channelMax[] = {1651, 1540, 1713, 1630, 1472, 1472};
+const uint16_t channelNeutral[] = {995, 883, 200, 972, 512, 512};
+const uint16_t channelMax[] = {1651, 1540, 1713, 1630, 1472, 1472};
 
-static SBUS RC(Serial2);
+SBUS RC(Serial2);
 
 void setupRC()
 {

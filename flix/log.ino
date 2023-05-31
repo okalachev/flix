@@ -9,8 +9,8 @@ const float LOG_PERIOD = 1 / LOG_RATE;
 const int LOG_SIZE = LOG_DURATION * LOG_RATE;
 const int LOG_COLUMNS = 14;
 
-static float logBuffer[LOG_SIZE][LOG_COLUMNS]; // * 4 (float)
-static int logPointer = 0;
+float logBuffer[LOG_SIZE][LOG_COLUMNS]; // * 4 (float)
+int logPointer = 0;
 
 void logData()
 {

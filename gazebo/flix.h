@@ -33,13 +33,13 @@ void applyAcc();
 void signalizeHorizontality();
 void control();
 void interpretRC();
-static void controlAttitude();
-static void controlManual();
-static void controlRate();
+void controlAttitude();
+void controlManual();
+void controlRate();
 void desaturate(float& a, float& b, float& c, float& d);
-static void indicateSaturation();
-static void showTable();
-static void cliTestMotor(uint8_t n);
+void indicateSaturation();
+void showTable();
+void cliTestMotor(uint8_t n);
 
 // mocks
 void setLED(bool on) {};

@@ -98,7 +98,7 @@ void interpretRC()
 	}
 }
 
-static void controlAttitude()
+void controlAttitude()
 {
 	if (!armed) {
 		rollPID.reset();
@@ -149,7 +149,7 @@ static void controlAttitude()
 	// std::cout << "rsp: " << ratesTarget.x << " " << ratesTarget.y << std::endl;
 }
 
-static void controlAttitudeAlter()
+void controlAttitudeAlter()
 {
 	if (!armed) {
 		rollPID.reset();
@@ -169,7 +169,7 @@ static void controlAttitudeAlter()
 }
 
 // passthrough mode
-static void controlManual()
+void controlManual()
 {
 	if (controls[RC_CHANNEL_THROTTLE] < 0.1) {
 		memset(motors, 0, sizeof(motors));
@@ -195,7 +195,7 @@ static void controlManual()
 	motors[3] = constrain(motors[3], 0, 1);
 }
 
-static void controlRate()
+void controlRate()
 {
 	if (!armed) { // TODO: too rough
 		memset(motors, 0, sizeof(motors));
@@ -257,7 +257,7 @@ void desaturate(float& a, float& b, float& c, float& d)
 
 static bool motorsSaturation = false;
 
-static inline void indicateSaturation() {
+inline void indicateSaturation() {
 	bool sat = motors[0] > 1 || motors[1] > 1 || motors[2] > 1 || motors[3] > 1 ||
 	           motors[0] < 0 || motors[1] < 0 || motors[2] < 0 || motors[3] < 0;
 	if (motorsSaturation != sat) {

@@ -1,7 +1,7 @@
 // Copyright (c) 2023 Oleg Kalachev <okalachev@gmail.com>
 // Repository: https://github.com/okalachev/flix
 
-static void _pwm(int n, uint16_t pwm)
+void _pwm(int n, uint16_t pwm)
 {
 	printf("Motor %d: %d\n", n, pwm);
 	ledcWrite(n, pwmToDutyCycle(pwm));

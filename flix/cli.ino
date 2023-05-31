@@ -30,7 +30,7 @@ const char* motd =
 "fullmot <n> - test motor on all signals\n"
 "wifi - start wi-fi access point\n";
 
-static const struct Param {
+const struct Param {
 	const char* name;
 	float* value;
 	float* value2;
@@ -51,7 +51,7 @@ static const struct Param {
 	// {"m", &mode, nullptr},
 };
 
-static void doCommand(String& command, String& value)
+void doCommand(String& command, String& value)
 {
 	if (command == "help" || command == "motd") {
 		Serial.println(motd);
@@ -110,7 +110,7 @@ static void doCommand(String& command, String& value)
 	}
 }
 
-static void showTable()
+void showTable()
 {
 	for (uint8_t i = 0; i < sizeof(params) / sizeof(params[0]); i++) {
 		Serial.print(params[i].name);
@@ -119,7 +119,7 @@ static void showTable()
 	}
 }
 
-static void cliTestMotor(uint8_t n)
+void cliTestMotor(uint8_t n)
 {
 	Serial.printf("Testing motor %d\n", n);
 	motors[n] = 1;
