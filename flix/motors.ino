@@ -15,10 +15,10 @@
 
 #define PWM_NEUTRAL 1500
 
-static const uint16_t pwmMin[] = {1600, 1600, 1600, 1600};
-static const uint16_t pwmMax[] = {2300, 2300, 2300, 2300};
-static const uint16_t pwmReverseMin[] = {1390, 1440, 1440, 1440};
-static const uint16_t pwmReverseMax[] = {1100, 1100, 1100, 1100};
+const uint16_t pwmMin[] = {1600, 1600, 1600, 1600};
+const uint16_t pwmMax[] = {2300, 2300, 2300, 2300};
+const uint16_t pwmReverseMin[] = {1390, 1440, 1440, 1440};
+const uint16_t pwmReverseMax[] = {1100, 1100, 1100, 1100};
 
 void setupMotors() {
 	Serial.println("Setup Motors");
@@ -39,7 +39,7 @@ void setupMotors() {
 	Serial.println("Motors initialized");
 }
 
-static uint16_t getPWM(float val, int n)
+uint16_t getPWM(float val, int n)
 {
 	if (val == 0) {
 		return PWM_NEUTRAL;
@@ -50,7 +50,7 @@ static uint16_t getPWM(float val, int n)
 	}
 }
 
-static uint8_t pwmToDutyCycle(uint16_t pwm) {
+uint8_t pwmToDutyCycle(uint16_t pwm) {
 	return map(pwm, 0, 1000000 / PWM_FREQUENCY, 0, (1 << PWM_RESOLUTION) - 1);
 }
 

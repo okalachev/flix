@@ -3,11 +3,11 @@
 
 // In-RAM logging
 
-const int LOG_RATE = 100;
-const int LOG_DURATION = 10;
-const float LOG_PERIOD = 1 / LOG_RATE;
-const int LOG_SIZE = LOG_DURATION * LOG_RATE;
-const int LOG_COLUMNS = 14;
+#define LOG_RATE 100
+#define LOG_DURATION 10
+#define LOG_PERIOD 1 / LOG_RATE
+#define LOG_SIZE LOG_DURATION * LOG_RATE
+#define LOG_COLUMNS 14
 
 float logBuffer[LOG_SIZE][LOG_COLUMNS]; // * 4 (float)
 int logPointer = 0;
