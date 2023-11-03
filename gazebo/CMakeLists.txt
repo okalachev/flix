@@ -1,5 +1,5 @@
-project(flix_gazebo)
 cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
+project(flix_gazebo)
 
 # === gazebo plugin
 find_package(gazebo REQUIRED)
