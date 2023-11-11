@@ -13,7 +13,7 @@ monitor:
 
 dependencies .dependencies:
 	arduino-cli core update-index --config-file arduino-cli.yaml
-	arduino-cli core install esp32:esp32@2.0.7 --config-file arduino-cli.yaml
+	arduino-cli core install esp32:esp32@2.0.11 --config-file arduino-cli.yaml
 	arduino-cli lib install "Bolder Flight Systems SBUS"@1.0.1
 	arduino-cli lib install --git-url https://github.com/okalachev/MPU9250.git --config-file arduino-cli.yaml
 	touch .dependencies
@@ -32,6 +32,12 @@ simulator: build_simulator
 
 log:
 	PORT=$(PORT) tools/grab_log.py
+
+plot:
+	plotjuggler -d $(shell ls -t tools/log/*.csv | head -n1)
+
+docs:
+	for FILE in docs/*.d2; do d2 $$FILE; done
 
 clean:
 	rm -rf gazebo/build flix/build flix/cache .dependencies
