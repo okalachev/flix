@@ -1,4 +1,3 @@
-SRC := $(wildcard flix/*.ino flix/*.cpp flix/*.hpp)
 BOARD = esp32:esp32:d1_mini32
 PORT := $(wildcard /dev/serial/by-id/usb-Silicon_Labs_CP2104_USB_to_UART_Bridge_Controller_* /dev/serial/by-id/usb-1a86_USB_Single_Serial_* /dev/cu.usbserial-*)
 PORT := $(strip $(PORT))
@@ -31,10 +30,10 @@ simulator: build_simulator
 	GAZEBO_PLUGIN_PATH=$$GAZEBO_PLUGIN_PATH:${CURDIR}/gazebo/build \
 	gazebo --verbose ${CURDIR}/gazebo/flix.world
 
-grab_log:
+log:
 	PORT=$(PORT) tools/grab_log.py
 
 clean:
 	rm -rf gazebo/build flix/build flix/cache .dependencies
 
-.PHONY: build upload monitor dependencies cmake build_simulator simulator grab_log clean
+.PHONY: build upload monitor dependencies cmake build_simulator simulator log clean

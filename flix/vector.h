@@ -32,7 +32,7 @@ public:
 		z /= n;
 	}
 
-	Vector operator * (float b)
+	Vector operator * (const float b) const
 	{
 		return Vector(x * b, y * b, z * b);
 	}
