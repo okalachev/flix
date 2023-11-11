@@ -3,6 +3,8 @@
 	<world name="default">
 		<scene>
 			<ambient>1 1 1 1</ambient>
+			<sky/>
+			<origin_visual>false</origin_visual>
 		</scene>
 		<gui>
 			<!-- <camera name="user_camera">
