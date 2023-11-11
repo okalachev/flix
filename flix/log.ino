@@ -5,7 +5,7 @@
 
 #define LOG_RATE 100
 #define LOG_DURATION 10
-#define LOG_PERIOD 1 / LOG_RATE
+#define LOG_PERIOD 1.0 / LOG_RATE
 #define LOG_SIZE LOG_DURATION * LOG_RATE
 #define LOG_COLUMNS 14
 
