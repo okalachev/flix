@@ -267,3 +267,13 @@ inline void indicateSaturation() {
 		setLED(motorsSaturation);
 	}
 }
+
+const char* getModeName()
+{
+	switch (mode) {
+		case MANUAL: return "MANUAL";
+		case ACRO: return "ACRO";
+		case STAB: return "STAB";
+		default: return "UNKNOWN";
+	}
+}

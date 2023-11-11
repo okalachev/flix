@@ -4,8 +4,10 @@
 // Implementation of command line interface
 
 #include "pid.h"
+#include "vector.h"
 
 extern PID rollRatePID, pitchRatePID, yawRatePID, rollPID, pitchPID;
+extern LowPassFilter<Vector> ratesFilter;
 
 const char* motd =
 "\nWelcome to\n"
@@ -47,7 +49,13 @@ const struct Param {
 	{"yi", &yawRatePID.i, nullptr},
 	{"yd", &yawRatePID.d, nullptr},
 
+	{"lpr", &ratesFilter.alpha, nullptr},
+	{"lpd", &rollRatePID.lpf.alpha, &pitchRatePID.lpf.alpha},
+
 	{"ss", &loopFreq, nullptr},
+	{"dt", &dt, nullptr},
+	{"t", &t, nullptr},
+
 	// {"m", &mode, nullptr},
 };
 
@@ -67,12 +75,13 @@ void doCommand(String& command, String& value)
 		Serial.printf("acc: %f %f %f\n", acc.x, acc.y, acc.z);
 		printIMUCal();
 	} else if (command == "rc") {
-		Serial.printf("RAW throttle %d yaw %d pitch %d roll %d aux %d mode %d\n",
+		Serial.printf("Raw: throttle %d yaw %d pitch %d roll %d aux %d mode %d\n",
 			channels[RC_CHANNEL_THROTTLE], channels[RC_CHANNEL_YAW], channels[RC_CHANNEL_PITCH],
 			channels[RC_CHANNEL_ROLL], channels[RC_CHANNEL_AUX], channels[RC_CHANNEL_MODE]);
-		Serial.printf("CONTROL throttle %f yaw %f pitch %f roll %f aux %f mode %f\n",
+		Serial.printf("Control: throttle %f yaw %f pitch %f roll %f aux %f mode %f\n",
 			controls[RC_CHANNEL_THROTTLE], controls[RC_CHANNEL_YAW], controls[RC_CHANNEL_PITCH],
 			controls[RC_CHANNEL_ROLL], controls[RC_CHANNEL_AUX], controls[RC_CHANNEL_MODE]);
+		Serial.printf("Mode: %s\n", getModeName());
 	} else if (command == "mot") {
 		Serial.printf("MOTOR front-right %f front-left %f rear-right %f rear-left %f\n",
 			motors[MOTOR_FRONT_RIGHT], motors[MOTOR_FRONT_LEFT], motors[MOTOR_REAR_RIGHT], motors[MOTOR_REAR_LEFT]);
