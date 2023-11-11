@@ -43,8 +43,8 @@ void logData()
 
 void dumpLog()
 {
-	Serial.printf("timestamp,rate.x,rate.y,rate.z,target.rate.x,target.rate.y,target.rate.z,"
-		"attitude.x,attitude.y,attitude.z,target.attitude.x,target.attitude.y,target.attitude.z,thrust\n");
+	Serial.printf("t,rate.x,rate.y,rate.z,ratesTarget.x,ratesTarget.y,ratesTarget.z,"
+		"attitude.x,attitude.y,attitude.z,attitudeTarget.x,attitudeTarget.y,attitudeTarget.z,thrustTarget\n");
 	for (int i = 0; i < LOG_SIZE; i++) {
 		for (int j = 0; j < LOG_COLUMNS - 1; j++) {
 			Serial.printf("%f,", logBuffer[i][j]);

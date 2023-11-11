@@ -56,13 +56,11 @@ void control()
 	interpretRC();
 	if (mode == STAB) {
 		controlAttitude();
-		// controlAttitudeAlter();
-	}
-
-	if (mode == MANUAL) {
-		controlManual();
-	} else {
 		controlRate();
+	} else if (mode == ACRO) {
+		controlRate();
+	} else if (mode == MANUAL) {
+		controlManual();
 	}
 }
 
@@ -77,7 +75,7 @@ void interpretRC()
 		mode = STAB;
 	}
 
-	armed = controls[RC_CHANNEL_THROTTLE] >= 0.1 && controls[RC_CHANNEL_AUX] >= 0.5;
+	armed = controls[RC_CHANNEL_THROTTLE] >= 0.05 && controls[RC_CHANNEL_AUX] >= 0.5;
 
 	controlYaw = armed && mode == STAB && controls[RC_CHANNEL_YAW] == 0;
 	if (!controlYaw) {
