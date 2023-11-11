@@ -6,7 +6,7 @@
 
 ## Features
 
-* Very simple and clear source code.
+* Simple and clear Arduino based source code.
 * Acro and Stabilized flight using remote control.
 * Precise simulation using Gazebo.
 * In-RAM logging.
@@ -15,6 +15,7 @@
 * ESCs with reverse mode support.
 * *Textbook and videos for students on writing a flight controller\*.*
 * *MAVLink support\*.*
+* *Completely 3D-printed frame*.*
 * *Position control and autonomous flights using external camera\**.
 
 *\* — planned.*
