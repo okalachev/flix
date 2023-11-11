@@ -6,6 +6,7 @@
 #include "vector.h"
 #include "quaternion.h"
 #include "pid.h"
+#include "lpf.h"
 
 #define PITCHRATE_P 0.05
 #define PITCHRATE_I 0.2
@@ -31,17 +32,20 @@
 #define YAWRATE_MAX 360 * DEG_TO_RAD
 #define MAX_TILT 30 * DEG_TO_RAD
 
+#define RATES_LFP_ALPHA 0.8
+#define RATES_D_LPF_ALPHA 0.2 // cutoff frequency ~ 40 Hz
+
 enum { MANUAL, ACRO, STAB } mode = STAB;
 bool armed = false;
 
-PID rollRatePID(ROLLRATE_P, ROLLRATE_I, ROLLRATE_D, ROLLRATE_I_LIM);
-PID pitchRatePID(PITCHRATE_P, PITCHRATE_I, PITCHRATE_D, PITCHRATE_I_LIM);
+PID rollRatePID(ROLLRATE_P, ROLLRATE_I, ROLLRATE_D, ROLLRATE_I_LIM, RATES_D_LPF_ALPHA);
+PID pitchRatePID(PITCHRATE_P, PITCHRATE_I, PITCHRATE_D, PITCHRATE_I_LIM, RATES_D_LPF_ALPHA);
 PID yawRatePID(YAWRATE_P, YAWRATE_I, YAWRATE_D);
 PID rollPID(ROLL_P, ROLL_I, ROLL_D);
 PID pitchPID(PITCH_P, PITCH_I, PITCH_D);
 PID yawPID(YAW_P, 0, 0);
 
-Vector ratesFiltered;
+LowPassFilter<Vector> ratesFilter(RATES_LFP_ALPHA);
 
 Quaternion attitudeTarget;
 Vector ratesTarget;
@@ -206,7 +210,7 @@ void controlRate()
 	// collective thrust is throttle * 4
 	thrustTarget = controls[RC_CHANNEL_THROTTLE]; // WARNING:
 
-	ratesFiltered = rates * 0.8 + ratesFiltered * 0.2; // cut-off frequency 40 Hz
+	Vector ratesFiltered = ratesFilter.update(rates);
 
 	torqueTarget.x = rollRatePID.update(ratesTarget.x - ratesFiltered.x, dt); // un-normalized "torque"
 	torqueTarget.y = pitchRatePID.update(ratesTarget.y - ratesFiltered.y, dt);

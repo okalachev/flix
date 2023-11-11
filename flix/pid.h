@@ -5,6 +5,8 @@
 
 #pragma once
 
+#include "lpf.h"
+
 class PID
 {
 public:
@@ -16,15 +18,20 @@ public:
 	float derivative = 0;
 	float integral = 0;
 
-	PID(float p, float i, float d, float windup = 0) : p(p), i(i), d(d), windup(windup) {};
+	LowPassFilter<float> lpf; // low pass filter for derivative term
+
+	PID(float p, float i, float d, float windup = 0, float dAlpha = 1) : p(p), i(i), d(d), windup(windup), lpf(dAlpha) {};
 
 	float update(float error, float dt)
 	{
 		integral += error * dt;
+
 		if (isfinite(prevError) && dt > 0) {
 			// calculate derivative if both dt and prevError are valid
-			float _derivative = (error - prevError) / dt;
-			derivative = derivative * 0.8 + 0.2 * _derivative; // lpf WARNING:
+			derivative = (error - prevError) / dt;
+
+			// apply low pass filter to derivative
+			derivative = lpf.update(derivative);
 		}
 
 		prevError = error;
