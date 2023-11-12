@@ -32,7 +32,7 @@
 #define YAWRATE_MAX 360 * DEG_TO_RAD
 #define MAX_TILT 30 * DEG_TO_RAD
 
-#define RATES_LFP_ALPHA 0.8
+#define RATES_LFP_ALPHA 0.8 // cutoff frequency ~ 250 Hz
 #define RATES_D_LPF_ALPHA 0.2 // cutoff frequency ~ 40 Hz
 
 enum { MANUAL, ACRO, STAB } mode = STAB;
@@ -68,7 +68,6 @@ void control()
 	}
 }
 
-
 void interpretRC()
 {
 	if (controls[RC_CHANNEL_MODE] < 0.25) {
@@ -80,6 +79,8 @@ void interpretRC()
 	}
 
 	armed = controls[RC_CHANNEL_THROTTLE] >= 0.05 && controls[RC_CHANNEL_AUX] >= 0.5;
+
+	thrustTarget = controls[RC_CHANNEL_THROTTLE];
 
 	controlYaw = armed && mode == STAB && controls[RC_CHANNEL_YAW] == 0;
 	if (!controlYaw) {
@@ -151,25 +152,6 @@ void controlAttitude()
 	// std::cout << "rsp: " << ratesTarget.x << " " << ratesTarget.y << std::endl;
 }
 
-void controlAttitudeAlter()
-{
-	if (!armed) {
-		rollPID.reset();
-		pitchPID.reset();
-		yawPID.reset();
-		return;
-	}
-	Vector target = attitudeTarget.toEulerZYX();
-	Vector att = attitude.toEulerZYX();
-
-	ratesTarget.x = rollPID.update(target.x - att.x, dt);
-	ratesTarget.y = pitchPID.update(target.y - att.y, dt);
-
-	if (controlYaw) {
-		ratesTarget.z = yawPID.update(target.z - att.z, dt); // WARNING:
-	}
-}
-
 // passthrough mode
 void controlManual()
 {
@@ -177,8 +159,6 @@ void controlManual()
 		memset(motors, 0, sizeof(motors));
 		return;
 	}
-
-	thrustTarget = controls[RC_CHANNEL_THROTTLE]; // collective thrust
 
 	torqueTarget = ratesTarget * 0.01;
 
@@ -207,9 +187,6 @@ void controlRate()
 		return;
 	}
 
-	// collective thrust is throttle * 4
-	thrustTarget = controls[RC_CHANNEL_THROTTLE]; // WARNING:
-
 	Vector ratesFiltered = ratesFilter.update(rates);
 
 	torqueTarget.x = rollRatePID.update(ratesTarget.x - ratesFiltered.x, dt); // un-normalized "torque"
@@ -228,44 +205,11 @@ void controlRate()
 	motors[MOTOR_REAR_LEFT] = thrustTarget - torqueTarget.y + torqueTarget.x + torqueTarget.z;
 	motors[MOTOR_REAR_RIGHT] = thrustTarget - torqueTarget.y - torqueTarget.x - torqueTarget.z;
 
-	//indicateSaturation();
-	// desaturate(motors[0], motors[1], motors[2], motors[3]);
-
 	// constrain and reverse, multiple by -1 if reversed
 	motors[0] = constrain(motors[0], 0, 1);
 	motors[1] = constrain(motors[1], 0, 1);
 	motors[2] = constrain(motors[2], 0, 1);
 	motors[3] = constrain(motors[3], 0, 1);
-}
-
-void desaturate(float& a, float& b, float& c, float& d)
-{
-	float m = max(max(a, b), max(c, d));
-	if (m > 1) {
-		float diff = m - 1;
-		a -= diff;
-		b -= diff;
-		c -= diff;
-		d -= diff;
-	}
-	m = min(min(a, b), min(c, d));
-	if (m < 0) {
-		a -= m;
-		b -= m;
-		c -= m;
-		d -= m;
-	}
-}
-
-static bool motorsSaturation = false;
-
-inline void indicateSaturation() {
-	bool sat = motors[0] > 1 || motors[1] > 1 || motors[2] > 1 || motors[3] > 1 ||
-	           motors[0] < 0 || motors[1] < 0 || motors[2] < 0 || motors[3] < 0;
-	if (motorsSaturation != sat) {
-		motorsSaturation = sat;
-		setLED(motorsSaturation);
-	}
 }
 
 const char* getModeName()

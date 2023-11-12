@@ -55,8 +55,6 @@ const struct Param {
 	{"ss", &loopFreq, nullptr},
 	{"dt", &dt, nullptr},
 	{"t", &t, nullptr},
-
-	// {"m", &mode, nullptr},
 };
 
 void doCommand(String& command, String& value)
