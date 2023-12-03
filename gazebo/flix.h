@@ -36,8 +36,6 @@ void interpretRC();
 void controlAttitude();
 void controlManual();
 void controlRate();
-void desaturate(float& a, float& b, float& c, float& d);
-void indicateSaturation();
 void showTable();
 void cliTestMotor(uint8_t n);
 
