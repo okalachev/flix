@@ -61,3 +61,15 @@ void sendMotors()
 	ledcWrite(2, pwmToDutyCycle(getPWM(motors[2], 2)));
 	ledcWrite(3, pwmToDutyCycle(getPWM(motors[3], 3)));
 }
+
+void fullMotorTest(int n, bool reverse)
+{
+	printf("Full test for motor %d\n", n);
+	for (int pwm = PWM_NEUTRAL; pwm <= 2300 && pwm >= 700; pwm += reverse ? -100 : 100) {
+		printf("Motor %d: %d\n", n, pwm);
+		ledcWrite(n, pwmToDutyCycle(pwm));
+		delay(3000);
+	}
+	printf("Motor %d: %d\n", n, PWM_NEUTRAL);
+	ledcWrite(n, pwmToDutyCycle(PWM_NEUTRAL));
+}

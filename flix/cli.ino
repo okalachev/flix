@@ -98,7 +98,7 @@ void doCommand(String& command, String& value)
 	} else if (command == "mrl") {
 		cliTestMotor(MOTOR_REAR_LEFT);
 	} else if (command == "fullmot") {
-		fullMotorTest(value.toInt());
+		fullMotorTest(value.toInt(), false);
 	} else {
 		float val = value.toFloat();
 		// TODO: on error returns 0, check invalid value
