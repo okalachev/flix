@@ -7,8 +7,8 @@ void step()
 	dt = now - t;
 	t = now;
 
-	if (isnan(dt)) {
-		dt = 0; // assume dt to be zero on first step
+	if (!(dt > 0)) {
+		dt = 0; // assume dt to be zero on first step and on reset
 	}
 
 	computeLoopFreq();
