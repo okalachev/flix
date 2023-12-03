@@ -60,52 +60,34 @@
 					<angular_velocity>
 						<x>
 							<noise type="gaussian">
-								<mean>0.0</mean>
-								<stddev>1.5e-2</stddev>
-								<!-- <bias_mean>0.0000075</bias_mean>
-								<bias_stddev>0.0000008</bias_stddev> -->
+								<stddev>0.00174533</stddev><!-- 0.1 degrees per second -->
 							</noise>
 						</x>
 						<y>
 							<noise type="gaussian">
-								<mean>0.0</mean>
-								<stddev>1.5e-2</stddev>
-								<!-- <bias_mean>0.0000075</bias_mean>
-								<bias_stddev>0.0000008</bias_stddev> -->
+								<stddev>0.00174533</stddev>
 							</noise>
 						</y>
 						<z>
 							<noise type="gaussian">
-								<mean>0.0</mean>
-								<stddev>1.5e-2</stddev>
-								<!-- <bias_mean>0.0000075</bias_mean>
-								<bias_stddev>0.0000008</bias_stddev> -->
+								<stddev>0.00174533</stddev>
 							</noise>
 						</z>
 					</angular_velocity>
 					<linear_acceleration>
 						<x>
 							<noise type="gaussian">
-								<mean>0.0</mean>
-								<stddev>3.5e-1</stddev>
-								<!-- <bias_mean>0.1</bias_mean>
-								<bias_stddev>0.001</bias_stddev> -->
+								<stddev>0.0784</stddev><!-- 8 mg -->
 							</noise>
 						</x>
 						<y>
 							<noise type="gaussian">
-								<mean>0.0</mean>
-								<stddev>3.5e-1</stddev>
-								<!-- <bias_mean>0.1</bias_mean>
-								<bias_stddev>0.001</bias_stddev> -->
+								<stddev>0.0784</stddev>
 							</noise>
 						</y>
 						<z>
 							<noise type="gaussian">
-								<mean>0.0</mean>
-								<stddev>3.5e-1</stddev>
-								<!-- <bias_mean>0.1</bias_mean>
-								<bias_stddev>0.001</bias_stddev> -->
+								<stddev>0.0784</stddev>
 							</noise>
 						</z>
 					</linear_acceleration>
