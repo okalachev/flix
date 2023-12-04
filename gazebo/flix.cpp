@@ -190,7 +190,8 @@ public:
 
 		// calculate attitude estimation error
 
-		float angle = Vector::angleBetweenVectors(attitude.rotate(Vector(0, 0, -1)), Vector(0, 0, -1));
+		Quaternion groundtruthAttitude(estimateModel->WorldPose().Rot().W(), estimateModel->WorldPose().Rot().X(), -estimateModel->WorldPose().Rot().Y(), -estimateModel->WorldPose().Rot().Z());
+		float angle = Vector::angleBetweenVectors(attitude.rotate(Vector(0, 0, -1)), groundtruthAttitude.rotate(Vector(0, 0, -1)));
 		if (angle < 0.3) {
 			//gzwarn << "att err: " << angle << endl;
 			// TODO: warning
