@@ -15,6 +15,7 @@ void sendMavlink()
 	static float lastFast = 0;
 
 	mavlink_message_t msg;
+	uint32_t time = t * 1000;
 
 	if (t - lastSlow >= PERIOD_SLOW) {
 		lastSlow = t;
@@ -23,31 +24,17 @@ void sendMavlink()
 			MAV_AUTOPILOT_GENERIC, MAV_MODE_FLAG_MANUAL_INPUT_ENABLED | MAV_MODE_FLAG_SAFETY_ARMED,
 			0, MAV_STATE_STANDBY);
 		sendMessage(&msg);
-
-		// params test
-		// mavlink_msg_param_value_pack(SYSTEM_ID, MAV_COMP_ID_AUTOPILOT1, &msg, "PITCHRATE_P", PITCHRATE_D, MAV_PARAM_TYPE_REAL32, 3, 0);
-		// sendMessage(&msg);
-		// mavlink_msg_param_value_pack(SYSTEM_ID, MAV_COMP_ID_AUTOPILOT1, &msg, "PITCHRATE_I", PITCHRATE_I, MAV_PARAM_TYPE_REAL32, 3, 1);
-		// sendMessage(&msg);
-		// mavlink_msg_param_value_pack(SYSTEM_ID, MAV_COMP_ID_AUTOPILOT1, &msg, "PITCHRATE_D", PITCHRATE_D, MAV_PARAM_TYPE_REAL32, 3, 2);
-		// sendMessage(&msg);
 	}
 
 	if (t - lastFast >= PERIOD_FAST) {
 		lastFast = t;
 
-		// mavlink_msg_attitude_pack(SYSTEM_ID, MAV_COMP_ID_AUTOPILOT1, &msg, t / 1000, NAN, NAN, NAN, rollRate, pitchRate, yawRate);
-		// sendMessage(&msg);
-
 		const float zeroQuat[] = {0, 0, 0, 0};
-
 		mavlink_msg_attitude_quaternion_pack(SYSTEM_ID, MAV_COMP_ID_AUTOPILOT1, &msg,
-			t / 1000, attitude.w, attitude.x, attitude.y, attitude.z, rates.x, rates.y, rates.z, zeroQuat);
-		// mavlink_msg_attitude_quaternion_pack(SYSTEM_ID, MAV_COMP_ID_AUTOPILOT1, &msg,
-		// 	t / 1000, attitudeTarget.w, attitudeTarget.x, attitudeTarget.y, attitudeTarget.z, rates.x, rates.y, rates.z, zeroQuat);
+			time, attitude.w, attitude.x, attitude.y, attitude.z, rates.x, rates.y, rates.z, zeroQuat);
 		sendMessage(&msg);
 
-		mavlink_msg_rc_channels_scaled_pack(SYSTEM_ID, MAV_COMP_ID_AUTOPILOT1, &msg, t / 1000, 0,
+		mavlink_msg_rc_channels_scaled_pack(SYSTEM_ID, MAV_COMP_ID_AUTOPILOT1, &msg, time, 0,
 			controls[0] * 10000, controls[1] * 10000, controls[2] * 10000,
 			controls[3] * 10000, controls[4] * 10000, controls[5] * 10000,
 			UINT16_MAX, UINT16_MAX, 255);
@@ -55,7 +42,13 @@ void sendMavlink()
 
 		float actuator[32];
 		memcpy(motors, actuator, 4 * sizeof(float));
-		mavlink_msg_actuator_output_status_pack(SYSTEM_ID, MAV_COMP_ID_AUTOPILOT1, &msg, t / 1000, 4, actuator);
+		mavlink_msg_actuator_output_status_pack(SYSTEM_ID, MAV_COMP_ID_AUTOPILOT1, &msg, time, 4, actuator);
+		sendMessage(&msg);
+
+		mavlink_msg_scaled_imu_pack(SYSTEM_ID, MAV_COMP_ID_AUTOPILOT1, &msg, time,
+			acc.x * 1000, acc.y * 1000, acc.z * 1000,
+			rates.x * 1000, rates.y * 1000, rates.z * 1000,
+			0, 0, 0, 0);
 		sendMessage(&msg);
 	}
 }
