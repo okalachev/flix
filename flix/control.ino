@@ -59,10 +59,12 @@ void control()
 	if (mode == STAB) {
 		controlAttitude();
 		controlRate();
+		controlTorque();
 	} else if (mode == ACRO) {
 		controlRate();
+		controlTorque();
 	} else if (mode == MANUAL) {
-		controlManual();
+		controlTorque();
 	}
 }
 
@@ -94,6 +96,11 @@ void interpretRC()
 			-controls[RC_CHANNEL_PITCH] * MAX_TILT,
 			attitudeTarget.getYaw());
 		ratesTarget.z = controls[RC_CHANNEL_YAW] * YAWRATE_MAX;
+
+	} else if (mode == MANUAL) {
+		// passthrough mode
+		yawMode = YAW_RATE;
+		torqueTarget = Vector(controls[RC_CHANNEL_ROLL], -controls[RC_CHANNEL_PITCH], controls[RC_CHANNEL_YAW]) * 0.01;
 	}
 
 	if (yawMode == YAW_RATE || !motorsActive()) {
@@ -128,7 +135,6 @@ void controlAttitude()
 void controlRate()
 {
 	if (!armed) {
-		memset(motors, 0, sizeof(motors));
 		rollRatePID.reset();
 		pitchRatePID.reset();
 		yawRatePID.reset();
@@ -140,27 +146,14 @@ void controlRate()
 	torqueTarget.x = rollRatePID.update(ratesTarget.x - ratesFiltered.x, dt); // un-normalized "torque"
 	torqueTarget.y = pitchRatePID.update(ratesTarget.y - ratesFiltered.y, dt);
 	torqueTarget.z = yawRatePID.update(ratesTarget.z - ratesFiltered.z, dt);
-
-	motors[MOTOR_FRONT_LEFT] = thrustTarget + torqueTarget.y + torqueTarget.x - torqueTarget.z;
-	motors[MOTOR_FRONT_RIGHT] = thrustTarget + torqueTarget.y - torqueTarget.x + torqueTarget.z;
-	motors[MOTOR_REAR_LEFT] = thrustTarget - torqueTarget.y + torqueTarget.x + torqueTarget.z;
-	motors[MOTOR_REAR_RIGHT] = thrustTarget - torqueTarget.y - torqueTarget.x - torqueTarget.z;
-
-	motors[0] = constrain(motors[0], 0, 1);
-	motors[1] = constrain(motors[1], 0, 1);
-	motors[2] = constrain(motors[2], 0, 1);
-	motors[3] = constrain(motors[3], 0, 1);
 }
 
-// passthrough mode
-void controlManual()
+void controlTorque()
 {
-	if (controls[RC_CHANNEL_THROTTLE] < 0.1) {
+	if (!armed) {
 		memset(motors, 0, sizeof(motors));
 		return;
 	}
-
-	torqueTarget = ratesTarget * 0.01;
 
 	motors[MOTOR_FRONT_LEFT] = thrustTarget + torqueTarget.y + torqueTarget.x - torqueTarget.z;
 	motors[MOTOR_FRONT_RIGHT] = thrustTarget + torqueTarget.y - torqueTarget.x + torqueTarget.z;
