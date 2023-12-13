@@ -36,12 +36,10 @@ void applyAcc()
 
 	// calculate accelerometer correction
 	Vector up = attitude.rotate(Vector(0, 0, -1));
-	Vector accCorrDirection = Vector::angularRatesBetweenVectors(acc, up);
-	accCorrDirection.normalize();
-	Vector accCorr = accCorrDirection * Vector::angleBetweenVectors(up, acc) * dt * WEIGHT_ACC;
+	Vector correction = Vector::angularRatesBetweenVectors(acc, up) * dt * WEIGHT_ACC;
 
 	// apply correction
-	attitude *= Quaternion::fromAngularRates(accCorr);
+	attitude *= Quaternion::fromAngularRates(correction);
 	attitude.normalize();
 }
 

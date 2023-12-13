@@ -115,12 +115,10 @@ void controlAttitude()
 	Vector upActual = attitude.rotate(up);
 	Vector upTarget = attitudeTarget.rotate(up);
 
-	float angle = Vector::angleBetweenVectors(upTarget, upActual);
-	Vector ratesTargetDir = Vector::angularRatesBetweenVectors(upTarget, upActual);
-	ratesTargetDir.normalize();
+	Vector error = Vector::angularRatesBetweenVectors(upTarget, upActual);
 
-	ratesTarget.x = rollPID.update(ratesTargetDir.x * angle, dt);
-	ratesTarget.y = pitchPID.update(ratesTargetDir.y * angle, dt);
+	ratesTarget.x = rollPID.update(error.x, dt);
+	ratesTarget.y = pitchPID.update(error.y, dt);
 
 	if (yawMode == YAW) {
 		ratesTarget.z = yawPID.update(wrapAngle(attitudeTarget.getYaw() - attitude.getYaw()), dt);

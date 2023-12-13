@@ -79,7 +79,10 @@ public:
 
 	static Vector angularRatesBetweenVectors(const Vector& u, const Vector& v)
 	{
-		return cross(u, v);
+		Vector direction = cross(u, v);
+		direction.normalize();
+		float angle = angleBetweenVectors(u, v);
+		return direction * angle;
 	}
 
 	size_t printTo(Print& p) const {
