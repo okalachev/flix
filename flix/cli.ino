@@ -30,6 +30,7 @@ const char* motd =
 "cg - calibrate gyro\n"
 "ca - calibrate accel\n"
 "fullmot <n> - test motor on all signals\n"
+"reset - reset state\n"
 "wifi - start wi-fi access point\n";
 
 const struct Param {
@@ -99,6 +100,8 @@ void doCommand(String& command, String& value)
 		cliTestMotor(MOTOR_REAR_LEFT);
 	} else if (command == "fullmot") {
 		fullMotorTest(value.toInt(), false);
+	} else if (command == "reset") {
+		attitude = Quaternion();
 	} else {
 		float val = value.toFloat();
 		// TODO: on error returns 0, check invalid value
