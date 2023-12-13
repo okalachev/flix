@@ -69,22 +69,6 @@ public:
 		return ret;
 	}
 
-	static Quaternion _fromBetweenVectors(float a, float b, float c, float x, float y, float z)
-	{
-		float dot = a * x + b * y + c * z;
-		float w1 = b * z - c * y;
-		float w2 = c * x - a * z;
-		float w3 = a * y - b * x;
-
-		Quaternion ret(
-			dot + sqrt(dot * dot + w1 * w1 + w2 * w2 + w3 * w3),
-			w1,
-			w2,
-			w3);
-		ret.normalize();
-		return ret;
-	};
-
 	void toAxisAngle(float& a, float& b, float& c, float& angle)
 	{
 		angle = acos(w) * 2;
@@ -129,12 +113,7 @@ public:
 		(*this) = Quaternion::fromEulerZYX(euler.x, euler.y, yaw);
 	}
 
-	void toAngularRates(float& x, float& y, float& z)
-	{
-		// this->toAxisAngle(); // TODO:
-	}
-
-	Quaternion & operator*=(const Quaternion &q)
+	Quaternion& operator *= (const Quaternion& q)
 	{
 		Quaternion ret(
 			w * q.w - x * q.x - y * q.y - z * q.z,
@@ -144,7 +123,7 @@ public:
 		return (*this = ret);
 	}
 
-	Quaternion operator*(const Quaternion& q)
+	Quaternion operator * (const Quaternion& q)
 	{
 		return Quaternion(
 			w * q.w - x * q.x - y * q.y - z * q.z,
