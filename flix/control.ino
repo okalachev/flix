@@ -36,6 +36,7 @@
 #define RATES_D_LPF_ALPHA 0.2 // cutoff frequency ~ 40 Hz
 
 enum { MANUAL, ACRO, STAB } mode = STAB;
+enum { YAW, YAW_RATE } yawMode = YAW;
 bool armed = false;
 
 PID rollRatePID(ROLLRATE_P, ROLLRATE_I, ROLLRATE_D, ROLLRATE_I_LIM, RATES_D_LPF_ALPHA);
@@ -51,9 +52,6 @@ Quaternion attitudeTarget;
 Vector ratesTarget;
 Vector torqueTarget;
 float thrustTarget;
- // TODO: ugly
-float yawTarget = NAN;
-bool controlYaw = false;
 
 void control()
 {
@@ -82,22 +80,25 @@ void interpretRC()
 
 	thrustTarget = controls[RC_CHANNEL_THROTTLE];
 
-	controlYaw = armed && mode == STAB && controls[RC_CHANNEL_YAW] == 0;
-	if (!controlYaw) {
-		yawTarget = attitude.getYaw();
-	}
-
 	if (mode == ACRO) {
+		yawMode = YAW_RATE;
 		ratesTarget.x = controls[RC_CHANNEL_ROLL] * ROLLRATE_MAX;
 		ratesTarget.y = -controls[RC_CHANNEL_PITCH] * PITCHRATE_MAX; // up pitch stick means tilt clockwise in frd
 		ratesTarget.z = controls[RC_CHANNEL_YAW] * YAWRATE_MAX;
 
 	} else if (mode == STAB) {
+		yawMode = controls[RC_CHANNEL_YAW] == 0 ? YAW : YAW_RATE;
+
 		attitudeTarget = Quaternion::fromEulerZYX(
 			controls[RC_CHANNEL_ROLL] * MAX_TILT,
 			-controls[RC_CHANNEL_PITCH] * MAX_TILT,
-			yawTarget); // attitude.getYaw());
+			attitudeTarget.getYaw());
 		ratesTarget.z = controls[RC_CHANNEL_YAW] * YAWRATE_MAX;
+	}
+
+	if (yawMode == YAW_RATE || !motorsActive()) {
+		// update yaw target as we have not control over the yaw
+		attitudeTarget.setYaw(attitude.getYaw());
 	}
 }
 
@@ -134,8 +135,8 @@ void controlAttitude()
 	ratesTarget.x = rollPID.update(ratesTargetDir.x * angle, dt);
 	ratesTarget.y = pitchPID.update(ratesTargetDir.y * angle, dt);
 
-	if (controlYaw) {
-		ratesTarget.z = yawPID.update(yawTarget - attitude.getYaw(), dt); // WARNING:
+	if (yawMode == YAW) {
+		ratesTarget.z = yawPID.update(wrapAngle(attitudeTarget.getYaw() - attitude.getYaw()), dt);
 	}
 
 	if (!ratesTarget.finite()) {
@@ -210,6 +211,11 @@ void controlRate()
 	motors[1] = constrain(motors[1], 0, 1);
 	motors[2] = constrain(motors[2], 0, 1);
 	motors[3] = constrain(motors[3], 0, 1);
+}
+
+bool motorsActive()
+{
+	return motors[0] > 0 || motors[1] > 0 || motors[2] > 0 || motors[3] > 0;
 }
 
 const char* getModeName()

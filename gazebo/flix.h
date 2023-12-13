@@ -37,6 +37,7 @@ void controlAttitude();
 void controlManual();
 void controlRate();
 void showTable();
+bool motorsActive();
 void cliTestMotor(uint8_t n);
 
 // mocks
