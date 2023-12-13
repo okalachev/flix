@@ -127,27 +127,6 @@ void controlAttitude()
 	}
 }
 
-// passthrough mode
-void controlManual()
-{
-	if (controls[RC_CHANNEL_THROTTLE] < 0.1) {
-		memset(motors, 0, sizeof(motors));
-		return;
-	}
-
-	torqueTarget = ratesTarget * 0.01;
-
-	motors[MOTOR_FRONT_LEFT] = thrustTarget + torqueTarget.y + torqueTarget.x - torqueTarget.z;
-	motors[MOTOR_FRONT_RIGHT] = thrustTarget + torqueTarget.y - torqueTarget.x + torqueTarget.z;
-	motors[MOTOR_REAR_LEFT] = thrustTarget - torqueTarget.y + torqueTarget.x + torqueTarget.z;
-	motors[MOTOR_REAR_RIGHT] = thrustTarget - torqueTarget.y - torqueTarget.x - torqueTarget.z;
-
-	motors[0] = constrain(motors[0], 0, 1);
-	motors[1] = constrain(motors[1], 0, 1);
-	motors[2] = constrain(motors[2], 0, 1);
-	motors[3] = constrain(motors[3], 0, 1);
-}
-
 void controlRate()
 {
 	if (!armed) {
