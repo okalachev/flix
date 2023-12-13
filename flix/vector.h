@@ -37,6 +37,11 @@ public:
 		return Vector(x * b, y * b, z * b);
 	}
 
+	Vector operator / (const float b) const
+	{
+		return Vector(x / b, y / b, z / b);
+	}
+
 	Vector operator + (const Vector& b) const
 	{
 		return Vector(x + b.x, y + b.y, z + b.z);
