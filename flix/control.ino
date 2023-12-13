@@ -116,21 +116,8 @@ void controlAttitude()
 	Vector upTarget = attitudeTarget.rotate(up);
 
 	float angle = Vector::angleBetweenVectors(upTarget, upActual);
-	if (!isfinite(angle)) {
-		// not enough precision to calculate
-		Serial.println("angle is nan, skip");
-		return;
-	}
-
 	Vector ratesTargetDir = Vector::angularRatesBetweenVectors(upTarget, upActual);
 	ratesTargetDir.normalize();
-
-	if (!ratesTargetDir.finite()) {
-		Serial.println("ratesTargetDir is nan, skip");
-		// std::cout << "angle is nan" << std::endl;
-		ratesTarget = Vector(0, 0, 0);
-		return;
-	}
 
 	ratesTarget.x = rollPID.update(ratesTargetDir.x * angle, dt);
 	ratesTarget.y = pitchPID.update(ratesTargetDir.y * angle, dt);
@@ -138,19 +125,6 @@ void controlAttitude()
 	if (yawMode == YAW) {
 		ratesTarget.z = yawPID.update(wrapAngle(attitudeTarget.getYaw() - attitude.getYaw()), dt);
 	}
-
-	if (!ratesTarget.finite()) {
-		Serial.print("ratesTarget: "); Serial.println(ratesTarget);
-		Serial.print("ratesTargetDir: "); Serial.println(ratesTargetDir);
-		Serial.print("attitudeTarget: "); Serial.println(attitudeTarget);
-		Serial.print("attitude: "); Serial.println(attitude);
-		Serial.print("upActual: "); Serial.println(upActual);
-		Serial.print("upTarget: "); Serial.println(upTarget);
-		Serial.print("angle: "); Serial.println(angle);
-		Serial.print("dt: "); Serial.println(dt);
-	}
-
-	// std::cout << "rsp: " << ratesTarget.x << " " << ratesTarget.y << std::endl;
 }
 
 // passthrough mode
@@ -168,10 +142,6 @@ void controlManual()
 	motors[MOTOR_REAR_LEFT] = thrustTarget - torqueTarget.y + torqueTarget.x + torqueTarget.z;
 	motors[MOTOR_REAR_RIGHT] = thrustTarget - torqueTarget.y - torqueTarget.x - torqueTarget.z;
 
-	if (!isfinite(motors[0]) || !isfinite(motors[1]) || !isfinite(motors[2]) || !isfinite(motors[3])) {
-		Serial.println("motors are nan");
-	}
-
 	motors[0] = constrain(motors[0], 0, 1);
 	motors[1] = constrain(motors[1], 0, 1);
 	motors[2] = constrain(motors[2], 0, 1);
@@ -180,7 +150,7 @@ void controlManual()
 
 void controlRate()
 {
-	if (!armed) { // TODO: too rough
+	if (!armed) {
 		memset(motors, 0, sizeof(motors));
 		rollRatePID.reset();
 		pitchRatePID.reset();
@@ -194,19 +164,11 @@ void controlRate()
 	torqueTarget.y = pitchRatePID.update(ratesTarget.y - ratesFiltered.y, dt);
 	torqueTarget.z = yawRatePID.update(ratesTarget.z - ratesFiltered.z, dt);
 
-	if (!torqueTarget.finite()) {
-		Serial.print("torqueTarget: "); Serial.println(torqueTarget);
-		Serial.print("ratesTarget: "); Serial.println(ratesTarget);
-		Serial.print("rates: "); Serial.println(rates);
-		Serial.print("dt: "); Serial.println(dt);
-	}
-
 	motors[MOTOR_FRONT_LEFT] = thrustTarget + torqueTarget.y + torqueTarget.x - torqueTarget.z;
 	motors[MOTOR_FRONT_RIGHT] = thrustTarget + torqueTarget.y - torqueTarget.x + torqueTarget.z;
 	motors[MOTOR_REAR_LEFT] = thrustTarget - torqueTarget.y + torqueTarget.x + torqueTarget.z;
 	motors[MOTOR_REAR_RIGHT] = thrustTarget - torqueTarget.y - torqueTarget.x - torqueTarget.z;
 
-	// constrain and reverse, multiple by -1 if reversed
 	motors[0] = constrain(motors[0], 0, 1);
 	motors[1] = constrain(motors[1], 0, 1);
 	motors[2] = constrain(motors[2], 0, 1);

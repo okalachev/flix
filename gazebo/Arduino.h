@@ -3,8 +3,6 @@
 
 // Partial implementation of Arduino API for simulation
 
-// https://github.com/UFABCRocketDesign/Simulator
-
 #pragma once
 
 #include <cmath>
