@@ -5,25 +5,14 @@
 			<ambient>1 1 1 1</ambient>
 			<sky/>
 			<origin_visual>false</origin_visual>
+			<grid>false</grid>
 		</scene>
 		<gui>
-			<!-- <camera name="user_camera">
-				<pose>-1 0 0.3 0 0 0</pose>
-				<track_visual>
-					<name>flix</name>
-					<min_dist>2</min_dist>
-					<max_dist>2</max_dist>
-					<use_model_frame>1</use_model_frame>
-					<static>1</static>
-					<inherit_yaw>1</inherit_yaw>
-				</track_visual>
-			</camera> -->
 			<camera name="user_camera">
 				<pose>-2 -0.3 1.5 0 0.5 0.1</pose>
 			</camera>
 		</gui>
 		<physics type="ode">
-			<!-- <real_time_update_rate>100</real_time_update_rate> -->
 			<max_step_size>0.001</max_step_size>
 		</physics>
 		<include>
@@ -36,23 +25,12 @@
 			<uri>model://flix</uri>
 			<pose>0 0 0.2 0 0 0</pose>
 		</include>
-		<include>
-			<uri>model://linnmon</uri>
-			<pose>0.2 1.5 0 0 0 0</pose>
-		</include>
-
-		<!-- TODO: redesign, move to flix model -->
-		<!-- <box><size>0.1 0.1 0.02</size></box> -->
 		<model name="flix_estimate">
 			<static>true</static>
 			<link name="estimate">
 				<visual name="estimate">
 					<pose>0 0 0 0 0 1.57</pose>
 					<geometry>
-						<!-- <mesh>
-							<uri>model://flix/plane.dae</uri>
-							<scale>0.003 0.003 0.003</scale>
-						</mesh> -->
 						<box>
 							<size>0.125711 0.125711 0.022</size>
 						</box>
