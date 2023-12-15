@@ -205,11 +205,12 @@ public:
 
 	void initNode() {
 		nodeHandle = transport::NodePtr(new transport::Node());
-		nodeHandle->Init(); // TODO: namespace
-		motorPub[0] = nodeHandle->Advertise<msgs::Int>("~/motor0");
-		motorPub[1] = nodeHandle->Advertise<msgs::Int>("~/motor1");
-		motorPub[2] = nodeHandle->Advertise<msgs::Int>("~/motor2");
-		motorPub[3] = nodeHandle->Advertise<msgs::Int>("~/motor3");
+		nodeHandle->Init();
+		string ns = "~/" + model->GetName();
+		motorPub[0] = nodeHandle->Advertise<msgs::Int>(ns + "/motor0");
+		motorPub[1] = nodeHandle->Advertise<msgs::Int>(ns + "/motor1");
+		motorPub[2] = nodeHandle->Advertise<msgs::Int>(ns + "/motor2");
+		motorPub[3] = nodeHandle->Advertise<msgs::Int>(ns + "/motor3");
 	}
 
 	void publishTopics() {
