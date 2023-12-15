@@ -104,7 +104,7 @@ void interpretRC()
 	}
 
 	if (yawMode == YAW_RATE || !motorsActive()) {
-		// update yaw target as we have not control over the yaw
+		// update yaw target as we don't have control over the yaw
 		attitudeTarget.setYaw(attitude.getYaw());
 	}
 }
