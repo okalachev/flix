@@ -79,7 +79,7 @@ public:
 
 	static float angleBetweenVectors(const Vector& a, const Vector& b)
 	{
-		return acos(dot(a, b) / (a.norm() * b.norm()));
+		return acos(constrain(dot(a, b) / (a.norm() * b.norm()), -1, 1));
 	}
 
 	static Vector angularRatesBetweenVectors(const Vector& u, const Vector& v)
