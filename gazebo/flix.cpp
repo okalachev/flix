@@ -26,7 +26,6 @@
 #include "control.ino"
 #include "log.ino"
 #include "cli.ino"
-#include "debug.ino"
 #include "lpf.h"
 
 using ignition::math::Vector3d;
