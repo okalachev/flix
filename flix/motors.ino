@@ -1,7 +1,7 @@
 // Copyright (c) 2023 Oleg Kalachev <okalachev@gmail.com>
 // Repository: https://github.com/okalachev/flix
 
-// Motors output
+// Motors output control
 // Motor: 8520 3.7V
 // ESC: KINGDUO Micro Mini 4A 1S Brushed Esc 3.6-6V
 

@@ -1,6 +1,8 @@
 // Copyright (c) 2023 Oleg Kalachev <okalachev@gmail.com>
 // Repository: https://github.com/okalachev/flix
 
+// Main firmware file
+
 #include "vector.h"
 #include "quaternion.h"
 

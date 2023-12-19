@@ -1,6 +1,8 @@
 // Copyright (c) 2023 Oleg Kalachev <okalachev@gmail.com>
 // Repository: https://github.com/okalachev/flix
 
+// Work with the IMU sensor
+
 #include <SPI.h>
 #include <MPU9250.h>
 

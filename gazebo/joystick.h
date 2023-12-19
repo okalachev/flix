@@ -1,6 +1,8 @@
 // Copyright (c) 2023 Oleg Kalachev <okalachev@gmail.com>
 // Repository: https://github.com/okalachev/flix
 
+// Joystick support for simulation
+
 #include <SDL2/SDL.h>
 #include <gazebo/gazebo.hh>
 #include <iostream>

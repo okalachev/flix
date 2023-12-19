@@ -1,6 +1,8 @@
 // Copyright (c) 2023 Oleg Kalachev <okalachev@gmail.com>
 // Repository: https://github.com/okalachev/flix
 
+// MAVLink communication
+
 #if WIFI_ENABLED == 1
 
 #include "mavlink/common/mavlink.h"

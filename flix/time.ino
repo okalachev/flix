@@ -1,6 +1,8 @@
 // Copyright (c) 2023 Oleg Kalachev <okalachev@gmail.com>
 // Repository: https://github.com/okalachev/flix
 
+// Time related functions
+
 void step()
 {
 	float now = micros() / 1000000.0;

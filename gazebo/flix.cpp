@@ -1,24 +1,7 @@
 // Copyright (c) 2023 Oleg Kalachev <okalachev@gmail.com>
 // Repository: https://github.com/okalachev/flix
 
-// https://classic.gazebosim.org/tutorials?tut=plugins_model&cat=write_plugin
-// https://classic.gazebosim.org/tutorials?tut=set_velocity&cat=
-// https://github.com/gazebosim/gazebo-classic/blob/gazebo11/plugins/ArduCopterPlugin.cc
-// https://github.com/gazebosim/gazebo-classic/blob/gazebo11/plugins/ArduCopterPlugin.cc#L510 - motor
-// https://classic.gazebosim.org/tutorials?tut=gui_overlay&cat=user_input
-// https://github.com/gazebosim/gazebo-classic/blob/gazebo9/examples/plugins/gui_overlay_plugin_time/GUIExampleTimeWidget.cc
-// https://github.com/yujinrobot/kobuki_desktop/blob/ea5b7283d92f61efbd1a2185b46e1ad344e7e81a/kobuki_gazebo_plugins/src/gazebo_ros_kobuki_loads.cpp#L29
-// https://github.com/osrf/swarm/blob/1a2e4040b12b686ed7a13e32301d538b1c7d0b1d/src/RobotPlugin.cc#L936
-
-// motors thrust: https://www.youtube.com/watch?v=VtKI4Pjx8Sk
-
-// https://github.com/gazebosim/gazebo-classic/tree/master/examples/plugins
-
-// publish to topics https://github.com/wuwushrek/sim_cf/blob/df68af275c9f753d9bf1b0494a4e513d9f4c9a7c/crazyflie_gazebo/src/gazebo_lps_plugin.cpp#L104
-// https://github.com/bitcraze/crazyflie-simulation
-
-// GUI overlay:
-// https://github.com/gazebosim/gazebo-classic/blob/gazebo9/examples/plugins/gui_overlay_plugin_time/GUIExampleTimeWidget.cc
+// Gazebo plugin for running Arduino code and simulating the drone
 
 #include <functional>
 #include <cmath>

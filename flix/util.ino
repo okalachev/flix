@@ -1,6 +1,8 @@
 // Copyright (c) 2023 Oleg Kalachev <okalachev@gmail.com>
 // Repository: https://github.com/okalachev/flix
 
+// Utility functions
+
 #include "math.h"
 
 float mapf(long x, long in_min, long in_max, float out_min, float out_max)

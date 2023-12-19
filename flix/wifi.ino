@@ -1,9 +1,7 @@
 // Copyright (c) 2023 Oleg Kalachev <okalachev@gmail.com>
 // Repository: https://github.com/okalachev/flix
 
-// https://github.com/espressif/arduino-esp32/blob/master/libraries/WiFi/examples/WiFiAccessPoint/WiFiAccessPoint.ino
-// https://github.com/espressif/arduino-esp32/blob/master/libraries/WiFi/examples/WiFiClient/WiFiClient.ino
-// https://github.com/espressif/arduino-esp32/blob/master/libraries/WiFi/examples/WiFiUDPClient/WiFiUDPClient.ino
+// Wi-Fi support
 
 #if WIFI_ENABLED == 1
 
@@ -15,9 +13,7 @@
 
 #define WIFI_SSID "flix"
 #define WIFI_PASSWORD "flixwifi"
-// #define WIFI_UDP_IP "192.168.4.255"
 #define WIFI_UDP_IP "255.255.255.255"
-// #define WIFI_UDP_IP "192.168.4.2"
 #define WIFI_UDP_PORT 14550
 
 WiFiUDP udp;

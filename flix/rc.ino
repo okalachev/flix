@@ -1,6 +1,8 @@
 // Copyright (c) 2023 Oleg Kalachev <okalachev@gmail.com>
 // Repository: https://github.com/okalachev/flix
 
+// Work with the RC receiver
+
 #include <SBUS.h>
 
 const uint16_t channelNeutral[] = {995, 883, 200, 972, 512, 512};

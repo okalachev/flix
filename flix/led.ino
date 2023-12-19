@@ -1,6 +1,8 @@
 // Copyright (c) 2023 Oleg Kalachev <okalachev@gmail.com>
 // Repository: https://github.com/okalachev/flix
 
+// Main LED control
+
 #define BLINK_PERIOD 500000
 
 void setupLED()
