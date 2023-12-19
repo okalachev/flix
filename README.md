@@ -6,7 +6,7 @@
 
 ## Features
 
-* Simple and clear Arduino based source code.
+* Simple and clean Arduino based source code.
 * Acro and Stabilized flight using remote control.
 * Precise simulation using Gazebo.
 * In-RAM logging.

@@ -7,8 +7,6 @@
 #include "vector.h"
 
 #define ONE_G 9.807f
-#define ACC_MIN 0.9f
-#define ACC_MAX 1.1f
 #define WEIGHT_ACC 0.5f
 
 void estimate()
