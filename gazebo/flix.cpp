@@ -43,6 +43,8 @@
 #include "control.ino"
 #include "log.ino"
 #include "cli.ino"
+#include "debug.ino"
+#include "lpf.h"
 
 using ignition::math::Vector3d;
 using ignition::math::Pose3d;
@@ -69,7 +71,7 @@ private:
 	event::ConnectionPtr updateConnection, resetConnection;
 	transport::NodePtr nodeHandle;
 	transport::PublisherPtr motorPub[4];
-	ofstream log;
+	LowPassFilter<Vector> accFilter = LowPassFilter<Vector>(0.1);
 
 public:
 	void Load(physics::ModelPtr _parent, sdf::ElementPtr /*_sdf*/)
@@ -112,7 +114,7 @@ public:
 
 		// read imu
 		rates = flu2frd(imu->AngularVelocity());
-		acc = flu2frd(imu->LinearAcceleration());
+		acc = this->accFilter.update(flu2frd(imu->LinearAcceleration()));
 
 		// read rc
 		joystickGet();
@@ -219,11 +221,6 @@ public:
 			msg.set_data(static_cast<int>(std::round(motors[i] * 1000)));
 			motorPub[i]->Publish(msg);
 		}
-	}
-
-	void logData() {
-		if (!log.is_open()) return;
-		log << this->model->GetWorld()->SimTime() << "\t" << rollRatePID.derivative << "\t" << pitchRatePID.derivative << "\n";
 	}
 };
 
