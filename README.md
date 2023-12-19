@@ -21,6 +21,12 @@
 
 *\* — planned.*
 
+## It actually flies
+
+<a href="https://youtu.be/8GzzIQ3C6DQ"><img width=500 src="https://i3.ytimg.com/vi/8GzzIQ3C6DQ/maxresdefault.jpg"></a>
+
+See YouTube demo video: https://youtu.be/8GzzIQ3C6DQ.
+
 ## Simulation
 
 Simulation in Gazebo using a plugin that runs original Arduino code is implemented:
