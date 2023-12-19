@@ -38,7 +38,7 @@ void setupIMU()
 bool readIMU()
 {
 	if (IMU.readSensor() < 0) {
-		Serial.println("IMU read error"); // TODO:
+		Serial.println("IMU read error");
 		return false;
 	}
 
@@ -83,6 +83,7 @@ void calibrateAccel()
 
 void loadAccelCal()
 {
+	// NOTE: this should be changed to the actual values
 	IMU.setAccelCalX(-0.0048542023, 1.0008112192);
 	IMU.setAccelCalY(0.0521845818, 0.9985780716);
 	IMU.setAccelCalZ(0.5754694939, 1.0045746565);
@@ -90,6 +91,7 @@ void loadAccelCal()
 
 void loadGyroCal()
 {
+	// NOTE: this should be changed to the actual values
 	IMU.setGyroBiasX_rads(-0.0185128022);
 	IMU.setGyroBiasY_rads(-0.0262369743);
 	IMU.setGyroBiasZ_rads(0.0163032326);
@@ -101,13 +103,3 @@ void printIMUCal()
 	Serial.printf("accel bias: %f %f %f\n", IMU.getAccelBiasX_mss(), IMU.getAccelBiasY_mss(), IMU.getAccelBiasZ_mss());
 	Serial.printf("accel scale: %f %f %f\n", IMU.getAccelScaleFactorX(), IMU.getAccelScaleFactorY(), IMU.getAccelScaleFactorZ());
 }
-
-// Accel bias: 0.0463809967 0.0463809967 0.1486964226
-// Accel scale: 0.9986976385 0.9993721247 1.0561490059
-
-// Accel bias: 0.0145006180 0.0145006180 0.0000000000
-// Accel scale: 0.9989741445 0.9993283749 1.0000000000
-
-// Correct:
-// Accel bias: -0.0048542023 0.0521845818 0.5754694939
-// Accel scale: 1.0008112192 0.9985780716 1.0045746565

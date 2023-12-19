@@ -30,8 +30,7 @@ const char* motd =
 "cg - calibrate gyro\n"
 "ca - calibrate accel\n"
 "fullmot <n> - test motor on all signals\n"
-"reset - reset state\n"
-"wifi - start wi-fi access point\n";
+"reset - reset drone's state\n";
 
 const struct Param {
 	const char* name;

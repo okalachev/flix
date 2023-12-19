@@ -34,6 +34,11 @@ N = int(sample_rate * duration)
 yf = np.fft.rfft(records)
 xf = np.fft.rfftfreq(N, 1 / sample_rate)
 
+# print out fft data
+print('Frequency, Amplitude')
+for i in range(len(xf)):
+    print(xf[i], ',', abs(yf[i]))
+
 plt.plot(xf, np.abs(yf))
 plt.title('FFT of ' + log_entry)
 plt.xlabel('Frequency')
