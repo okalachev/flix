@@ -7,7 +7,7 @@
 #include <MPU9250.h>
 
 #define IMU_CS_PIN 4 // chip-select pin for IMU SPI connection
-#define CALIBRATE_GYRO_ON_START false
+#define CALIBRATE_GYRO_ON_START true
 
 MPU9250 IMU(SPI, IMU_CS_PIN);
 
