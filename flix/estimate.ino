@@ -29,10 +29,9 @@ void applyAcc()
 {
 	// test should we apply accelerometer gravity correction
 	float accNorm = acc.norm();
-	if (accNorm < ACC_MIN * ONE_G || accNorm > ACC_MAX * ONE_G) {
-		// use accelerometer only when we're not accelerating
-		return;
-	}
+	bool landed = !motorsActive() && abs(accNorm - ONE_G) < ONE_G * 0.1f;
+
+	if (!landed) return;
 
 	// calculate accelerometer correction
 	Vector up = attitude.rotate(Vector(0, 0, -1));
