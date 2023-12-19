@@ -17,8 +17,19 @@
 * *MAVLink support\*.*
 * *Completely 3D-printed frame*.*
 * *Position control and autonomous flights using external camera\**.
+* [Building and running instructions](docs/build.md).
 
 *\* — planned.*
+
+## Simulation
+
+Simulation in Gazebo using a plugin that runs original Arduino code is implemented:
+
+<img src="docs/img/simulator.png" width=500>
+
+## Schematics
+
+<img src="docs/img/schematics.svg" width=800>
 
 ## Version 0
 
@@ -27,7 +38,7 @@
 |Component|Type|Image|Quantity|
 |-|-|-|-|
 |ESP32 Mini|Microcontroller board|<img src="docs/img/esp32.jpg" width=180>|1|
-|GY-91|IMU+barometer board|<img src="docs/img/gy-91.jpg" width=180>|1|
+|GY-91|IMU+LDO+barometer board|<img src="docs/img/gy-91.jpg" width=180>|1|
 |K100|Quadcopter frame|<img src="docs/img/frame.jpg" width=180>|1|
 |8520 3.7V brushed motor|Motor|<img src="docs/img/motor.jpeg" width=180>|4|
 |Hubsan 55 mm| Propeller|<img src="docs/img/prop.jpg" width=180>|4|
