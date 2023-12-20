@@ -37,9 +37,7 @@ Simulation in Gazebo using a plugin that runs original Arduino code is implement
 
 <img src="docs/img/schematics.svg" width=800>
 
-## Version 0
-
-### Components
+## Components (version 0)
 
 |Component|Type|Image|Quantity|
 |-|-|-|-|
@@ -56,3 +54,7 @@ Simulation in Gazebo using a plugin that runs original Arduino code is implement
 ||Battery charger|<img src="docs/img/charger.jpg" width=100>|1|
 ||Wires, connectors, tape, ...||
 ||3D-printed frame parts||
+
+## Telegram-channel
+
+Subscribe to Telegram-channel on developing the drone and the flight controller (in Russian): https://t.me/opensourcequadcopter.
