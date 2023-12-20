@@ -36,9 +36,6 @@ log:
 plot:
 	plotjuggler -d $(shell ls -t tools/log/*.csv | head -n1)
 
-docs:
-	for FILE in docs/*.d2; do d2 $$FILE; done
-
 clean:
 	rm -rf gazebo/build flix/build flix/cache .dependencies
 
