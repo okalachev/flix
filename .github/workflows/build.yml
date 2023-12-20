@@ -57,7 +57,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Install Gazebo
-      run: brew tap osrf/simulation && brew install gazebo11
+      run: brew tap osrf/simulation && brew install gazebo11 && brew link gazebo11
     - name: Install SDL2
       run: brew install sdl2
     - name: Build simulator
