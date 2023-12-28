@@ -1,5 +1,12 @@
 # Building and running
 
+To build the firmware or the simulator, you need to clone the repository using git:
+
+```bash
+git clone https://github.com/okalachev/flix.git
+cd flix
+```
+
 ## Simulation
 
 Dependencies are [Gazebo Classic simulator](https://classic.gazebosim.org) and [SDL2](https://www.libsdl.org) library.
@@ -22,7 +29,7 @@ Dependencies are [Gazebo Classic simulator](https://classic.gazebosim.org) and [
 2. Install SDL2:
 
    ```bash
-   sudo apt-get install libsdl2-dev
+   sudo apt-get update && sudo apt-get install build-essential libsdl2-dev
    ```
 
 3. Run the simulation:
