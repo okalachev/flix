@@ -11,8 +11,7 @@
 #define PERIOD_SLOW 1.0
 #define PERIOD_FAST 0.1
 
-void sendMavlink()
-{
+void sendMavlink() {
 	static float lastSlow = 0;
 	static float lastFast = 0;
 
@@ -55,8 +54,7 @@ void sendMavlink()
 	}
 }
 
-inline void sendMessage(const void *msg)
-{
+inline void sendMessage(const void *msg) {
 	uint8_t buf[MAVLINK_MAX_PACKET_LEN];
 	uint16_t len = mavlink_msg_to_send_buffer(buf, (mavlink_message_t *)msg);
 	sendWiFi(buf, len);

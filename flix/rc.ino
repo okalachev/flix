@@ -11,14 +11,12 @@ const uint16_t channelMax[] = {1651, 1540, 1713, 1630, 1472, 1472};
 
 SBUS RC(Serial2);
 
-void setupRC()
-{
+void setupRC() {
 	Serial.println("Setup RC");
 	RC.begin();
 }
 
-void readRC()
-{
+void readRC() {
 	bool failSafe, lostFrame;
 	if (RC.read(channels, &failSafe, &lostFrame)) {
 		if (failSafe) { return; } // TODO:

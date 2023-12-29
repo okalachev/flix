@@ -5,17 +5,14 @@
 
 #define BLINK_PERIOD 500000
 
-void setupLED()
-{
+void setupLED() {
 	pinMode(LED_BUILTIN, OUTPUT);
 }
 
-void setLED(bool on)
-{
+void setLED(bool on) {
 	digitalWrite(LED_BUILTIN, on ? HIGH : LOW);
 }
 
-void blinkLED()
-{
+void blinkLED() {
 	setLED(micros() / BLINK_PERIOD % 2);
 }

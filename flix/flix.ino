@@ -33,8 +33,7 @@ Vector acc; // accelerometer data, m/s/s
 Quaternion attitude; // estimated attitude
 float motors[4]; // normalized motors thrust in range [-1..1]
 
-void setup()
-{
+void setup() {
 	Serial.begin(SERIAL_BAUDRATE);
 	Serial.println("Initializing flix");
 	setupLED();
@@ -50,8 +49,7 @@ void setup()
 	Serial.println("Initializing complete");
 }
 
-void loop()
-{
+void loop() {
 	if (!readIMU()) return;
 
 	step();

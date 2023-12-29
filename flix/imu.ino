@@ -11,8 +11,7 @@
 
 MPU9250 IMU(SPI, IMU_CS_PIN);
 
-void setupIMU()
-{
+void setupIMU() {
 	Serial.println("Setup IMU");
 
 	auto status = IMU.begin();
@@ -35,8 +34,7 @@ void setupIMU()
 	// NOTE: very important, without the above the rate would be terrible 50 Hz
 }
 
-bool readIMU()
-{
+bool readIMU() {
 	if (IMU.readSensor() < 0) {
 		Serial.println("IMU read error");
 		return false;
@@ -54,8 +52,7 @@ bool readIMU()
 	return rates != lastRates;
 }
 
-void calibrateGyro()
-{
+void calibrateGyro() {
 	Serial.println("Calibrating gyro, stand still");
 	delay(500);
 	int status = IMU.calibrateGyro();
@@ -64,8 +61,7 @@ void calibrateGyro()
 	printIMUCal();
 }
 
-void calibrateAccel()
-{
+void calibrateAccel() {
 	Serial.println("Cal accel: place level"); delay(3000);
 	IMU.calibrateAccel();
 	Serial.println("Cal accel: place nose up"); delay(3000);
@@ -81,24 +77,21 @@ void calibrateAccel()
 	printIMUCal();
 }
 
-void loadAccelCal()
-{
+void loadAccelCal() {
 	// NOTE: this should be changed to the actual values
 	IMU.setAccelCalX(-0.0048542023, 1.0008112192);
 	IMU.setAccelCalY(0.0521845818, 0.9985780716);
 	IMU.setAccelCalZ(0.5754694939, 1.0045746565);
 }
 
-void loadGyroCal()
-{
+void loadGyroCal() {
 	// NOTE: this should be changed to the actual values
 	IMU.setGyroBiasX_rads(-0.0185128022);
 	IMU.setGyroBiasY_rads(-0.0262369743);
 	IMU.setGyroBiasZ_rads(0.0163032326);
 }
 
-void printIMUCal()
-{
+void printIMUCal() {
 	Serial.printf("gyro bias: %f %f %f\n", IMU.getGyroBiasX_rads(), IMU.getGyroBiasY_rads(), IMU.getGyroBiasZ_rads());
 	Serial.printf("accel bias: %f %f %f\n", IMU.getAccelBiasX_mss(), IMU.getAccelBiasY_mss(), IMU.getAccelBiasZ_mss());
 	Serial.printf("accel scale: %f %f %f\n", IMU.getAccelScaleFactorX(), IMU.getAccelScaleFactorY(), IMU.getAccelScaleFactorZ());

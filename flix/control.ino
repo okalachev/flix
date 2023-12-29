@@ -53,8 +53,7 @@ Vector ratesTarget;
 Vector torqueTarget;
 float thrustTarget;
 
-void control()
-{
+void control() {
 	interpretRC();
 	if (mode == STAB) {
 		controlAttitude();
@@ -68,8 +67,7 @@ void control()
 	}
 }
 
-void interpretRC()
-{
+void interpretRC() {
 	if (controls[RC_CHANNEL_MODE] < 0.25) {
 		mode = MANUAL;
 	} else if (controls[RC_CHANNEL_MODE] < 0.75) {
@@ -108,8 +106,7 @@ void interpretRC()
 	}
 }
 
-void controlAttitude()
-{
+void controlAttitude() {
 	if (!armed) {
 		rollPID.reset();
 		pitchPID.reset();
@@ -131,8 +128,7 @@ void controlAttitude()
 	}
 }
 
-void controlRate()
-{
+void controlRate() {
 	if (!armed) {
 		rollRatePID.reset();
 		pitchRatePID.reset();
@@ -147,8 +143,7 @@ void controlRate()
 	torqueTarget.z = yawRatePID.update(ratesTarget.z - ratesFiltered.z, dt);
 }
 
-void controlTorque()
-{
+void controlTorque() {
 	if (!armed) {
 		memset(motors, 0, sizeof(motors));
 		return;
@@ -165,13 +160,11 @@ void controlTorque()
 	motors[3] = constrain(motors[3], 0, 1);
 }
 
-bool motorsActive()
-{
+bool motorsActive() {
 	return motors[0] > 0 || motors[1] > 0 || motors[2] > 0 || motors[3] > 0;
 }
 
-const char* getModeName()
-{
+const char* getModeName() {
 	switch (mode) {
 		case MANUAL: return "MANUAL";
 		case ACRO: return "ACRO";

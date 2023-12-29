@@ -3,8 +3,7 @@
 
 // Time related functions
 
-void step()
-{
+void step() {
 	float now = micros() / 1000000.0;
 	dt = now - t;
 	t = now;
@@ -16,8 +15,7 @@ void step()
 	computeLoopFreq();
 }
 
-void computeLoopFreq()
-{
+void computeLoopFreq() {
 	static float windowStart = 0;
 	static uint32_t freq = 0;
 	freq++;

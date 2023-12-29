@@ -7,8 +7,7 @@
 
 #include "lpf.h"
 
-class PID
-{
+class PID {
 public:
 	float p = 0;
 	float i = 0;

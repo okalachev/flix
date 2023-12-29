@@ -24,8 +24,7 @@ bool joystickInitialized = false, warnShown = false;
 
 void normalizeRC();
 
-void joystickInit()
-{
+void joystickInit() {
 	SDL_Init(SDL_INIT_JOYSTICK);
 	joystick = SDL_JoystickOpen(0);
 	if (joystick != NULL) {
@@ -37,8 +36,7 @@ void joystickInit()
 	}
 }
 
-void joystickGet()
-{
+void joystickGet() {
 	if (!joystickInitialized) {
 		joystickInit();
 		return;

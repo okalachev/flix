@@ -57,8 +57,7 @@ const struct Param {
 	{"t", &t, nullptr},
 };
 
-void doCommand(String& command, String& value)
-{
+void doCommand(String& command, String& value) {
 	if (command == "help" || command == "motd") {
 		Serial.println(motd);
 	} else if (command == "show") {
@@ -119,8 +118,7 @@ void doCommand(String& command, String& value)
 	}
 }
 
-void showTable()
-{
+void showTable() {
 	for (uint8_t i = 0; i < sizeof(params) / sizeof(params[0]); i++) {
 		Serial.print(params[i].name);
 		Serial.print(" ");
@@ -128,8 +126,7 @@ void showTable()
 	}
 }
 
-void cliTestMotor(uint8_t n)
-{
+void cliTestMotor(uint8_t n) {
 	Serial.printf("Testing motor %d\n", n);
 	motors[n] = 1;
 	sendMotors();
@@ -139,8 +136,7 @@ void cliTestMotor(uint8_t n)
 	Serial.println("Done");
 }
 
-void parseInput()
-{
+void parseInput() {
 	static bool showMotd = true;
 	static String command;
 	static String value;

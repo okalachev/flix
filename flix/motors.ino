@@ -39,8 +39,7 @@ void setupMotors() {
 	Serial.println("Motors initialized");
 }
 
-uint16_t getPWM(float val, int n)
-{
+uint16_t getPWM(float val, int n) {
 	if (val == 0) {
 		return PWM_NEUTRAL;
 	} else if (val > 0) {
@@ -54,16 +53,14 @@ uint8_t pwmToDutyCycle(uint16_t pwm) {
 	return map(pwm, 0, 1000000 / PWM_FREQUENCY, 0, (1 << PWM_RESOLUTION) - 1);
 }
 
-void sendMotors()
-{
+void sendMotors() {
 	ledcWrite(0, pwmToDutyCycle(getPWM(motors[0], 0)));
 	ledcWrite(1, pwmToDutyCycle(getPWM(motors[1], 1)));
 	ledcWrite(2, pwmToDutyCycle(getPWM(motors[2], 2)));
 	ledcWrite(3, pwmToDutyCycle(getPWM(motors[3], 3)));
 }
 
-void fullMotorTest(int n, bool reverse)
-{
+void fullMotorTest(int n, bool reverse) {
 	printf("Full test for motor %d\n", n);
 	for (int pwm = PWM_NEUTRAL; pwm <= 2300 && pwm >= 700; pwm += reverse ? -100 : 100) {
 		printf("Motor %d: %d\n", n, pwm);

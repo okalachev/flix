@@ -33,8 +33,7 @@ using ignition::math::Vector3d;
 using namespace gazebo;
 using namespace std;
 
-class ModelFlix : public ModelPlugin
-{
+class ModelFlix : public ModelPlugin {
 private:
 	physics::ModelPtr model;
 	physics::LinkPtr body;
@@ -45,8 +44,7 @@ private:
 	LowPassFilter<Vector> accFilter = LowPassFilter<Vector>(0.1);
 
 public:
-	void Load(physics::ModelPtr _parent, sdf::ElementPtr /*_sdf*/)
-	{
+	void Load(physics::ModelPtr _parent, sdf::ElementPtr /*_sdf*/) {
 		this->model = _parent;
 		this->body = this->model->GetLink("body");
 		this->imu = dynamic_pointer_cast<sensors::ImuSensor>(sensors::get_sensor(model->GetScopedName(true) + "::body::imu")); // default::flix::body::imu
@@ -58,14 +56,12 @@ public:
 	}
 
 public:
-	void OnReset()
-	{
+	void OnReset() {
 		attitude = Quaternion(); // reset estimated attitude
 		gzmsg << "Flix plugin reset" << endl;
 	}
 
-	void OnUpdate()
-	{
+	void OnUpdate() {
 		__micros = model->GetWorld()->SimTime().Double() * 1000000;
 		step();
 
@@ -91,8 +87,7 @@ public:
 		logData();
 	}
 
-	void applyMotorsThrust()
-	{
+	void applyMotorsThrust() {
 		// thrusts
 		const double dist = 0.035355; // motors shift from the center, m
 		const double maxThrust = 0.03 * ONE_G; // ~30 g, https://youtu.be/VtKI4Pjx8Sk?&t=78

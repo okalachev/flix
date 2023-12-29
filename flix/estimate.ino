@@ -9,22 +9,19 @@
 #define ONE_G 9.807f
 #define WEIGHT_ACC 0.5f
 
-void estimate()
-{
+void estimate() {
 	applyGyro();
 	applyAcc();
 	signalizeHorizontality();
 }
 
-void applyGyro()
-{
+void applyGyro() {
 	// applying gyro
 	attitude *= Quaternion::fromAngularRates(rates * dt);
 	attitude.normalize();
 }
 
-void applyAcc()
-{
+void applyAcc() {
 	// test should we apply accelerometer gravity correction
 	float accNorm = acc.norm();
 	bool landed = !motorsActive() && abs(accNorm - ONE_G) < ONE_G * 0.1f;
@@ -40,8 +37,7 @@ void applyAcc()
 	attitude.normalize();
 }
 
-void signalizeHorizontality()
-{
+void signalizeHorizontality() {
 	float angle = Vector::angleBetweenVectors(attitude.rotate(Vector(0, 0, -1)), Vector(0, 0, -1));
 	setLED(angle < 15 * DEG_TO_RAD);
 }

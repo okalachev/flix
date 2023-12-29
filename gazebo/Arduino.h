@@ -44,8 +44,7 @@ public:
 
 class Print {
 public:
-	size_t printf(const char *format, ...)
-	{
+	size_t printf(const char *format, ...) {
 		va_list args;
 		va_start(args, format);
 		size_t result = vprintf(format, args);
@@ -53,48 +52,39 @@ public:
 		return result;
 	}
 
-	size_t print(float n, int digits = 2)
-	{
+	size_t print(float n, int digits = 2) {
 		return printf("%.*f", digits, n);
 	}
 
-	size_t println(float n, int digits = 2)
-	{
+	size_t println(float n, int digits = 2) {
 		return printf("%.*f\n", digits, n);
 	}
 
-	size_t print(const char* s)
-	{
+	size_t print(const char* s) {
 		return printf("%s", s);
 	}
 
-	size_t println()
-	{
+	size_t println() {
 		return print("\n");
 	}
 
-	size_t println(const char* s)
-	{
+	size_t println(const char* s) {
 		return printf("%s\n", s);
 	}
 
-	size_t println(const Printable& p)
-	{
+	size_t println(const Printable& p) {
 		return p.printTo(*this) + print("\n");
 	}
 
-	size_t print(const String& s)
-	{
+	size_t print(const String& s) {
 		return printf("%s", s.c_str());
 	}
 
-	size_t println(const std::string& s)
-	{
+	size_t println(const std::string& s) {
 		return printf("%s\n", s.c_str());
 	}
 
-	size_t println(const String& s)
-	{
+	size_t println(const String& s) {
 		return printf("%s\n", s.c_str());
 	}
 };

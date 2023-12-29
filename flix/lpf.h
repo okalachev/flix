@@ -6,8 +6,7 @@
 #pragma once
 
 template <typename T> // Using template to make the filter usable for scalar and vector values
-class LowPassFilter
-{
+class LowPassFilter {
 public:
 	float alpha; // smoothing constant, 1 means filter disabled
 	T output;

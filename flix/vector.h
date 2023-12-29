@@ -5,8 +5,7 @@
 
 #pragma once
 
-class Vector : public Printable
-{
+class Vector : public Printable {
 public:
 	float x, y, z;
 
