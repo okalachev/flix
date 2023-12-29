@@ -25,18 +25,5 @@
 			<uri>model://flix</uri>
 			<pose>0 0 0.2 0 0 0</pose>
 		</include>
-		<model name="flix_estimate">
-			<static>true</static>
-			<link name="estimate">
-				<visual name="estimate">
-					<pose>0 0 0 0 0 1.57</pose>
-					<geometry>
-						<box>
-							<size>0.125711 0.125711 0.022</size>
-						</box>
-					</geometry>
-				</visual>
-			</link>
-		</model>
 	</world>
 </sdf>

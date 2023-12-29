@@ -19,6 +19,7 @@
 
 #include "Arduino.h"
 #include "flix.h"
+#include "util.h"
 #include "util.ino"
 #include "joystick.h"
 #include "time.ino"
@@ -29,25 +30,13 @@
 #include "lpf.h"
 
 using ignition::math::Vector3d;
-using ignition::math::Pose3d;
 using namespace gazebo;
 using namespace std;
-
-Pose3d flu2frd(const Pose3d& p)
-{
-	return ignition::math::Pose3d(p.Pos().X(), -p.Pos().Y(), -p.Pos().Z(),
-	                              p.Rot().W(), p.Rot().X(), -p.Rot().Y(), -p.Rot().Z());
-}
-
-Vector flu2frd(const Vector3d& v)
-{
-	return Vector(v.X(), -v.Y(), -v.Z());
-}
 
 class ModelFlix : public ModelPlugin
 {
 private:
-	physics::ModelPtr model, estimateModel;
+	physics::ModelPtr model;
 	physics::LinkPtr body;
 	sensors::ImuSensorPtr imu;
 	event::ConnectionPtr updateConnection, resetConnection;
@@ -60,32 +49,18 @@ public:
 	{
 		this->model = _parent;
 		this->body = this->model->GetLink("body");
-
-		this->imu = std::dynamic_pointer_cast<sensors::ImuSensor>(sensors::get_sensor(model->GetScopedName(true) + "::body::imu")); // default::flix::body::imu
-		if (imu == nullptr) {
-			gzerr << "IMU sensor not found" << std::endl;
-			return;
-		}
-
-		this->estimateModel = model->GetWorld()->ModelByName("flix_estimate");
-
-		this->updateConnection = event::Events::ConnectWorldUpdateBegin(
-			std::bind(&ModelFlix::OnUpdate, this));
-
-		this->resetConnection = event::Events::ConnectWorldReset(
-			std::bind(&ModelFlix::OnReset, this));
-
+		this->imu = dynamic_pointer_cast<sensors::ImuSensor>(sensors::get_sensor(model->GetScopedName(true) + "::body::imu")); // default::flix::body::imu
+		this->updateConnection = event::Events::ConnectWorldUpdateBegin(bind(&ModelFlix::OnUpdate, this));
+		this->resetConnection = event::Events::ConnectWorldReset(bind(&ModelFlix::OnReset, this));
 		initNode();
-
 		Serial.begin(0);
-
 		gzmsg << "Flix plugin loaded" << endl;
 	}
 
 public:
 	void OnReset()
 	{
-		attitude = Quaternion();
+		attitude = Quaternion(); // reset estimated attitude
 		gzmsg << "Flix plugin reset" << endl;
 	}
 
@@ -112,7 +87,6 @@ public:
 		parseInput();
 
 		applyMotorsThrust();
-		updateEstimatePose();
 		publishTopics();
 		logData();
 	}
@@ -120,71 +94,26 @@ public:
 	void applyMotorsThrust()
 	{
 		// thrusts
-		const double d = 0.035355;
-		const double maxThrust = 0.03 * ONE_G; // 30 g, https://www.youtube.com/watch?v=VtKI4Pjx8Sk
-		// 65 mm prop ~40 g
+		const double dist = 0.035355; // motors shift from the center, m
+		const double maxThrust = 0.03 * ONE_G; // ~30 g, https://youtu.be/VtKI4Pjx8Sk?&t=78
 
-		const float scale0 = 1.0, scale1 = 1.1, scale2 = 0.9, scale3 = 1.05;
-		const float minThrustRel = 0;
+		const float scale0 = 1.0, scale1 = 1.1, scale2 = 0.9, scale3 = 1.05; // imitating motors asymmetry
+		float mfl = scale0 * maxThrust * abs(motors[MOTOR_FRONT_LEFT]);
+		float mfr = scale1 * maxThrust * abs(motors[MOTOR_FRONT_RIGHT]);
+		float mrl = scale2 * maxThrust * abs(motors[MOTOR_REAR_LEFT]);
+		float mrr = scale3 * maxThrust * abs(motors[MOTOR_REAR_RIGHT]);
 
-		// apply min thrust
-		float mfl = mapff(motors[MOTOR_FRONT_LEFT], 0, 1, minThrustRel, 1);
-		float mfr = mapff(motors[MOTOR_FRONT_RIGHT], 0, 1, minThrustRel, 1);
-		float mrl = mapff(motors[MOTOR_REAR_LEFT], 0, 1, minThrustRel, 1);
-		float mrr = mapff(motors[MOTOR_REAR_RIGHT], 0, 1, minThrustRel, 1);
-
-		if (motors[MOTOR_FRONT_LEFT] < 0.001) mfl = 0;
-		if (motors[MOTOR_FRONT_RIGHT] < 0.001) mfr = 0;
-		if (motors[MOTOR_REAR_LEFT] < 0.001) mrl = 0;
-		if (motors[MOTOR_REAR_RIGHT] < 0.001) mrr = 0;
-
-		// TODO: min_thrust
-
-		body->AddLinkForce(Vector3d(0.0, 0.0, scale0 * maxThrust * abs(mfl)), Vector3d(d, d, 0.0));
-		body->AddLinkForce(Vector3d(0.0, 0.0, scale1 * maxThrust * abs(mfr)), Vector3d(d, -d, 0.0));
-		body->AddLinkForce(Vector3d(0.0, 0.0, scale2 * maxThrust * abs(mrl)), Vector3d(-d, d, 0.0));
-		body->AddLinkForce(Vector3d(0.0, 0.0, scale3 * maxThrust * abs(mrr)), Vector3d(-d, -d, 0.0));
-
-		// TODO: indicate if > 1
+		body->AddLinkForce(Vector3d(0.0, 0.0, mfl), Vector3d(dist, dist, 0.0));
+		body->AddLinkForce(Vector3d(0.0, 0.0, mfr), Vector3d(dist, -dist, 0.0));
+		body->AddLinkForce(Vector3d(0.0, 0.0, mrl), Vector3d(-dist, dist, 0.0));
+		body->AddLinkForce(Vector3d(0.0, 0.0, mrr), Vector3d(-dist, -dist, 0.0));
 
 		// torque
-		const double maxTorque = 0.0023614413; // 24.08 g*cm
-		int direction = 1;
-		// z is counter clockwise, normal rotation direction is minus
-		body->AddRelativeTorque(Vector3d(0.0, 0.0, direction * scale0 * maxTorque * motors[MOTOR_FRONT_LEFT]));
-		body->AddRelativeTorque(Vector3d(0.0, 0.0, direction * scale1 * -maxTorque * motors[MOTOR_FRONT_RIGHT]));
-		body->AddRelativeTorque(Vector3d(0.0, 0.0, direction * scale2 * -maxTorque * motors[MOTOR_REAR_LEFT]));
-		body->AddRelativeTorque(Vector3d(0.0, 0.0, direction * scale3 * maxTorque * motors[MOTOR_REAR_RIGHT]));
-	}
-
-	void updateEstimatePose() {
-		if (estimateModel == nullptr) {
-			return;
-		}
-		if (!attitude.finite()) {
-			// gzerr << "attitude is nan" << std::endl;
-			return;
-		}
-		Pose3d pose(
-			model->WorldPose().Pos().X(), model->WorldPose().Pos().Y(), model->WorldPose().Pos().Z(),
-			attitude.w, attitude.x, -attitude.y, -attitude.z // frd to flu
-		);
-		// std::cout << pose.Pos().X() << " " << pose.Pos().Y() << " " << pose.Pos().Z() <<
-		// 	" " << pose.Rot().W() << " " << pose.Rot().X() << " " << pose.Rot().Y() << " " << pose.Rot().Z() << std::endl;
-
-		// calculate attitude estimation error
-
-		Quaternion groundtruthAttitude(estimateModel->WorldPose().Rot().W(), estimateModel->WorldPose().Rot().X(), -estimateModel->WorldPose().Rot().Y(), -estimateModel->WorldPose().Rot().Z());
-		float angle = Vector::angleBetweenVectors(attitude.rotate(Vector(0, 0, -1)), groundtruthAttitude.rotate(Vector(0, 0, -1)));
-		if (angle < 0.3) {
-			//gzwarn << "att err: " << angle << endl;
-			// TODO: warning
-			// position under the floor to make it invisible
-			pose.SetZ(-5);
-		}
-
-		estimateModel->SetWorldPose(pose);
-
+		const double maxTorque = 0.0024; // 24 g*cm ≈ 24 mN*m
+		body->AddRelativeTorque(Vector3d(0.0, 0.0, scale0 * maxTorque * motors[MOTOR_FRONT_LEFT]));
+		body->AddRelativeTorque(Vector3d(0.0, 0.0, scale1 * -maxTorque * motors[MOTOR_FRONT_RIGHT]));
+		body->AddRelativeTorque(Vector3d(0.0, 0.0, scale2 * -maxTorque * motors[MOTOR_REAR_LEFT]));
+		body->AddRelativeTorque(Vector3d(0.0, 0.0, scale3 * maxTorque * motors[MOTOR_REAR_RIGHT]));
 	}
 
 	void initNode() {
@@ -200,7 +129,7 @@ public:
 	void publishTopics() {
 		for (int i = 0; i < 4; i++) {
 			msgs::Int msg;
-			msg.set_data(static_cast<int>(std::round(motors[i] * 1000)));
+			msg.set_data(static_cast<int>(round(motors[i] * 1000)));
 			motorPub[i]->Publish(msg);
 		}
 	}

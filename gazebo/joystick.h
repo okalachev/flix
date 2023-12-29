@@ -7,12 +7,10 @@
 #include <gazebo/gazebo.hh>
 #include <iostream>
 
-using namespace std;
-
-static const int16_t channelNeutralMin[] = {-1290,	-258,	-26833,	0,	0, 0};
-static const int16_t channelNeutralMax[] = {-1032,	-258,	-27348,	3353,	0, 0};
-
-static const int16_t channelMax[] =        {27090,	27090,	27090,	27090, 0, 0};
+// NOTE: this should be changed to the actual calibration values
+const int16_t channelNeutralMin[] = {-1290, -258, -26833, 0, 0, 0};
+const int16_t channelNeutralMax[] = {-1032, -258, -27348, 3353, 0, 0};
+const int16_t channelMax[] = {27090, 27090, 27090, 27090, 0, 0};
 
 #define RC_CHANNEL_ROLL 0
 #define RC_CHANNEL_PITCH 1
@@ -21,8 +19,7 @@ static const int16_t channelMax[] =        {27090,	27090,	27090,	27090, 0, 0};
 #define RC_CHANNEL_AUX 4
 #define RC_CHANNEL_MODE 5
 
-static SDL_Joystick *joystick;
-
+SDL_Joystick *joystick;
 bool joystickInitialized = false, warnShown = false;
 
 void normalizeRC();
@@ -33,9 +30,9 @@ void joystickInit()
 	joystick = SDL_JoystickOpen(0);
 	if (joystick != NULL) {
 		joystickInitialized = true;
-		gzmsg << "Joystick initialized: " << SDL_JoystickNameForIndex(0) << endl;
+		gzmsg << "Joystick initialized: " << SDL_JoystickNameForIndex(0) << std::endl;
 	} else if (!warnShown) {
-		gzwarn << "Joystick not found, begin waiting for joystick..." << endl;
+		gzwarn << "Joystick not found, begin waiting for joystick..." << std::endl;
 		warnShown = true;
 	}
 }
