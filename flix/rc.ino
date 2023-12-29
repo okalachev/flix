@@ -5,6 +5,7 @@
 
 #include <SBUS.h>
 
+// NOTE: this should be changed to the actual calibration values
 const uint16_t channelNeutral[] = {995, 883, 200, 972, 512, 512};
 const uint16_t channelMax[] = {1651, 1540, 1713, 1630, 1472, 1472};
 

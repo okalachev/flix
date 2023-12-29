@@ -24,11 +24,6 @@ public:
 		return Quaternion(cos2, a * sinNorm, b * sinNorm, c * sinNorm);
 	}
 
-	static Quaternion fromAngularRates(float x, float y, float z)
-	{
-		return Quaternion::fromAxisAngle(x, y, z, sqrt(x * x + y * y + z * z));
-	}
-
 	static Quaternion fromAngularRates(const Vector& rates)
 	{
 		if (rates.zero()) {
