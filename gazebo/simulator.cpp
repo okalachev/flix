@@ -7,13 +7,11 @@
 #include <cmath>
 #include <gazebo/gazebo.hh>
 #include <gazebo/physics/physics.hh>
-#include <gazebo/rendering/rendering.hh>
 #include <gazebo/common/common.hh>
 #include <gazebo/sensors/sensors.hh>
 #include <gazebo/msgs/msgs.hh>
 #include <ignition/math/Vector3.hh>
 #include <ignition/math/Pose3.hh>
-#include <ignition/math/Quaternion.hh>
 #include <iostream>
 #include <fstream>
 
@@ -55,7 +53,6 @@ public:
 		gzmsg << "Flix plugin loaded" << endl;
 	}
 
-public:
 	void OnReset() {
 		attitude = Quaternion(); // reset estimated attitude
 		gzmsg << "Flix plugin reset" << endl;
@@ -82,12 +79,12 @@ public:
 		control();
 		parseInput();
 
-		applyMotorsThrust();
+		applyMotorForces();
 		publishTopics();
 		logData();
 	}
 
-	void applyMotorsThrust() {
+	void applyMotorForces() {
 		// thrusts
 		const double dist = 0.035355; // motors shift from the center, m
 		const double maxThrust = 0.03 * ONE_G; // ~30 g, https://youtu.be/VtKI4Pjx8Sk?&t=78
@@ -115,6 +112,7 @@ public:
 		nodeHandle = transport::NodePtr(new transport::Node());
 		nodeHandle->Init();
 		string ns = "~/" + model->GetName();
+		// create motors output topics for debugging and plotting
 		motorPub[0] = nodeHandle->Advertise<msgs::Int>(ns + "/motor0");
 		motorPub[1] = nodeHandle->Advertise<msgs::Int>(ns + "/motor1");
 		motorPub[2] = nodeHandle->Advertise<msgs::Int>(ns + "/motor2");
