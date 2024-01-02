@@ -27,6 +27,7 @@ const char* motd =
 "rc - show RC data\n"
 "mot - show motor data\n"
 "log - dump in-RAM log\n"
+"cr - calibrate RC\n"
 "cg - calibrate gyro\n"
 "ca - calibrate accel\n"
 "fullmot <n> - test motor on all signals\n"
@@ -84,6 +85,8 @@ void doCommand(String& command, String& value) {
 			motors[MOTOR_FRONT_RIGHT], motors[MOTOR_FRONT_LEFT], motors[MOTOR_REAR_RIGHT], motors[MOTOR_REAR_LEFT]);
 	} else if (command == "log") {
 		dumpLog();
+	} else if (command == "cr") {
+		calibrateRC();
 	} else if (command == "cg") {
 		calibrateGyro();
 	} else if (command == "ca") {

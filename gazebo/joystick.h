@@ -7,10 +7,9 @@
 #include <gazebo/gazebo.hh>
 #include <iostream>
 
-// NOTE: this should be changed to the actual calibration values
-const int16_t channelNeutralMin[] = {-1290, -258, -26833, 0, 0, 0};
-const int16_t channelNeutralMax[] = {-1032, -258, -27348, 3353, 0, 0};
-const int16_t channelMax[] = {27090, 27090, 27090, 27090, 0, 0};
+// simulation calibration overrides, NOTE: use `cr` command and replace with the actual values
+const int channelNeutralOverride[] = {-258, -258, -27349, 0, 0, 1};
+const int channelMaxOverride[] = {27090, 27090, 27090, 27090, 0, 1};
 
 #define RC_CHANNEL_ROLL 0
 #define RC_CHANNEL_PITCH 1
@@ -34,6 +33,12 @@ void joystickInit() {
 		gzwarn << "Joystick not found, begin waiting for joystick..." << std::endl;
 		warnShown = true;
 	}
+
+	// apply calibration overrides
+	extern int channelNeutral[RC_CHANNELS];
+	extern int channelMax[RC_CHANNELS];
+	memcpy(channelNeutral, channelNeutralOverride, sizeof(channelNeutralOverride));
+	memcpy(channelMax, channelMaxOverride, sizeof(channelMaxOverride));
 }
 
 void joystickGet() {
@@ -51,15 +56,4 @@ void joystickGet() {
 	controls[RC_CHANNEL_MODE] = channels[RC_CHANNEL_MODE];
 
 	normalizeRC();
-}
-
-void normalizeRC() {
-	for (uint8_t i = 0; i < 4; i++) {
-		if (channels[i] >= channelNeutralMin[i] && channels[i] <= channelNeutralMax[i]) {
-			controls[i] = 0;
-		} else {
-			controls[i] = mapf(channels[i], (channelNeutralMin[i] + channelNeutralMax[i]) / 2, channelMax[i], 0, 1);
-		}
-	}
-	controls[RC_CHANNEL_THROTTLE] = constrain(controls[RC_CHANNEL_THROTTLE], 0, 1);
 }

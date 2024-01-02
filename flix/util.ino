@@ -31,3 +31,13 @@ float wrapAngle(float angle) {
 	}
 	return angle;
 }
+
+template <typename T>
+void printArray(T arr[], int size) {
+	Serial.print("{");
+	for (uint8_t i = 0; i < size; i++) {
+		Serial.print(arr[i]);
+		if (i < size - 1) Serial.print(", ");
+	}
+	Serial.println("}");
+}

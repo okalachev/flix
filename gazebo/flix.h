@@ -39,6 +39,7 @@ void controlTorque();
 void showTable();
 bool motorsActive();
 void cliTestMotor(uint8_t n);
+void printRCCal();
 
 // mocks
 void setLED(bool on) {};

@@ -52,6 +52,10 @@ public:
 		return result;
 	}
 
+	size_t print(int n) {
+		return printf("%d", n);
+	}
+
 	size_t print(float n, int digits = 2) {
 		return printf("%.*f", digits, n);
 	}

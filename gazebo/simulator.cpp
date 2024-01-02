@@ -19,7 +19,7 @@
 #include "flix.h"
 #include "util.h"
 #include "util.ino"
-#include "joystick.h"
+#include "rc.ino"
 #include "time.ino"
 #include "estimate.ino"
 #include "control.ino"
