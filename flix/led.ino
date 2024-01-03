@@ -5,6 +5,10 @@
 
 #define BLINK_PERIOD 500000
 
+#ifndef LED_BUILTIN
+#define LED_BUILTIN 2 // for ESP32 Dev Module
+#endif
+
 void setupLED() {
 	pinMode(LED_BUILTIN, OUTPUT);
 }
