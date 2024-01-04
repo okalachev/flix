@@ -49,11 +49,13 @@ Simulation in Gazebo using a plugin that runs original Arduino code is implement
 |2.7A 1S Dual Way Micro Brush ESC|Motor ESC|<img src="docs/img/esc.jpg" width=100>|4|
 |KINGKONG TINY X8|RC transmitter|<img src="docs/img/tx.jpg" width=100>|1|
 |DF500 (SBUS)|RC receiver|<img src="docs/img/rx.jpg" width=100>|1|
-||SBUS inverter|<img src="docs/img/inv.jpg" width=100>|1|
+||~~SBUS inverter~~*|<img src="docs/img/inv.jpg" width=100>|~~1~~|
 |3.7 Li-Po 850 MaH 60C|Battery|||
 ||Battery charger|<img src="docs/img/charger.jpg" width=100>|1|
 ||Wires, connectors, tape, ...||
 ||3D-printed frame parts||
+
+*\* — not needed as ESP32 supports [software pin inversion](https://github.com/bolderflight/sbus#inverted-serial).*
 
 ## Telegram-channel
 
