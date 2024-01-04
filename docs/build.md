@@ -66,9 +66,10 @@ Dependencies are [Gazebo Classic simulator](https://classic.gazebosim.org) and [
 
 1. Install [Arduino IDE](https://www.arduino.cc/en/software) (version 2 is recommended).
 2. Install ESP32 core using [Boards Manager](https://docs.arduino.cc/learn/starting-guide/cores).
-3. Install the following libraries using [Library Manager](https://docs.arduino.cc/software/ide-v2/tutorials/ide-v2-installing-a-library) (versions are significant):
+3. Install the following libraries using [Library Manager](https://docs.arduino.cc/software/ide-v2/tutorials/ide-v2-installing-a-library) (**versions are significant**):
    * `Bolder Flight Systems SBUS`, version 1.0.1.
    * `Bolder Flight Systems MPU9250`, version 1.0.1. <!-- TODO: actually the fork is needed -->
+   * `MAVLink`, version 2.0.1.
 4. Clone the project using git or [download the source code as a ZIP archive](https://codeload.github.com/okalachev/flix/zip/refs/heads/master).
 5. Open the downloaded Arduino sketch `flix/flix.ino` in Arduino IDE.
 6. [Build and upload](https://docs.arduino.cc/software/ide-v2/tutorials/getting-started/ide-v2-uploading-a-sketch) the firmware using Arduino IDE.

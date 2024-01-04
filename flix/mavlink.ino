@@ -5,7 +5,7 @@
 
 #if WIFI_ENABLED == 1
 
-#include "mavlink/common/mavlink.h"
+#include <MAVLink.h>
 
 #define SYSTEM_ID 1
 #define PERIOD_SLOW 1.0
