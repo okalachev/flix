@@ -1,5 +1,5 @@
 BOARD = esp32:esp32:d1_mini32
-PORT := $(wildcard /dev/serial/by-id/usb-Silicon_Labs_CP2104_USB_to_UART_Bridge_Controller_* /dev/serial/by-id/usb-1a86_USB_Single_Serial_* /dev/cu.usbserial-*)
+PORT := $(wildcard /dev/serial/by-id/usb-Silicon_Labs_CP21* /dev/serial/by-id/usb-1a86_USB_Single_Serial_* /dev/cu.usbserial-*)
 PORT := $(strip $(PORT))
 
 build: .dependencies
