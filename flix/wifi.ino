@@ -8,8 +8,6 @@
 #include <WiFi.h>
 #include <WiFiClient.h>
 #include <WiFiAP.h>
-#include "SBUS.h"
-#include "mavlink/common/mavlink.h"
 
 #define WIFI_SSID "flix"
 #define WIFI_PASSWORD "flixwifi"
