@@ -137,10 +137,12 @@ void controlRate() {
 	}
 
 	Vector ratesFiltered = ratesFilter.update(rates);
+	Vector error = ratesTarget - ratesFiltered;
 
-	torqueTarget.x = rollRatePID.update(ratesTarget.x - ratesFiltered.x, dt); // un-normalized "torque"
-	torqueTarget.y = pitchRatePID.update(ratesTarget.y - ratesFiltered.y, dt);
-	torqueTarget.z = yawRatePID.update(ratesTarget.z - ratesFiltered.z, dt);
+	// Calculate desired torque, where 0 - no torque, 1 - maximum possible torque
+	torqueTarget.x = rollRatePID.update(error.x, dt);
+	torqueTarget.y = pitchRatePID.update(error.y, dt);
+	torqueTarget.z = yawRatePID.update(error.z, dt);
 }
 
 void controlTorque() {
