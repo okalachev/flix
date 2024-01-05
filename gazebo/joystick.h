@@ -54,6 +54,4 @@ void joystickGet() {
 	}
 	channels[RC_CHANNEL_MODE] = SDL_JoystickGetButton(joystick, 0) ? 1 : 0;
 	controls[RC_CHANNEL_MODE] = channels[RC_CHANNEL_MODE];
-
-	normalizeRC();
 }

@@ -67,7 +67,7 @@ public:
 		acc = this->accFilter.update(flu2frd(imu->LinearAcceleration()));
 
 		// read rc
-		joystickGet();
+		readRC();
 		controls[RC_CHANNEL_MODE] = 1; // 0 acro, 1 stab
 		controls[RC_CHANNEL_AUX] = 1; // armed
 
