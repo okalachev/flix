@@ -1,0 +1,2 @@
+# https://github.com/github-linguist/linguist/blob/master/docs/overrides.md
+*.h linguist-language=C++
