@@ -19,9 +19,9 @@
 #define RC_CHANNEL_MODE 5
 
 #define MOTOR_REAR_LEFT 0
-#define MOTOR_FRONT_LEFT 3
-#define MOTOR_FRONT_RIGHT 2
 #define MOTOR_REAR_RIGHT 1
+#define MOTOR_FRONT_RIGHT 2
+#define MOTOR_FRONT_LEFT 3
 
 float t = NAN; // current step time, s
 float dt; // time delta from previous step, s

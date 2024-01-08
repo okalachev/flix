@@ -6,8 +6,8 @@
 #if WIFI_ENABLED == 1
 
 #include <WiFi.h>
-#include <WiFiClient.h>
 #include <WiFiAP.h>
+#include <WiFiUdp.h>
 
 #define WIFI_SSID "flix"
 #define WIFI_PASSWORD "flixwifi"
