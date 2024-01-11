@@ -39,5 +39,5 @@ void applyAcc() {
 
 void signalizeHorizontality() {
 	float angle = Vector::angleBetweenVectors(attitude.rotate(Vector(0, 0, -1)), Vector(0, 0, -1));
-	setLED(angle < 15 * DEG_TO_RAD);
+	setLED(angle < radians(15));
 }

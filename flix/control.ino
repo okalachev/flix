@@ -27,10 +27,10 @@
 #define PITCH_I ROLL_I
 #define PITCH_D ROLL_D
 #define YAW_P 3
-#define PITCHRATE_MAX 360 * DEG_TO_RAD
-#define ROLLRATE_MAX 360 * DEG_TO_RAD
-#define YAWRATE_MAX 360 * DEG_TO_RAD
-#define MAX_TILT 30 * DEG_TO_RAD
+#define PITCHRATE_MAX radians(360)
+#define ROLLRATE_MAX radians(360)
+#define YAWRATE_MAX radians(360)
+#define MAX_TILT radians(30)
 
 #define RATES_LFP_ALPHA 0.8 // cutoff frequency ~ 250 Hz
 #define RATES_D_LPF_ALPHA 0.2 // cutoff frequency ~ 40 Hz
