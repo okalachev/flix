@@ -42,7 +42,7 @@ void sendMavlink() {
 		sendMessage(&msg);
 
 		float actuator[32];
-		memcpy(motors, actuator, 4 * sizeof(float));
+		memcpy(actuator, motors, sizeof(motors));
 		mavlink_msg_actuator_output_status_pack(SYSTEM_ID, MAV_COMP_ID_AUTOPILOT1, &msg, time, 4, actuator);
 		sendMessage(&msg);
 
