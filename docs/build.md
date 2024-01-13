@@ -98,6 +98,10 @@ Dependencies are [Gazebo Classic simulator](https://classic.gazebosim.org) and [
 
 See other available Make commands in the [Makefile](../Makefile).
 
+### Firmware code structure
+
+See [firmware overview](firmware.md) for more details.
+
 ## Setup
 
 Before flight in simulation and on the real drone, you need to calibrate your remote control. Use drone's command line interface (`make monitor` on the real drone) and type `cr` command. Copy calibration results to the source code (`flix/rc.ino` and/or `gazebo/joystick.h`).

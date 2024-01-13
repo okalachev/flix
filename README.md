@@ -2,7 +2,7 @@
 
 **flix** (*flight + X*) — making an open source ESP32-based quadcopter from scratch.
 
-<img src="docs/img/flix.jpg" width=500>
+<img src="docs/img/flix.jpg" width=500 alt="Flix quadcopter">
 
 ## Features
 
@@ -31,11 +31,11 @@ See YouTube demo video: https://youtu.be/8GzzIQ3C6DQ.
 
 Simulation in Gazebo using a plugin that runs original Arduino code is implemented:
 
-<img src="docs/img/simulator.png" width=500>
+<img src="docs/img/simulator.png" width=500 alt="Flix simulator">
 
 ## Schematics
 
-<img src="docs/img/schematics.svg" width=800>
+<img src="docs/img/schematics.svg" width=800 alt="Flix schematics">
 
 You can also check a user contributed [variant of complete circuit diagram](https://github.com/okalachev/flix/issues/3#issue-2066079898) of the drone.
 
