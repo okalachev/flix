@@ -39,6 +39,8 @@ Simulation in Gazebo using a plugin that runs original Arduino code is implement
 
 You can also check a user contributed [variant of complete circuit diagram](https://github.com/okalachev/flix/issues/3#issue-2066079898) of the drone.
 
+*\* — SBUS inverter is not needed as ESP32 supports [software pin inversion](https://github.com/bolderflight/sbus#inverted-serial).*
+
 ## Components (version 0)
 
 |Component|Type|Image|Quantity|
