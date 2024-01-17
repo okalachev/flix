@@ -12,9 +12,10 @@
 * In-RAM logging.
 * Command line interface through USB port.
 * Wi-Fi support.
+* MAVLink support.
+* Control using mobile phone (with QGroundControl app).
 * ESCs with reverse mode support.
 * *Textbook and videos for students on writing a flight controller\*.*
-* *MAVLink support\*.*
 * *Completely 3D-printed frame*.*
 * *Position control and autonomous flights using external camera\**.
 * [Building and running instructions](docs/build.md).

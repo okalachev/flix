@@ -20,6 +20,7 @@ void setupWiFi() {
 	Serial.println("Setup Wi-Fi");
 	WiFi.softAP(WIFI_SSID, WIFI_PASSWORD);
 	IPAddress myIP = WiFi.softAPIP();
+	udp.begin(WIFI_UDP_PORT);
 }
 
 void sendWiFi(const uint8_t *buf, int len) {
@@ -27,6 +28,11 @@ void sendWiFi(const uint8_t *buf, int len) {
 	udp.beginPacket(WIFI_UDP_IP, WIFI_UDP_PORT);
 	udp.write(buf, len);
 	udp.endPacket();
+}
+
+int receiveWiFi(uint8_t *buf, int len) {
+	udp.parsePacket();
+	return udp.read(buf, len);
 }
 
 #endif

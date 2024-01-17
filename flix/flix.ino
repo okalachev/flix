@@ -60,7 +60,7 @@ void loop() {
 	sendMotors();
 	parseInput();
 #if WIFI_ENABLED == 1
-	sendMavlink();
+	processMavlink();
 #endif
 	logData();
 }

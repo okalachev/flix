@@ -10,6 +10,12 @@
 #define SYSTEM_ID 1
 #define PERIOD_SLOW 1.0
 #define PERIOD_FAST 0.1
+#define MAVLINK_CONTROL_SCALE 0.7f
+
+void processMavlink() {
+	sendMavlink();
+	receiveMavlink();
+}
 
 void sendMavlink() {
 	static float lastSlow = 0;
@@ -58,6 +64,34 @@ void sendMessage(const void *msg) {
 	uint8_t buf[MAVLINK_MAX_PACKET_LEN];
 	int len = mavlink_msg_to_send_buffer(buf, (mavlink_message_t *)msg);
 	sendWiFi(buf, len);
+}
+
+void receiveMavlink() {
+	uint8_t buf[MAVLINK_MAX_PACKET_LEN];
+	int len = receiveWiFi(buf, MAVLINK_MAX_PACKET_LEN);
+
+	// New packet, parse it
+	mavlink_message_t msg;
+	mavlink_status_t status;
+	for (int i = 0; i < len; i++) {
+		if (mavlink_parse_char(MAVLINK_COMM_0, buf[i], &msg, &status)) {
+			handleMavlink(&msg);
+		}
+	}
+}
+
+void handleMavlink(const void *_msg) {
+	mavlink_message_t *msg = (mavlink_message_t *)_msg;
+	if (msg->msgid == MAVLINK_MSG_ID_MANUAL_CONTROL) {
+		mavlink_manual_control_t manualControl;
+		mavlink_msg_manual_control_decode(msg, &manualControl);
+		controls[RC_CHANNEL_THROTTLE] = manualControl.z / 1000.0f;
+		controls[RC_CHANNEL_PITCH] = manualControl.x / 1000.0f * MAVLINK_CONTROL_SCALE;
+		controls[RC_CHANNEL_ROLL] = manualControl.y / 1000.0f * MAVLINK_CONTROL_SCALE;
+		controls[RC_CHANNEL_YAW] = manualControl.r / 1000.0f * MAVLINK_CONTROL_SCALE;
+		controls[RC_CHANNEL_MODE] = 1; // STAB mode
+		controls[RC_CHANNEL_AUX] = 1; // armed
+	}
 }
 
 #endif
