@@ -4,6 +4,8 @@
 // Utility functions
 
 #include "math.h"
+#include <soc/soc.h>
+#include <soc/rtc_cntl_reg.h>
 
 float mapf(long x, long in_min, long in_max, float out_min, float out_max) {
 	return (float)(x - in_min) * (out_max - out_min) / (float)(in_max - in_min) + out_min;
@@ -40,4 +42,9 @@ void printArray(T arr[], int size) {
 		if (i < size - 1) Serial.print(", ");
 	}
 	Serial.println("}");
+}
+
+// Disable reset on low voltage
+void disableBrownOut() {
+	WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0);
 }
