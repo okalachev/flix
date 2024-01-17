@@ -22,7 +22,8 @@ void setupWiFi() {
 	IPAddress myIP = WiFi.softAPIP();
 }
 
-inline void sendWiFi(const uint8_t *buf, size_t len) {
+void sendWiFi(const uint8_t *buf, int len) {
+// if (!udp.beginPacket(WIFI_UDP_IP, WIFI_UDP_PORT)) return;
 	udp.beginPacket(WIFI_UDP_IP, WIFI_UDP_PORT);
 	udp.write(buf, len);
 	udp.endPacket();

@@ -54,9 +54,9 @@ void sendMavlink() {
 	}
 }
 
-inline void sendMessage(const void *msg) {
+void sendMessage(const void *msg) {
 	uint8_t buf[MAVLINK_MAX_PACKET_LEN];
-	uint16_t len = mavlink_msg_to_send_buffer(buf, (mavlink_message_t *)msg);
+	int len = mavlink_msg_to_send_buffer(buf, (mavlink_message_t *)msg);
 	sendWiFi(buf, len);
 }
 

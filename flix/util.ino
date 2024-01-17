@@ -3,7 +3,7 @@
 
 // Utility functions
 
-#include "math.h"
+#include <math.h>
 #include <soc/soc.h>
 #include <soc/rtc_cntl_reg.h>
 
@@ -23,7 +23,7 @@ float randomFloat(float min, float max) {
 	return min + (max - min) * (float)rand() / RAND_MAX;
 }
 
-// wrap angle to [-PI, PI)
+// Wrap angle to [-PI, PI)
 float wrapAngle(float angle) {
 	angle = fmodf(angle, 2 * PI);
 	if (angle > PI) {
