@@ -7,12 +7,12 @@
 #include <MPU9250.h>
 
 #define IMU_CS_PIN 4 // chip-select pin for IMU SPI connection
-#define CALIBRATE_GYRO_ON_START true
+#define LOAD_GYRO_CAL false
 
 MPU9250 IMU(SPI, IMU_CS_PIN);
 
 void setupIMU() {
-	Serial.println("Setup IMU");
+	Serial.println("Setup IMU, stand still");
 
 	auto status = IMU.begin();
 	if (status < 0) {
@@ -22,12 +22,7 @@ void setupIMU() {
 		}
 	}
 
-	if (CALIBRATE_GYRO_ON_START) {
-		calibrateGyro();
-	} else {
-		loadGyroCal();
-	}
-
+	if (LOAD_GYRO_CAL) loadGyroCal();
 	loadAccelCal();
 
 	IMU.setSrd(0); // set sample rate to 1000 Hz
@@ -54,7 +49,6 @@ bool readIMU() {
 
 void calibrateGyro() {
 	Serial.println("Calibrating gyro, stand still");
-	delay(500);
 	int status = IMU.calibrateGyro();
 	Serial.printf("Calibration status: %d\n", status);
 	IMU.setSrd(0);
