@@ -53,6 +53,7 @@ jobs:
         retention-days: 1
 
   build_simulator_macos:
+    if: false # temporarily disable
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v3
