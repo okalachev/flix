@@ -77,7 +77,7 @@ void interpretRC() {
 		mode = STAB;
 	}
 
-	armed = controls[RC_CHANNEL_THROTTLE] >= 0.05 && controls[RC_CHANNEL_AUX] >= 0.5;
+	armed = controls[RC_CHANNEL_THROTTLE] >= 0.05 && controls[RC_CHANNEL_ARMED] >= 0.5;
 	thrustTarget = controls[RC_CHANNEL_THROTTLE];
 
 	if (mode == ACRO) {

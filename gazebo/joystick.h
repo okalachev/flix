@@ -15,7 +15,7 @@ const int channelMaxOverride[] = {27090, 27090, 27090, 27090, 0, 1};
 #define RC_CHANNEL_PITCH 1
 #define RC_CHANNEL_THROTTLE 2
 #define RC_CHANNEL_YAW 3
-#define RC_CHANNEL_AUX 4
+#define RC_CHANNEL_ARMED 4
 #define RC_CHANNEL_MODE 5
 
 SDL_Joystick *joystick;

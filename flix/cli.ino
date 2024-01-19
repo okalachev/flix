@@ -73,12 +73,12 @@ void doCommand(String& command, String& value) {
 		Serial.printf("acc: %f %f %f\n", acc.x, acc.y, acc.z);
 		printIMUCal();
 	} else if (command == "rc") {
-		Serial.printf("Raw: throttle %d yaw %d pitch %d roll %d aux %d mode %d\n",
+		Serial.printf("Raw: throttle %d yaw %d pitch %d roll %d armed %d mode %d\n",
 			channels[RC_CHANNEL_THROTTLE], channels[RC_CHANNEL_YAW], channels[RC_CHANNEL_PITCH],
-			channels[RC_CHANNEL_ROLL], channels[RC_CHANNEL_AUX], channels[RC_CHANNEL_MODE]);
-		Serial.printf("Control: throttle %f yaw %f pitch %f roll %f aux %f mode %f\n",
+			channels[RC_CHANNEL_ROLL], channels[RC_CHANNEL_ARMED], channels[RC_CHANNEL_MODE]);
+		Serial.printf("Control: throttle %f yaw %f pitch %f roll %f armed %f mode %f\n",
 			controls[RC_CHANNEL_THROTTLE], controls[RC_CHANNEL_YAW], controls[RC_CHANNEL_PITCH],
-			controls[RC_CHANNEL_ROLL], controls[RC_CHANNEL_AUX], controls[RC_CHANNEL_MODE]);
+			controls[RC_CHANNEL_ROLL], controls[RC_CHANNEL_ARMED], controls[RC_CHANNEL_MODE]);
 		Serial.printf("Mode: %s\n", getModeName());
 	} else if (command == "mot") {
 		Serial.printf("MOTOR front-right %f front-left %f rear-right %f rear-left %f\n",

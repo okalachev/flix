@@ -90,7 +90,7 @@ void handleMavlink(const void *_msg) {
 		controls[RC_CHANNEL_ROLL] = manualControl.y / 1000.0f * MAVLINK_CONTROL_SCALE;
 		controls[RC_CHANNEL_YAW] = manualControl.r / 1000.0f * MAVLINK_CONTROL_SCALE;
 		controls[RC_CHANNEL_MODE] = 1; // STAB mode
-		controls[RC_CHANNEL_AUX] = 1; // armed
+		controls[RC_CHANNEL_ARMED] = 1; // armed
 	}
 }
 
