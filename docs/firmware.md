@@ -18,7 +18,7 @@ The main loop is running at 1000 Hz. All the dataflow is happening through globa
 
 Firmware source files are located in `flix` directory. The key files are:
 
-* [`flix.ino`](../flix/flix.ino) — main entry point, Arduino sketch. Include global variables definition and the main loop.
+* [`flix.ino`](../flix/flix.ino) — main entry point, Arduino sketch. Includes global variables definition and the main loop.
 * [`imu.ino`](../flix/imu.ino) — reading data from the IMU sensor (gyroscope and accelerometer), IMU calibration.
 * [`rc.ino`](../flix/rc.ino) — reading data from the RC receiver, RC calibration.
 * [`estimate.ino`](../flix/estimate.ino) — drone's attitude estimation, complementary filter.
