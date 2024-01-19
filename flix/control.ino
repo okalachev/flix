@@ -68,10 +68,11 @@ void control() {
 }
 
 void interpretRC() {
+	// NOTE: put ACRO or MANUAL modes there if you want to use them
 	if (controls[RC_CHANNEL_MODE] < 0.25) {
-		mode = MANUAL;
+		mode = STAB;
 	} else if (controls[RC_CHANNEL_MODE] < 0.75) {
-		mode = ACRO;
+		mode = STAB;
 	} else {
 		mode = STAB;
 	}
