@@ -27,10 +27,11 @@ gazebo/build cmake: gazebo/CMakeLists.txt
 build_simulator: gazebo/build
 	make -C gazebo/build
 
+GAZEBO ?= gazebo
 simulator: build_simulator
 	GAZEBO_MODEL_PATH=$$GAZEBO_MODEL_PATH:${CURDIR}/gazebo/models \
 	GAZEBO_PLUGIN_PATH=$$GAZEBO_PLUGIN_PATH:${CURDIR}/gazebo/build \
-	gazebo --verbose ${CURDIR}/gazebo/flix.world
+	$(GAZEBO) --verbose ${CURDIR}/gazebo/flix.world
 
 log:
 	PORT=$(PORT) tools/grab_log.py

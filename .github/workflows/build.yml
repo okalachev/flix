@@ -46,6 +46,8 @@ jobs:
       run: sudo apt-get install libsdl2-dev
     - name: Build simulator
       run: make build_simulator
+    - name: Run simulator
+      run: timeout --preserve-status 30 make simulator GAZEBO=gzserver || [ $? -eq 143 ]
     - uses: actions/upload-artifact@v3
       with:
         name: gazebo-plugin-binary
@@ -53,7 +55,6 @@ jobs:
         retention-days: 1
 
   build_simulator_macos:
-    if: false # temporarily disable
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v3
@@ -70,3 +71,7 @@ jobs:
       run: brew install sdl2
     - name: Build simulator
       run: make build_simulator
+    - name: Run simulator
+      run: |
+        brew install coreutils
+        timeout --preserve-status 30 make simulator GAZEBO=gzserver || [ $? -eq 143 ]
