@@ -11,6 +11,7 @@
 #define PERIOD_SLOW 1.0
 #define PERIOD_FAST 0.1
 #define MAVLINK_CONTROL_SCALE 0.7f
+#define MAVLINK_CONTROL_YAW_DEAD_ZONE 0.1f
 
 void processMavlink() {
 	sendMavlink();
@@ -91,6 +92,8 @@ void handleMavlink(const void *_msg) {
 		controls[RC_CHANNEL_YAW] = manualControl.r / 1000.0f * MAVLINK_CONTROL_SCALE;
 		controls[RC_CHANNEL_MODE] = 1; // STAB mode
 		controls[RC_CHANNEL_ARMED] = 1; // armed
+
+		if (abs(controls[RC_CHANNEL_YAW]) < MAVLINK_CONTROL_YAW_DEAD_ZONE) controls[RC_CHANNEL_YAW] = 0;
 	}
 }
 
