@@ -41,10 +41,10 @@ void joystickInit() {
 	memcpy(channelMax, channelMaxOverride, sizeof(channelMaxOverride));
 }
 
-void joystickGet() {
+bool joystickGet() {
 	if (!joystickInitialized) {
 		joystickInit();
-		return;
+		return false;
 	}
 
 	SDL_JoystickUpdate();
@@ -54,4 +54,5 @@ void joystickGet() {
 	}
 	channels[RC_CHANNEL_MODE] = SDL_JoystickGetButton(joystick, 0) ? 1 : 0;
 	controls[RC_CHANNEL_MODE] = channels[RC_CHANNEL_MODE];
+	return true;
 }

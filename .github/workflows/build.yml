@@ -39,6 +39,8 @@ jobs:
   build_simulator:
     runs-on: ubuntu-latest
     steps:
+    - name: Install Arduino CLI
+      uses: arduino/setup-arduino-cli@v1.1.1
     - uses: actions/checkout@v3
     - name: Install Gazebo
       run: curl -sSL http://get.gazebosim.org | sh
@@ -55,6 +57,8 @@ jobs:
   build_simulator_macos:
     runs-on: macos-latest
     steps:
+    - name: Install Arduino CLI
+      run: brew install arduino-cli
     - uses: actions/checkout@v3
     - name: Clean up python binaries # Workaround for https://github.com/actions/setup-python/issues/577
       run: |

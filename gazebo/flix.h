@@ -8,6 +8,7 @@
 #include "vector.h"
 #include "quaternion.h"
 #include "Arduino.h"
+#include "wifi.h"
 
 #define RC_CHANNELS 6
 
@@ -15,6 +16,8 @@
 #define MOTOR_FRONT_LEFT 3
 #define MOTOR_FRONT_RIGHT 2
 #define MOTOR_REAR_RIGHT 1
+
+#define WIFI_ENABLED 1
 
 float t = NAN;
 float dt;
@@ -40,6 +43,11 @@ void showTable();
 bool motorsActive();
 void cliTestMotor(uint8_t n);
 void printRCCal();
+void processMavlink();
+void sendMavlink();
+void sendMessage(const void *msg);
+void receiveMavlink();
+void handleMavlink(const void *_msg);
 
 // mocks
 void setLED(bool on) {};

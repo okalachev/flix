@@ -25,6 +25,7 @@
 #include "control.ino"
 #include "log.ino"
 #include "cli.ino"
+#include "mavlink.ino"
 #include "lpf.h"
 
 using ignition::math::Vector3d;
@@ -78,6 +79,7 @@ public:
 
 		control();
 		parseInput();
+		processMavlink();
 
 		applyMotorForces();
 		publishTopics();
