@@ -65,6 +65,10 @@ cd flix
    make simulator
    ```
 
+### Flight
+
+Use USB remote control or QGroundControl mobile app (with *Virtual Joystick* setting enabled) to control the drone.
+
 ## Firmware
 
 ### Arduino IDE (Windows, Linux, macOS)
