@@ -9,11 +9,15 @@ cd flix
 
 ## Simulation
 
-Dependencies are [Gazebo Classic simulator](https://classic.gazebosim.org) and [SDL2](https://www.libsdl.org) library.
-
 ### Ubuntu
 
-1. Install Gazebo 11:
+1. Install Arduino CLI:
+
+   ```bash
+   curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | BINDIR=~/local/bin sh
+   ```
+
+2. Install Gazebo 11:
 
    ```bash
    curl -sSL http://get.gazebosim.org | sh
@@ -26,13 +30,13 @@ Dependencies are [Gazebo Classic simulator](https://classic.gazebosim.org) and [
    source ~/.bashrc
    ```
 
-2. Install SDL2:
+3. Install SDL2 and other dependencies:
 
    ```bash
    sudo apt-get update && sudo apt-get install build-essential libsdl2-dev
    ```
 
-3. Run the simulation:
+4. Run the simulation:
 
    ```bash
    make simulator
@@ -46,10 +50,11 @@ Dependencies are [Gazebo Classic simulator](https://classic.gazebosim.org) and [
    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
    ```
 
-2. Install Gazebo 11 and SDL2:
+2. Install Arduino CLI, Gazebo 11 and SDL2:
 
    ```bash
    brew tap osrf/simulation
+   brew install arduino-cli
    brew install gazebo11
    brew install sdl2
    ```
@@ -59,6 +64,10 @@ Dependencies are [Gazebo Classic simulator](https://classic.gazebosim.org) and [
    ```bash
    make simulator
    ```
+
+### Flight
+
+Use USB remote control or QGroundControl mobile app (with *Virtual Joystick* setting enabled) to control the drone.
 
 ## Firmware
 

@@ -24,7 +24,7 @@ gazebo/build cmake: gazebo/CMakeLists.txt
 	mkdir -p gazebo/build
 	cd gazebo/build && cmake ..
 
-build_simulator: gazebo/build
+build_simulator: .dependencies gazebo/build
 	make -C gazebo/build
 
 GAZEBO ?= gazebo

@@ -25,6 +25,7 @@
 #include "control.ino"
 #include "log.ino"
 #include "cli.ino"
+#include "mavlink.ino"
 #include "lpf.h"
 
 using ignition::math::Vector3d;
@@ -78,6 +79,7 @@ public:
 
 		control();
 		parseInput();
+		processMavlink();
 
 		applyMotorForces();
 		publishTopics();
@@ -101,7 +103,7 @@ public:
 		body->AddLinkForce(Vector3d(0.0, 0.0, mrr), Vector3d(-dist, -dist, 0.0));
 
 		// torque
-		const double maxTorque = 0.0024; // 24 g*cm ≈ 24 mN*m
+		const double maxTorque = 0.0024 * ONE_G; // ~24 g*cm
 		body->AddRelativeTorque(Vector3d(0.0, 0.0, scale0 * maxTorque * motors[MOTOR_FRONT_LEFT]));
 		body->AddRelativeTorque(Vector3d(0.0, 0.0, scale1 * -maxTorque * motors[MOTOR_FRONT_RIGHT]));
 		body->AddRelativeTorque(Vector3d(0.0, 0.0, scale2 * -maxTorque * motors[MOTOR_REAR_LEFT]));

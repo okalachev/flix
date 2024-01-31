@@ -15,3 +15,7 @@ set(CMAKE_BUILD_TYPE RelWithDebInfo)
 add_library(flix SHARED simulator.cpp)
 target_link_libraries(flix ${GAZEBO_LIBRARIES} ${SDL2_LIBRARIES})
 target_include_directories(flix PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+
+# Include dir for MAVLink-Arduino library
+target_include_directories(flix PUBLIC $ENV{HOME}/Arduino/libraries/MAVLink)
+target_include_directories(flix PUBLIC $ENV{HOME}/Documents/Arduino/libraries/MAVLink)

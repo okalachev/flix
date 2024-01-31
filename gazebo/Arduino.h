@@ -122,6 +122,8 @@ public:
 		}
 		return -1;
 	}
+
+	void setRxInvert(bool invert) {};
 };
 
 HardwareSerial Serial, Serial2;
