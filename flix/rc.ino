@@ -5,8 +5,6 @@
 
 #include <SBUS.h>
 
-#define INVERT_SERIAL true // false if external SBUS invertor is used
-
 // NOTE: use `cr` command and replace with the actual values
 int channelNeutral[] = {995, 883, 200, 972, 512, 512};
 int channelMax[] = {1651, 1540, 1713, 1630, 1472, 1472};
@@ -16,7 +14,7 @@ SBUS RC(Serial2);
 void setupRC() {
 	Serial.println("Setup RC");
 	RC.begin();
-	Serial2.setRxInvert(INVERT_SERIAL);
+	Serial2.setRxInvert(true); // SBUS uses inverted signal
 }
 
 void readRC() {
