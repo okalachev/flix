@@ -9,16 +9,13 @@
 #define MOTOR_1_PIN 13
 #define MOTOR_2_PIN 14
 #define MOTOR_3_PIN 15
-
 #define PWM_FREQUENCY 200
 #define PWM_RESOLUTION 8
-
 #define PWM_NEUTRAL 1500
-
-const uint16_t pwmMin[] = {1600, 1600, 1600, 1600};
-const uint16_t pwmMax[] = {2300, 2300, 2300, 2300};
-const uint16_t pwmReverseMin[] = {1390, 1440, 1440, 1440};
-const uint16_t pwmReverseMax[] = {1100, 1100, 1100, 1100};
+#define PWM_MIN 1600
+#define PWM_MAX 2300
+#define PWM_REVERSE_MIN 1440
+#define PWM_REVERSE_MAX 1100
 
 void setupMotors() {
 	Serial.println("Setup Motors");
@@ -43,9 +40,9 @@ uint16_t getPWM(float val, int n) {
 	if (val == 0) {
 		return PWM_NEUTRAL;
 	} else if (val > 0) {
-		return mapff(val, 0, 1, pwmMin[n], pwmMax[n]);
+		return mapff(val, 0, 1, PWM_MIN, PWM_MAX);
 	} else {
-		return mapff(val, 0, -1, pwmReverseMin[n], pwmReverseMax[n]);
+		return mapff(val, 0, -1, PWM_REVERSE_MIN, PWM_REVERSE_MAX);
 	}
 }
 
