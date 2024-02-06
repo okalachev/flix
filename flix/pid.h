@@ -21,8 +21,7 @@ public:
 
 	PID(float p, float i, float d, float windup = 0, float dAlpha = 1) : p(p), i(i), d(d), windup(windup), lpf(dAlpha) {};
 
-	float update(float error, float dt)
-	{
+	float update(float error, float dt) {
 		integral += error * dt;
 
 		if (isfinite(prevError) && dt > 0) {
@@ -38,8 +37,7 @@ public:
 		return p * error + constrain(i * integral, -windup, windup) + d * derivative; // PID
 	}
 
-	void reset()
-	{
+	void reset() {
 		prevError = NAN;
 		integral = 0;
 		derivative = 0;

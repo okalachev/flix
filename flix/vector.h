@@ -13,76 +13,62 @@ public:
 
 	Vector(float x, float y, float z): x(x), y(y), z(z) {};
 
-	float norm() const
-	{
+	float norm() const {
 		return sqrt(x * x + y * y + z * z);
 	}
 
-	bool zero() const
-	{
+	bool zero() const {
 		return x == 0 && y == 0 && z == 0;
 	}
 
-	void normalize()
-	{
+	void normalize() {
 		float n = norm();
 		x /= n;
 		y /= n;
 		z /= n;
 	}
 
-	Vector operator * (const float b) const
-	{
+	Vector operator * (const float b) const {
 		return Vector(x * b, y * b, z * b);
 	}
 
-	Vector operator / (const float b) const
-	{
+	Vector operator / (const float b) const {
 		return Vector(x / b, y / b, z / b);
 	}
 
-	Vector operator + (const Vector& b) const
-	{
+	Vector operator + (const Vector& b) const {
 		return Vector(x + b.x, y + b.y, z + b.z);
 	}
 
-	Vector operator - (const Vector& b) const
-	{
+	Vector operator - (const Vector& b) const {
 		return Vector(x - b.x, y - b.y, z - b.z);
 	}
 
-	inline bool operator == (const Vector& b) const
-	{
+	inline bool operator == (const Vector& b) const {
 		return x == b.x && y == b.y && z == b.z;
 	}
 
-	inline bool operator != (const Vector& b) const
-	{
+	inline bool operator != (const Vector& b) const {
 		return !(*this == b);
 	}
 
-	inline bool finite() const
-	{
+	inline bool finite() const {
 		return isfinite(x) && isfinite(y) && isfinite(z);
 	}
 
-	static float dot(const Vector& a, const Vector& b)
-	{
+	static float dot(const Vector& a, const Vector& b) {
 		return a.x * b.x + a.y * b.y + a.z * b.z;
 	}
 
-	static Vector cross(const Vector& a, const Vector& b)
-	{
+	static Vector cross(const Vector& a, const Vector& b) {
 		return Vector(a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z, a.x * b.y - a.y * b.x);
 	}
 
-	static float angleBetweenVectors(const Vector& a, const Vector& b)
-	{
+	static float angleBetweenVectors(const Vector& a, const Vector& b) {
 		return acos(constrain(dot(a, b) / (a.norm() * b.norm()), -1, 1));
 	}
 
-	static Vector angularRatesBetweenVectors(const Vector& u, const Vector& v)
-	{
+	static Vector angularRatesBetweenVectors(const Vector& u, const Vector& v) {
 		Vector direction = cross(u, v);
 		direction.normalize();
 		float angle = angleBetweenVectors(u, v);

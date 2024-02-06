@@ -15,8 +15,7 @@ public:
 
 	Quaternion(float w, float x, float y, float z): w(w), x(x), y(y), z(z) {};
 
-	static Quaternion fromAxisAngle(float a, float b, float c, float angle)
-	{
+	static Quaternion fromAxisAngle(float a, float b, float c, float angle) {
 		float halfAngle = angle * 0.5;
 		float sin2 = sin(halfAngle);
 		float cos2 = cos(halfAngle);
@@ -24,16 +23,14 @@ public:
 		return Quaternion(cos2, a * sinNorm, b * sinNorm, c * sinNorm);
 	}
 
-	static Quaternion fromAngularRates(const Vector& rates)
-	{
+	static Quaternion fromAngularRates(const Vector& rates) {
 		if (rates.zero()) {
 			return Quaternion();
 		}
 		return Quaternion::fromAxisAngle(rates.x, rates.y, rates.z, rates.norm());
 	}
 
-	static Quaternion fromEulerZYX(float x, float y, float z)
-	{
+	static Quaternion fromEulerZYX(float x, float y, float z) {
 		float cx = cos(x / 2);
 		float cy = cos(y / 2);
 		float cz = cos(z / 2);
@@ -48,8 +45,7 @@ public:
 			cx * cy * sz - sx * sy * cz);
 	}
 
-	static Quaternion fromBetweenVectors(Vector u, Vector v)
-	{
+	static Quaternion fromBetweenVectors(Vector u, Vector v) {
 		float dot = u.x * v.x + u.y * v.y + u.z * v.z;
 		float w1 = u.y * v.z - u.z * v.y;
 		float w2 = u.z * v.x - u.x * v.z;
@@ -64,24 +60,21 @@ public:
 		return ret;
 	}
 
-	void toAxisAngle(float& a, float& b, float& c, float& angle)
-	{
+	void toAxisAngle(float& a, float& b, float& c, float& angle) {
 		angle = acos(w) * 2;
 		a = x / sin(angle / 2);
 		b = y / sin(angle / 2);
 		c = z / sin(angle / 2);
 	}
 
-	Vector toEulerZYX() const
-	{
+	Vector toEulerZYX() const {
 		return Vector(
 			atan2(2 * (w * x + y * z), 1 - 2 * (x * x + y * y)),
 			asin(2 * (w * y - z * x)),
 			atan2(2 * (w * z + x * y), 1 - 2 * (y * y + z * z)));
 	}
 
-	float getYaw() const
-	{
+	float getYaw() const {
 		// https://github.com/ros/geometry2/blob/589caf083cae9d8fae7effdb910454b4681b9ec1/tf2/include/tf2/impl/utils.h#L122
 		float yaw;
 		float sqx = x * x;
@@ -101,15 +94,13 @@ public:
 		return yaw;
 	}
 
-	void setYaw(float yaw)
-	{
+	void setYaw(float yaw) {
 		// TODO: optimize?
 		Vector euler = toEulerZYX();
 		(*this) = Quaternion::fromEulerZYX(euler.x, euler.y, yaw);
 	}
 
-	Quaternion& operator *= (const Quaternion& q)
-	{
+	Quaternion& operator *= (const Quaternion& q) {
 		Quaternion ret(
 			w * q.w - x * q.x - y * q.y - z * q.z,
 			w * q.x + x * q.w + y * q.z - z * q.y,
@@ -118,8 +109,7 @@ public:
 		return (*this = ret);
 	}
 
-	Quaternion operator * (const Quaternion& q)
-	{
+	Quaternion operator * (const Quaternion& q) {
 		return Quaternion(
 			w * q.w - x * q.x - y * q.y - z * q.z,
 			w * q.x + x * q.w + y * q.z - z * q.y,
@@ -127,8 +117,7 @@ public:
 			w * q.z + z * q.w + x * q.y - y * q.x);
 	}
 
-	Quaternion inversed() const
-	{
+	Quaternion inversed() const {
 		float normSqInv = 1 / (w * w + x * x + y * y + z * z);
 		return Quaternion(
 			w * normSqInv,
@@ -137,13 +126,11 @@ public:
 			-z * normSqInv);
 	}
 
-	float norm() const
-	{
+	float norm() const {
 		return sqrt(w * w + x * x + y * y + z * z);
 	}
 
-	void normalize()
-	{
+	void normalize() {
 		float n = norm();
 		w /= n;
 		x /= n;
@@ -151,27 +138,23 @@ public:
 		z /= n;
 	}
 
-	Vector conjugate(const Vector& v)
-	{
+	Vector conjugate(const Vector& v) {
 		Quaternion qv(0, v.x, v.y, v.z);
 		Quaternion res = (*this) * qv * inversed();
 		return Vector(res.x, res.y, res.z);
 	}
 
-	Vector conjugateInversed(const Vector& v)
-	{
+	Vector conjugateInversed(const Vector& v) {
 		Quaternion qv(0, v.x, v.y, v.z);
 		Quaternion res = inversed() * qv * (*this);
 		return Vector(res.x, res.y, res.z);
 	}
 
-	inline Vector rotate(const Vector& v)
-	{
+	inline Vector rotate(const Vector& v) {
 		return conjugateInversed(v);
 	}
 
-	inline bool finite() const
-	{
+	inline bool finite() const {
 		return isfinite(w) && isfinite(x) && isfinite(y) && isfinite(z);
 	}
 
