@@ -9,7 +9,9 @@ class SBUS {
 public:
 	SBUS(HardwareSerial& bus) {};
 	void begin() {};
-	bool read(int16_t* channels, bool* failsafe, bool* lostFrame) { // NOTE: on the hardware channels is uint16_t
+	bool read(int16_t *channels, bool *failsafe, bool *lostFrame) { // NOTE: on the hardware channels is uint16_t
+		*failsafe = false;
+		*lostFrame = false;
 		return joystickGet();
 	};
 };

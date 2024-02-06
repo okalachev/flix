@@ -18,9 +18,9 @@ void setupRC() {
 }
 
 void readRC() {
-	bool failSafe, lostFrame;
-	if (RC.read(channels, &failSafe, &lostFrame)) {
-		if (failSafe) { return; } // TODO:
+	bool failsafe, lostFrame;
+	if (RC.read(channels, &failsafe, &lostFrame)) {
+		if (failsafe) { return; } // TODO:
 		if (lostFrame) { return; }
 		normalizeRC();
 	}
