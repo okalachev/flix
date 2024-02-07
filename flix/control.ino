@@ -32,7 +32,7 @@
 #define YAWRATE_MAX radians(360)
 #define MAX_TILT radians(30)
 
-#define RATES_LFP_ALPHA 0.8 // cutoff frequency ~ 250 Hz
+#define RATES_LFP_ALPHA 0.2 // cutoff frequency ~ 40 Hz
 #define RATES_D_LPF_ALPHA 0.2 // cutoff frequency ~ 40 Hz
 
 enum { MANUAL, ACRO, STAB } mode = STAB;
