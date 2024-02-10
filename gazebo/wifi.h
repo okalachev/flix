@@ -25,7 +25,7 @@ void setupWiFi() {
 	bind(wifiSocket, (sockaddr *)&addr, sizeof(addr));
 	int broadcast = 1;
 	setsockopt(wifiSocket, SOL_SOCKET, SO_BROADCAST, &broadcast, sizeof(broadcast)); // enable broadcast
-	gzmsg << "WiFi UDP socket initialized on port " << WIFI_UDP_PORT_LOCAL << std::endl;
+	gzmsg << "WiFi UDP socket initialized on port " << WIFI_UDP_PORT_LOCAL << " (remote port " << WIFI_UDP_PORT_REMOTE << ")" << std::endl;
 }
 
 void sendWiFi(const uint8_t *buf, int len) {
