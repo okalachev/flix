@@ -36,7 +36,13 @@ cd flix
    sudo apt-get update && sudo apt-get install build-essential libsdl2-dev
    ```
 
-4. Run the simulation:
+4. Add your user to the `input` group to enable joystick support (you need to re-login after this command):
+
+   ```bash
+   sudo usermod -a -G input $USER
+   ```
+
+5. Run the simulation:
 
    ```bash
    make simulator
