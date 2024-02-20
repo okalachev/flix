@@ -89,10 +89,10 @@ void interpretRC() {
 	} else if (mode == STAB) {
 		yawMode = controls[RC_CHANNEL_YAW] == 0 ? YAW : YAW_RATE;
 
-		attitudeTarget = Quaternion::fromEulerZYX(
+		attitudeTarget = Quaternion::fromEulerZYX(Vector(
 			controls[RC_CHANNEL_ROLL] * MAX_TILT,
 			-controls[RC_CHANNEL_PITCH] * MAX_TILT,
-			attitudeTarget.getYaw());
+			attitudeTarget.getYaw()));
 		ratesTarget.z = controls[RC_CHANNEL_YAW] * YAWRATE_MAX;
 
 	} else if (mode == MANUAL) {

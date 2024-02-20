@@ -30,13 +30,13 @@ public:
 		return Quaternion::fromAxisAngle(rates.x, rates.y, rates.z, rates.norm());
 	}
 
-	static Quaternion fromEulerZYX(float x, float y, float z) {
-		float cx = cos(x / 2);
-		float cy = cos(y / 2);
-		float cz = cos(z / 2);
-		float sx = sin(x / 2);
-		float sy = sin(y / 2);
-		float sz = sin(z / 2);
+	static Quaternion fromEulerZYX(const Vector& euler) {
+		float cx = cos(euler.x / 2);
+		float cy = cos(euler.y / 2);
+		float cz = cos(euler.z / 2);
+		float sx = sin(euler.x / 2);
+		float sy = sin(euler.y / 2);
+		float sz = sin(euler.z / 2);
 
 		return Quaternion(
 			cx * cy * cz + sx * sy * sz,
@@ -99,9 +99,7 @@ public:
 		float sqy = y * y;
 		float sqz = z * z;
 		float sqw = w * w;
-
 		double sarg = -2 * (x * z - w * y) / (sqx + sqy + sqz + sqw);
-
 		if (sarg <= -0.99999) {
 			yaw = -2 * atan2(y, x);
 		} else if (sarg >= 0.99999) {
@@ -115,7 +113,8 @@ public:
 	void setYaw(float yaw) {
 		// TODO: optimize?
 		Vector euler = toEulerZYX();
-		(*this) = Quaternion::fromEulerZYX(euler.x, euler.y, yaw);
+		euler.z = yaw;
+		(*this) = Quaternion::fromEulerZYX(euler);
 	}
 
 	Quaternion& operator *= (const Quaternion& q) {
