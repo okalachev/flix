@@ -68,10 +68,28 @@ public:
 	}
 
 	Vector toEulerZYX() const {
-		return Vector(
-			atan2(2 * (w * x + y * z), 1 - 2 * (x * x + y * y)),
-			asin(2 * (w * y - z * x)),
-			atan2(2 * (w * z + x * y), 1 - 2 * (y * y + z * z)));
+		// https://github.com/ros/geometry2/blob/589caf083cae9d8fae7effdb910454b4681b9ec1/tf2/include/tf2/impl/utils.h#L87
+		Vector euler;
+		float sqx = x * x;
+		float sqy = y * y;
+		float sqz = z * z;
+		float sqw = w * w;
+		// Cases derived from https://orbitalstation.wordpress.com/tag/quaternion/
+		float sarg = -2 * (x * z - w * y) / (sqx + sqy + sqz + sqw); /* normalization added from urdfom_headers */
+		if (sarg <= -0.99999) {
+			euler.x = 0;
+			euler.y = -0.5 * PI;
+			euler.z = -2 * atan2(y, x);
+		} else if (sarg >= 0.99999) {
+			euler.x = 0;
+			euler.y = 0.5 * PI;
+			euler.z = 2 * atan2(y, x);
+		} else {
+			euler.x = atan2(2 * (y * z + w * x), sqw - sqx - sqy + sqz);
+			euler.y = asin(sarg);
+			euler.z = atan2(2 * (x * y + w * z), sqw + sqx - sqy - sqz);
+		}
+		return euler;
 	}
 
 	float getYaw() const {
