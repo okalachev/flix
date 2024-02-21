@@ -49,7 +49,7 @@ You can also check a user contributed [variant of complete circuit diagram](http
 |ESP32 Mini|Microcontroller board|<img src="docs/img/esp32.jpg" width=100>|1|
 |GY-91|IMU+LDO+barometer board|<img src="docs/img/gy-91.jpg" width=100>|1|
 |K100|Quadcopter frame|<img src="docs/img/frame.jpg" width=100>|1|
-|8520 3.7V brushed motor|Motor|<img src="docs/img/motor.jpeg" width=100>|4|
+|8520 3.7V brushed motor (**shaft 0.8mm!**)|Motor|<img src="docs/img/motor.jpeg" width=100>|4|
 |Hubsan 55 mm| Propeller|<img src="docs/img/prop.jpg" width=100>|4|
 |2.7A 1S Dual Way Micro Brush ESC|Motor ESC|<img src="docs/img/esc.jpg" width=100>|4|
 |KINGKONG TINY X8|RC transmitter|<img src="docs/img/tx.jpg" width=100>|1|
