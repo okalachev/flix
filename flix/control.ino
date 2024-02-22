@@ -35,7 +35,7 @@
 #define RATES_LFP_ALPHA 0.2 // cutoff frequency ~ 40 Hz
 #define RATES_D_LPF_ALPHA 0.2 // cutoff frequency ~ 40 Hz
 
-enum { MANUAL, ACRO, STAB } mode = STAB;
+enum { MANUAL, ACRO, STAB, USER } mode = STAB;
 enum { YAW, YAW_RATE } yawMode = YAW;
 bool armed = false;
 
@@ -68,6 +68,8 @@ void control() {
 }
 
 void interpretRC() {
+	armed = controls[RC_CHANNEL_THROTTLE] >= 0.05 && controls[RC_CHANNEL_ARMED] >= 0.5;
+
 	// NOTE: put ACRO or MANUAL modes there if you want to use them
 	if (controls[RC_CHANNEL_MODE] < 0.25) {
 		mode = STAB;
@@ -77,7 +79,6 @@ void interpretRC() {
 		mode = STAB;
 	}
 
-	armed = controls[RC_CHANNEL_THROTTLE] >= 0.05 && controls[RC_CHANNEL_ARMED] >= 0.5;
 	thrustTarget = controls[RC_CHANNEL_THROTTLE];
 
 	if (mode == ACRO) {
