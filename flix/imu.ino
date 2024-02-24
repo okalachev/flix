@@ -6,10 +6,9 @@
 #include <SPI.h>
 #include <MPU9250.h>
 
-#define IMU_CS_PIN 4 // chip-select pin for IMU SPI connection
 #define LOAD_GYRO_CAL false
 
-MPU9250 IMU(SPI, IMU_CS_PIN);
+MPU9250 IMU(SPI, SS);
 
 void setupIMU() {
 	Serial.println("Setup IMU, stand still");
