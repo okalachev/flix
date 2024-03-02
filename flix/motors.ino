@@ -14,8 +14,8 @@
 #define PWM_NEUTRAL 1500
 #define PWM_MIN 1600
 #define PWM_MAX 2300
-#define PWM_REVERSE_MIN 1440
-#define PWM_REVERSE_MAX 1100
+#define PWM_REVERSE_MIN 1100
+#define PWM_REVERSE_MAX 1440
 
 void setupMotors() {
 	Serial.println("Setup Motors");
