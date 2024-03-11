@@ -65,7 +65,7 @@ void calibrateAccel() {
 	IMU.calibrateAccel();
 	Serial.println("Cal accel: place on left side"); delay(3000);
 	IMU.calibrateAccel();
-	Serial.println("Cal accel: upside down"); delay(300);
+	Serial.println("Cal accel: upside down"); delay(3000);
 	IMU.calibrateAccel();
 	printIMUCal();
 }
