@@ -62,9 +62,10 @@ void calibrateGyro() {
 
 void calibrateAccel() {
 	Serial.println("Calibrating accelerometer");
-	IMU.setAccelRange(IMU.ACCEL_RANGE_2G);
+	IMU.setAccelRange(IMU.ACCEL_RANGE_2G); // the most sensitive mode
 	IMU.setDlpfBandwidth(IMU.DLPF_BANDWIDTH_20HZ);
 	IMU.setSrd(19);
+
 	Serial.setTimeout(60000);
 	Serial.print("Place level [enter] "); Serial.readStringUntil('\n');
 	calibrateAccelOnce();
@@ -78,10 +79,9 @@ void calibrateAccel() {
 	calibrateAccelOnce();
 	Serial.print("Place upside down [enter] "); Serial.readStringUntil('\n');
 	calibrateAccelOnce();
+
 	printIMUCal();
-	IMU.setAccelRange(IMU.ACCEL_RANGE_16G);
-	IMU.setDlpfBandwidth(IMU.DLPF_BANDWIDTH_184HZ);
-	IMU.setSrd(0);
+	configureIMU();
 }
 
 void calibrateAccelOnce() {
