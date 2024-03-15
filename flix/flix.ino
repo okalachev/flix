@@ -51,8 +51,7 @@ void setup() {
 }
 
 void loop() {
-	if (!readIMU()) return;
-
+	readIMU();
 	step();
 	readRC();
 	estimate();

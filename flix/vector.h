@@ -44,6 +44,16 @@ public:
 		return Vector(x - b.x, y - b.y, z - b.z);
 	}
 
+	// Element-wise multiplication
+	Vector operator * (const Vector& b) const {
+		return Vector(x * b.x, y * b.y, z * b.z);
+	}
+
+	// Element-wise division
+	Vector operator / (const Vector& b) const {
+		return Vector(x / b.x, y / b.y, z / b.z);
+	}
+
 	inline bool operator == (const Vector& b) const {
 		return x == b.x && y == b.y && z == b.z;
 	}
