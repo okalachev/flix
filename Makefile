@@ -15,7 +15,6 @@ dependencies .dependencies:
 	arduino-cli core update-index --config-file arduino-cli.yaml
 	arduino-cli core install esp32:esp32@2.0.11 --config-file arduino-cli.yaml
 	arduino-cli lib update-index
-	arduino-cli lib install "Bolder Flight Systems SBUS"@1.0.1
 	arduino-cli lib install "FlixPeriph"
 	arduino-cli lib install "MAVLink"@2.0.1
 	touch .dependencies

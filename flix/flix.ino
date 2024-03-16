@@ -26,7 +26,7 @@
 float t = NAN; // current step time, s
 float dt; // time delta from previous step, s
 float loopFreq; // loop frequency, Hz
-uint16_t channels[16]; // raw rc channels
+int16_t channels[16]; // raw rc channels
 float controls[RC_CHANNELS]; // normalized controls in range [-1..1] ([0..1] for throttle)
 Vector rates; // angular rates, rad/s
 Vector acc; // accelerometer data, m/s/s
