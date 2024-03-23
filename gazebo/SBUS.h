@@ -11,7 +11,7 @@ struct SBUSData {
 
 class SBUS {
 public:
-	SBUS(HardwareSerial& bus) {};
+	SBUS(HardwareSerial& bus, const bool inv = true) {};
 	void begin() {};
 	bool read() { return joystickGet(); };
 	SBUSData data() {
