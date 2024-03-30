@@ -30,6 +30,7 @@ const char* motd =
 "cr - calibrate RC\n"
 "cg - calibrate gyro\n"
 "ca - calibrate accel\n"
+"mfr, mfl, mrr, mrl - test appropriate motor\n"
 "fullmot <n> - full motor test\n"
 "reset - reset drone's state\n";
 
