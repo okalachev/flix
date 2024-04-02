@@ -73,6 +73,7 @@ void doCommand(String& command, String& value) {
 		Serial.printf("gyro: %f %f %f\n", rates.x, rates.y, rates.z);
 		Serial.printf("acc: %f %f %f\n", acc.x, acc.y, acc.z);
 		printIMUCal();
+		Serial.printf("frequency: %f\n", loopFreq);
 	} else if (command == "rc") {
 		Serial.printf("Raw: throttle %d yaw %d pitch %d roll %d armed %d mode %d\n",
 			channels[RC_CHANNEL_THROTTLE], channels[RC_CHANNEL_YAW], channels[RC_CHANNEL_PITCH],
