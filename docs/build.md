@@ -65,6 +65,13 @@ cd flix
    brew install sdl2
    ```
 
+   Set up your Gazebo environment variables:
+
+   ```bash
+   echo "source /opt/homebrew/share/gazebo/setup.sh" >> ~/.zshrc
+   source ~/.zshrc
+   ```
+
 3. Run the simulation:
 
    ```bash
