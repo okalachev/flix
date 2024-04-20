@@ -32,7 +32,6 @@
 #define YAWRATE_MAX radians(360)
 #define MAX_TILT radians(30)
 
-#define RATES_LFP_ALPHA 0.2 // cutoff frequency ~ 40 Hz
 #define RATES_D_LPF_ALPHA 0.2 // cutoff frequency ~ 40 Hz
 
 enum { MANUAL, ACRO, STAB, USER } mode = STAB;
@@ -45,8 +44,6 @@ PID yawRatePID(YAWRATE_P, YAWRATE_I, YAWRATE_D);
 PID rollPID(ROLL_P, ROLL_I, ROLL_D);
 PID pitchPID(PITCH_P, PITCH_I, PITCH_D);
 PID yawPID(YAW_P, 0, 0);
-
-LowPassFilter<Vector> ratesFilter(RATES_LFP_ALPHA);
 
 Quaternion attitudeTarget;
 Vector ratesTarget;
@@ -138,8 +135,7 @@ void controlRate() {
 		return;
 	}
 
-	Vector ratesFiltered = ratesFilter.update(rates);
-	Vector error = ratesTarget - ratesFiltered;
+	Vector error = ratesTarget - rates;
 
 	// Calculate desired torque, where 0 - no torque, 1 - maximum possible torque
 	torqueTarget.x = rollRatePID.update(error.x, dt);

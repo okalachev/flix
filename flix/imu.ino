@@ -36,11 +36,11 @@ void configureIMU() {
 
 void readIMU() {
 	IMU.waitForData();
-	IMU.getGyro(rates.x, rates.y, rates.z);
+	IMU.getGyro(gyro.x, gyro.y, gyro.z);
 	IMU.getAccel(acc.x, acc.y, acc.z);
 	// apply scale and bias
 	acc = (acc - accBias) / accScale;
-	rates = rates - gyroBias;
+	gyro = gyro - gyroBias;
 }
 
 void calibrateGyro() {
@@ -51,8 +51,8 @@ void calibrateGyro() {
 	gyroBias = Vector(0, 0, 0);
 	for (int i = 0; i < samples; i++) {
 		IMU.waitForData();
-		IMU.getGyro(rates.x, rates.y, rates.z);
-		gyroBias = gyroBias + rates;
+		IMU.getGyro(gyro.x, gyro.y, gyro.z);
+		gyroBias = gyroBias + gyro;
 	}
 	gyroBias = gyroBias / samples;
 

@@ -55,7 +55,7 @@ void sendMavlink() {
 
 		mavlink_msg_scaled_imu_pack(SYSTEM_ID, MAV_COMP_ID_AUTOPILOT1, &msg, time,
 			acc.x * 1000, acc.y * 1000, acc.z * 1000,
-			rates.x * 1000, rates.y * 1000, rates.z * 1000,
+			gyro.x * 1000, gyro.y * 1000, gyro.z * 1000,
 			0, 0, 0, 0);
 		sendMessage(&msg);
 	}

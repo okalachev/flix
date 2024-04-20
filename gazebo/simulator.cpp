@@ -64,7 +64,7 @@ public:
 		step();
 
 		// read imu
-		rates = flu2frd(imu->AngularVelocity());
+		gyro = flu2frd(imu->AngularVelocity());
 		acc = this->accFilter.update(flu2frd(imu->LinearAcceleration()));
 
 		// read rc
