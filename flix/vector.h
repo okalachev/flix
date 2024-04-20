@@ -78,10 +78,10 @@ public:
 		return acos(constrain(dot(a, b) / (a.norm() * b.norm()), -1, 1));
 	}
 
-	static Vector angularRatesBetweenVectors(const Vector& u, const Vector& v) {
-		Vector direction = cross(u, v);
+	static Vector angularRatesBetweenVectors(const Vector& a, const Vector& b) {
+		Vector direction = cross(a, b);
 		direction.normalize();
-		float angle = angleBetweenVectors(u, v);
+		float angle = angleBetweenVectors(a, b);
 		return direction * angle;
 	}
 
