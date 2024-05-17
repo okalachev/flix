@@ -62,6 +62,8 @@ You can also check a user contributed [variant of complete circuit diagram](http
 
 *\* — not needed as ESP32 supports [software pin inversion](https://github.com/bolderflight/sbus#inverted-serial).*
 
-## Telegram-channel
+## Materials
 
 Subscribe to Telegram-channel on developing the drone and the flight controller (in Russian): https://t.me/opensourcequadcopter.
+
+Detailed article on Habr.com about the development of the drone (in Russian): https://habr.com/ru/articles/814127/.
