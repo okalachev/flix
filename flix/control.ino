@@ -169,6 +169,7 @@ const char* getModeName() {
 		case MANUAL: return "MANUAL";
 		case ACRO: return "ACRO";
 		case STAB: return "STAB";
+		case USER: return "USER";
 		default: return "UNKNOWN";
 	}
 }

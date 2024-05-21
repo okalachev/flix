@@ -8,8 +8,8 @@
 #include <iostream>
 
 // simulation calibration overrides, NOTE: use `cr` command and replace with the actual values
-const int channelNeutralOverride[] = {-258, -258, -27349, 0, 5417, 0};
-const int channelMaxOverride[] = {27090, 27090, 27090, 27090, 27090, 1};
+const int channelNeutralOverride[] = {-258, -258, -27349, 0, -27349, 0};
+const int channelMaxOverride[] = {27090, 27090, 27090, 27090, -5676, 1};
 
 #define RC_CHANNEL_ROLL 0
 #define RC_CHANNEL_PITCH 1

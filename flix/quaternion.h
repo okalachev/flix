@@ -167,6 +167,7 @@ public:
 		return Vector(res.x, res.y, res.z);
 	}
 
+	// Rotate vector by quaternion
 	inline Vector rotate(const Vector& v) {
 		return conjugateInversed(v);
 	}

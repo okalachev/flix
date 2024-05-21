@@ -57,8 +57,8 @@ You can also check a user contributed [variant of complete circuit diagram](http
 ||~~SBUS inverter~~*|<img src="docs/img/inv.jpg" width=100>|~~1~~|
 |3.7 Li-Po 850 MaH 60C|Battery|||
 ||Battery charger|<img src="docs/img/charger.jpg" width=100>|1|
-||Wires, connectors, tape, ...||
-||3D-printed frame parts||
+||Wires, connectors, tape, ...|||
+||3D-printed frame parts|||
 
 *\* — not needed as ESP32 supports [software pin inversion](https://github.com/bolderflight/sbus#inverted-serial).*
 
