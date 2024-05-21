@@ -14,7 +14,7 @@ cd flix
 1. Install Arduino CLI:
 
    ```bash
-   curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | BINDIR=~/local/bin sh
+   curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | BINDIR=/usr/local/bin sh
    ```
 
 2. Install Gazebo 11:
