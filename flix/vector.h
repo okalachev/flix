@@ -80,6 +80,10 @@ public:
 
 	static Vector angularRatesBetweenVectors(const Vector& a, const Vector& b) {
 		Vector direction = cross(a, b);
+		if (direction.zero()) {
+			// vectors are opposite, return any perpendicular vector
+			return cross(a, Vector(1, 0, 0));
+		}
 		direction.normalize();
 		float angle = angleBetweenVectors(a, b);
 		return direction * angle;
