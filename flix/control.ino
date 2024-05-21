@@ -149,10 +149,10 @@ void controlTorque() {
 		return;
 	}
 
-	motors[MOTOR_FRONT_LEFT] = thrustTarget + torqueTarget.y + torqueTarget.x - torqueTarget.z;
-	motors[MOTOR_FRONT_RIGHT] = thrustTarget + torqueTarget.y - torqueTarget.x + torqueTarget.z;
-	motors[MOTOR_REAR_LEFT] = thrustTarget - torqueTarget.y + torqueTarget.x + torqueTarget.z;
-	motors[MOTOR_REAR_RIGHT] = thrustTarget - torqueTarget.y - torqueTarget.x - torqueTarget.z;
+	motors[MOTOR_FRONT_LEFT] = thrustTarget + torqueTarget.x + torqueTarget.y - torqueTarget.z;
+	motors[MOTOR_FRONT_RIGHT] = thrustTarget - torqueTarget.x + torqueTarget.y + torqueTarget.z;
+	motors[MOTOR_REAR_LEFT] = thrustTarget + torqueTarget.x - torqueTarget.y + torqueTarget.z;
+	motors[MOTOR_REAR_RIGHT] = thrustTarget - torqueTarget.x - torqueTarget.y - torqueTarget.z;
 
 	motors[0] = constrain(motors[0], 0, 1);
 	motors[1] = constrain(motors[1], 0, 1);
