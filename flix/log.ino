@@ -44,6 +44,7 @@ void dumpLog() {
 	Serial.printf("t,rates.x,rates.y,rates.z,ratesTarget.x,ratesTarget.y,ratesTarget.z,"
 		"attitude.x,attitude.y,attitude.z,attitudeTarget.x,attitudeTarget.y,attitudeTarget.z,thrustTarget\n");
 	for (int i = 0; i < LOG_SIZE; i++) {
+		if (logBuffer[i][0] == 0) continue; // skip empty records
 		for (int j = 0; j < LOG_COLUMNS - 1; j++) {
 			Serial.printf("%f,", logBuffer[i][j]);
 		}

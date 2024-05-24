@@ -8,9 +8,10 @@ The main loop is running at 1000 Hz. All the dataflow is happening through globa
 
 * `t` *(float)* — current step time, *s*.
 * `dt` *(float)* — time delta between the current and previous steps, *s*.
-* `rates` *(Vector)* — angular rates from the gyroscope, *rad/s*.
+* `gyro` *(Vector)* — data from the gyroscope, *rad/s*.
 * `acc` *(Vector)* — acceleration data from the accelerometer, *m/s<sup>2</sup>*.
-* `attitude` *(Quaternion)* — current estimated attitude (orientation) of drone.
+* `rates` *(Vector)* — filtered angular rates, *rad/s*.
+* `attitude` *(Quaternion)* — estimated attitude (orientation) of drone.
 * `controls` *(float[])* — user control inputs from the RC, normalized to [-1, 1] range.
 * `motors` *(float[])* — motor outputs, normalized to [-1, 1] range; reverse rotation is possible.
 

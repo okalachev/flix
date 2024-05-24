@@ -1,5 +1,5 @@
 *.hex
 *.elf
-gazebo/build/
+build/
 tools/log/
 .dependencies

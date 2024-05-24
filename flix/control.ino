@@ -32,10 +32,9 @@
 #define YAWRATE_MAX radians(360)
 #define MAX_TILT radians(30)
 
-#define RATES_LFP_ALPHA 0.8 // cutoff frequency ~ 250 Hz
 #define RATES_D_LPF_ALPHA 0.2 // cutoff frequency ~ 40 Hz
 
-enum { MANUAL, ACRO, STAB } mode = STAB;
+enum { MANUAL, ACRO, STAB, USER } mode = STAB;
 enum { YAW, YAW_RATE } yawMode = YAW;
 bool armed = false;
 
@@ -45,8 +44,6 @@ PID yawRatePID(YAWRATE_P, YAWRATE_I, YAWRATE_D);
 PID rollPID(ROLL_P, ROLL_I, ROLL_D);
 PID pitchPID(PITCH_P, PITCH_I, PITCH_D);
 PID yawPID(YAW_P, 0, 0);
-
-LowPassFilter<Vector> ratesFilter(RATES_LFP_ALPHA);
 
 Quaternion attitudeTarget;
 Vector ratesTarget;
@@ -68,6 +65,8 @@ void control() {
 }
 
 void interpretRC() {
+	armed = controls[RC_CHANNEL_THROTTLE] >= 0.05 && controls[RC_CHANNEL_ARMED] >= 0.5;
+
 	// NOTE: put ACRO or MANUAL modes there if you want to use them
 	if (controls[RC_CHANNEL_MODE] < 0.25) {
 		mode = STAB;
@@ -77,7 +76,6 @@ void interpretRC() {
 		mode = STAB;
 	}
 
-	armed = controls[RC_CHANNEL_THROTTLE] >= 0.05 && controls[RC_CHANNEL_ARMED] >= 0.5;
 	thrustTarget = controls[RC_CHANNEL_THROTTLE];
 
 	if (mode == ACRO) {
@@ -89,10 +87,10 @@ void interpretRC() {
 	} else if (mode == STAB) {
 		yawMode = controls[RC_CHANNEL_YAW] == 0 ? YAW : YAW_RATE;
 
-		attitudeTarget = Quaternion::fromEulerZYX(
+		attitudeTarget = Quaternion::fromEulerZYX(Vector(
 			controls[RC_CHANNEL_ROLL] * MAX_TILT,
 			-controls[RC_CHANNEL_PITCH] * MAX_TILT,
-			attitudeTarget.getYaw());
+			attitudeTarget.getYaw()));
 		ratesTarget.z = controls[RC_CHANNEL_YAW] * YAWRATE_MAX;
 
 	} else if (mode == MANUAL) {
@@ -137,8 +135,7 @@ void controlRate() {
 		return;
 	}
 
-	Vector ratesFiltered = ratesFilter.update(rates);
-	Vector error = ratesTarget - ratesFiltered;
+	Vector error = ratesTarget - rates;
 
 	// Calculate desired torque, where 0 - no torque, 1 - maximum possible torque
 	torqueTarget.x = rollRatePID.update(error.x, dt);
@@ -152,10 +149,10 @@ void controlTorque() {
 		return;
 	}
 
-	motors[MOTOR_FRONT_LEFT] = thrustTarget + torqueTarget.y + torqueTarget.x - torqueTarget.z;
-	motors[MOTOR_FRONT_RIGHT] = thrustTarget + torqueTarget.y - torqueTarget.x + torqueTarget.z;
-	motors[MOTOR_REAR_LEFT] = thrustTarget - torqueTarget.y + torqueTarget.x + torqueTarget.z;
-	motors[MOTOR_REAR_RIGHT] = thrustTarget - torqueTarget.y - torqueTarget.x - torqueTarget.z;
+	motors[MOTOR_FRONT_LEFT] = thrustTarget + torqueTarget.x + torqueTarget.y - torqueTarget.z;
+	motors[MOTOR_FRONT_RIGHT] = thrustTarget - torqueTarget.x + torqueTarget.y + torqueTarget.z;
+	motors[MOTOR_REAR_LEFT] = thrustTarget + torqueTarget.x - torqueTarget.y + torqueTarget.z;
+	motors[MOTOR_REAR_RIGHT] = thrustTarget - torqueTarget.x - torqueTarget.y - torqueTarget.z;
 
 	motors[0] = constrain(motors[0], 0, 1);
 	motors[1] = constrain(motors[1], 0, 1);
@@ -172,6 +169,7 @@ const char* getModeName() {
 		case MANUAL: return "MANUAL";
 		case ACRO: return "ACRO";
 		case STAB: return "STAB";
+		case USER: return "USER";
 		default: return "UNKNOWN";
 	}
 }

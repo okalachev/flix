@@ -8,15 +8,15 @@
 #include <iostream>
 
 // simulation calibration overrides, NOTE: use `cr` command and replace with the actual values
-const int channelNeutralOverride[] = {-258, -258, -27349, 0, 0, 1};
-const int channelMaxOverride[] = {27090, 27090, 27090, 27090, 0, 1};
+const int channelNeutralOverride[] = {-258, -258, -27349, 0, -27349, 0};
+const int channelMaxOverride[] = {27090, 27090, 27090, 27090, -5676, 1};
 
 #define RC_CHANNEL_ROLL 0
 #define RC_CHANNEL_PITCH 1
 #define RC_CHANNEL_THROTTLE 2
 #define RC_CHANNEL_YAW 3
-#define RC_CHANNEL_ARMED 4
-#define RC_CHANNEL_MODE 5
+#define RC_CHANNEL_ARMED 5
+#define RC_CHANNEL_MODE 4
 
 SDL_Joystick *joystick;
 bool joystickInitialized = false, warnShown = false;
@@ -49,10 +49,8 @@ bool joystickGet() {
 
 	SDL_JoystickUpdate();
 
-	for (uint8_t i = 0; i < 4; i++) {
+	for (uint8_t i = 0; i < 8; i++) {
 		channels[i] = SDL_JoystickGetAxis(joystick, i);
 	}
-	channels[RC_CHANNEL_MODE] = SDL_JoystickGetButton(joystick, 0) ? 1 : 0;
-	controls[RC_CHANNEL_MODE] = channels[RC_CHANNEL_MODE];
 	return true;
 }

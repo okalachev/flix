@@ -14,7 +14,7 @@ cd flix
 1. Install Arduino CLI:
 
    ```bash
-   curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | BINDIR=~/local/bin sh
+   curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | BINDIR=/usr/local/bin sh
    ```
 
 2. Install Gazebo 11:
@@ -36,7 +36,13 @@ cd flix
    sudo apt-get update && sudo apt-get install build-essential libsdl2-dev
    ```
 
-4. Run the simulation:
+4. Add your user to the `input` group to enable joystick support (you need to re-login after this command):
+
+   ```bash
+   sudo usermod -a -G input $USER
+   ```
+
+5. Run the simulation:
 
    ```bash
    make simulator
@@ -59,6 +65,13 @@ cd flix
    brew install sdl2
    ```
 
+   Set up your Gazebo environment variables:
+
+   ```bash
+   echo "source /opt/homebrew/share/gazebo/setup.sh" >> ~/.zshrc
+   source ~/.zshrc
+   ```
+
 3. Run the simulation:
 
    ```bash
@@ -67,7 +80,7 @@ cd flix
 
 ### Flight
 
-Use USB remote control or QGroundControl mobile app (with *Virtual Joystick* setting enabled) to control the drone.
+Use USB remote control or QGroundControl mobile app (with *Virtual Joystick* setting enabled) to control the drone. *Auto-Center Throttle* setting **should be disabled**.
 
 ## Firmware
 
@@ -75,9 +88,8 @@ Use USB remote control or QGroundControl mobile app (with *Virtual Joystick* set
 
 1. Install [Arduino IDE](https://www.arduino.cc/en/software) (version 2 is recommended).
 2. Install ESP32 core using [Boards Manager](https://docs.arduino.cc/learn/starting-guide/cores).
-3. Install the following libraries using [Library Manager](https://docs.arduino.cc/software/ide-v2/tutorials/ide-v2-installing-a-library) (**versions are significant**):
-   * `Bolder Flight Systems SBUS`, version 1.0.1.
-   * `Bolder Flight Systems MPU9250`, version 1.0.2.
+3. Install the following libraries using [Library Manager](https://docs.arduino.cc/software/ide-v2/tutorials/ide-v2-installing-a-library):
+   * `FlixPeriph`.
    * `MAVLink`, version 2.0.1.
 4. Clone the project using git or [download the source code as a ZIP archive](https://codeload.github.com/okalachev/flix/zip/refs/heads/master).
 5. Open the downloaded Arduino sketch `flix/flix.ino` in Arduino IDE.

@@ -5,11 +5,20 @@
 
 #include "joystick.h"
 
+struct SBUSData {
+	int16_t ch[16];
+};
+
 class SBUS {
 public:
-	SBUS(HardwareSerial& bus) {};
+	SBUS(HardwareSerial& bus, const bool inv = true) {};
 	void begin() {};
-	bool read(int16_t* channels, bool* failsafe, bool* lostFrame) { // NOTE: on the hardware channels is uint16_t
-		return joystickGet();
+	bool read() { return joystickGet(); };
+	SBUSData data() {
+		SBUSData data;
+		for (uint8_t i = 0; i < 16; i++) {
+			data.ch[i] = channels[i];
+		}
+		return data;
 	};
 };

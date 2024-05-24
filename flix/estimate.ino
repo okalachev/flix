@@ -5,9 +5,13 @@
 
 #include "quaternion.h"
 #include "vector.h"
+#include "lpf.h"
 
 #define ONE_G 9.807f
 #define WEIGHT_ACC 0.5f
+#define RATES_LFP_ALPHA 0.2 // cutoff frequency ~ 40 Hz
+
+LowPassFilter<Vector> ratesFilter(RATES_LFP_ALPHA);
 
 void estimate() {
 	applyGyro();
@@ -16,7 +20,10 @@ void estimate() {
 }
 
 void applyGyro() {
-	// applying gyro
+	// filter gyro to get angular rates
+	rates = ratesFilter.update(gyro);
+
+	// apply rates to attitude
 	attitude *= Quaternion::fromAngularRates(rates * dt);
 	attitude.normalize();
 }

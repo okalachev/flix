@@ -13,8 +13,7 @@ public:
 
 	LowPassFilter(float alpha): alpha(alpha) {};
 
-	T update(const T input)
-	{
+	T update(const T input) {
 		if (alpha == 1) { // filter disabled
 			return input;
 		}
@@ -26,13 +25,11 @@ public:
 		return output = output * (1 - alpha) + input * alpha;
 	}
 
-	void setCutOffFrequency(float cutOffFreq, float dt)
-	{
+	void setCutOffFrequency(float cutOffFreq, float dt) {
 		alpha = 1 - exp(-2 * PI * cutOffFreq * dt);
 	}
 
-	void reset()
-	{
+	void reset() {
 		initialized = false;
 	}
 
