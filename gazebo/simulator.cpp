@@ -92,10 +92,10 @@ public:
 		const double maxThrust = 0.03 * ONE_G; // ~30 g, https://youtu.be/VtKI4Pjx8Sk?&t=78
 
 		const float scale0 = 1.0, scale1 = 1.1, scale2 = 0.9, scale3 = 1.05; // imitating motors asymmetry
-		float mfl = scale0 * maxThrust * abs(motors[MOTOR_FRONT_LEFT]);
-		float mfr = scale1 * maxThrust * abs(motors[MOTOR_FRONT_RIGHT]);
-		float mrl = scale2 * maxThrust * abs(motors[MOTOR_REAR_LEFT]);
-		float mrr = scale3 * maxThrust * abs(motors[MOTOR_REAR_RIGHT]);
+		float mfl = scale0 * maxThrust * motors[MOTOR_FRONT_LEFT];
+		float mfr = scale1 * maxThrust * motors[MOTOR_FRONT_RIGHT];
+		float mrl = scale2 * maxThrust * motors[MOTOR_REAR_LEFT];
+		float mrr = scale3 * maxThrust * motors[MOTOR_REAR_RIGHT];
 
 		body->AddLinkForce(Vector3d(0.0, 0.0, mfl), Vector3d(dist, dist, 0.0));
 		body->AddLinkForce(Vector3d(0.0, 0.0, mfr), Vector3d(dist, -dist, 0.0));
