@@ -29,7 +29,7 @@ void setupIMU() {
 
 void configureIMU() {
 	IMU.setAccelRange(IMU.ACCEL_RANGE_4G);
-	IMU.setGyroRange(IMU.GYRO_RANGE_500DPS);
+	IMU.setGyroRange(IMU.GYRO_RANGE_2000DPS);
 	IMU.setDlpfBandwidth(IMU.DLPF_BANDWIDTH_184HZ);
 	IMU.setSrd(0); // set sample rate to 1000 Hz
 }
