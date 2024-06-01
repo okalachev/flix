@@ -19,3 +19,15 @@ jobs:
         echo -e "t,x,y,z\n0,1,2,3\n1,4,5,6" > log.csv
         ./csv_to_ulog log.csv
         test $(stat -c %s log.ulg) -eq 196
+  python_tools:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Install Python dependencies
+      run: pip install -r tools/requirements.txt
+    - name: Test csv_to_mcap tool
+      run: |
+        cd tools
+        echo -e "t,x,y,z\n0,1,2,3\n1,4,5,6" > log.csv
+        ./csv_to_mcap.py log.csv
+        test $(stat -c %s log.mcap) -eq 883
