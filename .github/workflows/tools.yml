@@ -1,0 +1,21 @@
+name: Build tools
+
+on:
+  push:
+    branches: [ '*' ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  csv_to_ulog:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build csv_to_ulog
+      run: cd tools/csv_to_ulog && mkdir build && cd build && cmake .. && make
+    - name: Test csv_to_ulog
+      run: |
+        cd tools/csv_to_ulog/build
+        echo -e "t,x,y,z\n0,1,2,3\n1,4,5,6" > log.csv
+        ./csv_to_ulog log.csv
+        test $(stat -c %s log.ulg) -eq 196
