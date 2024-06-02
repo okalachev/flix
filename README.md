@@ -9,7 +9,7 @@
 * Simple and clean Arduino based source code.
 * Acro and Stabilized flight using remote control.
 * Precise simulation using Gazebo.
-* In-RAM logging.
+* [In-RAM logging](docs/log.md).
 * Command line interface through USB port.
 * Wi-Fi support.
 * MAVLink support.
