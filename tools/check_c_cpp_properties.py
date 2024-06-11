@@ -13,7 +13,7 @@ props = json.loads(txt)
 env = props.get('env', {})
 env['workspaceFolder'] = '.'
 
-def path(s):
+def check_path(s):
     source = s
     # replace env
     for key, value in env.items():
@@ -27,7 +27,7 @@ def path(s):
     if s == '':
         s = '.'
     print('Check', source, '->', s)
-    return s
+    assert os.path.exists(s)
 
 # linux, macos or windows:
 platform = platform.system().lower()
@@ -48,12 +48,13 @@ for configuration in props['configurations']:
     print('Check configuration', configuration['name'])
 
     for include_path in configuration.get('includePath', []):
-        assert os.path.exists(path(include_path)), include_path
+        check_path(include_path)
 
     for forced_include in configuration.get('forcedInclude', []):
-        assert os.path.exists(path(forced_include)), forced_include
+        check_path(forced_include)
 
     for browse in configuration.get('browse', {}).get('path', []):
-        assert os.path.exists(path(browse)), browse
+        check_path(browse)
 
-    assert os.path.exists(path(configuration.get('compilerPath', '~'))), configuration.get('compilerPath')
+    if 'compilerPath' in configuration:
+        check_path(configuration['compilerPath'])
