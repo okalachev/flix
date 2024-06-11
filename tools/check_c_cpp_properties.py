@@ -1,0 +1,52 @@
+#!/usr/bin/env python3
+
+import os
+import platform
+import json5
+
+
+props = json5.load(open('.vscode/c_cpp_properties.json'))
+
+env = props.get('env', {})
+env['workspaceFolder'] = '.'
+
+def abspath(s):
+    # replace env
+    for key, value in env.items():
+        s = s.replace('${' + key + '}', value)
+    # remove globs from the end
+    if s.endswith('**'):
+        s = s[:-2]
+    elif s.endswith('*'):
+        s = s[:-1]
+    s = os.path.expanduser(s)
+    if s == '':
+        s = '.'
+    return s
+
+# linux, macos or windows:
+platform = platform.system().lower()
+if platform == 'darwin':
+    platform = 'macos'
+elif platform == 'linux' or platform == 'windows':
+    pass
+else:
+    raise Exception('Unknown platform: ' + platform)
+
+for configuration in props['configurations']:
+    if platform not in configuration['name'].lower():
+        print('Skip', configuration['name'])
+        continue
+
+    print('Check configuration', configuration['name'])
+
+    for include_path in configuration.get('includePath', []):
+        assert os.path.exists(abspath(include_path)), include_path
+
+    for forced_include in configuration.get('forcedInclude', []):
+        assert os.path.exists(abspath(forced_include)), forced_include
+
+    for browse in configuration.get('browse', {}).get('path', []):
+        assert os.path.exists(abspath(browse)), browse
+
+    assert os.path.exists(abspath(configuration.get('compilerPath', '~'))), configuration.get('compilerPath')

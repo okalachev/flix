@@ -1,0 +1,145 @@
+{
+	// https://support.arduino.cc/hc/en-us/articles/4415103213714-Find-sketches-libraries-board-cores-and-other-files-on-your-computer#
+	"env": {
+		"coreVersion": "2.0.11",
+		"FreeRTOSPath": "" // set to FreeRTOS sources if available
+	},
+	"configurations": [
+		{
+			"name": "Linux",
+			"includePath": [
+				"~/Arduino/libraries/**",
+				"~/.arduino15/packages/esp32/hardware/esp32/${coreVersion}/variants/d1_mini32",
+				"~/.arduino15/packages/esp32/hardware/esp32/${coreVersion}/libraries/**",
+				"~/.arduino15/packages/esp32/hardware/esp32/${coreVersion}/cores/**",
+				"~/.arduino15/packages/esp32/hardware/esp32/${coreVersion}/tools/sdk/esp32/**",
+				"${workspaceFolder}/flix"
+			],
+			"forcedInclude": [
+				"${workspaceFolder}/.vscode/intellisense.h",
+				"~/.arduino15/packages/esp32/hardware/esp32/${coreVersion}/cores/esp32/Arduino.h",
+				"~/.arduino15/packages/esp32/hardware/esp32/${coreVersion}/variants/d1_mini32/pins_arduino.h",
+				"${workspaceFolder}/flix/cli.ino",
+				"${workspaceFolder}/flix/control.ino",
+				"${workspaceFolder}/flix/estimate.ino",
+				"${workspaceFolder}/flix/flix.ino",
+				"${workspaceFolder}/flix/imu.ino",
+				"${workspaceFolder}/flix/led.ino",
+				"${workspaceFolder}/flix/log.ino",
+				"${workspaceFolder}/flix/mavlink.ino",
+				"${workspaceFolder}/flix/motors.ino",
+				"${workspaceFolder}/flix/rc.ino",
+				"${workspaceFolder}/flix/time.ino",
+				"${workspaceFolder}/flix/util.ino",
+				"${workspaceFolder}/flix/wifi.ino"
+			],
+			"browse": {
+				"path": [
+					"~/.arduino15/packages/esp32/hardware/esp32/${coreVersion}/cores/esp32/",
+					"~/.arduino15/packages/esp32/hardware/esp32/${coreVersion}/libraries",
+					"${FreeRTOSPath}"
+				]
+			},
+			"compilerPath": "~/.arduino15/packages/esp32/tools/xtensa-esp32-elf-gcc/esp-2021r2-patch5-8.4.0/bin/xtensa-esp32-elf-g++",
+			"cStandard": "c11",
+			"cppStandard": "c++17",
+			"defines": [
+				"ARDUINO=10812",
+				"ARDUINO_D1_MINI32",
+				"ESP32",
+				"F_CPU=240000000L"
+			]
+		},
+		{
+			"name": "macOS",
+			"includePath": [
+				"~/Documents/Arduino/libraries/**",
+				"~/Library/Arduino15/packages/esp32/hardware/esp32/${coreVersion}/variants/d1_mini32",
+				"~/Library/Arduino15/packages/esp32/hardware/esp32/${coreVersion}/libraries/**",
+				"~/Library/Arduino15/packages/esp32/hardware/esp32/${coreVersion}/cores/**",
+				"~/Library/Arduino15/packages/esp32/hardware/esp32/${coreVersion}/tools/sdk/esp32/**",
+				"${workspaceFolder}/flix"
+			],
+			"forcedInclude": [
+				"${workspaceFolder}/.vscode/intellisense.h",
+				"~/Library/Arduino15/packages/esp32/hardware/esp32/${coreVersion}/cores/esp32/Arduino.h",
+				"~/Library/Arduino15/packages/esp32/hardware/esp32/${coreVersion}/variants/d1_mini32/pins_arduino.h",
+				"${workspaceFolder}/flix/cli.ino",
+				"${workspaceFolder}/flix/control.ino",
+				"${workspaceFolder}/flix/estimate.ino",
+				"${workspaceFolder}/flix/flix.ino",
+				"${workspaceFolder}/flix/imu.ino",
+				"${workspaceFolder}/flix/led.ino",
+				"${workspaceFolder}/flix/log.ino",
+				"${workspaceFolder}/flix/mavlink.ino",
+				"${workspaceFolder}/flix/motors.ino",
+				"${workspaceFolder}/flix/rc.ino",
+				"${workspaceFolder}/flix/time.ino",
+				"${workspaceFolder}/flix/util.ino",
+				"${workspaceFolder}/flix/wifi.ino"
+			],
+			"browse": {
+				"path": [
+					"~/Library/Arduino15/packages/esp32/hardware/esp32/${coreVersion}/cores/esp32/",
+					"~/Library/Arduino15/packages/esp32/hardware/esp32/${coreVersion}/libraries",
+					"${FreeRTOSPath}"
+				]
+			},
+			"compilerPath": "~/Library/Arduino15/packages/esp32/tools/xtensa-esp32-elf-gcc/esp-2021r2-patch5-8.4.0/bin/xtensa-esp32-elf-g++",
+			"cStandard": "c11",
+			"cppStandard": "c++17",
+			"defines": [
+				"ARDUINO=10812",
+				"ARDUINO_D1_MINI32",
+				"ESP32",
+				"F_CPU=240000000L"
+			]
+		},
+		{
+			"name": "Windows",
+			"includePath": [
+				"~/Documents/Arduino/libraries/**",
+				"~/AppData/Local/Arduino15/packages/esp32/hardware/esp32/${coreVersion}/variants/d1_mini32",
+				"~/AppData/Local/Arduino15/packages/esp32/hardware/esp32/${coreVersion}/libraries/**",
+				"~/AppData/Local/Arduino15/packages/esp32/hardware/esp32/${coreVersion}/cores/**",
+				"~/AppData/Local/Arduino15/packages/esp32/hardware/esp32/${coreVersion}/tools/sdk/esp32/**",
+				"${workspaceFolder}/flix"
+			],
+			"forcedInclude": [
+				"${workspaceFolder}/.vscode/intellisense.h",
+				"~/AppData/Local/Arduino15/packages/esp32/hardware/esp32/${coreVersion}/cores/esp32/Arduino.h",
+				"~/AppData/Local/Arduino15/packages/esp32/hardware/esp32/${coreVersion}/variants/d1_mini32/pins_arduino.h",
+				"${workspaceFolder}/flix/cli.ino",
+				"${workspaceFolder}/flix/control.ino",
+				"${workspaceFolder}/flix/estimate.ino",
+				"${workspaceFolder}/flix/flix.ino",
+				"${workspaceFolder}/flix/imu.ino",
+				"${workspaceFolder}/flix/led.ino",
+				"${workspaceFolder}/flix/log.ino",
+				"${workspaceFolder}/flix/mavlink.ino",
+				"${workspaceFolder}/flix/motors.ino",
+				"${workspaceFolder}/flix/rc.ino",
+				"${workspaceFolder}/flix/time.ino",
+				"${workspaceFolder}/flix/util.ino",
+				"${workspaceFolder}/flix/wifi.ino"
+			],
+			"browse": {
+				"path": [
+					"~/AppData/Local/Arduino15/packages/esp32/hardware/esp32/${coreVersion}/cores/esp32/",
+					"~/AppData/Local/Arduino15/packages/esp32/hardware/esp32/${coreVersion}/libraries",
+					"${FreeRTOSPath}"
+				]
+			},
+			"compilerPath": "~/AppData/Local/Arduino15/packages/esp32/tools/xtensa-esp32-elf-gcc/esp-2021r2-patch5-8.4.0/bin/xtensa-esp32-elf-g++.exe",
+			"cStandard": "c11",
+			"cppStandard": "c++17",
+			"defines": [
+				"ARDUINO=10812",
+				"ARDUINO_D1_MINI32",
+				"ESP32",
+				"F_CPU=240000000L"
+			]
+		}
+	],
+	"version": 4
+}

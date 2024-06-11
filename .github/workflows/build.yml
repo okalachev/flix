@@ -7,7 +7,7 @@ on:
     branches: [ master ]
 
 jobs:
-  build:
+  build_linux:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -15,6 +15,10 @@ jobs:
       run: curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | BINDIR=/usr/local/bin sh
     - name: Build firmware
       run: make
+    - name: Check c_cpp_properties.json
+      run: |
+        pip install -r tools/requirements.txt
+        tools/check_c_cpp_properties.py
 
   build_macos:
     runs-on: macos-latest
@@ -24,6 +28,10 @@ jobs:
       run: brew install arduino-cli
     - name: Build firmware
       run: make
+    - name: Install requirements
+      run: pip install -r tools/requirements.txt
+    - name: Check c_cpp_properties.json
+      run: tools/check_c_cpp_properties.py
 
   build_windows:
     runs-on: windows-latest
@@ -35,6 +43,10 @@ jobs:
       run: choco install make
     - name: Build firmware
       run: make
+    - name: Install requirements
+      run: pip install -r tools/requirements.txt
+    - name: Check c_cpp_properties.json
+      run: tools/check_c_cpp_properties.py
 
   build_simulator:
     runs-on: ubuntu-latest
