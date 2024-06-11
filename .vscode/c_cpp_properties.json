@@ -44,10 +44,16 @@
 			"cStandard": "c11",
 			"cppStandard": "c++17",
 			"defines": [
-				"ARDUINO=10812",
+				"F_CPU=240000000L",
+				"ARDUINO=10607",
 				"ARDUINO_D1_MINI32",
+				"ARDUINO_ARCH_ESP32",
+				"ARDUINO_BOARD=D1_MINI32",
+				"ARDUINO_VARIANT=d1_mini32",
+				"ARDUINO_PARTITION_default",
 				"ESP32",
-				"F_CPU=240000000L"
+				"CORE_DEBUG_LEVEL=0",
+				"ARDUINO_USB_CDC_ON_BOOT="
 			]
 		},
 		{
@@ -89,10 +95,16 @@
 			"cStandard": "c11",
 			"cppStandard": "c++17",
 			"defines": [
-				"ARDUINO=10812",
+				"F_CPU=240000000L",
+				"ARDUINO=10607",
 				"ARDUINO_D1_MINI32",
+				"ARDUINO_ARCH_ESP32",
+				"ARDUINO_BOARD=D1_MINI32",
+				"ARDUINO_VARIANT=d1_mini32",
+				"ARDUINO_PARTITION_default",
 				"ESP32",
-				"F_CPU=240000000L"
+				"CORE_DEBUG_LEVEL=0",
+				"ARDUINO_USB_CDC_ON_BOOT="
 			]
 		},
 		{
@@ -134,10 +146,16 @@
 			"cStandard": "c11",
 			"cppStandard": "c++17",
 			"defines": [
-				"ARDUINO=10812",
+				"F_CPU=240000000L",
+				"ARDUINO=10607",
 				"ARDUINO_D1_MINI32",
+				"ARDUINO_ARCH_ESP32",
+				"ARDUINO_BOARD=D1_MINI32",
+				"ARDUINO_VARIANT=d1_mini32",
+				"ARDUINO_PARTITION_default",
 				"ESP32",
-				"F_CPU=240000000L"
+				"CORE_DEBUG_LEVEL=0",
+				"ARDUINO_USB_CDC_ON_BOOT="
 			]
 		}
 	],
