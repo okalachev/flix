@@ -13,7 +13,8 @@ props = json.loads(txt)
 env = props.get('env', {})
 env['workspaceFolder'] = '.'
 
-def abspath(s):
+def path(s):
+    source = s
     # replace env
     for key, value in env.items():
         s = s.replace('${' + key + '}', value)
@@ -25,6 +26,7 @@ def abspath(s):
     s = os.path.expanduser(s)
     if s == '':
         s = '.'
+    print('Check', source, '->', s)
     return s
 
 # linux, macos or windows:
@@ -40,18 +42,18 @@ else:
 
 for configuration in props['configurations']:
     if platform not in configuration['name'].lower():
-        print('Skip', configuration['name'])
+        print('Skip configuration', configuration['name'])
         continue
 
     print('Check configuration', configuration['name'])
 
     for include_path in configuration.get('includePath', []):
-        assert os.path.exists(abspath(include_path)), include_path
+        assert os.path.exists(path(include_path)), include_path
 
     for forced_include in configuration.get('forcedInclude', []):
-        assert os.path.exists(abspath(forced_include)), forced_include
+        assert os.path.exists(path(forced_include)), forced_include
 
     for browse in configuration.get('browse', {}).get('path', []):
-        assert os.path.exists(abspath(browse)), browse
+        assert os.path.exists(path(browse)), browse
 
-    assert os.path.exists(abspath(configuration.get('compilerPath', '~'))), configuration.get('compilerPath')
+    assert os.path.exists(path(configuration.get('compilerPath', '~'))), configuration.get('compilerPath')
