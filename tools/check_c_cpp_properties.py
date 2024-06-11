@@ -2,9 +2,13 @@
 
 import os
 import platform
-import json5
+import json
+import re
 
-props = json5.load(open('.vscode/c_cpp_properties.json'))
+txt = open('.vscode/c_cpp_properties.json').read()
+# remove comments
+txt = re.sub(r'//.*', '', txt)
+props = json.loads(txt)
 
 env = props.get('env', {})
 env['workspaceFolder'] = '.'

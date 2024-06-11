@@ -1,4 +1,3 @@
 docopt
 matplotlib
 mcap
-json5
