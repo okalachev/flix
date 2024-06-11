@@ -51,7 +51,7 @@
 			]
 		},
 		{
-			"name": "macOS",
+			"name": "Mac",
 			"includePath": [
 				"~/Documents/Arduino/libraries/**",
 				"~/Library/Arduino15/packages/esp32/hardware/esp32/${coreVersion}/variants/d1_mini32",
@@ -96,7 +96,7 @@
 			]
 		},
 		{
-			"name": "Windows",
+			"name": "Win32",
 			"includePath": [
 				"~/Documents/Arduino/libraries/**",
 				"~/AppData/Local/Arduino15/packages/esp32/hardware/esp32/${coreVersion}/variants/d1_mini32",
