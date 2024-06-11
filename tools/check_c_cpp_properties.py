@@ -28,7 +28,7 @@ def abspath(s):
 platform = platform.system().lower()
 if platform == 'darwin':
     platform = 'mac'
-elif platform == 'windows'
+elif platform == 'windows':
     platform = 'win32'
 elif platform == 'linux':
     pass
