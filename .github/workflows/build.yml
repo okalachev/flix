@@ -40,7 +40,7 @@ jobs:
     - name: Build firmware
       run: make
     - name: Check c_cpp_properties.json
-      run: tools/check_c_cpp_properties.py
+      run: python3 tools/check_c_cpp_properties.py
 
   build_simulator:
     runs-on: ubuntu-latest
