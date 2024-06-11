@@ -1,5 +1,5 @@
 {
-	// https://support.arduino.cc/hc/en-us/articles/4415103213714-Find-sketches-libraries-board-cores-and-other-files-on-your-computer#
+	// https://support.arduino.cc/hc/en-us/articles/4415103213714-Find-sketches-libraries-board-cores-and-other-files-on-your-computer
 	"env": {
 		"coreVersion": "2.0.11",
 		"FreeRTOSPath": "" // set to FreeRTOS sources if available

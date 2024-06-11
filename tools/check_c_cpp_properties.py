@@ -4,7 +4,6 @@ import os
 import platform
 import json5
 
-
 props = json5.load(open('.vscode/c_cpp_properties.json'))
 
 env = props.get('env', {})
