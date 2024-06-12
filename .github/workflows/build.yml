@@ -10,7 +10,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Install Arduino CLI
       run: curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | BINDIR=/usr/local/bin sh
     - name: Build firmware
@@ -19,7 +19,7 @@ jobs:
   build_macos:
     runs-on: macos-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Install Arduino CLI
       run: brew install arduino-cli
     - name: Build firmware
@@ -28,7 +28,7 @@ jobs:
   build_windows:
     runs-on: windows-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Install Arduino CLI
       run: choco install arduino-cli
     - name: Install Make
@@ -41,7 +41,7 @@ jobs:
     steps:
     - name: Install Arduino CLI
       uses: arduino/setup-arduino-cli@v1.1.1
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Install Gazebo
       run: curl -sSL http://get.gazebosim.org | sh
     - name: Install SDL2
@@ -59,7 +59,7 @@ jobs:
     steps:
     - name: Install Arduino CLI
       run: brew install arduino-cli
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Clean up python binaries # Workaround for https://github.com/actions/setup-python/issues/577
       run: |
         rm -f /usr/local/bin/2to3*
