@@ -3,3 +3,4 @@
 build/
 tools/log/
 .dependencies
+!.vscode/*
