@@ -27,7 +27,7 @@ def check_path(s):
     if s == '':
         s = '.'
     print('Check', source, '->', s)
-    assert os.path.exists(s)
+    assert os.path.exists(s), 'Path does not exist: ' + s
 
 # linux, macos or windows:
 platform = platform.system().lower()
