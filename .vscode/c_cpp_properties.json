@@ -1,7 +1,8 @@
 {
 	// https://support.arduino.cc/hc/en-us/articles/4415103213714-Find-sketches-libraries-board-cores-and-other-files-on-your-computer
 	"env": {
-		"coreVersion": "2.0.11",
+		"coreVersion": "3.0.0",
+		"compilerVersion": "esp-12.2.0_20230208",
 		"FreeRTOSPath": "" // set to FreeRTOS sources if available
 	},
 	"configurations": [
@@ -12,7 +13,6 @@
 				"~/.arduino15/packages/esp32/hardware/esp32/${coreVersion}/variants/d1_mini32",
 				"~/.arduino15/packages/esp32/hardware/esp32/${coreVersion}/libraries/**",
 				"~/.arduino15/packages/esp32/hardware/esp32/${coreVersion}/cores/**",
-				"~/.arduino15/packages/esp32/hardware/esp32/${coreVersion}/tools/sdk/esp32/**",
 				"${workspaceFolder}/flix"
 			],
 			"forcedInclude": [
@@ -40,7 +40,7 @@
 					"${FreeRTOSPath}"
 				]
 			},
-			"compilerPath": "~/.arduino15/packages/esp32/tools/xtensa-esp32-elf-gcc/esp-2021r2-patch5-8.4.0/bin/xtensa-esp32-elf-g++",
+			"compilerPath": "~/.arduino15/packages/esp32/tools/xtensa-esp32-elf-gcc/${compilerVersion}/bin/xtensa-esp32-elf-g++",
 			"cStandard": "c11",
 			"cppStandard": "c++17",
 			"defines": [
@@ -63,7 +63,6 @@
 				"~/Library/Arduino15/packages/esp32/hardware/esp32/${coreVersion}/variants/d1_mini32",
 				"~/Library/Arduino15/packages/esp32/hardware/esp32/${coreVersion}/libraries/**",
 				"~/Library/Arduino15/packages/esp32/hardware/esp32/${coreVersion}/cores/**",
-				"~/Library/Arduino15/packages/esp32/hardware/esp32/${coreVersion}/tools/sdk/esp32/**",
 				"${workspaceFolder}/flix"
 			],
 			"forcedInclude": [
@@ -91,7 +90,7 @@
 					"${FreeRTOSPath}"
 				]
 			},
-			"compilerPath": "~/Library/Arduino15/packages/esp32/tools/xtensa-esp32-elf-gcc/esp-2021r2-patch5-8.4.0/bin/xtensa-esp32-elf-g++",
+			"compilerPath": "~/Library/Arduino15/packages/esp32/tools/xtensa-esp32-elf-gcc/${compilerVersion}/bin/xtensa-esp32-elf-g++",
 			"cStandard": "c11",
 			"cppStandard": "c++17",
 			"defines": [
@@ -114,7 +113,6 @@
 				"~/AppData/Local/Arduino15/packages/esp32/hardware/esp32/${coreVersion}/variants/d1_mini32",
 				"~/AppData/Local/Arduino15/packages/esp32/hardware/esp32/${coreVersion}/libraries/**",
 				"~/AppData/Local/Arduino15/packages/esp32/hardware/esp32/${coreVersion}/cores/**",
-				"~/AppData/Local/Arduino15/packages/esp32/hardware/esp32/${coreVersion}/tools/sdk/esp32/**",
 				"${workspaceFolder}/flix"
 			],
 			"forcedInclude": [
@@ -142,7 +140,7 @@
 					"${FreeRTOSPath}"
 				]
 			},
-			"compilerPath": "~/AppData/Local/Arduino15/packages/esp32/tools/xtensa-esp32-elf-gcc/esp-2021r2-patch5-8.4.0/bin/xtensa-esp32-elf-g++.exe",
+			"compilerPath": "~/AppData/Local/Arduino15/packages/esp32/tools/xtensa-esp32-elf-gcc/${compilerVersion}/bin/xtensa-esp32-elf-g++.exe",
 			"cStandard": "c11",
 			"cppStandard": "c++17",
 			"defines": [
