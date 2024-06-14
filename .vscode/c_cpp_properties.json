@@ -3,6 +3,7 @@
 	"env": {
 		"coreVersion": "3.0.0",
 		"compilerVersion": "esp-12.2.0_20230208",
+		"idfRelease": "v5.1-442a798083",
 		"FreeRTOSPath": "" // set to FreeRTOS sources if available
 	},
 	"configurations": [
@@ -13,6 +14,8 @@
 				"~/.arduino15/packages/esp32/hardware/esp32/${coreVersion}/variants/d1_mini32",
 				"~/.arduino15/packages/esp32/hardware/esp32/${coreVersion}/libraries/**",
 				"~/.arduino15/packages/esp32/hardware/esp32/${coreVersion}/cores/**",
+				"~/.arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_${idfRelease}/esp32/**",
+				"~/.arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_${idfRelease}/esp32/dio_qspi/include",
 				"${workspaceFolder}/flix"
 			],
 			"forcedInclude": [
@@ -63,16 +66,18 @@
 				"~/Library/Arduino15/packages/esp32/hardware/esp32/${coreVersion}/variants/d1_mini32",
 				"~/Library/Arduino15/packages/esp32/hardware/esp32/${coreVersion}/libraries/**",
 				"~/Library/Arduino15/packages/esp32/hardware/esp32/${coreVersion}/cores/**",
+				"~/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_${idfRelease}/esp32/**",
+				"~/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_${idfRelease}/esp32/dio_qspi/include",
 				"${workspaceFolder}/flix"
 			],
 			"forcedInclude": [
 				"${workspaceFolder}/.vscode/intellisense.h",
 				"~/Library/Arduino15/packages/esp32/hardware/esp32/${coreVersion}/cores/esp32/Arduino.h",
 				"~/Library/Arduino15/packages/esp32/hardware/esp32/${coreVersion}/variants/d1_mini32/pins_arduino.h",
+				"${workspaceFolder}/flix/flix.ino",
 				"${workspaceFolder}/flix/cli.ino",
 				"${workspaceFolder}/flix/control.ino",
 				"${workspaceFolder}/flix/estimate.ino",
-				"${workspaceFolder}/flix/flix.ino",
 				"${workspaceFolder}/flix/imu.ino",
 				"${workspaceFolder}/flix/led.ino",
 				"${workspaceFolder}/flix/log.ino",
@@ -113,6 +118,8 @@
 				"~/AppData/Local/Arduino15/packages/esp32/hardware/esp32/${coreVersion}/variants/d1_mini32",
 				"~/AppData/Local/Arduino15/packages/esp32/hardware/esp32/${coreVersion}/libraries/**",
 				"~/AppData/Local/Arduino15/packages/esp32/hardware/esp32/${coreVersion}/cores/**",
+				"~/AppData/Local/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_${idfRelease}/esp32/**",
+				"~/AppData/Local/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_${idfRelease}/esp32/dio_qspi/include",
 				"${workspaceFolder}/flix"
 			],
 			"forcedInclude": [
