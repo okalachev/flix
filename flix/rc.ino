@@ -9,7 +9,7 @@
 int channelNeutral[] = {995, 883, 200, 972, 512, 512};
 int channelMax[] = {1651, 1540, 1713, 1630, 1472, 1472};
 
-SBUS RC(Serial2);
+SBUS RC(Serial2, 16, 17); // NOTE: remove pin numbers (16, 17) if you use the new default pins for Serial2 (4, 25)
 
 void setupRC() {
 	Serial.println("Setup RC");
