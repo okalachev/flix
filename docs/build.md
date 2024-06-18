@@ -80,7 +80,7 @@ cd flix
 
 ### Flight
 
-Use USB remote control or QGroundControl mobile app (with *Virtual Joystick* setting enabled) to control the drone. *Auto-Center Throttle* setting **should be disabled**.
+Use USB remote control or [QGroundControl mobile app](https://docs.qgroundcontrol.com/master/en/qgc-user-guide/getting_started/download_and_install.html#android) (with *Virtual Joystick* setting enabled) to control the drone. *Auto-Center Throttle* setting **should be disabled**.
 
 ## Firmware
 
