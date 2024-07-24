@@ -47,8 +47,8 @@ public:
 		this->model = _parent;
 		this->body = this->model->GetLink("body");
 		this->imu = dynamic_pointer_cast<sensors::ImuSensor>(sensors::get_sensor(model->GetScopedName(true) + "::body::imu")); // default::flix::body::imu
-		this->updateConnection = event::Events::ConnectWorldUpdateBegin(bind(&ModelFlix::OnUpdate, this));
-		this->resetConnection = event::Events::ConnectWorldReset(bind(&ModelFlix::OnReset, this));
+		this->updateConnection = event::Events::ConnectWorldUpdateBegin(std::bind(&ModelFlix::OnUpdate, this));
+		this->resetConnection = event::Events::ConnectWorldReset(std::bind(&ModelFlix::OnReset, this));
 		initNode();
 		Serial.begin(0);
 		gzmsg << "Flix plugin loaded" << endl;

@@ -7,6 +7,7 @@
 
 #include <cmath>
 #include <string>
+#include <stdint.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/poll.h>
