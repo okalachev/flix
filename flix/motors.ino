@@ -20,17 +20,11 @@
 void setupMotors() {
 	Serial.println("Setup Motors");
 
-	// configure PWM channels
-	ledcSetup(0, PWM_FREQUENCY, PWM_RESOLUTION);
-	ledcSetup(1, PWM_FREQUENCY, PWM_RESOLUTION);
-	ledcSetup(2, PWM_FREQUENCY, PWM_RESOLUTION);
-	ledcSetup(3, PWM_FREQUENCY, PWM_RESOLUTION);
-
-	// attach channels to motor pins
-	ledcAttachPin(MOTOR_0_PIN, 0);
-	ledcAttachPin(MOTOR_1_PIN, 1);
-	ledcAttachPin(MOTOR_2_PIN, 2);
-	ledcAttachPin(MOTOR_3_PIN, 3);
+	// configure pins
+	ledcAttach(MOTOR_0_PIN, PWM_FREQUENCY, PWM_RESOLUTION);
+	ledcAttach(MOTOR_1_PIN, PWM_FREQUENCY, PWM_RESOLUTION);
+	ledcAttach(MOTOR_2_PIN, PWM_FREQUENCY, PWM_RESOLUTION);
+	ledcAttach(MOTOR_3_PIN, PWM_FREQUENCY, PWM_RESOLUTION);
 
 	sendMotors();
 	Serial.println("Motors initialized");
@@ -51,10 +45,10 @@ uint8_t pwmToDutyCycle(uint16_t pwm) {
 }
 
 void sendMotors() {
-	ledcWrite(0, pwmToDutyCycle(getPWM(motors[0], 0)));
-	ledcWrite(1, pwmToDutyCycle(getPWM(motors[1], 1)));
-	ledcWrite(2, pwmToDutyCycle(getPWM(motors[2], 2)));
-	ledcWrite(3, pwmToDutyCycle(getPWM(motors[3], 3)));
+	ledcWrite(MOTOR_0_PIN, pwmToDutyCycle(getPWM(motors[0], 0)));
+	ledcWrite(MOTOR_1_PIN, pwmToDutyCycle(getPWM(motors[1], 1)));
+	ledcWrite(MOTOR_2_PIN, pwmToDutyCycle(getPWM(motors[2], 2)));
+	ledcWrite(MOTOR_3_PIN, pwmToDutyCycle(getPWM(motors[3], 3)));
 }
 
 void fullMotorTest(int n, bool reverse) {
