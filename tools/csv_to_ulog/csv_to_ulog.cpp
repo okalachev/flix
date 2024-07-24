@@ -4,10 +4,10 @@
 // Tool for conversion CSV log file to ULog format
 
 #include <ulog_cpp/simple_writer.hpp>
+#include <rapidcsv.h>
 #include <vector>
 #include <string>
 #include <filesystem>
-#include "rapidcsv.h"
 
 using std::vector;
 using std::string;
