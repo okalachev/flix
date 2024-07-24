@@ -5,7 +5,8 @@ import platform
 import json
 import re
 
-txt = open('.vscode/c_cpp_properties.json').read()
+path = '.vscode/c_cpp_properties.json' if os.path.exists('./.vscode/c_cpp_properties.json') else '../.vscode/c_cpp_properties.json'
+txt = open(path).read()
 # remove comments
 txt = re.sub(r'//.*', '', txt)
 props = json.loads(txt)
