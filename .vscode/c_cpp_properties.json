@@ -30,7 +30,7 @@
 				"${workspaceFolder}/flix/util.ino",
 				"${workspaceFolder}/flix/wifi.ino"
 			],
-			"compilerPath": "~/.arduino15/packages/esp32/tools/xtensa-esp32-elf-gcc/2302/bin/xtensa-esp32-elf-g++",
+			"compilerPath": "~/.arduino15/packages/esp32/tools/esp-x32/2302/bin/xtensa-esp32-elf-g++",
 			"cStandard": "c11",
 			"cppStandard": "c++17",
 			"defines": [
