@@ -8,7 +8,7 @@
 				"~/.arduino15/packages/esp32/hardware/esp32/3.0.3/cores/**",
 				"~/.arduino15/packages/esp32/hardware/esp32/3.0.3/libraries/**",
 				"~/.arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.1-dc859c1e67/esp32/**",
-				"~/.arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_${idfRelease}/esp32/dio_qspi/include",
+				"~/.arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.1-dc859c1e67/esp32/dio_qspi/include",
 				"~/Arduino/libraries/**",
 				"/usr/include/**"
 			],
