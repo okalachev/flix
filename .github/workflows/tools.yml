@@ -10,7 +10,7 @@ jobs:
   csv_to_ulog:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Build csv_to_ulog
       run: cd tools/csv_to_ulog && mkdir build && cd build && cmake .. && make
     - name: Test csv_to_ulog
@@ -22,7 +22,7 @@ jobs:
   python_tools:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Install Python dependencies
       run: pip install -r tools/requirements.txt
     - name: Test csv_to_mcap tool
