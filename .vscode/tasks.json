@@ -1,0 +1,31 @@
+{
+	"tasks": [
+		{
+			"label": "Build firmware",
+			"type": "shell",
+			"command": "make",
+			"problemMatcher": [ "$gcc" ],
+			"presentation": { "clear": true, "showReuseMessage": false },
+		},
+		{
+			"label": "Upload firmware",
+			"type": "shell",
+			"command": "make upload",
+			"problemMatcher": [ "$gcc" ],
+			"presentation": { "clear": true, "showReuseMessage": false }
+		},
+		{
+			"label": "Build simulator",
+			"type": "shell",
+			"command": "make build_simulator",
+			"problemMatcher": [ "$gcc" ],
+			"presentation": { "clear": true, "showReuseMessage": false }
+		},
+		{
+			"label": "Clean",
+			"type": "shell",
+			"command": "make clean",
+		}
+	],
+	"version": "2.0.0"
+}

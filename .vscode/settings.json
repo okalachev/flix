@@ -1,0 +1,8 @@
+{
+	"C_Cpp.intelliSenseEngineFallback": "enabled",
+	"files.associations": {
+		"*.sdf": "xml",
+		"*.ino": "cpp",
+		"*.h": "cpp"
+	}
+}
