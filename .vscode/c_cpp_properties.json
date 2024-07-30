@@ -5,8 +5,9 @@
 			"includePath": [
 				"${workspaceFolder}/flix",
 				"${workspaceFolder}/gazebo",
-				"~/.arduino15/packages/esp32/hardware/esp32/3.0.3/cores/**",
+				"~/.arduino15/packages/esp32/hardware/esp32/3.0.3/cores/esp32",
 				"~/.arduino15/packages/esp32/hardware/esp32/3.0.3/libraries/**",
+				"~/.arduino15/packages/esp32/hardware/esp32/3.0.3/variants/d1_mini32",
 				"~/.arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.1-dc859c1e67/esp32/**",
 				"~/.arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.1-dc859c1e67/esp32/dio_qspi/include",
 				"~/Arduino/libraries/**",
@@ -53,6 +54,7 @@
 				"${workspaceFolder}/gazebo",
 				"~/Library/Arduino15/packages/esp32/hardware/esp32/3.0.3/cores/esp32",
 				"~/Library/Arduino15/packages/esp32/hardware/esp32/3.0.3/libraries/**",
+				"~/Library/Arduino15/packages/esp32/hardware/esp32/3.0.3/variants/d1_mini32",
 				"~/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.1-dc859c1e67/esp32/include/**",
 				"~/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.1-dc859c1e67/esp32/dio_qspi/include",
 				"~/Documents/Arduino/libraries/**",
@@ -98,8 +100,9 @@
 			"includePath": [
 				"${workspaceFolder}/flix",
 				"${workspaceFolder}/gazebo",
-				"~/AppData/Local/Arduino15/packages/esp32/hardware/esp32/3.0.3/cores/**",
+				"~/AppData/Local/Arduino15/packages/esp32/hardware/esp32/3.0.3/cores/esp32",
 				"~/AppData/Local/Arduino15/packages/esp32/hardware/esp32/3.0.3/libraries/**",
+				"~/AppData/Local/Arduino15/packages/esp32/hardware/esp32/3.0.3/variants/d1_mini32",
 				"~/AppData/Local/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.1-dc859c1e67/esp32/**",
 				"~/AppData/Local/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.1-dc859c1e67/esp32/dio_qspi/include",
 				"~/Documents/Arduino/libraries/**"
