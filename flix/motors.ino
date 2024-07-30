@@ -5,10 +5,11 @@
 // Motor: 8520 3.7V
 // ESC: KINGDUO Micro Mini 4A 1S Brushed Esc 3.6-6V
 
-#define MOTOR_0_PIN 12
-#define MOTOR_1_PIN 13
-#define MOTOR_2_PIN 14
-#define MOTOR_3_PIN 15
+#define MOTOR_0_PIN 12 // rear left
+#define MOTOR_1_PIN 13 // rear right
+#define MOTOR_2_PIN 14 // front right
+#define MOTOR_3_PIN 15 // front left
+
 #define PWM_FREQUENCY 200
 #define PWM_RESOLUTION 8
 #define PWM_NEUTRAL 1500
