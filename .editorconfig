@@ -4,7 +4,7 @@ root = true
 end_of_line = lf
 insert_final_newline = true
 
-[*.{ino,cpp,c,h,hpp,sdf,world}]
+[*.{ino,cpp,c,h,hpp,sdf,world,json}]
 charset = utf-8
 indent_style = tab
 tab_width = 4
