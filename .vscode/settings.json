@@ -4,5 +4,10 @@
 		"*.sdf": "xml",
 		"*.ino": "cpp",
 		"*.h": "cpp"
-	}
+	},
+	"C_Cpp.vcFormat.newLine.beforeOpenBrace.function": "newLine",
+	"C_Cpp.vcFormat.newLine.beforeOpenBrace.block": "sameLine",
+	"C_Cpp.vcFormat.newLine.beforeOpenBrace.lambda": "sameLine",
+	"C_Cpp.vcFormat.newLine.beforeOpenBrace.namespace": "sameLine",
+	"C_Cpp.vcFormat.newLine.beforeOpenBrace.type": "sameLine"
 }
