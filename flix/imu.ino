@@ -41,6 +41,9 @@ void readIMU() {
 	// apply scale and bias
 	acc = (acc - accBias) / accScale;
 	gyro = gyro - gyroBias;
+	// rotate to FRD
+	rotateData(acc);
+	rotateData(gyro);
 }
 
 void calibrateGyro() {
@@ -118,4 +121,9 @@ void printIMUCal() {
 	Serial.printf("gyro bias: %f %f %f\n", gyroBias.x, gyroBias.y, gyroBias.z);
 	Serial.printf("accel bias: %f %f %f\n", accBias.x, accBias.y, accBias.z);
 	Serial.printf("accel scale: %f %f %f\n", accScale.x, accScale.y, accScale.z);
+}
+
+void rotateData(Vector& data) {
+	// FLU to FRD
+	data = Vector(data.x, -data.y, -data.z);
 }
