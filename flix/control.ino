@@ -123,7 +123,8 @@ void controlAttitude() {
 	ratesTarget.y = pitchPID.update(error.y, dt);
 
 	if (yawMode == YAW) {
-		ratesTarget.z = yawPID.update(wrapAngle(attitudeTarget.getYaw() - attitude.getYaw()), dt);
+		float yawError = wrapAngle(attitudeTarget.getYaw() - attitude.getYaw());
+		ratesTarget.z = yawPID.update(yawError, dt);
 	}
 }
 
