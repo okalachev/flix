@@ -8,7 +8,7 @@
 
 #define SERIAL_BAUDRATE 115200
 
-#define WIFI_ENABLED 0
+#define WIFI_ENABLED 1
 
 #define RC_CHANNELS 6
 #define RC_CHANNEL_ROLL 0
