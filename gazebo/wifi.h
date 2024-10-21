@@ -18,7 +18,7 @@ int wifiSocket;
 
 void setupWiFi() {
 	wifiSocket = socket(AF_INET, SOCK_DGRAM, 0);
-	sockaddr_in addr;
+	sockaddr_in addr; // local address
 	addr.sin_family = AF_INET;
 	addr.sin_addr.s_addr = INADDR_ANY;
 	addr.sin_port = htons(WIFI_UDP_PORT_LOCAL);
@@ -30,7 +30,7 @@ void setupWiFi() {
 
 void sendWiFi(const uint8_t *buf, int len) {
 	if (wifiSocket == 0) setupWiFi();
-	sockaddr_in addr;
+	sockaddr_in addr; // remote address
 	addr.sin_family = AF_INET;
 	addr.sin_addr.s_addr = INADDR_BROADCAST; // send UDP broadcast
 	addr.sin_port = htons(WIFI_UDP_PORT_REMOTE);

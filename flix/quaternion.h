@@ -75,7 +75,7 @@ public:
 		float sqz = z * z;
 		float sqw = w * w;
 		// Cases derived from https://orbitalstation.wordpress.com/tag/quaternion/
-		float sarg = -2 * (x * z - w * y) / (sqx + sqy + sqz + sqw); /* normalization added from urdfom_headers */
+		float sarg = -2 * (x * z - w * y) / (sqx + sqy + sqz + sqw);
 		if (sarg <= -0.99999) {
 			euler.x = 0;
 			euler.y = -0.5 * PI;
