@@ -102,7 +102,7 @@ void doCommand(String& command, String& value) {
 	} else if (command == "mrl") {
 		cliTestMotor(MOTOR_REAR_LEFT);
 	} else if (command == "fullmot") {
-		fullMotorTest(value.toInt(), false);
+		fullMotorTest(value.toInt());
 	} else if (command == "reset") {
 		attitude = Quaternion();
 	} else {

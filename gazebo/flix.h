@@ -54,6 +54,6 @@ void handleMavlink(const void *_msg);
 void setLED(bool on) {};
 void calibrateGyro() { printf("Skip gyro calibrating\n"); };
 void calibrateAccel() { printf("Skip accel calibrating\n"); };
-void fullMotorTest(int n, bool reverse) { printf("Skip full motor test\n"); };
+void fullMotorTest(int n) { printf("Skip full motor test\n"); };
 void sendMotors() {};
 void printIMUCal() { printf("cal: N/A\n"); };
