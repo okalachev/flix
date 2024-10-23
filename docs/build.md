@@ -78,9 +78,26 @@ cd flix
    make simulator
    ```
 
-### Flight
+### Setup and flight
 
-Use USB remote control or [QGroundControl mobile app](https://docs.qgroundcontrol.com/master/en/qgc-user-guide/getting_started/download_and_install.html#android) (with *Virtual Joystick* setting enabled) to control the drone. *Auto-Center Throttle* setting **should be disabled**.
+#### Control with smartphone
+
+1. Install [QGroundControl mobile app](https://docs.qgroundcontrol.com/master/en/qgc-user-guide/getting_started/download_and_install.html#android) on your smartphone.
+2. Connect your smartphone to the same Wi-Fi network as the machine running the simulator.
+3. If you're using a virtual machine, make sure that its network is set to the **bridged** mode with Wi-Fi adapter selected.
+4. Run the simulation.
+5. Open QGroundControl app. It should connect and begin showing the virtual drone's telemetry automatically.
+6. Go to the settings and enable *Virtual Joystick*. *Auto-Center Throttle* setting **should be disabled**.
+7. Use the virtual joystick to fly the drone!
+
+#### Control with USB remote control
+
+1. Connect your USB remote control to the machine running the simulator.
+2. Run the simulation.
+3. Calibrate the RC using `cr` command in the command line interface and stop the simulation.
+4. Copy the calibration results to the source code (`gazebo/joystick.h`).
+5. Run the simulation again.
+6. Use the USB remote control to fly the drone!
 
 ## Firmware
 
@@ -119,12 +136,33 @@ Use USB remote control or [QGroundControl mobile app](https://docs.qgroundcontro
 
 See other available Make commands in the [Makefile](../Makefile).
 
+### Setup and flight
+
+Before flight you need to calibrate the accelerometer:
+
+1. Open Serial Monitor in Arduino IDE (use use `make monitor` command in the command line).
+2. Type `ca` command there.
+3. Copy calibration results to the source code (`flix/imu.ino`).
+
+#### Control with smartphone
+
+1. Install [QGroundControl mobile app](https://docs.qgroundcontrol.com/master/en/qgc-user-guide/getting_started/download_and_install.html#android) on your smartphone.
+2. Power the drone using the battery.
+3. Connect your smartphone to the appeared `flix` Wi-Fi network.
+4. Open QGroundControl app. It should connect and begin showing the drone's telemetry automatically.
+5. Go to the settings and enable *Virtual Joystick*. *Auto-Center Throttle* setting **should be disabled**.
+6. Use the virtual joystick to fly the drone!
+
+#### Control with remote control
+
+Before flight using remote control, you need to calibrate it:
+
+1. Open Serial Monitor in Arduino IDE (use use `make monitor` command in the command line).
+2. Type `cr` command there.
+3. Copy calibration results to the source code (`flix/rc.ino`).
+
+Then you can use your remote control to fly the drone!
+
 ### Firmware code structure
 
 See [firmware overview](firmware.md) for more details.
-
-## Setup
-
-Before flight in simulation and on the real drone, you need to calibrate your remote control. Use drone's command line interface (`make monitor` on the real drone) and type `cr` command. Copy calibration results to the source code (`flix/rc.ino` and/or `gazebo/joystick.h`).
-
-On the real drone, you also need to calibrate the accelerometer and the gyroscope. Use `ca` and `cg` commands for that. Copy calibration results to the source code (`flix/imu.ino`).
