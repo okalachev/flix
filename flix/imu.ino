@@ -122,8 +122,3 @@ void printIMUCal() {
 	Serial.printf("accel bias: %f %f %f\n", accBias.x, accBias.y, accBias.z);
 	Serial.printf("accel scale: %f %f %f\n", accScale.x, accScale.y, accScale.z);
 }
-
-void rotateData(Vector& data) {
-	// FLU to FRD
-	data = Vector(data.x, -data.y, -data.z);
-}
