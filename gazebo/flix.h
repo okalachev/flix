@@ -49,6 +49,7 @@ void sendMavlink();
 void sendMessage(const void *msg);
 void receiveMavlink();
 void handleMavlink(const void *_msg);
+inline Quaternion FLU2FRD(const Quaternion &q);
 
 // mocks
 void setLED(bool on) {};

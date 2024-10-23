@@ -36,7 +36,7 @@ void applyAcc() {
 	if (!landed) return;
 
 	// calculate accelerometer correction
-	Vector up = attitude.rotate(Vector(0, 0, -1));
+	Vector up = attitude.rotate(Vector(0, 0, 1));
 	Vector correction = Vector::angularRatesBetweenVectors(acc, up) * dt * WEIGHT_ACC;
 
 	// apply correction
@@ -45,6 +45,6 @@ void applyAcc() {
 }
 
 void signalizeHorizontality() {
-	float angle = Vector::angleBetweenVectors(attitude.rotate(Vector(0, 0, -1)), Vector(0, 0, -1));
+	float angle = Vector::angleBetweenVectors(attitude.rotate(Vector(0, 0, 1)), Vector(0, 0, 1));
 	setLED(angle < radians(15));
 }

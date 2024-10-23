@@ -81,22 +81,22 @@ void interpretRC() {
 	if (mode == ACRO) {
 		yawMode = YAW_RATE;
 		ratesTarget.x = controls[RC_CHANNEL_ROLL] * ROLLRATE_MAX;
-		ratesTarget.y = -controls[RC_CHANNEL_PITCH] * PITCHRATE_MAX; // up pitch stick means tilt clockwise in frd
-		ratesTarget.z = controls[RC_CHANNEL_YAW] * YAWRATE_MAX;
+		ratesTarget.y = controls[RC_CHANNEL_PITCH] * PITCHRATE_MAX;
+		ratesTarget.z = -controls[RC_CHANNEL_YAW] * YAWRATE_MAX; // positive yaw stick means clockwise rotation in FLU
 
 	} else if (mode == STAB) {
 		yawMode = controls[RC_CHANNEL_YAW] == 0 ? YAW : YAW_RATE;
 
 		attitudeTarget = Quaternion::fromEulerZYX(Vector(
 			controls[RC_CHANNEL_ROLL] * MAX_TILT,
-			-controls[RC_CHANNEL_PITCH] * MAX_TILT,
+			controls[RC_CHANNEL_PITCH] * MAX_TILT,
 			attitudeTarget.getYaw()));
-		ratesTarget.z = controls[RC_CHANNEL_YAW] * YAWRATE_MAX;
+		ratesTarget.z = -controls[RC_CHANNEL_YAW] * YAWRATE_MAX; // positive yaw stick means clockwise rotation in FLU
 
 	} else if (mode == MANUAL) {
 		// passthrough mode
 		yawMode = YAW_RATE;
-		torqueTarget = Vector(controls[RC_CHANNEL_ROLL], -controls[RC_CHANNEL_PITCH], controls[RC_CHANNEL_YAW]) * 0.01;
+		torqueTarget = Vector(controls[RC_CHANNEL_ROLL], controls[RC_CHANNEL_PITCH], -controls[RC_CHANNEL_YAW]) * 0.01;
 	}
 
 	if (yawMode == YAW_RATE || !motorsActive()) {
@@ -113,7 +113,7 @@ void controlAttitude() {
 		return;
 	}
 
-	const Vector up(0, 0, -1);
+	const Vector up(0, 0, 1);
 	Vector upActual = attitude.rotate(up);
 	Vector upTarget = attitudeTarget.rotate(up);
 
@@ -150,10 +150,10 @@ void controlTorque() {
 		return;
 	}
 
-	motors[MOTOR_FRONT_LEFT] = thrustTarget + torqueTarget.x + torqueTarget.y - torqueTarget.z;
-	motors[MOTOR_FRONT_RIGHT] = thrustTarget - torqueTarget.x + torqueTarget.y + torqueTarget.z;
-	motors[MOTOR_REAR_LEFT] = thrustTarget + torqueTarget.x - torqueTarget.y + torqueTarget.z;
-	motors[MOTOR_REAR_RIGHT] = thrustTarget - torqueTarget.x - torqueTarget.y - torqueTarget.z;
+	motors[MOTOR_FRONT_LEFT] = thrustTarget + torqueTarget.x - torqueTarget.y + torqueTarget.z;
+	motors[MOTOR_FRONT_RIGHT] = thrustTarget - torqueTarget.x - torqueTarget.y - torqueTarget.z;
+	motors[MOTOR_REAR_LEFT] = thrustTarget + torqueTarget.x + torqueTarget.y - torqueTarget.z;
+	motors[MOTOR_REAR_RIGHT] = thrustTarget - torqueTarget.x + torqueTarget.y + torqueTarget.z;
 
 	motors[0] = constrain(motors[0], 0, 1);
 	motors[1] = constrain(motors[1], 0, 1);
