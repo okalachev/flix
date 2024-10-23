@@ -23,7 +23,6 @@
 * Wi-Fi support.
 * MAVLink support.
 * Control using mobile phone (with QGroundControl app).
-* ESCs with reverse mode support.
 * Completely 3D-printed frame.
 * *Textbook and videos for students on writing a flight controller¹.*
 * *Position control and autonomous flights using external camera¹*.
@@ -100,7 +99,7 @@ Complete diagram is Work-in-Progress.
 ### Notes
 
 * Power ESP32 Mini with Li-Po battery using VCC (+) and GND (-) pins.
-* Connect the GY-91 board to the ESP32 Mini using VSPI , power it using 3.3V and GND pins:
+* Connect the GY-91 board to the ESP32 Mini using VSPI, power it using 3.3V and GND pins:
 
   |GY-91 pin|ESP32 pin|
   |-|-|
