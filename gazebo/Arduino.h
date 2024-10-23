@@ -134,7 +134,8 @@ void delay(uint32_t ms) {
 }
 
 unsigned long __micros;
+unsigned long __resetTime = 0;
 
 unsigned long micros() {
-	return __micros;
+	return __micros + __resetTime; // keep the time monotonic
 }
