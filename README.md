@@ -1,8 +1,17 @@
-# flix
+# Flix
 
-**flix** (*flight + X*) — making an open source ESP32-based quadcopter from scratch.
+**Flix** (*flight + X*) — making an open source ESP32-based quadcopter from scratch.
 
-<img src="docs/img/flix.jpg" width=500 alt="Flix quadcopter">
+<table>
+  <tr>
+    <td align=center><strong>Version 1</strong> (3D-printed frame)</td>
+    <td align=center><strong>Version 0</strong></td>
+  </tr>
+  <tr>
+    <td><img src="docs/img/flix1.jpg" width=500 alt="Flix quadcopter"></td>
+    <td><img src="docs/img/flix.jpg" width=500 alt="Flix quadcopter"></td>
+  </tr>
+</table>
 
 ## Features
 
@@ -15,55 +24,123 @@
 * MAVLink support.
 * Control using mobile phone (with QGroundControl app).
 * ESCs with reverse mode support.
-* *Textbook and videos for students on writing a flight controller\*.*
-* *Completely 3D-printed frame*.*
-* *Position control and autonomous flights using external camera\**.
+* Completely 3D-printed frame.
+* *Textbook and videos for students on writing a flight controller¹.*
+* *Position control and autonomous flights using external camera¹*.
 * [Building and running instructions](docs/build.md).
 
-*\* — planned.*
+*¹ — planned.*
 
 ## It actually flies
 
+See detailed demo video (for version 0): https://youtu.be/8GzzIQ3C6DQ.
+
 <a href="https://youtu.be/8GzzIQ3C6DQ"><img width=500 src="https://i3.ytimg.com/vi/8GzzIQ3C6DQ/maxresdefault.jpg"></a>
 
-See YouTube demo video: https://youtu.be/8GzzIQ3C6DQ.
+Version 1 test flight: https://t.me/opensourcequadcopter/42.
+
+<a href="https://t.me/opensourcequadcopter/42"><img width=500 src="docs/img/flight-video.jpg"></a>
 
 ## Simulation
 
-Simulation in Gazebo using a plugin that runs original Arduino code is implemented:
+The simulator is implemented using Gazebo and runs the original Arduino code:
 
 <img src="docs/img/simulator.png" width=500 alt="Flix simulator">
 
-## Schematics
+See [instructions on running the simulation](docs/build.md).
 
-<img src="docs/img/schematics.svg" width=800 alt="Flix schematics">
+## Components (version 1)
 
-You can also check a user contributed [variant of complete circuit diagram](https://miro.com/app/board/uXjVN-dTjoo=/) of the drone.
+|Type|Part|Image|Quantity|
+|-|-|:-:|:-:|
+|Microcontroller board|ESP32 Mini|<img src="docs/img/esp32.jpg" width=100>|1|
+|IMU and barometer² board|GY-91 (or other MPU-9250 board)|<img src="docs/img/gy-91.jpg" width=100>|1|
+|Motor|8520 3.7V brushed motor (**shaft 0.8mm!**)|<img src="docs/img/motor.jpeg" width=100>|4|
+|Propeller|Hubsan 55 mm|<img src="docs/img/prop.jpg" width=100>|4|
+|MOSFET (transistor)|100N03A or [compatible](https://t.me/opensourcequadcopter/33)|<img src="docs/img/100n03a.jpg" width=100>|4|
+|Pull-down resistor|10 kΩ|<img src="docs/img/resistor10k.jpg" width=100>|4|
+|3.7V Li-Po battery|LW 952540 (or any compatible by the size)|<img src="docs/img/battery.jpg" width=100>|1|
+|Li-Po Battery charger|Any|<img src="docs/img/charger.jpg" width=100>|1|
+|Screws for IMU board mounting|M3x5|<img src="docs/img/screw-m3.jpg" width=100>|2|
+|Screws for frame assembly|M1.4x5|<img src="docs/img/screw-m1.4.jpg" height=30 align=center>|4|
+|Frame bottom part|3D printed: [`flix-frame.stl`](docs/assets/flix-frame.stl)|<img src="docs/img/frame1.jpg" width=100>|1|
+|Frame top part|3D printed: [`esp32-holder.stl`](docs/assets/esp32-holder.stl)|<img src="docs/img/esp32-holder.jpg" width=100>|1|
+|Washer for IMU board mounting|3D printed: [`washer-m3.stl`](docs/assets/washer-m3.stl)|<img src="docs/img/washer-m3.jpg" width=100>|1|
+|*RC transmitter (optional)*|*KINGKONG TINY X8 or other³*|<img src="docs/img/tx.jpg" width=100>|1|
+|*RC receiver (optional)*|*DF500 or other³*|<img src="docs/img/rx.jpg" width=100>|1|
+|Wires|28 AWG recommended|<img src="docs/img/wire-28awg.jpg" width=100>||
+|Tape, double-sided tape||||
 
-*\* — SBUS inverter is not needed as ESP32 supports [software pin inversion](https://github.com/bolderflight/sbus#inverted-serial).*
+*² — barometer is not used for now.*
 
-## Components (version 0)
+*³ — you may use any transmitter-receiver pair with SBUS interface.*
 
-|Component|Type|Image|Quantity|
-|-|-|-|-|
-|ESP32 Mini|Microcontroller board|<img src="docs/img/esp32.jpg" width=100>|1|
-|GY-91|IMU+LDO+barometer board|<img src="docs/img/gy-91.jpg" width=100>|1|
-|K100|Quadcopter frame|<img src="docs/img/frame.jpg" width=100>|1|
-|8520 3.7V brushed motor (**shaft 0.8mm!**)|Motor|<img src="docs/img/motor.jpeg" width=100>|4|
-|Hubsan 55 mm| Propeller|<img src="docs/img/prop.jpg" width=100>|4|
-|2.7A 1S Dual Way Micro Brush ESC|Motor ESC|<img src="docs/img/esc.jpg" width=100>|4|
-|KINGKONG TINY X8|RC transmitter|<img src="docs/img/tx.jpg" width=100>|1|
-|DF500 (SBUS)|RC receiver|<img src="docs/img/rx.jpg" width=100>|1|
-||~~SBUS inverter~~*|<img src="docs/img/inv.jpg" width=100>|~~1~~|
-|3.7 Li-Po 850 MaH 60C|Battery|||
-||Battery charger|<img src="docs/img/charger.jpg" width=100>|1|
-||Wires, connectors, tape, ...|||
-||3D-printed frame parts|||
+Tools required for assembly:
 
-*\* — not needed as ESP32 supports [software pin inversion](https://github.com/bolderflight/sbus#inverted-serial).*
+* 3D printer.
+* Soldering iron.
+* Solder wire (with flux).
+* Screwdrivers.
+* Multimeter.
+
+Feel free to modify the design and or code, and create your own improved versions of Flix! Send your results to the [official Telegram chat](https://t.me/opensourcequadcopterchat), or directly to the author ([E-mail](mailto:okalachev@gmail.com), [Telegram](https://t.me/okalachev)).
+
+## Schematics (version 1)
+
+### Simplified connection diagram
+
+<img src="docs/img/schematics1.svg" width=800 alt="Flix version 1 schematics">
+
+Motor connection scheme:
+
+<img src="docs/img/mosfet-connection.png" height=400 alt="MOSFET connection scheme">
+
+Complete diagram is Work-in-Progress.
+
+### Notes
+
+* Power ESP32 Mini with Li-Po battery using VCC (+) and GND (-) pins.
+* Connect the GY-91 board to the ESP32 Mini using VSPI , power it using 3.3V and GND pins:
+
+  |GY-91 pin|ESP32 pin|
+  |-|-|
+  |GND|GND|
+  |3.3V|3.3V|
+  |SCK|SVP (GPIO18)|
+  |MOSI|GPIO23|
+  |MISO|GPIO19|
+  |NCS|GPIO5|
+
+* Solder pull-down resistors to the MOSFETs.
+* Connect the motors to the ESP32 Mini using MOSFETs, by following scheme:
+
+  |Motor|Position|Direction|Wires|GPIO|
+  |-|-|-|-|-|
+  |Motor 0|Rear left|Counter-clockwise|Black & White|GPIO12|
+  |Motor 1|Rear right|Clockwise|Blue & Red|GPIO13|
+  |Motor 2|Front right|Counter-clockwise|Black & White|GPIO14|
+  |Motor 3|Front left|Clockwise|Blue & Red|GPIO15|
+
+  Counter-clockwise motors have black and white wires and clockwise motors have blue and red wires.
+
+* Optionally connect the RC receiver to the ESP32's UART2:
+
+  |Receiver pin|ESP32 pin|
+  |-|-|
+  |GND|GND|
+  |VIN|VC (or 3.3V depending on the receiver)|
+  |Signal|GPIO4 ⁴|
+
+*⁴ – UART2 RX pin was [changed](https://docs.espressif.com/projects/arduino-esp32/en/latest/migration_guides/2.x_to_3.0.html#id14) to GPIO4 in Arduino ESP32 core 3.0.*
+
+## Version 0
+
+See the information on the obsolete version 0 in the [corresponding article](docs/version0.md).
 
 ## Materials
 
-Subscribe to Telegram-channel on developing the drone and the flight controller (in Russian): https://t.me/opensourcequadcopter.
+Subscribe to the Telegram channel on developing the drone and the flight controller (in Russian): https://t.me/opensourcequadcopter.
+
+Join the official Telegram chat: https://t.me/opensourcequadcopterchat.
 
 Detailed article on Habr.com about the development of the drone (in Russian): https://habr.com/ru/articles/814127/.
