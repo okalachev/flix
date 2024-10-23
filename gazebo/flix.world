@@ -23,7 +23,7 @@
 		</include>
 		<include>
 			<uri>model://flix</uri>
-			<pose>0 0 0.2 0 0 0</pose>
+			<pose>0 0 0.3 0 0 0</pose>
 		</include>
 	</world>
 </sdf>
