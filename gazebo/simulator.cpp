@@ -56,6 +56,7 @@ public:
 
 	void OnReset() {
 		attitude = Quaternion(); // reset estimated attitude
+		__resetTime += __micros;
 		gzmsg << "Flix plugin reset" << endl;
 	}
 
