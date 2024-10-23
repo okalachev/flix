@@ -70,8 +70,7 @@ See [instructions on running the simulation](docs/build.md).
 |Wires|28 AWG recommended|<img src="docs/img/wire-28awg.jpg" width=100>||
 |Tape, double-sided tape||||
 
-*² — barometer is not used for now.*
-
+*² — barometer is not used for now.*<br>
 *³ — you may use any transmitter-receiver pair with SBUS interface.*
 
 Tools required for assembly:
@@ -128,9 +127,9 @@ Complete diagram is Work-in-Progress.
   |-|-|
   |GND|GND|
   |VIN|VC (or 3.3V depending on the receiver)|
-  |Signal|GPIO4 ⁴|
+  |Signal|GPIO4⁴|
 
-*⁴ – UART2 RX pin was [changed](https://docs.espressif.com/projects/arduino-esp32/en/latest/migration_guides/2.x_to_3.0.html#id14) to GPIO4 in Arduino ESP32 core 3.0.*
+*⁴ — UART2 RX pin was [changed](https://docs.espressif.com/projects/arduino-esp32/en/latest/migration_guides/2.x_to_3.0.html#id14) to GPIO4 in Arduino ESP32 core 3.0.*
 
 ## Version 0
 
