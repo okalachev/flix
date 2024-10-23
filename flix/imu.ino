@@ -2,6 +2,9 @@
 // Repository: https://github.com/okalachev/flix
 
 // Work with the IMU sensor
+// IMU is oriented FLU (front-left-up) style.
+// In case of FRD (front-right-down) orientation of the IMU, use this code:
+// https://gist.github.com/okalachev/713db47e31bce643dbbc9539d166ce98.
 
 #include <SPI.h>
 #include <MPU9250.h>

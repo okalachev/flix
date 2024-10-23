@@ -17,7 +17,6 @@
 
 #include "Arduino.h"
 #include "flix.h"
-#include "util.h"
 #include "util.ino"
 #include "rc.ino"
 #include "time.ino"
@@ -63,9 +62,9 @@ public:
 		__micros = model->GetWorld()->SimTime().Double() * 1000000;
 		step();
 
-		// read imu
-		gyro = flu2frd(imu->AngularVelocity());
-		acc = this->accFilter.update(flu2frd(imu->LinearAcceleration()));
+		// read virtual imu
+		gyro = Vector(imu->AngularVelocity().X(), imu->AngularVelocity().Y(), imu->AngularVelocity().Z());
+		acc = this->accFilter.update(Vector(imu->LinearAcceleration().X(), imu->LinearAcceleration().Y(), imu->LinearAcceleration().Z()));
 
 		// read rc
 		readRC();
@@ -75,7 +74,7 @@ public:
 		estimate();
 
 		// correct yaw to the actual yaw
-		attitude.setYaw(-this->model->WorldPose().Yaw());
+		attitude.setYaw(this->model->WorldPose().Yaw());
 
 		control();
 		parseInput();
