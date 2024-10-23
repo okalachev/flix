@@ -1,9 +1,9 @@
 // Copyright (c) 2023 Oleg Kalachev <okalachev@gmail.com>
 // Repository: https://github.com/okalachev/flix
 
-// Motors output control
+// Motors output control using MOSFETs
+// In case of using ESC, use this version of the code: https://gist.github.com/okalachev/8871d3a94b6b6c0a298f41a4edd34c61.
 // Motor: 8520 3.7V
-// ESC: KINGDUO Micro Mini 4A 1S Brushed Esc 3.6-6V
 
 #define MOTOR_0_PIN 12 // rear left
 #define MOTOR_1_PIN 13 // rear right
@@ -12,11 +12,6 @@
 
 #define PWM_FREQUENCY 200
 #define PWM_RESOLUTION 8
-#define PWM_NEUTRAL 1500
-#define PWM_MIN 1600
-#define PWM_MAX 2300
-#define PWM_REVERSE_MIN 1400
-#define PWM_REVERSE_MAX 700
 
 void setupMotors() {
 	Serial.println("Setup Motors");
@@ -31,34 +26,25 @@ void setupMotors() {
 	Serial.println("Motors initialized");
 }
 
-uint16_t getPWM(float val, int n) {
-	if (val == 0) {
-		return PWM_NEUTRAL;
-	} else if (val > 0) {
-		return mapff(val, 0, 1, PWM_MIN, PWM_MAX);
-	} else {
-		return mapff(val, 0, -1, PWM_REVERSE_MIN, PWM_REVERSE_MAX);
-	}
-}
-
-uint8_t pwmToDutyCycle(uint16_t pwm) {
-	return map(pwm, 0, 1000000 / PWM_FREQUENCY, 0, (1 << PWM_RESOLUTION) - 1);
+uint8_t signalToDutyCycle(float control) {
+	float duty = mapff(control, 0, 1, 0, (1 << PWM_RESOLUTION) - 1);
+	return round(constrain(duty, 0, (1 << PWM_RESOLUTION) - 1));
 }
 
 void sendMotors() {
-	ledcWrite(MOTOR_0_PIN, pwmToDutyCycle(getPWM(motors[0], 0)));
-	ledcWrite(MOTOR_1_PIN, pwmToDutyCycle(getPWM(motors[1], 1)));
-	ledcWrite(MOTOR_2_PIN, pwmToDutyCycle(getPWM(motors[2], 2)));
-	ledcWrite(MOTOR_3_PIN, pwmToDutyCycle(getPWM(motors[3], 3)));
+	ledcWrite(MOTOR_0_PIN, signalToDutyCycle(motors[0]));
+	ledcWrite(MOTOR_1_PIN, signalToDutyCycle(motors[1]));
+	ledcWrite(MOTOR_2_PIN, signalToDutyCycle(motors[2]));
+	ledcWrite(MOTOR_3_PIN, signalToDutyCycle(motors[3]));
 }
 
-void fullMotorTest(int n, bool reverse) {
+void fullMotorTest(int n) {
 	printf("Full test for motor %d\n", n);
-	for (int pwm = PWM_NEUTRAL; pwm <= 2300 && pwm >= 700; pwm += reverse ? -100 : 100) {
-		printf("Motor %d: %d\n", n, pwm);
-		ledcWrite(n, pwmToDutyCycle(pwm));
+	for (float signal = 0; signal <= 1; signal += 0.1) {
+		printf("Motor %d: %f\n", n, signal);
+		ledcWrite(n, signalToDutyCycle(signal));
 		delay(3000);
 	}
-	printf("Motor %d: %d\n", n, PWM_NEUTRAL);
-	ledcWrite(n, pwmToDutyCycle(PWM_NEUTRAL));
+	printf("Motor %d: %f\n", n, 0);
+	ledcWrite(n, signalToDutyCycle(0));
 }
