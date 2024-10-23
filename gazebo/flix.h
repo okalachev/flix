@@ -10,7 +10,7 @@
 #include "Arduino.h"
 #include "wifi.h"
 
-#define RC_CHANNELS 6
+#define RC_CHANNELS 16
 
 #define MOTOR_REAR_LEFT 0
 #define MOTOR_FRONT_LEFT 3
