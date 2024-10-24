@@ -117,7 +117,7 @@ public:
 	int read() {
 		if (available()) {
 			char c;
-			::read(STDIN_FILENO, &c, 1); // use raw read to avoid C++ buffering
+			size_t res = ::read(STDIN_FILENO, &c, 1); // use raw read to avoid C++ buffering
 			// https://stackoverflow.com/questions/45238997/does-getchar-function-has-its-own-buffer-to-store-remaining-input
 			return c;
 		}

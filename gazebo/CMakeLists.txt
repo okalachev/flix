@@ -15,6 +15,7 @@ set(CMAKE_BUILD_TYPE RelWithDebInfo)
 add_library(flix SHARED simulator.cpp)
 target_link_libraries(flix ${GAZEBO_LIBRARIES} ${SDL2_LIBRARIES})
 target_include_directories(flix PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_compile_options(flix PRIVATE -Wno-address-of-packed-member) # disable unneeded mavlink warnings
 
 # Include dir for MAVLink-Arduino library
 target_include_directories(flix PUBLIC $ENV{HOME}/Arduino/libraries/MAVLink)
