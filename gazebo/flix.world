@@ -9,7 +9,7 @@
 		</scene>
 		<gui>
 			<camera name="user_camera">
-				<pose>-2 -0.3 1.5 0 0.5 0.1</pose>
+				<pose>-2.3 0 1.1 0 0.3 0</pose>
 			</camera>
 		</gui>
 		<physics type="ode">
