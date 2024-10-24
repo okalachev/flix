@@ -107,7 +107,7 @@ cd flix
 2. Install ESP32 core using [Boards Manager](https://docs.arduino.cc/learn/starting-guide/cores).
 3. Install the following libraries using [Library Manager](https://docs.arduino.cc/software/ide-v2/tutorials/ide-v2-installing-a-library):
    * `FlixPeriph`.
-   * `MAVLink`, version 2.0.1.
+   * `MAVLink`, version 2.0.10.
 4. Clone the project using git or [download the source code as a ZIP archive](https://codeload.github.com/okalachev/flix/zip/refs/heads/master).
 5. Open the downloaded Arduino sketch `flix/flix.ino` in Arduino IDE.
 6. [Build and upload](https://docs.arduino.cc/software/ide-v2/tutorials/getting-started/ide-v2-uploading-a-sketch) the firmware using Arduino IDE.
