@@ -104,7 +104,7 @@ cd flix
 ### Arduino IDE (Windows, Linux, macOS)
 
 1. Install [Arduino IDE](https://www.arduino.cc/en/software) (version 2 is recommended).
-2. Install ESP32 core using [Boards Manager](https://docs.arduino.cc/learn/starting-guide/cores).
+2. Install ESP32 core, version 3.0.3 (version 2.x is not supported). See the [official Espressif's instructions](https://docs.espressif.com/projects/arduino-esp32/en/latest/installing.html#installing-using-arduino-ide) on installing ESP32 Core in Arduino IDE.
 3. Install the following libraries using [Library Manager](https://docs.arduino.cc/software/ide-v2/tutorials/ide-v2-installing-a-library):
    * `FlixPeriph`.
    * `MAVLink`, version 2.0.10.
