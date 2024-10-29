@@ -62,9 +62,9 @@ See [instructions on running the simulation](docs/build.md).
 |Li-Po Battery charger|Any|<img src="docs/img/charger.jpg" width=100>|1|
 |Screws for IMU board mounting|M3x5|<img src="docs/img/screw-m3.jpg" width=100>|2|
 |Screws for frame assembly|M1.4x5|<img src="docs/img/screw-m1.4.jpg" height=30 align=center>|4|
-|Frame bottom part|3D printed: [`flix-frame.stl`](docs/assets/flix-frame.stl)|<img src="docs/img/frame1.jpg" width=100>|1|
-|Frame top part|3D printed: [`esp32-holder.stl`](docs/assets/esp32-holder.stl)|<img src="docs/img/esp32-holder.jpg" width=100>|1|
-|Washer for IMU board mounting|3D printed: [`washer-m3.stl`](docs/assets/washer-m3.stl)|<img src="docs/img/washer-m3.jpg" width=100>|1|
+|Frame bottom part|3D printed:<br>[`flix-frame.stl`](docs/assets/flix-frame.stl) [`flix-frame.step`](docs/assets/flix-frame.step)|<img src="docs/img/frame1.jpg" width=100>|1|
+|Frame top part|3D printed:<br>[`esp32-holder.stl`](docs/assets/esp32-holder.stl) [`esp32-holder.step`](docs/assets/esp32-holder.step)|<img src="docs/img/esp32-holder.jpg" width=100>|1|
+|Washer for IMU board mounting|3D printed:<br>[`washer-m3.stl`](docs/assets/washer-m3.stl) [`washer-m3.step`](docs/assets/washer-m3.step)|<img src="docs/img/washer-m3.jpg" width=100>|1|
 |*RC transmitter (optional)*|*KINGKONG TINY X8 or other³*|<img src="docs/img/tx.jpg" width=100>|1|
 |*RC receiver (optional)*|*DF500 or other³*|<img src="docs/img/rx.jpg" width=100>|1|
 |Wires|28 AWG recommended|<img src="docs/img/wire-28awg.jpg" width=100>||
