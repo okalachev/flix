@@ -53,10 +53,10 @@ See [instructions on running the simulation](docs/build.md).
 |Type|Part|Image|Quantity|
 |-|-|:-:|:-:|
 |Microcontroller board|ESP32 Mini|<img src="docs/img/esp32.jpg" width=100>|1|
-|IMU and barometer² board|GY-91 (or other MPU-9250 board)|<img src="docs/img/gy-91.jpg" width=100>|1|
+|IMU and barometer² board|GY-91 (or other MPU-9250/MPU-6500 board)|<img src="docs/img/gy-91.jpg" width=100>|1|
 |Motor|8520 3.7V brushed motor (**shaft 0.8mm!**)|<img src="docs/img/motor.jpeg" width=100>|4|
 |Propeller|Hubsan 55 mm|<img src="docs/img/prop.jpg" width=100>|4|
-|MOSFET (transistor)|100N03A or [compatible](https://t.me/opensourcequadcopter/33)|<img src="docs/img/100n03a.jpg" width=100>|4|
+|MOSFET (transistor)|100N03A or [analog](https://t.me/opensourcequadcopter/33)|<img src="docs/img/100n03a.jpg" width=100>|4|
 |Pull-down resistor|10 kΩ|<img src="docs/img/resistor10k.jpg" width=100>|4|
 |3.7V Li-Po battery|LW 952540 (or any compatible by the size)|<img src="docs/img/battery.jpg" width=100>|1|
 |Li-Po Battery charger|Any|<img src="docs/img/charger.jpg" width=100>|1|
