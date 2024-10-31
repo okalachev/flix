@@ -70,6 +70,7 @@ void doCommand(String& command, String& value) {
 	} else if (command == "psq") {
 		Serial.printf("qx: %f qy: %f qz: %f qw: %f\n", attitude.x, attitude.y, attitude.z, attitude.w);
 	} else if (command == "imu") {
+		printIMUInfo();
 		Serial.printf("gyro: %f %f %f\n", rates.x, rates.y, rates.z);
 		Serial.printf("acc: %f %f %f\n", acc.x, acc.y, acc.z);
 		printIMUCal();

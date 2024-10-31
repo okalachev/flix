@@ -122,3 +122,8 @@ void printIMUCal() {
 	Serial.printf("accel bias: %f %f %f\n", accBias.x, accBias.y, accBias.z);
 	Serial.printf("accel scale: %f %f %f\n", accScale.x, accScale.y, accScale.z);
 }
+
+void printIMUInfo() {
+	Serial.printf("type: %s\n", IMU.getType());
+	Serial.printf("who am I: 0x%02X\n", IMU.whoAmI());
+}
