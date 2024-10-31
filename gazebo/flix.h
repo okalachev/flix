@@ -58,3 +58,4 @@ void calibrateAccel() { printf("Skip accel calibrating\n"); };
 void fullMotorTest(int n) { printf("Skip full motor test\n"); };
 void sendMotors() {};
 void printIMUCal() { printf("cal: N/A\n"); };
+void printIMUInfo() {};
