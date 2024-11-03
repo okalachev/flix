@@ -34,7 +34,6 @@ Quaternion attitude;
 void computeLoopFreq();
 void applyGyro();
 void applyAcc();
-void signalizeHorizontality();
 void control();
 void interpretRC();
 void controlAttitude();

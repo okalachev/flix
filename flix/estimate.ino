@@ -16,7 +16,6 @@ LowPassFilter<Vector> ratesFilter(RATES_LFP_ALPHA);
 void estimate() {
 	applyGyro();
 	applyAcc();
-	signalizeHorizontality();
 }
 
 void applyGyro() {
@@ -42,9 +41,4 @@ void applyAcc() {
 	// apply correction
 	attitude *= Quaternion::fromAngularRates(correction);
 	attitude.normalize();
-}
-
-void signalizeHorizontality() {
-	float angle = Vector::angleBetweenVectors(attitude.rotate(Vector(0, 0, 1)), Vector(0, 0, 1));
-	setLED(angle < radians(15));
 }
