@@ -1,7 +1,7 @@
 // Copyright (c) 2023 Oleg Kalachev <okalachev@gmail.com>
 // Repository: https://github.com/okalachev/flix
 
-// Main LED control
+// Board's LED control
 
 #define BLINK_PERIOD 500000
 
@@ -14,7 +14,12 @@ void setupLED() {
 }
 
 void setLED(bool on) {
+	static bool state = false;
+	if (on == state) {
+		return; // don't call digitalWrite if the state is the same
+	}
 	digitalWrite(LED_BUILTIN, on ? HIGH : LOW);
+	state = on;
 }
 
 void blinkLED() {
