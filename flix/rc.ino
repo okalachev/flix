@@ -21,6 +21,7 @@ void readRC() {
 		SBUSData data = RC.data();
 		memcpy(channels, data.ch, sizeof(channels)); // copy channels data
 		normalizeRC();
+		controlsTime = t;
 	}
 }
 

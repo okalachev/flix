@@ -25,6 +25,7 @@
 #include "log.ino"
 #include "cli.ino"
 #include "mavlink.ino"
+#include "failsafe.ino"
 #include "lpf.h"
 
 using ignition::math::Vector3d;

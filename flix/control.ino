@@ -52,6 +52,7 @@ float thrustTarget;
 
 void control() {
 	interpretRC();
+	failsafe();
 	if (mode == STAB) {
 		controlAttitude();
 		controlRate();

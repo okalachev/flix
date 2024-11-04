@@ -93,6 +93,7 @@ void handleMavlink(const void *_msg) {
 		controls[RC_CHANNEL_YAW] = manualControl.r / 1000.0f * MAVLINK_CONTROL_SCALE;
 		controls[RC_CHANNEL_MODE] = 1; // STAB mode
 		controls[RC_CHANNEL_ARMED] = 1; // armed
+		controlsTime = t;
 
 		if (abs(controls[RC_CHANNEL_YAW]) < MAVLINK_CONTROL_YAW_DEAD_ZONE) controls[RC_CHANNEL_YAW] = 0;
 	}
