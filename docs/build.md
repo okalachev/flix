@@ -104,10 +104,10 @@ cd flix
 ### Arduino IDE (Windows, Linux, macOS)
 
 1. Install [Arduino IDE](https://www.arduino.cc/en/software) (version 2 is recommended).
-2. Install ESP32 core, version 3.0.3 (version 2.x is not supported). See the [official Espressif's instructions](https://docs.espressif.com/projects/arduino-esp32/en/latest/installing.html#installing-using-arduino-ide) on installing ESP32 Core in Arduino IDE.
+2. Install ESP32 core, version 3.0.5 (version 2.x is not supported). See the [official Espressif's instructions](https://docs.espressif.com/projects/arduino-esp32/en/latest/installing.html#installing-using-arduino-ide) on installing ESP32 Core in Arduino IDE.
 3. Install the following libraries using [Library Manager](https://docs.arduino.cc/software/ide-v2/tutorials/ide-v2-installing-a-library):
    * `FlixPeriph`, the latest version.
-   * `MAVLink`, version 2.0.10.
+   * `MAVLink`, version 2.0.11.
 4. Clone the project using git or [download the source code as a ZIP archive](https://codeload.github.com/okalachev/flix/zip/refs/heads/master).
 5. Open the downloaded Arduino sketch `flix/flix.ino` in Arduino IDE.
 6. [Build and upload](https://docs.arduino.cc/software/ide-v2/tutorials/getting-started/ide-v2-uploading-a-sketch) the firmware using Arduino IDE.
