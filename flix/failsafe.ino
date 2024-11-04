@@ -1,4 +1,4 @@
-// Copyright (c) 2023 Oleg Kalachev <okalachev@gmail.com>
+// Copyright (c) 2024 Oleg Kalachev <okalachev@gmail.com>
 // Repository: https://github.com/okalachev/flix
 
 // Fail-safe for RC loss
