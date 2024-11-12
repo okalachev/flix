@@ -104,9 +104,9 @@ Complete diagram is Work-in-Progress.
   |-|-|
   |GND|GND|
   |3.3V|3.3V|
-  |SCK|SVP (GPIO18)|
-  |MOSI|GPIO23|
-  |MISO|GPIO19|
+  |SCL *(SCK)*|SVP (GPIO18)|
+  |SDA *(MOSI)*|GPIO23|
+  |SAO *(MISO)*|GPIO19|
   |NCS|GPIO5|
 
 * Solder pull-down resistors to the MOSFETs.
