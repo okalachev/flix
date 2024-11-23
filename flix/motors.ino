@@ -37,14 +37,3 @@ void sendMotors() {
 	ledcWrite(MOTOR_2_PIN, signalToDutyCycle(motors[2]));
 	ledcWrite(MOTOR_3_PIN, signalToDutyCycle(motors[3]));
 }
-
-void fullMotorTest(int n) {
-	printf("Full test for motor %d\n", n);
-	for (float signal = 0; signal <= 1; signal += 0.1) {
-		printf("Motor %d: %f\n", n, signal);
-		ledcWrite(n, signalToDutyCycle(signal));
-		delay(3000);
-	}
-	printf("Motor %d: %f\n", n, 0);
-	ledcWrite(n, signalToDutyCycle(0));
-}
