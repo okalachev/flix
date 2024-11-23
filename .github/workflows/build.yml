@@ -61,7 +61,7 @@ jobs:
         retention-days: 1
 
   build_simulator_macos:
-    runs-on: macos-latest
+    runs-on: macos-14
     steps:
     - name: Install Arduino CLI
       run: brew install arduino-cli
@@ -74,7 +74,7 @@ jobs:
         rm -f /usr/local/bin/python3*
         rm -f /usr/local/bin/python3*-config
     - name: Install Gazebo
-      run: brew update && brew tap osrf/simulation && brew install gazebo11
+      run: brew update && brew tap osrf/simulation && brew install gazebo11 --verbose --debug
     - name: Install SDL2
       run: brew install sdl2
     - name: Build simulator
