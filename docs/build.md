@@ -161,7 +161,10 @@ Before flight using remote control, you need to calibrate it:
 2. Type `cr` command there.
 3. Copy calibration results to the source code (`flix/rc.ino`).
 
-Then you can use your remote control to fly the drone! If something goes wrong, go to the [Troubleshooting](troubleshooting) article.
+Then you can use your remote control to fly the drone!
+
+> [!NOTE]
+> If something goes wrong, go to the [Troubleshooting](troubleshooting.md) article.
 
 ### Firmware code structure
 
