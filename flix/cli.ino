@@ -132,8 +132,9 @@ void showTable() {
 void cliTestMotor(uint8_t n) {
 	Serial.printf("Testing motor %d\n", n);
 	motors[n] = 1;
+	delay(50); // ESP32 may need to wait until the end of the current cycle to change duty https://github.com/espressif/arduino-esp32/issues/5306
 	sendMotors();
-	delay(5000);
+	delay(3000);
 	motors[n] = 0;
 	sendMotors();
 	Serial.println("Done");
