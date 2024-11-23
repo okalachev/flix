@@ -4,7 +4,7 @@
 
 Do the following:
 
-* **Check ESP32 core is installed**. Check if the version matches the one used in the tutorial.
+* **Check ESP32 core is installed**. Check if the version matches the one used in the [tutorial](build.md#firmware).
 * **Check libraries**. Install all the required libraries from the tutorial. Make sure there are no MPU9250 or other peripherals libraries that may conflict with the ones used in the tutorial.
 
 ## The drone doesn't fly
