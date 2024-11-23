@@ -19,7 +19,7 @@ jobs:
       run: tools/check_c_cpp_properties.py
 
   build_macos:
-    runs-on: macos-latest
+    runs-on: macos-14
     steps:
     - uses: actions/checkout@v4
     - name: Install Arduino CLI
