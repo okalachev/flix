@@ -131,6 +131,14 @@ Complete diagram is Work-in-Progress.
 
 *⁴ — UART2 RX pin was [changed](https://docs.espressif.com/projects/arduino-esp32/en/latest/migration_guides/2.x_to_3.0.html#id14) to GPIO4 in Arduino ESP32 core 3.0.*
 
+### IMU placement
+
+Required IMU orientation on the drone is **FLU** (Forward, Left, Up):
+
+<img src="docs/img/flu.svg" width=400 alt="IMU orientation">
+
+In case of using **FRD** orientation (Forward, Right, Down), use [the code for rotation](https://gist.github.com/okalachev/713db47e31bce643dbbc9539d166ce98).
+
 ## Version 0
 
 See the information on the obsolete version 0 in the [corresponding article](docs/version0.md).
