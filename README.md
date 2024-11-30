@@ -133,11 +133,13 @@ Complete diagram is Work-in-Progress.
 
 ### IMU placement
 
-Required IMU orientation on the drone is **FLU** (Forward, Left, Up):
+Required IMU orientation on the drone is **FLU** (Forward, Left, Up)⁵:
 
-<img src="docs/img/flu.svg" width=400 alt="IMU orientation">
+<img src="docs/img/flu.svg" width=400 alt="GY-91 axis">
 
 In case of using **FRD** orientation (Forward, Right, Down), use [the code for rotation](https://gist.github.com/okalachev/713db47e31bce643dbbc9539d166ce98).
+
+*⁵ — This X/Y/Z IMU axis orientation is used in the Flix IMU library, internal accel/gyro/mag axes differ.*
 
 ## Version 0
 
