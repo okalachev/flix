@@ -34,8 +34,8 @@ void setupIMU() {
 void configureIMU() {
 	IMU.setAccelRange(IMU.ACCEL_RANGE_4G);
 	IMU.setGyroRange(IMU.GYRO_RANGE_2000DPS);
-	IMU.setDlpfBandwidth(IMU.DLPF_BANDWIDTH_184HZ);
-	IMU.setSrd(0); // set sample rate to 1000 Hz
+	IMU.setDLPF(IMU.DLPF_MAX);
+	IMU.setRate(IMU.RATE_1KHZ_APPROX);
 }
 
 void readIMU() {
@@ -67,8 +67,6 @@ void calibrateGyro() {
 void calibrateAccel() {
 	Serial.println("Calibrating accelerometer");
 	IMU.setAccelRange(IMU.ACCEL_RANGE_2G); // the most sensitive mode
-	IMU.setDlpfBandwidth(IMU.DLPF_BANDWIDTH_20HZ);
-	IMU.setSrd(19);
 
 	Serial.setTimeout(60000);
 	Serial.print("Place level [enter] "); Serial.readStringUntil('\n');
@@ -89,7 +87,7 @@ void calibrateAccel() {
 }
 
 void calibrateAccelOnce() {
-	const int samples = 100;
+	const int samples = 1000;
 	static Vector accMax(-INFINITY, -INFINITY, -INFINITY);
 	static Vector accMin(INFINITY, INFINITY, INFINITY);
 
@@ -125,6 +123,6 @@ void printIMUCal() {
 }
 
 void printIMUInfo() {
-	Serial.printf("type: %s\n", IMU.getType());
+	Serial.printf("model: %s\n", IMU.getModel());
 	Serial.printf("who am I: 0x%02X\n", IMU.whoAmI());
 }
