@@ -23,7 +23,7 @@ Do the following:
 * **Check the RC data** if you use it. Use `rc` command, `Control` should show correct values between -1 and 1, and between 0 and 1 for the throttle.
 * **Configure QGroundControl correctly before connecting to the drone** if you use it to control the drone. Go to the settings and enable *Virtual Joystick*. *Auto-Center Throttle* setting **should be disabled**.
 * **Make sure you're not moving the drone several seconds after the power on**. The drone calibrates its gyroscope on the start so it should stay still for a while.
-* **Check the IMU frequency**. Perform `imu` command. The `frequency` field should be about 1000 (Hz).
+* **Check the IMU sample rate**. Perform `imu` command. The `rate` field should be about 1000 (Hz).
 * **Check the IMU data**. Perform `imu` command, check raw accelerometer and gyro output. The output should change as you move the drone.
 * **Calibrate the accelerometer.** if is wasn't done before. Perform `ca` command and put the results to `imu.ino` file.
 * **Check the attitude estimation**. Connect to the drone using QGroundControl. Rotate the drone in different orientations and check if the attitude estimation shown in QGroundControl is correct.

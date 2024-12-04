@@ -21,7 +21,7 @@
 
 float t = NAN;
 float dt;
-float loopFreq;
+float loopRate;
 float motors[4];
 int16_t channels[16]; // raw rc channels
 float controls[RC_CHANNELS];
@@ -32,7 +32,7 @@ Vector rates;
 Quaternion attitude;
 
 // declarations
-void computeLoopFreq();
+void computeLoopRate();
 void applyGyro();
 void applyAcc();
 void control();

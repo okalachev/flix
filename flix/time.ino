@@ -12,16 +12,16 @@ void step() {
 		dt = 0; // assume dt to be zero on first step and on reset
 	}
 
-	computeLoopFreq();
+	computeLoopRate();
 }
 
-void computeLoopFreq() {
+void computeLoopRate() {
 	static float windowStart = 0;
-	static uint32_t freq = 0;
-	freq++;
+	static uint32_t rate = 0;
+	rate++;
 	if (t - windowStart >= 1) { // 1 second window
-		loopFreq = freq;
+		loopRate = rate;
 		windowStart = t;
-		freq = 0;
+		rate = 0;
 	}
 }
