@@ -16,7 +16,7 @@ dependencies .dependencies:
 	arduino-cli core install esp32:esp32@3.0.7 --config-file arduino-cli.yaml
 	arduino-cli lib update-index
 	arduino-cli lib install "FlixPeriph"
-	arduino-cli lib install "MAVLink"@2.0.11
+	arduino-cli lib install "MAVLink"@2.0.12
 	touch .dependencies
 
 gazebo/build cmake: gazebo/CMakeLists.txt
