@@ -61,7 +61,7 @@ jobs:
         retention-days: 1
 
   build_simulator_macos:
-    runs-on: macos-14
+    runs-on: macos-15
     steps:
     - name: Install Arduino CLI
       run: brew install arduino-cli
