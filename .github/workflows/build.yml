@@ -74,7 +74,7 @@ jobs:
         rm -f /usr/local/bin/python3*
         rm -f /usr/local/bin/python3*-config
     - name: Install Gazebo
-      run: brew update && brew tap osrf/simulation && brew install gazebo11 --verbose --debug
+      run: brew update && brew tap osrf/simulation && brew install gazebo11
     - name: Install SDL2
       run: brew install sdl2
     - name: Build simulator
@@ -84,16 +84,16 @@ jobs:
     runs-on: macos-15
     steps:
     - name: Install Gazebo
-      run: brew update && brew tap osrf/simulation && brew install gz-ionic --verbose --debug
+      run: brew update && brew tap osrf/simulation && brew install gz-ionic
 
   install_gz_jetty_macos:
     runs-on: macos-15
     steps:
     - name: Install Gazebo
-      run: brew update && brew tap osrf/simulation && brew install gz-jetty --verbose --debug
+      run: brew update && brew tap osrf/simulation && brew install gz-jetty
 
   install_gz_harmonic_macos:
     runs-on: macos-15
     steps:
     - name: Install Gazebo
-      run: brew update && brew tap osrf/simulation && brew install gz-harmonic --verbose --debug
+      run: brew update && brew tap osrf/simulation && brew install gz-harmonic
