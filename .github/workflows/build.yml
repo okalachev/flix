@@ -79,3 +79,21 @@ jobs:
       run: brew install sdl2
     - name: Build simulator
       run: make build_simulator
+
+  install_gz_ionic_macos:
+    runs-on: macos-15
+    steps:
+    - name: Install Gazebo
+      run: brew update && brew tap osrf/simulation && brew install gz-ionic --verbose --debug
+
+  install_gz_jetty_macos:
+    runs-on: macos-15
+    steps:
+    - name: Install Gazebo
+      run: brew update && brew tap osrf/simulation && brew install gz-jetty --verbose --debug
+
+  install_gz_harmonic_macos:
+    runs-on: macos-15
+    steps:
+    - name: Install Gazebo
+      run: brew update && brew tap osrf/simulation && brew install gz-harmonic --verbose --debug
