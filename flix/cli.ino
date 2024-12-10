@@ -30,8 +30,7 @@ const char* motd =
 "cr - calibrate RC\n"
 "cg - calibrate gyro\n"
 "ca - calibrate accel\n"
-"mfr, mfl, mrr, mrl - test appropriate motor\n"
-"fullmot <n> - full motor test\n"
+"mfr, mfl, mrr, mrl - test motor\n"
 "reset - reset drone's state\n";
 
 const struct Param {
@@ -54,7 +53,7 @@ const struct Param {
 	{"lpr", &ratesFilter.alpha, nullptr},
 	{"lpd", &rollRatePID.lpf.alpha, &pitchRatePID.lpf.alpha},
 
-	{"ss", &loopFreq, nullptr},
+	{"ss", &loopRate, nullptr},
 	{"dt", &dt, nullptr},
 	{"t", &t, nullptr},
 };
@@ -74,7 +73,7 @@ void doCommand(String& command, String& value) {
 		Serial.printf("gyro: %f %f %f\n", rates.x, rates.y, rates.z);
 		Serial.printf("acc: %f %f %f\n", acc.x, acc.y, acc.z);
 		printIMUCal();
-		Serial.printf("frequency: %f\n", loopFreq);
+		Serial.printf("rate: %f\n", loopRate);
 	} else if (command == "rc") {
 		Serial.printf("Raw: throttle %d yaw %d pitch %d roll %d armed %d mode %d\n",
 			channels[RC_CHANNEL_THROTTLE], channels[RC_CHANNEL_YAW], channels[RC_CHANNEL_PITCH],
@@ -102,8 +101,6 @@ void doCommand(String& command, String& value) {
 		cliTestMotor(MOTOR_REAR_RIGHT);
 	} else if (command == "mrl") {
 		cliTestMotor(MOTOR_REAR_LEFT);
-	} else if (command == "fullmot") {
-		fullMotorTest(value.toInt());
 	} else if (command == "reset") {
 		attitude = Quaternion();
 	} else {
@@ -135,8 +132,9 @@ void showTable() {
 void cliTestMotor(uint8_t n) {
 	Serial.printf("Testing motor %d\n", n);
 	motors[n] = 1;
+	delay(50); // ESP32 may need to wait until the end of the current cycle to change duty https://github.com/espressif/arduino-esp32/issues/5306
 	sendMotors();
-	delay(5000);
+	delay(3000);
 	motors[n] = 0;
 	sendMotors();
 	Serial.println("Done");

@@ -15,14 +15,6 @@ float mapff(float x, float in_min, float in_max, float out_min, float out_max) {
 	return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
-int8_t sign(float x) {
-	return (x > 0) - (x < 0);
-}
-
-float randomFloat(float min, float max) {
-	return min + (max - min) * (float)rand() / RAND_MAX;
-}
-
 // Wrap angle to [-PI, PI)
 float wrapAngle(float angle) {
 	angle = fmodf(angle, 2 * PI);

@@ -21,7 +21,7 @@
 
 float t = NAN;
 float dt;
-float loopFreq;
+float loopRate;
 float motors[4];
 int16_t channels[16]; // raw rc channels
 float controls[RC_CHANNELS];
@@ -32,7 +32,7 @@ Vector rates;
 Quaternion attitude;
 
 // declarations
-void computeLoopFreq();
+void computeLoopRate();
 void applyGyro();
 void applyAcc();
 void control();
@@ -57,7 +57,6 @@ inline Quaternion FLU2FRD(const Quaternion &q);
 void setLED(bool on) {};
 void calibrateGyro() { printf("Skip gyro calibrating\n"); };
 void calibrateAccel() { printf("Skip accel calibrating\n"); };
-void fullMotorTest(int n) { printf("Skip full motor test\n"); };
 void sendMotors() {};
 void printIMUCal() { printf("cal: N/A\n"); };
 void printIMUInfo() {};

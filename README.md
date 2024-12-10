@@ -53,7 +53,7 @@ See [instructions on running the simulation](docs/build.md).
 |Type|Part|Image|Quantity|
 |-|-|:-:|:-:|
 |Microcontroller board|ESP32 Mini|<img src="docs/img/esp32.jpg" width=100>|1|
-|IMU and barometer² board|GY-91 (or other MPU-9250/MPU-6500 board)|<img src="docs/img/gy-91.jpg" width=100>|1|
+|IMU (and barometer²) board|GY‑91 (or other MPU‑9250/MPU‑6500 board), ICM‑20948³|<img src="docs/img/gy-91.jpg" width=90 align=center><img src="docs/img/icm-20948.jpg" width=100>|1|
 |Motor|8520 3.7V brushed motor (**shaft 0.8mm!**)|<img src="docs/img/motor.jpeg" width=100>|4|
 |Propeller|Hubsan 55 mm|<img src="docs/img/prop.jpg" width=100>|4|
 |MOSFET (transistor)|100N03A or [analog](https://t.me/opensourcequadcopter/33)|<img src="docs/img/100n03a.jpg" width=100>|4|
@@ -62,16 +62,18 @@ See [instructions on running the simulation](docs/build.md).
 |Li-Po Battery charger|Any|<img src="docs/img/charger.jpg" width=100>|1|
 |Screws for IMU board mounting|M3x5|<img src="docs/img/screw-m3.jpg" width=100>|2|
 |Screws for frame assembly|M1.4x5|<img src="docs/img/screw-m1.4.jpg" height=30 align=center>|4|
-|Frame bottom part|3D printed:<br>[`flix-frame.stl`](docs/assets/flix-frame.stl) [`flix-frame.step`](docs/assets/flix-frame.step)|<img src="docs/img/frame1.jpg" width=100>|1|
+|Frame bottom part|3D printed⁴:<br>[`flix-frame.stl`](docs/assets/flix-frame.stl) [`flix-frame.step`](docs/assets/flix-frame.step)|<img src="docs/img/frame1.jpg" width=100>|1|
 |Frame top part|3D printed:<br>[`esp32-holder.stl`](docs/assets/esp32-holder.stl) [`esp32-holder.step`](docs/assets/esp32-holder.step)|<img src="docs/img/esp32-holder.jpg" width=100>|1|
 |Washer for IMU board mounting|3D printed:<br>[`washer-m3.stl`](docs/assets/washer-m3.stl) [`washer-m3.step`](docs/assets/washer-m3.step)|<img src="docs/img/washer-m3.jpg" width=100>|1|
-|*RC transmitter (optional)*|*KINGKONG TINY X8 or other³*|<img src="docs/img/tx.jpg" width=100>|1|
-|*RC receiver (optional)*|*DF500 or other³*|<img src="docs/img/rx.jpg" width=100>|1|
+|*RC transmitter (optional)*|*KINGKONG TINY X8 or other⁵*|<img src="docs/img/tx.jpg" width=100>|1|
+|*RC receiver (optional)*|*DF500 or other⁵*|<img src="docs/img/rx.jpg" width=100>|1|
 |Wires|28 AWG recommended|<img src="docs/img/wire-28awg.jpg" width=100>||
 |Tape, double-sided tape||||
 
 *² — barometer is not used for now.*<br>
-*³ — you may use any transmitter-receiver pair with SBUS interface.*
+*³ — change `MPU9250` to `ICM20948` in `imu.ino` file if using ICM-20948 board.*<br>
+*⁴ — this frame is optimized for GY-91 board, if using other, the board mount holes positions should be modified.*<br>
+*⁵ — you may use any transmitter-receiver pair with SBUS interface.*
 
 Tools required for assembly:
 
@@ -98,9 +100,9 @@ Complete diagram is Work-in-Progress.
 ### Notes
 
 * Power ESP32 Mini with Li-Po battery using VCC (+) and GND (-) pins.
-* Connect the GY-91 board to the ESP32 Mini using VSPI, power it using 3.3V and GND pins:
+* Connect the IMU board to the ESP32 Mini using VSPI, power it using 3.3V and GND pins:
 
-  |GY-91 pin|ESP32 pin|
+  |IMU pin|ESP32 pin|
   |-|-|
   |GND|GND|
   |3.3V|3.3V|
@@ -127,9 +129,19 @@ Complete diagram is Work-in-Progress.
   |-|-|
   |GND|GND|
   |VIN|VC (or 3.3V depending on the receiver)|
-  |Signal|GPIO4⁴|
+  |Signal|GPIO4⁶|
 
-*⁴ — UART2 RX pin was [changed](https://docs.espressif.com/projects/arduino-esp32/en/latest/migration_guides/2.x_to_3.0.html#id14) to GPIO4 in Arduino ESP32 core 3.0.*
+*⁶ — UART2 RX pin was [changed](https://docs.espressif.com/projects/arduino-esp32/en/latest/migration_guides/2.x_to_3.0.html#id14) to GPIO4 in Arduino ESP32 core 3.0.*
+
+### IMU placement
+
+Required IMU orientation on the drone is **FLU** (Forward, Left, Up)⁷:
+
+<img src="docs/img/flu.svg" width=400 alt="GY-91 axis">
+
+In case of using **FRD** orientation (Forward, Right, Down), use [the code for rotation](https://gist.github.com/okalachev/713db47e31bce643dbbc9539d166ce98).
+
+*⁷ — This X/Y/Z IMU axis orientation is used in the Flix IMU library, internal accel/gyro/mag axes differ.*
 
 ## Version 0
 
