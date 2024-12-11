@@ -7,4 +7,4 @@ serve:
 clean:
 	mdbook clean
 
-.PHONY: serve clean
+.PHONY: build serve clean
