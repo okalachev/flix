@@ -135,13 +135,13 @@ Complete diagram is Work-in-Progress.
 
 ### IMU placement
 
-Required IMU orientation on the drone is **FLU** (Forward, Left, Up)⁷:
+Default IMU orientation in the code is **LFD** (Left-Forward-Down):
 
-<img src="docs/img/flu.svg" width=400 alt="GY-91 axis">
+<img src="docs/img/gy91-lfd.svg" width=400 alt="GY-91 axes">
 
-In case of using **FRD** orientation (Forward, Right, Down), use [the code for rotation](https://gist.github.com/okalachev/713db47e31bce643dbbc9539d166ce98).
+In case of using other IMU orientation, modify the `rotateIMU` function in the `imu.ino` file.
 
-*⁷ — This X/Y/Z IMU axis orientation is used in the Flix IMU library, internal accel/gyro/mag axes differ.*
+See [FlixPeriph documentation](https://github.com/okalachev/flixperiph?tab=readme-ov-file#imu-axes-orientation) to learn axis orientation of other IMU boards.
 
 ## Version 0
 

@@ -2,9 +2,6 @@
 // Repository: https://github.com/okalachev/flix
 
 // Work with the IMU sensor
-// IMU is oriented FLU (front-left-up) style.
-// In case of FRD (front-right-down) orientation of the IMU, use this code:
-// https://gist.github.com/okalachev/713db47e31bce643dbbc9539d166ce98.
 
 #include <SPI.h>
 #include <MPU9250.h>
@@ -45,6 +42,16 @@ void readIMU() {
 	// apply scale and bias
 	acc = (acc - accBias) / accScale;
 	gyro = gyro - gyroBias;
+	// rotate
+	rotateIMU(acc);
+	rotateIMU(gyro);
+}
+
+void rotateIMU(Vector& data) {
+	// Rotate from LFD to FLU
+	// NOTE: In case of using other IMU orientation, change this line:
+	data = Vector(data.y, data.x, -data.z);
+	// Axes orientation for various boards: https://github.com/okalachev/flixperiph#imu-axes-orientation
 }
 
 void calibrateGyro() {

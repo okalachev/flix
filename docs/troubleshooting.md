@@ -21,6 +21,7 @@ Do the following:
 * **Check the IMU data**. Perform `imu` command, check raw accelerometer and gyro output. The output should change as you move the drone.
 * **Calibrate the accelerometer.** if is wasn't done before. Perform `ca` command and put the results to `imu.ino` file.
 * **Check the attitude estimation**. Connect to the drone using QGroundControl. Rotate the drone in different orientations and check if the attitude estimation shown in QGroundControl is correct.
+* **Check the IMU orientation is set correctly**. If the attitude estimation is rotated, make sure `rotateIMU` function is defined correctly in `imu.ino` file.
 * **Check the motors**. Perform the following commands using Serial Monitor:
   * `mfr` — should rotate front right motor (counter-clockwise).
   * `mfl` — should rotate front left motor (clockwise).
