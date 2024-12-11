@@ -1,0 +1,9 @@
+[book]
+authors = ["Oleg Kalachev"]
+language = "ru"
+multilingual = false
+src = "book"
+title = "Flix"
+
+[build]
+build-dir = "build"
