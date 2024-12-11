@@ -15,3 +15,7 @@ jobs:
       run: cargo install mdbook --vers 0.4.43 --locked
     - name: Build book
       run: cd docs && mdbook build
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: docs/build
