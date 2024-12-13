@@ -19,7 +19,7 @@ Flix version 0 (obsolete):
 |~~SBUS inverter~~*||<img src="img/inv.jpg" width=100>|~~1~~|
 |Battery|3.7 Li-Po 850 MaH 60C|||
 |Battery charger||<img src="img/charger.jpg" width=100>|1|
-|Wires, connectors, tape, ...|||
+|Wires, connectors, tape, ...||||
 
 *\* — not needed as ESP32 supports [software pin inversion](https://github.com/bolderflight/sbus#inverted-serial).*
 
