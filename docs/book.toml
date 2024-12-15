@@ -3,7 +3,13 @@ authors = ["Oleg Kalachev"]
 language = "ru"
 multilingual = false
 src = "book"
-title = "Flix"
+title = "Полетный контроллер с нуля"
+description = "Учебник по разработке полетного контроллера квадрокоптера"
 
 [build]
 build-dir = "build"
+
+[output.html]
+git-repository-url = "https://github.com/okalachev/flix"
+edit-url-template = "https://github.com/okalachev/flix/blob/master/docs/{path}?plain=1"
+mathjax-support = true
