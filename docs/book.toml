@@ -14,5 +14,8 @@ additional-css = ["book.css"]
 edit-url-template = "https://github.com/okalachev/flix/blob/master/docs/{path}?plain=1"
 mathjax-support = true
 
+[output.html.code.hidelines]
+cpp = "//~"
+
 [preprocessor.alerts]
 command = "python3 alerts.py"
