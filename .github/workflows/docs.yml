@@ -1,0 +1,46 @@
+name: Docs
+
+on:
+  push:
+    branches: [ '*' ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  markdownlint:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Install markdownlint
+      run: npm install -g markdownlint-cli
+    - name: Run markdownlint
+      run: cd docs && markdownlint .
+
+  build_book:
+    runs-on: ubuntu-latest
+    needs: markdownlint
+    steps:
+    - uses: actions/checkout@v4
+    - name: Install mdBook
+      run: cargo install mdbook --vers 0.4.43 --locked
+    - name: Build book
+      run: cd docs && mdbook build
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: docs/build
+
+  deploy:
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
+    concurrency:
+      group: "pages"
+      cancel-in-progress: true
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build_book
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v1
