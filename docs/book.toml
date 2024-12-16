@@ -13,3 +13,6 @@ build-dir = "build"
 git-repository-url = "https://github.com/okalachev/flix"
 edit-url-template = "https://github.com/okalachev/flix/blob/master/docs/{path}?plain=1"
 mathjax-support = true
+
+[preprocessor.alerts]
+command = "python3 alerts.py"
