@@ -60,22 +60,22 @@ jobs:
         path: gazebo/build/*.so
         retention-days: 1
 
-#  build_simulator_macos:
-#    runs-on: macos-latest
-#    steps:
-#    - name: Install Arduino CLI
-#      run: brew install arduino-cli
-#    - uses: actions/checkout@v4
-#    - name: Clean up python binaries # Workaround for https://github.com/actions/setup-python/issues/577
-#      run: |
-#        rm -f /usr/local/bin/2to3*
-#        rm -f /usr/local/bin/idle3*
-#        rm -f /usr/local/bin/pydoc3*
-#        rm -f /usr/local/bin/python3*
-#        rm -f /usr/local/bin/python3*-config
-#    - name: Install Gazebo
-#      run: brew update && brew tap osrf/simulation && brew install gazebo11
-#    - name: Install SDL2
-#      run: brew install sdl2
-#    - name: Build simulator
-#      run: make build_simulator
+  build_simulator_macos:
+    runs-on: macos-latest
+    steps:
+    - name: Install Arduino CLI
+      run: brew install arduino-cli
+    - uses: actions/checkout@v4
+    - name: Clean up python binaries # Workaround for https://github.com/actions/setup-python/issues/577
+      run: |
+        rm -f /usr/local/bin/2to3*
+        rm -f /usr/local/bin/idle3*
+        rm -f /usr/local/bin/pydoc3*
+        rm -f /usr/local/bin/python3*
+        rm -f /usr/local/bin/python3*-config
+    - name: Install Gazebo
+      run: brew update && brew tap osrf/simulation && brew install gazebo11
+    - name: Install SDL2
+      run: brew install sdl2
+    - name: Build simulator
+      run: make build_simulator
