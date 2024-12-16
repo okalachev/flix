@@ -6,6 +6,11 @@ on:
   pull_request:
     branches: [ master ]
 
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
 jobs:
   markdownlint:
     runs-on: ubuntu-latest
