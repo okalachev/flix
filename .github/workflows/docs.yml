@@ -31,7 +31,7 @@ jobs:
         path: docs/build
 
   deploy:
-    # if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
     concurrency:
       group: "pages"
       cancel-in-progress: true
