@@ -24,7 +24,7 @@
 * MAVLink support.
 * Control using mobile phone (with QGroundControl app).
 * Completely 3D-printed frame.
-* *Textbook and videos for students on writing a flight controller¹.*
+* Textbook for students on writing a flight controller ([in development](https://quadcopter.dev)).
 * *Position control and autonomous flights using external camera¹*.
 * [Building and running instructions](docs/build.md).
 
