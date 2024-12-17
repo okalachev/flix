@@ -17,9 +17,9 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Install markdownlint
-      run: npm install -g markdownlint-cli
+      run: npm install -g markdownlint-cli2
     - name: Run markdownlint
-      run: cd docs && markdownlint .
+      run: markdownlint-cli2 "**/*.md"
 
   build_book:
     runs-on: ubuntu-latest
