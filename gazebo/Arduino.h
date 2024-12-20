@@ -129,6 +129,11 @@ public:
 
 HardwareSerial Serial, Serial2;
 
+class EspClass {
+public:
+	void restart() { Serial.println("Ignore reboot in simulation"); }
+} ESP;
+
 void delay(uint32_t ms) {
 	std::this_thread::sleep_for(std::chrono::milliseconds(ms));
 }

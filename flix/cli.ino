@@ -31,7 +31,8 @@ const char* motd =
 "cg - calibrate gyro\n"
 "ca - calibrate accel\n"
 "mfr, mfl, mrr, mrl - test motor\n"
-"reset - reset drone's state\n";
+"reset - reset drone's state\n"
+"reboot - reboot the drone\n";
 
 const struct Param {
 	const char* name;
@@ -103,6 +104,8 @@ void doCommand(String& command, String& value) {
 		cliTestMotor(MOTOR_REAR_LEFT);
 	} else if (command == "reset") {
 		attitude = Quaternion();
+	} else if (command == "reboot") {
+		ESP.restart();
 	} else {
 		float val = value.toFloat();
 		// TODO: on error returns 0, check invalid value
