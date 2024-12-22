@@ -6,8 +6,6 @@
 #include <SPI.h>
 #include <MPU9250.h>
 
-#define ONE_G 9.80665
-
 // NOTE: use 'ca' command to calibrate the accelerometer and put the values here
 Vector accBias(0, 0, 0);
 Vector accScale(1, 1, 1);

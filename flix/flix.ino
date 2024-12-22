@@ -23,6 +23,8 @@
 #define MOTOR_FRONT_RIGHT 2
 #define MOTOR_FRONT_LEFT 3
 
+#define ONE_G 9.80665
+
 float t = NAN; // current step time, s
 float dt; // time delta from previous step, s
 float loopRate; // loop rate, Hz
