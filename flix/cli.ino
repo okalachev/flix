@@ -25,7 +25,7 @@ const char* motd =
 "psq - show attitude quaternion\n"
 "imu - show IMU data\n"
 "rc - show RC data\n"
-"mot - show motor data\n"
+"mot - show motor output\n"
 "log - dump in-RAM log\n"
 "cr - calibrate RC\n"
 "cg - calibrate gyro\n"
