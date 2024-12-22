@@ -19,4 +19,5 @@ void descend() {
 	controls[RC_CHANNEL_PITCH] = 0;
 	controls[RC_CHANNEL_YAW] = 0;
 	controls[RC_CHANNEL_THROTTLE] -= dt / DESCEND_TIME;
+	if (controls[RC_CHANNEL_THROTTLE] < 0) controls[RC_CHANNEL_THROTTLE] = 0;
 }
