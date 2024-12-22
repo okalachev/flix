@@ -41,7 +41,7 @@ void joystickInit() {
 	memcpy(channelMax, channelMaxOverride, sizeof(channelMaxOverride));
 }
 
-bool joystickGet() {
+bool joystickGet(int16_t ch[16]) {
 	if (!joystickInitialized) {
 		joystickInit();
 		return false;
@@ -49,8 +49,8 @@ bool joystickGet() {
 
 	SDL_JoystickUpdate();
 
-	for (uint8_t i = 0; i < 8; i++) {
-		channels[i] = SDL_JoystickGetAxis(joystick, i);
+	for (uint8_t i = 0; i < sizeof(channels) / sizeof(channels[0]); i++) {
+		ch[i] = SDL_JoystickGetAxis(joystick, i);
 	}
 	return true;
 }

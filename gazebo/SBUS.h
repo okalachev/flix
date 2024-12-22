@@ -14,12 +14,10 @@ public:
 	SBUS(HardwareSerial& bus, const bool inv = true) {};
 	SBUS(HardwareSerial& bus, const int8_t rxpin, const int8_t txpin, const bool inv = true) {};
 	void begin() {};
-	bool read() { return joystickGet(); };
+	bool read() { return true; };
 	SBUSData data() {
 		SBUSData data;
-		for (uint8_t i = 0; i < 16; i++) {
-			data.ch[i] = channels[i];
-		}
+		joystickGet(data.ch);
 		return data;
 	};
 };
