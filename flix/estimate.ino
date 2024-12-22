@@ -7,7 +7,6 @@
 #include "vector.h"
 #include "lpf.h"
 
-#define ONE_G 9.807f
 #define WEIGHT_ACC 0.5f
 #define RATES_LFP_ALPHA 0.2 // cutoff frequency ~ 40 Hz
 

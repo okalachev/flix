@@ -19,6 +19,8 @@
 
 #define WIFI_ENABLED 1
 
+#define ONE_G 9.80665
+
 float t = NAN;
 float dt;
 float loopRate;
