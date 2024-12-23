@@ -96,10 +96,9 @@ The latest version of Ubuntu supported by Gazebo 11 simulator is 20.04. If you h
 
 1. Connect your USB remote control to the machine running the simulator.
 2. Run the simulation.
-3. Calibrate the RC using `cr` command in the command line interface and stop the simulation.
-4. Copy the calibration results to the source code (`gazebo/joystick.h`).
-5. Run the simulation again.
-6. Use the USB remote control to fly the drone!
+3. Calibrate the RC using `cr` command in the command line interface.
+4. Run the simulation again.
+5. Use the USB remote control to fly the drone!
 
 ## Firmware
 
