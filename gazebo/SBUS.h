@@ -14,7 +14,7 @@ public:
 	SBUS(HardwareSerial& bus, const bool inv = true) {};
 	SBUS(HardwareSerial& bus, const int8_t rxpin, const int8_t txpin, const bool inv = true) {};
 	void begin() {};
-	bool read() { return true; };
+	bool read() { return joystickInitialized; };
 	SBUSData data() {
 		SBUSData data;
 		joystickGet(data.ch);
