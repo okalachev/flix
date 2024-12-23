@@ -141,6 +141,25 @@ void handleMavlink(const void *_msg) {
 		mavlink_msg_mission_count_pack(SYSTEM_ID, MAV_COMP_ID_AUTOPILOT1, &msg, 0, 0, 0, MAV_MISSION_TYPE_MISSION, 0);
 		sendMessage(&msg);
 	}
+
+	// Handle commands
+	if (msg->msgid == MAVLINK_MSG_ID_COMMAND_LONG) {
+		mavlink_command_long_t commandLong;
+		mavlink_msg_command_long_decode(msg, &commandLong);
+		mavlink_message_t ack;
+		mavlink_message_t response;
+
+		if (commandLong.command == MAV_CMD_REQUEST_MESSAGE && commandLong.param1 == MAVLINK_MSG_ID_AUTOPILOT_VERSION) {
+			mavlink_msg_command_ack_pack(SYSTEM_ID, MAV_COMP_ID_AUTOPILOT1, &ack, commandLong.command, MAV_RESULT_ACCEPTED, UINT8_MAX, 0, msg->sysid, msg->compid);
+			sendMessage(&ack);
+			mavlink_msg_autopilot_version_pack(SYSTEM_ID, MAV_COMP_ID_AUTOPILOT1, &response,
+				MAV_PROTOCOL_CAPABILITY_PARAM_FLOAT | MAV_PROTOCOL_CAPABILITY_MAVLINK2, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0);
+			sendMessage(&response);
+		} else {
+			mavlink_msg_command_ack_pack(SYSTEM_ID, MAV_COMP_ID_AUTOPILOT1, &ack, commandLong.command, MAV_RESULT_UNSUPPORTED, UINT8_MAX, 0, msg->sysid, msg->compid);
+			sendMessage(&ack);
+		}
+	}
 }
 
 // Convert Forward-Left-Up to Forward-Right-Down quaternion
