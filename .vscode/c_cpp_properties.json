@@ -29,7 +29,8 @@
 				"${workspaceFolder}/flix/rc.ino",
 				"${workspaceFolder}/flix/time.ino",
 				"${workspaceFolder}/flix/util.ino",
-				"${workspaceFolder}/flix/wifi.ino"
+				"${workspaceFolder}/flix/wifi.ino",
+				"${workspaceFolder}/flix/parameters.ino"
 			],
 			"compilerPath": "~/.arduino15/packages/esp32/tools/esp-x32/2302/bin/xtensa-esp32-elf-g++",
 			"cStandard": "c11",
@@ -76,7 +77,8 @@
 				"${workspaceFolder}/flix/rc.ino",
 				"${workspaceFolder}/flix/time.ino",
 				"${workspaceFolder}/flix/util.ino",
-				"${workspaceFolder}/flix/wifi.ino"
+				"${workspaceFolder}/flix/wifi.ino",
+				"${workspaceFolder}/flix/parameters.ino"
 			],
 			"compilerPath": "~/Library/Arduino15/packages/esp32/tools/esp-x32/2302/bin/xtensa-esp32-elf-g++",
 			"cStandard": "c11",
@@ -123,7 +125,8 @@
 				"${workspaceFolder}/flix/rc.ino",
 				"${workspaceFolder}/flix/time.ino",
 				"${workspaceFolder}/flix/util.ino",
-				"${workspaceFolder}/flix/wifi.ino"
+				"${workspaceFolder}/flix/wifi.ino",
+				"${workspaceFolder}/flix/parameters.ino"
 			],
 			"compilerPath": "~/AppData/Local/Arduino15/packages/esp32/tools/esp-x32/2302/bin/xtensa-esp32-elf-g++.exe",
 			"cStandard": "c11",

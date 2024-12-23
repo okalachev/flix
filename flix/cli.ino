@@ -19,8 +19,10 @@ const char* motd =
 "|__|     |_______||__| /__/ \\__\\\n\n"
 "Commands:\n\n"
 "help - show help\n"
-"show - show all parameters\n"
-"<name> <value> - set parameter\n"
+"p - show all parameters\n"
+"p <name> - show parameter\n"
+"p <name> <value> - set parameter\n"
+"preset - reset parameters\n"
 "ps - show pitch/roll/yaw\n"
 "psq - show attitude quaternion\n"
 "imu - show IMU data\n"
@@ -34,36 +36,22 @@ const char* motd =
 "reset - reset drone's state\n"
 "reboot - reboot the drone\n";
 
-const struct Param {
-	const char* name;
-	float* value;
-	float* value2;
-} params[] = {
-	{"rp", &rollRatePID.p, &pitchRatePID.p},
-	{"ri", &rollRatePID.i, &pitchRatePID.i},
-	{"rd", &rollRatePID.d, &pitchRatePID.d},
-
-	{"ap", &rollPID.p, &pitchPID.p},
-	{"ai", &rollPID.i, &pitchPID.i},
-	{"ad", &rollPID.d, &pitchPID.d},
-
-	{"yp", &yawRatePID.p, nullptr},
-	{"yi", &yawRatePID.i, nullptr},
-	{"yd", &yawRatePID.d, nullptr},
-
-	{"lpr", &ratesFilter.alpha, nullptr},
-	{"lpd", &rollRatePID.lpf.alpha, &pitchRatePID.lpf.alpha},
-
-	{"ss", &loopRate, nullptr},
-	{"dt", &dt, nullptr},
-	{"t", &t, nullptr},
-};
-
-void doCommand(String& command, String& value) {
+void doCommand(String& command, String& arg0, String& arg1) {
 	if (command == "help" || command == "motd") {
 		Serial.println(motd);
-	} else if (command == "show") {
-		showTable();
+	} else if (command == "p" && arg0 == "") {
+		printParameters();
+	} else if (command == "p" && arg0 != "" && arg1 == "") {
+		Serial.printf("%s = %g\n", arg0.c_str(), getParameter(arg0.c_str()));
+	} else if (command == "p") {
+		bool success = setParameter(arg0.c_str(), arg1.toFloat());
+		if (success) {
+			Serial.printf("%s = %g\n", arg0.c_str(), arg1.toFloat());
+		} else {
+			Serial.printf("Parameter not found: %s\n", arg0.c_str());
+		}
+	} else if (command == "preset") {
+		resetParameters();
 	} else if (command == "ps") {
 		Vector a = attitude.toEulerZYX();
 		Serial.printf("roll: %f pitch: %f yaw: %f\n", a.x * RAD_TO_DEG, a.y * RAD_TO_DEG, a.z * RAD_TO_DEG);
@@ -106,29 +94,10 @@ void doCommand(String& command, String& value) {
 		attitude = Quaternion();
 	} else if (command == "reboot") {
 		ESP.restart();
+	} else if (command == "") {
+		// do nothing
 	} else {
-		float val = value.toFloat();
-		// TODO: on error returns 0, check invalid value
-
-		for (uint8_t i = 0; i < sizeof(params) / sizeof(params[0]); i++) {
-			if (command == params[i].name) {
-				*params[i].value = val;
-				if (params[i].value2 != nullptr) *params[i].value2 = val;
-				Serial.print(command);
-				Serial.print(" = ");
-				Serial.println(val, 4);
-				return;
-			}
-		}
 		Serial.println("Invalid command: " + command);
-	}
-}
-
-void showTable() {
-	for (uint8_t i = 0; i < sizeof(params) / sizeof(params[0]); i++) {
-		Serial.print(params[i].name);
-		Serial.print(" ");
-		Serial.println(*params[i].value, 5);
 	}
 }
 
@@ -145,9 +114,7 @@ void cliTestMotor(uint8_t n) {
 
 void parseInput() {
 	static bool showMotd = true;
-	static String command;
-	static String value;
-	static bool parsingCommand = true;
+	static String input;
 
 	if (showMotd) {
 		Serial.println(motd);
@@ -157,16 +124,21 @@ void parseInput() {
 	while (Serial.available()) {
 		char c = Serial.read();
 		if (c == '\n') {
-			parsingCommand = true;
-			if (!command.isEmpty()) {
-				doCommand(command, value);
-			}
-			command.clear();
-			value.clear();
-		} else if (c == ' ') {
-			parsingCommand = false;
+			char chars[input.length() + 1];
+			input.toCharArray(chars, input.length() + 1);
+			String command = stringToken(chars, " ");
+			String arg0 = stringToken(NULL, " ");
+			String arg1 = stringToken(NULL, "");
+			doCommand(command, arg0, arg1);
+			input.clear();
 		} else {
-			(parsingCommand ? command : value) += c;
+			input += c;
 		}
 	}
+}
+
+// Helper function for parsing input
+String stringToken(char* str, const char* delim) {
+	char* token = strtok(str, delim);
+	return token == NULL ? "" : token;
 }

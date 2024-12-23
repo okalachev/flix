@@ -19,7 +19,7 @@ Do the following:
 * **Make sure you're not moving the drone several seconds after the power on**. The drone calibrates its gyroscope on the start so it should stay still for a while.
 * **Check the IMU sample rate**. Perform `imu` command. The `rate` field should be about 1000 (Hz).
 * **Check the IMU data**. Perform `imu` command, check raw accelerometer and gyro output. The output should change as you move the drone.
-* **Calibrate the accelerometer.** if is wasn't done before. Perform `ca` command and put the results to `imu.ino` file.
+* **Calibrate the accelerometer.** if is wasn't done before. Type `ca` command in Serial Monitor and follow the instructions.
 * **Check the attitude estimation**. Connect to the drone using QGroundControl. Rotate the drone in different orientations and check if the attitude estimation shown in QGroundControl is correct.
 * **Check the IMU orientation is set correctly**. If the attitude estimation is rotated, make sure `rotateIMU` function is defined correctly in `imu.ino` file.
 * **Check the motors**. Perform the following commands using Serial Monitor:
@@ -27,7 +27,7 @@ Do the following:
   * `mfl` — should rotate front left motor (clockwise).
   * `mrl` — should rotate rear left motor (counter-clockwise).
   * `mrr` — should rotate rear right motor (clockwise).
-* **Calibrate the RC** if you use it. Perform `cr` command and put the results to `rc.ino` file.
+* **Calibrate the RC** if you use it. Type `cr` command in Serial Monitor and follow the instructions.
 * **Check the RC data** if you use it. Use `rc` command, `Control` should show correct values between -1 and 1, and between 0 and 1 for the throttle.
 * **Check the IMU output using QGroundControl**. Connect to the drone using QGroundControl on your computer. Go to the *Analyze* tab, *MAVLINK Inspector*. Plot the data from the `SCALED_IMU` message. The gyroscope and accelerometer data should change according to the drone movement.
 * **Check the gyroscope only attitude estimation**. Comment out `applyAcc();` line in `estimate.ino` and check if the attitude estimation in QGroundControl. It should be stable, but only drift very slowly.

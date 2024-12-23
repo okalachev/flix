@@ -7,10 +7,6 @@
 #include <gazebo/gazebo.hh>
 #include <iostream>
 
-// simulation calibration overrides, NOTE: use `cr` command and replace with the actual values
-const int channelNeutralOverride[] = {-258, -258, -27349, 0, -27349, 0};
-const int channelMaxOverride[] = {27090, 27090, 27090, 27090, -5676, 1};
-
 #define RC_CHANNEL_ROLL 0
 #define RC_CHANNEL_PITCH 1
 #define RC_CHANNEL_THROTTLE 2
@@ -20,8 +16,6 @@ const int channelMaxOverride[] = {27090, 27090, 27090, 27090, -5676, 1};
 
 SDL_Joystick *joystick;
 bool joystickInitialized = false, warnShown = false;
-
-void normalizeRC();
 
 void joystickInit() {
 	SDL_Init(SDL_INIT_JOYSTICK);
@@ -33,12 +27,6 @@ void joystickInit() {
 		gzwarn << "Joystick not found, begin waiting for joystick..." << std::endl;
 		warnShown = true;
 	}
-
-	// apply calibration overrides
-	extern int channelNeutral[RC_CHANNELS];
-	extern int channelMax[RC_CHANNELS];
-	memcpy(channelNeutral, channelNeutralOverride, sizeof(channelNeutralOverride));
-	memcpy(channelMax, channelMaxOverride, sizeof(channelMaxOverride));
 }
 
 bool joystickGet(int16_t ch[16]) {

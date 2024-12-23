@@ -143,8 +143,7 @@ See other available Make commands in the [Makefile](../Makefile).
 Before flight you need to calibrate the accelerometer:
 
 1. Open Serial Monitor in Arduino IDE (use use `make monitor` command in the command line).
-2. Type `ca` command there.
-3. Copy calibration results to the source code (`flix/imu.ino`).
+2. Type `ca` command there and follow the instructions.
 
 #### Control with smartphone
 
@@ -160,8 +159,7 @@ Before flight you need to calibrate the accelerometer:
 Before flight using remote control, you need to calibrate it:
 
 1. Open Serial Monitor in Arduino IDE (use use `make monitor` command in the command line).
-2. Type `cr` command there.
-3. Copy calibration results to the source code (`flix/rc.ino`).
+2. Type `cr` command there and follow the instructions.
 
 Then you can use your remote control to fly the drone!
 

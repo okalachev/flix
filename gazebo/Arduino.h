@@ -27,15 +27,27 @@ long map(long x, long in_min, long in_max, long out_min, long out_max) {
 	return (delta * rise) / run + out_min;
 }
 
+size_t strlcpy(char* dst, const char* src, size_t len) {
+	size_t l = strlen(src);
+	size_t i = 0;
+	while (i < len - 1 && *src != '\0') { *dst++ = *src++; i++; }
+	*dst = '\0';
+	return l;
+}
+
 class __FlashStringHelper;
 
 // Arduino String partial implementation
 // https://www.arduino.cc/reference/en/language/variables/data-types/stringobject/
 class String: public std::string {
 public:
+	String(const char *str = "") : std::string(str) {}
 	long toInt() const { return atol(this->c_str()); }
 	float toFloat() const { return atof(this->c_str()); }
 	bool isEmpty() const { return this->empty(); }
+	void toCharArray(char *buf, unsigned int bufsize, unsigned int index = 0) const {
+		strlcpy(buf, this->c_str() + index, bufsize);
+	}
 };
 
 class Print;

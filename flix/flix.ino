@@ -41,6 +41,7 @@ void setup() {
 	Serial.begin(SERIAL_BAUDRATE);
 	Serial.println("Initializing flix");
 	disableBrownOut();
+	setupParameters();
 	setupLED();
 	setupMotors();
 	setLED(true);
@@ -66,4 +67,5 @@ void loop() {
 	processMavlink();
 #endif
 	logData();
+	flushParameters();
 }

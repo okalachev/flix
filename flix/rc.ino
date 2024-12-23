@@ -5,9 +5,8 @@
 
 #include <SBUS.h>
 
-// NOTE: use 'cr' command to calibrate the RC and put the values here
-int channelNeutral[] = {995, 883, 200, 972, 512, 512, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-int channelMax[] = {1651, 1540, 1713, 1630, 1472, 1472, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+float channelNeutral[RC_CHANNELS] = {NAN}; // first element NAN means not calibrated
+float channelMax[RC_CHANNELS];
 
 SBUS RC(Serial2); // NOTE: Use RC(Serial2, 16, 17) if you use the old UART2 pins
 
@@ -26,6 +25,7 @@ void readRC() {
 }
 
 void normalizeRC() {
+	if (isnan(channelNeutral[0])) return; // skip if not calibrated
 	for (uint8_t i = 0; i < RC_CHANNELS; i++) {
 		controls[i] = mapf(channels[i], channelNeutral[i], channelMax[i], 0, 1);
 	}

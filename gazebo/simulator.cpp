@@ -23,6 +23,7 @@
 #include "estimate.ino"
 #include "control.ino"
 #include "log.ino"
+#include "parameters.ino"
 #include "cli.ino"
 #include "mavlink.ino"
 #include "failsafe.ino"
@@ -51,6 +52,7 @@ public:
 		this->resetConnection = event::Events::ConnectWorldReset(std::bind(&ModelFlix::OnReset, this));
 		initNode();
 		Serial.begin(0);
+		setupParameters();
 		gzmsg << "Flix plugin loaded" << endl;
 	}
 
@@ -85,6 +87,7 @@ public:
 		applyMotorForces();
 		publishTopics();
 		logData();
+		flushParameters();
 	}
 
 	void applyMotorForces() {

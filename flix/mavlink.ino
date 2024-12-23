@@ -84,6 +84,7 @@ void receiveMavlink() {
 
 void handleMavlink(const void *_msg) {
 	mavlink_message_t *msg = (mavlink_message_t *)_msg;
+
 	if (msg->msgid == MAVLINK_MSG_ID_MANUAL_CONTROL) {
 		mavlink_manual_control_t manualControl;
 		mavlink_msg_manual_control_decode(msg, &manualControl);
@@ -96,6 +97,49 @@ void handleMavlink(const void *_msg) {
 		controlsTime = t;
 
 		if (abs(controls[RC_CHANNEL_YAW]) < MAVLINK_CONTROL_YAW_DEAD_ZONE) controls[RC_CHANNEL_YAW] = 0;
+	}
+
+	if (msg->msgid == MAVLINK_MSG_ID_PARAM_REQUEST_LIST) {
+		mavlink_message_t msg;
+		for (int i = 0; i < parametersCount(); i++) {
+			mavlink_msg_param_value_pack(SYSTEM_ID, MAV_COMP_ID_AUTOPILOT1, &msg,
+				getParameterName(i), getParameter(i), MAV_PARAM_TYPE_REAL32, parametersCount(), i);
+			sendMessage(&msg);
+		}
+	}
+
+	if (msg->msgid == MAVLINK_MSG_ID_PARAM_REQUEST_READ) {
+		mavlink_param_request_read_t paramRequestRead;
+		mavlink_msg_param_request_read_decode(msg, &paramRequestRead);
+		char name[16 + 1];
+		strlcpy(name, paramRequestRead.param_id, sizeof(name)); // param_id might be not null-terminated
+		float value = strlen(name) == 0 ? getParameter(paramRequestRead.param_index) : getParameter(name);
+		if (paramRequestRead.param_index != -1) {
+			memcpy(name, getParameterName(paramRequestRead.param_index), 16);
+		}
+		mavlink_message_t msg;
+		mavlink_msg_param_value_pack(SYSTEM_ID, MAV_COMP_ID_AUTOPILOT1, &msg,
+			name, value, MAV_PARAM_TYPE_REAL32, parametersCount(), paramRequestRead.param_index);
+		sendMessage(&msg);
+	}
+
+	if (msg->msgid == MAVLINK_MSG_ID_PARAM_SET) {
+		mavlink_param_set_t paramSet;
+		mavlink_msg_param_set_decode(msg, &paramSet);
+		char name[16 + 1];
+		strlcpy(name, paramSet.param_id, sizeof(name)); // param_id might be not null-terminated
+		setParameter(name, paramSet.param_value);
+		// send ack
+		mavlink_message_t msg;
+		mavlink_msg_param_value_pack(SYSTEM_ID, MAV_COMP_ID_AUTOPILOT1, &msg,
+			paramSet.param_id, paramSet.param_value, MAV_PARAM_TYPE_REAL32, parametersCount(), 0); // index is unknown
+		sendMessage(&msg);
+	}
+
+	if (msg->msgid == MAVLINK_MSG_ID_MISSION_REQUEST_LIST) { // handle to make qgc happy
+		mavlink_message_t msg;
+		mavlink_msg_mission_count_pack(SYSTEM_ID, MAV_COMP_ID_AUTOPILOT1, &msg, 0, 0, 0, MAV_MISSION_TYPE_MISSION, 0);
+		sendMessage(&msg);
 	}
 }
 
