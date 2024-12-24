@@ -26,14 +26,15 @@ void setupMotors() {
 	Serial.println("Motors initialized");
 }
 
-uint8_t signalToDutyCycle(float signal) {
-	float duty = mapff(signal, 0, 1, 0, (1 << PWM_RESOLUTION) - 1);
-	return round(constrain(duty, 0, (1 << PWM_RESOLUTION) - 1));
+uint8_t getDutyCycle(float value) { // TODO: for canonical
+	value = constrain(value, 0, 1);
+	float duty = mapff(value, 0, 1, 0, (1 << PWM_RESOLUTION) - 1);
+	return round(duty);
 }
 
 void sendMotors() {
-	ledcWrite(MOTOR_0_PIN, signalToDutyCycle(motors[0]));
-	ledcWrite(MOTOR_1_PIN, signalToDutyCycle(motors[1]));
-	ledcWrite(MOTOR_2_PIN, signalToDutyCycle(motors[2]));
-	ledcWrite(MOTOR_3_PIN, signalToDutyCycle(motors[3]));
+	ledcWrite(MOTOR_0_PIN, getDutyCycle(motors[0]));
+	ledcWrite(MOTOR_1_PIN, getDutyCycle(motors[1]));
+	ledcWrite(MOTOR_2_PIN, getDutyCycle(motors[2]));
+	ledcWrite(MOTOR_3_PIN, getDutyCycle(motors[3]));
 }
