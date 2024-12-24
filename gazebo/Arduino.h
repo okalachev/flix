@@ -99,7 +99,7 @@ public:
 class HardwareSerial: public Print {
 public:
 	void begin(unsigned long baud) {
-		// server is running in background by default, so doesn't have access to stdin
+		// server is running in background by default, so it doesn't have access to stdin
 		// https://github.com/gazebosim/gazebo-classic/blob/d45feeb51f773e63960616880b0544770b8d1ad7/gazebo/gazebo_main.cc#L216
 		// set foreground process group to current process group to allow reading from stdin
 		// https://stackoverflow.com/questions/58918188/why-is-stdin-not-propagated-to-child-process-of-different-process-group
