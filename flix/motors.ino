@@ -26,8 +26,8 @@ void setupMotors() {
 	Serial.println("Motors initialized");
 }
 
-uint8_t signalToDutyCycle(float control) {
-	float duty = mapff(control, 0, 1, 0, (1 << PWM_RESOLUTION) - 1);
+uint8_t signalToDutyCycle(float signal) {
+	float duty = mapff(signal, 0, 1, 0, (1 << PWM_RESOLUTION) - 1);
 	return round(constrain(duty, 0, (1 << PWM_RESOLUTION) - 1));
 }
 

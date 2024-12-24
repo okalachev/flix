@@ -36,8 +36,6 @@ public:
 		return true;
 	}
 
-	void end();
-
 	bool isKey(const char *key) {
 		return storage.find(key) != storage.end();
 	}
