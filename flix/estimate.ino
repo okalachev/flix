@@ -31,6 +31,7 @@ void applyAcc() {
 	float accNorm = acc.norm();
 	bool landed = !motorsActive() && abs(accNorm - ONE_G) < ONE_G * 0.1f;
 
+	setLED(landed);
 	if (!landed) return;
 
 	// calculate accelerometer correction

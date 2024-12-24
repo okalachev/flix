@@ -22,7 +22,7 @@ void setupIMU() {
 		}
 	}
 	configureIMU();
-	calibrateGyro();
+	// calibrateGyro();
 }
 
 void configureIMU() {
@@ -36,6 +36,7 @@ void readIMU() {
 	IMU.waitForData();
 	IMU.getGyro(gyro.x, gyro.y, gyro.z);
 	IMU.getAccel(acc.x, acc.y, acc.z);
+	calibrateGyroOnce();
 	// apply scale and bias
 	acc = (acc - accBias) / accScale;
 	gyro = gyro - gyroBias;
@@ -49,6 +50,13 @@ void rotateIMU(Vector& data) {
 	// NOTE: In case of using other IMU orientation, change this line:
 	data = Vector(data.y, data.x, -data.z);
 	// Axes orientation for various boards: https://github.com/okalachev/flixperiph#imu-axes-orientation
+}
+
+void calibrateGyroOnce() {
+	if (!landed) return;
+	static float samples = 0; // overflows after 49 days at 1000 Hz
+	samples++;
+	gyroBias = gyroBias + (gyro - gyroBias) / samples; // running average
 }
 
 void calibrateGyro() {
