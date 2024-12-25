@@ -107,11 +107,11 @@ bool setParameter(const char *name, const float value) {
 	return false;
 }
 
-void flushParameters() {
-	static float lastFlush = 0;
-	if (t - lastFlush < 1) return; // flush once per second
+void syncParameters() {
+	static float lastSync = 0;
+	if (t - lastSync < 1) return; // sync once per second
 	if (motorsActive()) return; // don't use flash while flying, it may cause a delay
-	lastFlush = t;
+	lastSync = t;
 
 	for (auto &parameter : parameters) {
 		if (parameter.value == *parameter.variable) continue;

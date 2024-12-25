@@ -67,5 +67,5 @@ void loop() {
 	processMavlink();
 #endif
 	logData();
-	flushParameters();
+	syncParameters();
 }

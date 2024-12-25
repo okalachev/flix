@@ -87,7 +87,7 @@ public:
 		applyMotorForces();
 		publishTopics();
 		logData();
-		flushParameters();
+		syncParameters();
 	}
 
 	void applyMotorForces() {
