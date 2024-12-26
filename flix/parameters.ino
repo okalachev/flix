@@ -1,7 +1,6 @@
 #pragma once
 
 #include <Preferences.h>
-#include <vector>
 
 extern float channelNeutral[RC_CHANNELS];
 extern float channelMax[RC_CHANNELS];
