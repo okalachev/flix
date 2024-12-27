@@ -15,9 +15,12 @@
 #define RC_CHANNEL_MODE 4
 
 SDL_Joystick *joystick;
-bool joystickInitialized = false, warnShown = false;
 
-void joystickInit() {
+bool joystickInit() {
+	static bool joystickInitialized = false;
+	static bool warnShown = false;
+	if (joystickInitialized) return true;
+
 	SDL_Init(SDL_INIT_JOYSTICK);
 	joystick = SDL_JoystickOpen(0);
 	if (joystick != NULL) {
@@ -27,14 +30,10 @@ void joystickInit() {
 		gzwarn << "Joystick not found, begin waiting for joystick..." << std::endl;
 		warnShown = true;
 	}
+	return joystickInitialized;
 }
 
 bool joystickGet(int16_t ch[16]) {
-	if (!joystickInitialized) {
-		joystickInit();
-		return false;
-	}
-
 	SDL_JoystickUpdate();
 
 	for (uint8_t i = 0; i < sizeof(channels) / sizeof(channels[0]); i++) {
