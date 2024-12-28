@@ -121,9 +121,9 @@ void calibrateAccelOnce() {
 }
 
 void printIMUCal() {
-	Serial.printf("gyro bias: %f, %f, %f\n", gyroBias.x, gyroBias.y, gyroBias.z);
-	Serial.printf("accel bias: %f, %f, %f\n", accBias.x, accBias.y, accBias.z);
-	Serial.printf("accel scale: %f, %f, %f\n", accScale.x, accScale.y, accScale.z);
+	Serial.printf("gyro bias: %f %f %f\n", gyroBias.x, gyroBias.y, gyroBias.z);
+	Serial.printf("accel bias: %f %f %f\n", accBias.x, accBias.y, accBias.z);
+	Serial.printf("accel scale: %f %f %f\n", accScale.x, accScale.y, accScale.z);
 }
 
 void printIMUInfo() {
