@@ -3,36 +3,58 @@
 
 // In-RAM logging
 
+#include "vector.h"
+
 #define LOG_RATE 100
 #define LOG_DURATION 10
 #define LOG_PERIOD 1.0 / LOG_RATE
 #define LOG_SIZE LOG_DURATION * LOG_RATE
-#define LOG_COLUMNS 14
 
-float logBuffer[LOG_SIZE][LOG_COLUMNS]; // * 4 (float)
-int logPointer = 0;
+Vector attitudeEuler;
+Vector attitudeTargetEuler;
+
+struct LogEntry {
+	const char *name;
+	float *value;
+};
+
+LogEntry logEntries[] = {
+	{"t", &t},
+	{"rates.x", &rates.x},
+	{"rates.y", &rates.y},
+	{"rates.z", &rates.z},
+	{"ratesTarget.x", &ratesTarget.x},
+	{"ratesTarget.y", &ratesTarget.y},
+	{"ratesTarget.z", &ratesTarget.z},
+	{"attitude.x", &attitudeEuler.x},
+	{"attitude.y", &attitudeEuler.y},
+	{"attitude.z", &attitudeEuler.z},
+	{"attitudeTarget.x", &attitudeTargetEuler.x},
+	{"attitudeTarget.y", &attitudeTargetEuler.y},
+	{"attitudeTarget.z", &attitudeTargetEuler.z},
+	{"thrustTarget", &thrustTarget}
+};
+
+const int logColumns = sizeof(logEntries) / sizeof(logEntries[0]);
+float logBuffer[LOG_SIZE][logColumns];
+
+void prepareLogData() {
+	attitudeEuler = attitude.toEulerZYX();
+	attitudeTargetEuler = attitudeTarget.toEulerZYX();
+}
 
 void logData() {
 	if (!armed) return;
-
+	static int logPointer = 0;
 	static float logTime = 0;
 	if (t - logTime < LOG_PERIOD) return;
 	logTime = t;
 
-	logBuffer[logPointer][0] = t;
-	logBuffer[logPointer][1] = rates.x;
-	logBuffer[logPointer][2] = rates.y;
-	logBuffer[logPointer][3] = rates.z;
-	logBuffer[logPointer][4] = ratesTarget.x;
-	logBuffer[logPointer][5] = ratesTarget.y;
-	logBuffer[logPointer][6] = ratesTarget.z;
-	logBuffer[logPointer][7] = attitude.toEulerZYX().x;
-	logBuffer[logPointer][8] = attitude.toEulerZYX().y;
-	logBuffer[logPointer][9] = attitude.toEulerZYX().z;
-	logBuffer[logPointer][10] = attitudeTarget.toEulerZYX().x;
-	logBuffer[logPointer][11] = attitudeTarget.toEulerZYX().y;
-	logBuffer[logPointer][12] = attitudeTarget.toEulerZYX().z;
-	logBuffer[logPointer][13] = thrustTarget;
+	prepareLogData();
+
+	for (int i = 0; i < logColumns; i++) {
+		logBuffer[logPointer][i] = *logEntries[i].value;
+	}
 
 	logPointer++;
 	if (logPointer >= LOG_SIZE) {
@@ -41,13 +63,15 @@ void logData() {
 }
 
 void dumpLog() {
-	Serial.printf("t,rates.x,rates.y,rates.z,ratesTarget.x,ratesTarget.y,ratesTarget.z,"
-		"attitude.x,attitude.y,attitude.z,attitudeTarget.x,attitudeTarget.y,attitudeTarget.z,thrustTarget\n");
+	// Print header
+	for (int i = 0; i < logColumns; i++) {
+		Serial.printf("%s%s", logEntries[i].name, i < logColumns - 1 ? "," : "\n");
+	}
+	// Print data
 	for (int i = 0; i < LOG_SIZE; i++) {
 		if (logBuffer[i][0] == 0) continue; // skip empty records
-		for (int j = 0; j < LOG_COLUMNS - 1; j++) {
-			Serial.printf("%f,", logBuffer[i][j]);
+		for (int j = 0; j < logColumns; j++) {
+			Serial.printf("%g%s", logBuffer[i][j], j < logColumns - 1 ? "," : "\n");
 		}
-		Serial.printf("%f\n", logBuffer[i][LOG_COLUMNS - 1]);
 	}
 }
