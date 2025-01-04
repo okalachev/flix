@@ -54,15 +54,15 @@ public:
 		return Vector(x / b.x, y / b.y, z / b.z);
 	}
 
-	inline bool operator == (const Vector& b) const {
+	bool operator == (const Vector& b) const {
 		return x == b.x && y == b.y && z == b.z;
 	}
 
-	inline bool operator != (const Vector& b) const {
+	bool operator != (const Vector& b) const {
 		return !(*this == b);
 	}
 
-	inline bool finite() const {
+	bool finite() const {
 		return isfinite(x) && isfinite(y) && isfinite(z);
 	}
 
