@@ -168,11 +168,11 @@ public:
 	}
 
 	// Rotate vector by quaternion
-	inline Vector rotate(const Vector& v) {
+	Vector rotate(const Vector& v) {
 		return conjugateInversed(v);
 	}
 
-	inline bool finite() const {
+	bool finite() const {
 		return isfinite(w) && isfinite(x) && isfinite(y) && isfinite(z);
 	}
 
