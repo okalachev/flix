@@ -2,6 +2,9 @@
 // Repository: https://github.com/okalachev/flix
 
 // MAVLink communication
+#if __GNUC__ > 8
+  #pragma GCC diagnostic ignored "-Waddress-of-packed-member"
+#endif
 
 #if WIFI_ENABLED == 1
 
