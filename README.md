@@ -59,6 +59,7 @@ See [instructions on running the simulation](docs/build.md).
 |MOSFET (transistor)|100N03A or [analog](https://t.me/opensourcequadcopter/33)|<img src="docs/img/100n03a.jpg" width=100>|4|
 |Pull-down resistor|10 kΩ|<img src="docs/img/resistor10k.jpg" width=100>|4|
 |3.7V Li-Po battery|LW 952540 (or any compatible by the size)|<img src="docs/img/battery.jpg" width=100>|1|
+|Battery connector cable|MX2.0 2P female|<img src="docs/img/mx.png" width=100>|1|
 |Li-Po Battery charger|Any|<img src="docs/img/charger.jpg" width=100>|1|
 |Screws for IMU board mounting|M3x5|<img src="docs/img/screw-m3.jpg" width=100>|2|
 |Screws for frame assembly|M1.4x5|<img src="docs/img/screw-m1.4.jpg" height=30 align=center>|4|
