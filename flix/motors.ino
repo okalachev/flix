@@ -27,7 +27,7 @@ void setupMotors() {
 	Serial.println("Motors initialized");
 }
 
-uint8_t getDutyCycle(float value) {
+int getDutyCycle(float value) {
 	value = constrain(value, 0, 1);
 	float pwm = mapff(value, 0, 1, PWM_MIN, PWM_MAX);
 	float duty = mapff(pwm, 0, 1000000 / PWM_FREQUENCY, 0, (1 << PWM_RESOLUTION) - 1);
