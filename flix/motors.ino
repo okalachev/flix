@@ -13,6 +13,12 @@
 #define PWM_FREQUENCY 500
 #define PWM_RESOLUTION 8
 
+// Motors array indexes:
+const int MOTOR_REAR_LEFT = 0;
+const int MOTOR_REAR_RIGHT = 1;
+const int MOTOR_FRONT_RIGHT = 2;
+const int MOTOR_FRONT_LEFT = 3;
+
 void setupMotors() {
 	Serial.println("Setup Motors");
 

@@ -12,11 +12,6 @@
 
 #define RC_CHANNELS 16
 
-#define MOTOR_REAR_LEFT 0
-#define MOTOR_FRONT_LEFT 3
-#define MOTOR_FRONT_RIGHT 2
-#define MOTOR_REAR_RIGHT 1
-
 #define WIFI_ENABLED 1
 
 #define ONE_G 9.80665
@@ -43,6 +38,7 @@ void controlAttitude();
 void controlRate();
 void controlTorque();
 void showTable();
+void sendMotors();
 bool motorsActive();
 void cliTestMotor(uint8_t n);
 void printRCCal();
@@ -59,6 +55,5 @@ inline Quaternion FLU2FRD(const Quaternion &q);
 void setLED(bool on) {};
 void calibrateGyro() { printf("Skip gyro calibrating\n"); };
 void calibrateAccel() { printf("Skip accel calibrating\n"); };
-void sendMotors() {};
 void printIMUCal() { printf("cal: N/A\n"); };
 void printIMUInfo() {};

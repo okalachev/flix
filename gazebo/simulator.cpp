@@ -20,6 +20,7 @@
 #include "util.ino"
 #include "rc.ino"
 #include "time.ino"
+#include "motors.ino"
 #include "estimate.ino"
 #include "control.ino"
 #include "log.ino"
