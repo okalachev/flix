@@ -60,7 +60,7 @@ public:
 		return ret;
 	}
 
-	void toAxisAngle(float& a, float& b, float& c, float& angle) {
+	void toAxisAngle(float& a, float& b, float& c, float& angle) const {
 		angle = acos(w) * 2;
 		a = x / sin(angle / 2);
 		b = y / sin(angle / 2);
@@ -126,7 +126,7 @@ public:
 		return (*this = ret);
 	}
 
-	Quaternion operator * (const Quaternion& q) {
+	Quaternion operator * (const Quaternion& q) const {
 		return Quaternion(
 			w * q.w - x * q.x - y * q.y - z * q.z,
 			w * q.x + x * q.w + y * q.z - z * q.y,
@@ -155,25 +155,25 @@ public:
 		z /= n;
 	}
 
-	Vector conjugate(const Vector& v) {
+	Vector conjugate(const Vector& v) const {
 		Quaternion qv(0, v.x, v.y, v.z);
 		Quaternion res = (*this) * qv * inversed();
 		return Vector(res.x, res.y, res.z);
 	}
 
-	Vector conjugateInversed(const Vector& v) {
+	Vector conjugateInversed(const Vector& v) const {
 		Quaternion qv(0, v.x, v.y, v.z);
 		Quaternion res = inversed() * qv * (*this);
 		return Vector(res.x, res.y, res.z);
 	}
 
 	// Rotate vector by quaternion
-	Vector rotateVector(const Vector& v) {
+	Vector rotateVector(const Vector& v) const {
 		return conjugateInversed(v);
 	}
 
 	// Rotate quaternion by quaternion
-	Quaternion rotate(const Quaternion& q, const bool normalize = true) {
+	Quaternion rotate(const Quaternion& q, const bool normalize = true) const {
 		Quaternion rotated = (*this) * q;
 		if (normalize) {
 			rotated.normalize();
