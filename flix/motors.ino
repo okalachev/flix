@@ -2,8 +2,7 @@
 // Repository: https://github.com/okalachev/flix
 
 // Motors output control using MOSFETs
-// In case of using ESC, use this version of the code: https://gist.github.com/okalachev/8871d3a94b6b6c0a298f41a4edd34c61.
-// Motor: 8520 3.7V
+// In case of using ESCs, change PWM_MIN and PWM_MAX definitions to appropriate values in μs
 
 #define MOTOR_0_PIN 12 // rear left
 #define MOTOR_1_PIN 13 // rear right
@@ -12,6 +11,8 @@
 
 #define PWM_FREQUENCY 500
 #define PWM_RESOLUTION 8
+#define PWM_MIN 0
+#define PWM_MAX 1000000 / PWM_FREQUENCY
 
 void setupMotors() {
 	Serial.println("Setup Motors");
@@ -28,7 +29,8 @@ void setupMotors() {
 
 uint8_t getDutyCycle(float value) {
 	value = constrain(value, 0, 1);
-	float duty = mapff(value, 0, 1, 0, (1 << PWM_RESOLUTION) - 1);
+	float pwm = mapff(value, 0, 1, PWM_MIN, PWM_MAX);
+	float duty = mapff(pwm, 0, 1000000 / PWM_FREQUENCY, 0, (1 << PWM_RESOLUTION) - 1);
 	return round(duty);
 }
 
