@@ -27,4 +27,4 @@ Flix version 0 (obsolete):
 
 <img src="img/schematics.svg" width=800 alt="Flix schematics">
 
-You can also check a user contributed [variant of complete circuit diagram](https://miro.com/app/board/uXjVN-dTjoo=/) of the drone.
+You can also check a user contributed [variant of complete circuit diagram](https://miro.com/app/board/uXjVN-dTjoo=/?moveToWidget=3458764574482511443&cot=14) of the drone.

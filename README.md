@@ -54,7 +54,7 @@ See [instructions on running the simulation](docs/build.md).
 |-|-|:-:|:-:|
 |Microcontroller board|ESP32 Mini|<img src="docs/img/esp32.jpg" width=100>|1|
 |IMU (and barometer²) board|GY‑91 (or other MPU‑9250/MPU‑6500 board), ICM‑20948³|<img src="docs/img/gy-91.jpg" width=90 align=center><img src="docs/img/icm-20948.jpg" width=100>|1|
-|Motor|8520 3.7V brushed motor (**shaft 0.8mm!**)|<img src="docs/img/motor.jpeg" width=100>|4|
+|Motor|8520 3.7V brushed motor (shaft 0.8mm).<br>Motor with exact 3.7V voltage is needed, not ranged working voltage (3.7V — 6V).|<img src="docs/img/motor.jpeg" width=100>|4|
 |Propeller|Hubsan 55 mm|<img src="docs/img/prop.jpg" width=100>|4|
 |MOSFET (transistor)|100N03A or [analog](https://t.me/opensourcequadcopter/33)|<img src="docs/img/100n03a.jpg" width=100>|4|
 |Pull-down resistor|10 kΩ|<img src="docs/img/resistor10k.jpg" width=100>|4|
@@ -129,7 +129,7 @@ Complete diagram is Work-in-Progress.
   |Receiver pin|ESP32 pin|
   |-|-|
   |GND|GND|
-  |VIN|VC (or 3.3V depending on the receiver)|
+  |VIN|VCC (or 3.3V depending on the receiver)|
   |Signal|GPIO4⁶|
 
 *⁶ — UART2 RX pin was [changed](https://docs.espressif.com/projects/arduino-esp32/en/latest/migration_guides/2.x_to_3.0.html#id14) to GPIO4 in Arduino ESP32 core 3.0.*
