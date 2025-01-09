@@ -150,6 +150,9 @@ void delay(uint32_t ms) {
 	std::this_thread::sleep_for(std::chrono::milliseconds(ms));
 }
 
+bool ledcAttach(uint8_t pin, uint32_t freq, uint8_t resolution) { return true; }
+bool ledcWrite(uint8_t pin, uint32_t duty) { return true; }
+
 unsigned long __micros;
 unsigned long __resetTime = 0;
 

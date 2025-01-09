@@ -50,6 +50,8 @@ Vector ratesTarget;
 Vector torqueTarget;
 float thrustTarget;
 
+extern const int MOTOR_REAR_LEFT, MOTOR_REAR_RIGHT, MOTOR_FRONT_RIGHT, MOTOR_FRONT_LEFT;
+
 void control() {
 	interpretRC();
 	failsafe();

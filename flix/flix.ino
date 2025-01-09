@@ -18,11 +18,6 @@
 #define RC_CHANNEL_ARMED 4
 #define RC_CHANNEL_MODE 5
 
-#define MOTOR_REAR_LEFT 0
-#define MOTOR_REAR_RIGHT 1
-#define MOTOR_FRONT_RIGHT 2
-#define MOTOR_FRONT_LEFT 3
-
 #define ONE_G 9.80665
 
 float t = NAN; // current step time, s
