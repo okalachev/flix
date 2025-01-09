@@ -18,8 +18,6 @@
 #define RC_CHANNEL_ARMED 4
 #define RC_CHANNEL_MODE 5
 
-#define ONE_G 9.80665
-
 float t = NAN; // current step time, s
 float dt; // time delta from previous step, s
 float loopRate; // loop rate, Hz

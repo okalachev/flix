@@ -12,6 +12,8 @@ Vector accBias;
 Vector gyroBias;
 Vector accScale(1, 1, 1);
 
+extern const float ONE_G;
+
 void setupIMU() {
 	Serial.println("Setup IMU");
 	bool status = IMU.begin();
