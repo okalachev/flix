@@ -168,8 +168,17 @@ public:
 	}
 
 	// Rotate vector by quaternion
-	Vector rotate(const Vector& v) {
+	Vector rotateVector(const Vector& v) {
 		return conjugateInversed(v);
+	}
+
+	// Rotate quaternion by quaternion
+	Quaternion rotate(const Quaternion& q, const bool normalize = true) {
+		Quaternion rotated = (*this) * q;
+		if (normalize) {
+			rotated.normalize();
+		}
+		return rotated;
 	}
 
 	bool finite() const {

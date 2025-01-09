@@ -115,8 +115,8 @@ void controlAttitude() {
 	}
 
 	const Vector up(0, 0, 1);
-	Vector upActual = attitude.rotate(up);
-	Vector upTarget = attitudeTarget.rotate(up);
+	Vector upActual = attitude.rotateVector(up);
+	Vector upTarget = attitudeTarget.rotateVector(up);
 
 	Vector error = Vector::angularRatesBetweenVectors(upTarget, upActual);
 
