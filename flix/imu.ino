@@ -22,6 +22,7 @@ void setupIMU() {
 		}
 	}
 	configureIMU();
+	delay(500); // wait a bit before calibrating
 	calibrateGyro();
 }
 
