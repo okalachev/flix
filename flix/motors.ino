@@ -46,3 +46,7 @@ void sendMotors() {
 	ledcWrite(MOTOR_2_PIN, getDutyCycle(motors[2]));
 	ledcWrite(MOTOR_3_PIN, getDutyCycle(motors[3]));
 }
+
+bool motorsActive() {
+	return motors[0] != 0 || motors[1] != 0 || motors[2] != 0 || motors[3] != 0;
+}

@@ -164,10 +164,6 @@ void controlTorque() {
 	motors[3] = constrain(motors[3], 0, 1);
 }
 
-bool motorsActive() {
-	return motors[0] > 0 || motors[1] > 0 || motors[2] > 0 || motors[3] > 0;
-}
-
 const char* getModeName() {
 	switch (mode) {
 		case MANUAL: return "MANUAL";
