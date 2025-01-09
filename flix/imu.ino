@@ -13,6 +13,8 @@ Vector accScale(1, 1, 1);
 MPU9250 IMU(SPI);
 Vector gyroBias;
 
+extern const float ONE_G;
+
 void setupIMU() {
 	Serial.println("Setup IMU");
 	bool status = IMU.begin();
