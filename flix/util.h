@@ -3,6 +3,8 @@
 
 // Utility functions
 
+#pragma once
+
 #include <math.h>
 #include <soc/soc.h>
 #include <soc/rtc_cntl_reg.h>

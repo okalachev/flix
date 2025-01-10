@@ -5,14 +5,13 @@
 
 #include <SPI.h>
 #include <MPU9250.h>
+#include "util.h"
 
 MPU9250 IMU(SPI);
 
 Vector accBias;
 Vector gyroBias;
 Vector accScale(1, 1, 1);
-
-extern const float ONE_G;
 
 void setupIMU() {
 	Serial.println("Setup IMU");

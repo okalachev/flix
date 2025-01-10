@@ -4,6 +4,8 @@
 // Motors output control using MOSFETs
 // In case of using ESCs, change PWM_MIN and PWM_MAX definitions to appropriate values in μs
 
+#include "util.h"
+
 #define MOTOR_0_PIN 12 // rear left
 #define MOTOR_1_PIN 13 // rear right
 #define MOTOR_2_PIN 14 // front right

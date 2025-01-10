@@ -4,6 +4,7 @@
 // Work with the RC receiver
 
 #include <SBUS.h>
+#include "util.h"
 
 float channelNeutral[RC_CHANNELS] = {NAN}; // first element NAN means not calibrated
 float channelMax[RC_CHANNELS];

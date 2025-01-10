@@ -5,6 +5,7 @@
 
 #include "vector.h"
 #include "quaternion.h"
+#include "util.h"
 
 #define SERIAL_BAUDRATE 115200
 #define WIFI_ENABLED 1

@@ -7,6 +7,7 @@
 #include "quaternion.h"
 #include "pid.h"
 #include "lpf.h"
+#include "util.h"
 
 #define PITCHRATE_P 0.05
 #define PITCHRATE_I 0.2

@@ -6,12 +6,12 @@
 #include "quaternion.h"
 #include "vector.h"
 #include "lpf.h"
+#include "util.h"
 
 #define WEIGHT_ACC 0.5f
 #define RATES_LFP_ALPHA 0.2 // cutoff frequency ~ 40 Hz
 
 LowPassFilter<Vector> ratesFilter(RATES_LFP_ALPHA);
-extern const float ONE_G;
 
 void estimate() {
 	applyGyro();
