@@ -51,6 +51,6 @@ void calibrateRC() {
 }
 
 void printRCCal() {
-	printArray(channelNeutral, RC_CHANNELS);
-	printArray(channelMax, RC_CHANNELS);
+	printArray(channelNeutral);
+	printArray(channelMax);
 }

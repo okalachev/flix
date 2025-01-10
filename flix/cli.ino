@@ -54,7 +54,7 @@ void doCommand(String& command, String& arg0, String& arg1) {
 		resetParameters();
 	} else if (command == "ps") {
 		Vector a = attitude.toEulerZYX();
-		Serial.printf("roll: %f pitch: %f yaw: %f\n", a.x * RAD_TO_DEG, a.y * RAD_TO_DEG, a.z * RAD_TO_DEG);
+		Serial.printf("roll: %f pitch: %f yaw: %f\n", degrees(a.x), degrees(a.y), degrees(a.z));
 	} else if (command == "psq") {
 		Serial.printf("qx: %f qy: %f qz: %f qw: %f\n", attitude.x, attitude.y, attitude.z, attitude.w);
 	} else if (command == "imu") {
@@ -67,12 +67,12 @@ void doCommand(String& command, String& arg0, String& arg1) {
 		Serial.printf("Raw: throttle %d yaw %d pitch %d roll %d armed %d mode %d\n",
 			channels[RC_CHANNEL_THROTTLE], channels[RC_CHANNEL_YAW], channels[RC_CHANNEL_PITCH],
 			channels[RC_CHANNEL_ROLL], channels[RC_CHANNEL_ARMED], channels[RC_CHANNEL_MODE]);
-		Serial.printf("Control: throttle %f yaw %f pitch %f roll %f armed %f mode %f\n",
+		Serial.printf("Control: throttle %g yaw %g pitch %g roll %g armed %g mode %g\n",
 			controls[RC_CHANNEL_THROTTLE], controls[RC_CHANNEL_YAW], controls[RC_CHANNEL_PITCH],
 			controls[RC_CHANNEL_ROLL], controls[RC_CHANNEL_ARMED], controls[RC_CHANNEL_MODE]);
 		Serial.printf("Mode: %s\n", getModeName());
 	} else if (command == "mot") {
-		Serial.printf("MOTOR front-right %f front-left %f rear-right %f rear-left %f\n",
+		Serial.printf("Motors: front-right %g front-left %g rear-right %g rear-left %g\n",
 			motors[MOTOR_FRONT_RIGHT], motors[MOTOR_FRONT_LEFT], motors[MOTOR_REAR_RIGHT], motors[MOTOR_REAR_LEFT]);
 	} else if (command == "log") {
 		dumpLog();

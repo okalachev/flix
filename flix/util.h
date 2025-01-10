@@ -30,9 +30,9 @@ float wrapAngle(float angle) {
 	return angle;
 }
 
-template <typename T>
-void printArray(T arr[], int size) {
-	for (uint8_t i = 0; i < size; i++) {
+template <typename T, int N>
+void printArray(const T (&arr)[N]) {
+	for (int i = 0; i < N; i++) {
 		Serial.printf("%g ", static_cast<float>(arr[i]));
 	}
 	Serial.println();
