@@ -2,7 +2,7 @@
 // Repository: https://github.com/okalachev/flix
 
 // Motors output control using MOSFETs
-// In case of using ESCs, change PWM_MIN and PWM_MAX definitions to appropriate values in μs
+// In case of using ESCs, change PWM_STOP, PWM_MIN and PWM_MAX to appropriate values in μs, decrease PWM_FREQUENCY (to 400)
 
 #include "util.h"
 
@@ -13,6 +13,7 @@
 
 #define PWM_FREQUENCY 500
 #define PWM_RESOLUTION 12
+#define PWM_STOP 0
 #define PWM_MIN 0
 #define PWM_MAX 1000000 / PWM_FREQUENCY
 
@@ -38,6 +39,7 @@ void setupMotors() {
 int getDutyCycle(float value) {
 	value = constrain(value, 0, 1);
 	float pwm = mapff(value, 0, 1, PWM_MIN, PWM_MAX);
+	if (value == 0) pwm = PWM_STOP;
 	float duty = mapff(pwm, 0, 1000000 / PWM_FREQUENCY, 0, (1 << PWM_RESOLUTION) - 1);
 	return round(duty);
 }
