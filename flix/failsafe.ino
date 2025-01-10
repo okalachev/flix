@@ -6,6 +6,7 @@
 #define RC_LOSS_TIMEOUT 0.2
 #define DESCEND_TIME 3.0 // time to descend from full throttle to zero
 
+extern float controlsTime;
 extern int rollChannel, pitchChannel, throttleChannel, yawChannel;
 
 void failsafe() {

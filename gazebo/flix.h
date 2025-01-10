@@ -18,7 +18,6 @@ float dt;
 float motors[4];
 int16_t channels[16]; // raw rc channels
 float controls[16];
-float controlsTime;
 Vector acc;
 Vector gyro;
 Vector rates;

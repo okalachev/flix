@@ -13,6 +13,7 @@
 #define MAVLINK_CONTROL_SCALE 0.7f
 #define MAVLINK_CONTROL_YAW_DEAD_ZONE 0.1f
 
+extern float controlsTime;
 extern int rollChannel, pitchChannel, throttleChannel, yawChannel, armedChannel, modeChannel;
 
 void processMavlink() {
