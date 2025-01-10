@@ -13,6 +13,8 @@
 #define MAVLINK_CONTROL_SCALE 0.7f
 #define MAVLINK_CONTROL_YAW_DEAD_ZONE 0.1f
 
+extern int rollChannel, pitchChannel, throttleChannel, yawChannel, armedChannel, modeChannel;
+
 void processMavlink() {
 	sendMavlink();
 	receiveMavlink();
@@ -88,15 +90,15 @@ void handleMavlink(const void *_msg) {
 	if (msg->msgid == MAVLINK_MSG_ID_MANUAL_CONTROL) {
 		mavlink_manual_control_t manualControl;
 		mavlink_msg_manual_control_decode(msg, &manualControl);
-		controls[RC_CHANNEL_THROTTLE] = manualControl.z / 1000.0f;
-		controls[RC_CHANNEL_PITCH] = manualControl.x / 1000.0f * MAVLINK_CONTROL_SCALE;
-		controls[RC_CHANNEL_ROLL] = manualControl.y / 1000.0f * MAVLINK_CONTROL_SCALE;
-		controls[RC_CHANNEL_YAW] = manualControl.r / 1000.0f * MAVLINK_CONTROL_SCALE;
-		controls[RC_CHANNEL_MODE] = 1; // STAB mode
-		controls[RC_CHANNEL_ARMED] = 1; // armed
+		controls[throttleChannel] = manualControl.z / 1000.0f;
+		controls[pitchChannel] = manualControl.x / 1000.0f * MAVLINK_CONTROL_SCALE;
+		controls[rollChannel] = manualControl.y / 1000.0f * MAVLINK_CONTROL_SCALE;
+		controls[yawChannel] = manualControl.r / 1000.0f * MAVLINK_CONTROL_SCALE;
+		controls[modeChannel] = 1; // STAB mode
+		controls[armedChannel] = 1; // armed
 		controlsTime = t;
 
-		if (abs(controls[RC_CHANNEL_YAW]) < MAVLINK_CONTROL_YAW_DEAD_ZONE) controls[RC_CHANNEL_YAW] = 0;
+		if (abs(controls[yawChannel]) < MAVLINK_CONTROL_YAW_DEAD_ZONE) controls[yawChannel] = 0;
 	}
 
 	if (msg->msgid == MAVLINK_MSG_ID_PARAM_REQUEST_LIST) {

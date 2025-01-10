@@ -5,8 +5,8 @@
 
 #include <Preferences.h>
 
-extern float channelNeutral[RC_CHANNELS];
-extern float channelMax[RC_CHANNELS];
+extern float channelNeutral[16];
+extern float channelMax[16];
 
 Preferences storage;
 

@@ -6,6 +6,8 @@
 #define RC_LOSS_TIMEOUT 0.2
 #define DESCEND_TIME 3.0 // time to descend from full throttle to zero
 
+extern int rollChannel, pitchChannel, throttleChannel, yawChannel;
+
 void failsafe() {
 	if (t - controlsTime > RC_LOSS_TIMEOUT) {
 		descend();
@@ -15,9 +17,9 @@ void failsafe() {
 void descend() {
 	// Smooth descend on RC lost
 	mode = STAB;
-	controls[RC_CHANNEL_ROLL] = 0;
-	controls[RC_CHANNEL_PITCH] = 0;
-	controls[RC_CHANNEL_YAW] = 0;
-	controls[RC_CHANNEL_THROTTLE] -= dt / DESCEND_TIME;
-	if (controls[RC_CHANNEL_THROTTLE] < 0) controls[RC_CHANNEL_THROTTLE] = 0;
+	controls[rollChannel] = 0;
+	controls[pitchChannel] = 0;
+	controls[throttleChannel] = 0;
+	controls[throttleChannel] -= dt / DESCEND_TIME;
+	if (controls[throttleChannel] < 0) controls[throttleChannel] = 0;
 }

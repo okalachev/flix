@@ -6,8 +6,16 @@
 #include <SBUS.h>
 #include "util.h"
 
-float channelNeutral[RC_CHANNELS] = {NAN}; // first element NAN means not calibrated
-float channelMax[RC_CHANNELS];
+// RC channels mapping:
+int rollChannel = 0;
+int pitchChannel = 1;
+int throttleChannel = 2;
+int yawChannel = 3;
+int armedChannel = 4;
+int modeChannel = 5;
+
+float channelNeutral[16] = {NAN}; // first element NAN means not calibrated
+float channelMax[16];
 
 SBUS RC(Serial2); // NOTE: Use RC(Serial2, 16, 17) if you use the old UART2 pins
 
@@ -27,7 +35,7 @@ void readRC() {
 
 void normalizeRC() {
 	if (isnan(channelNeutral[0])) return; // skip if not calibrated
-	for (uint8_t i = 0; i < RC_CHANNELS; i++) {
+	for (uint8_t i = 0; i < 16; i++) {
 		controls[i] = mapf(channels[i], channelNeutral[i], channelMax[i], 0, 1);
 	}
 }
@@ -37,14 +45,14 @@ void calibrateRC() {
 	Serial.println("··o     ··o\n···     ···\n···     ···");
 	delay(4000);
 	for (int i = 0; i < 30; i++) readRC(); // ensure the values are updated
-	for (int i = 0; i < RC_CHANNELS; i++) {
+	for (int i = 0; i < 16; i++) {
 		channelMax[i] = channels[i];
 	}
 	Serial.println("Calibrate RC: move all sticks to neutral positions in 4 seconds");
 	Serial.println("···     ···\n···     ·o·\n·o·     ···");
 	delay(4000);
 	for (int i = 0; i < 30; i++) readRC(); // ensure the values are updated
-	for (int i = 0; i < RC_CHANNELS; i++) {
+	for (int i = 0; i < 16; i++) {
 		channelNeutral[i] = channels[i];
 	}
 	printRCCal();

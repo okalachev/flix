@@ -7,13 +7,6 @@
 #include <gazebo/gazebo.hh>
 #include <iostream>
 
-#define RC_CHANNEL_ROLL 0
-#define RC_CHANNEL_PITCH 1
-#define RC_CHANNEL_THROTTLE 2
-#define RC_CHANNEL_YAW 3
-#define RC_CHANNEL_ARMED 5
-#define RC_CHANNEL_MODE 4
-
 SDL_Joystick *joystick;
 
 bool joystickInit() {

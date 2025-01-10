@@ -10,18 +10,10 @@
 #define SERIAL_BAUDRATE 115200
 #define WIFI_ENABLED 1
 
-#define RC_CHANNELS 16
-#define RC_CHANNEL_ROLL 0
-#define RC_CHANNEL_PITCH 1
-#define RC_CHANNEL_THROTTLE 2
-#define RC_CHANNEL_YAW 3
-#define RC_CHANNEL_ARMED 4
-#define RC_CHANNEL_MODE 5
-
 float t = NAN; // current step time, s
 float dt; // time delta from previous step, s
-int16_t channels[RC_CHANNELS]; // raw rc channels
-float controls[RC_CHANNELS]; // normalized controls in range [-1..1] ([0..1] for throttle)
+int16_t channels[16]; // raw rc channels
+float controls[16]; // normalized controls in range [-1..1] ([0..1] for throttle)
 float controlsTime; // time of the last controls update
 Vector gyro; // gyroscope data
 Vector acc; // accelerometer data, m/s/s

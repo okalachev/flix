@@ -54,6 +54,7 @@ Vector torqueTarget;
 float thrustTarget;
 
 extern const int MOTOR_REAR_LEFT, MOTOR_REAR_RIGHT, MOTOR_FRONT_RIGHT, MOTOR_FRONT_LEFT;
+extern int rollChannel, pitchChannel, throttleChannel, yawChannel, armedChannel, modeChannel;
 
 void control() {
 	interpretRC();
@@ -71,38 +72,38 @@ void control() {
 }
 
 void interpretRC() {
-	armed = controls[RC_CHANNEL_THROTTLE] >= 0.05 && controls[RC_CHANNEL_ARMED] >= 0.5;
+	armed = controls[throttleChannel] >= 0.05 && controls[armedChannel] >= 0.5;
 
 	// NOTE: put ACRO or MANUAL modes there if you want to use them
-	if (controls[RC_CHANNEL_MODE] < 0.25) {
+	if (controls[modeChannel] < 0.25) {
 		mode = STAB;
-	} else if (controls[RC_CHANNEL_MODE] < 0.75) {
+	} else if (controls[modeChannel] < 0.75) {
 		mode = STAB;
 	} else {
 		mode = STAB;
 	}
 
-	thrustTarget = controls[RC_CHANNEL_THROTTLE];
+	thrustTarget = controls[throttleChannel];
 
 	if (mode == ACRO) {
 		yawMode = YAW_RATE;
-		ratesTarget.x = controls[RC_CHANNEL_ROLL] * maxRate.x;
-		ratesTarget.y = controls[RC_CHANNEL_PITCH] * maxRate.y;
-		ratesTarget.z = -controls[RC_CHANNEL_YAW] * maxRate.z; // positive yaw stick means clockwise rotation in FLU
+		ratesTarget.x = controls[rollChannel] * maxRate.x;
+		ratesTarget.y = controls[pitchChannel] * maxRate.y;
+		ratesTarget.z = -controls[yawChannel] * maxRate.z; // positive yaw stick means clockwise rotation in FLU
 
 	} else if (mode == STAB) {
-		yawMode = controls[RC_CHANNEL_YAW] == 0 ? YAW : YAW_RATE;
+		yawMode = controls[yawChannel] == 0 ? YAW : YAW_RATE;
 
 		attitudeTarget = Quaternion::fromEulerZYX(Vector(
-			controls[RC_CHANNEL_ROLL] * tiltMax,
-			controls[RC_CHANNEL_PITCH] * tiltMax,
+			controls[rollChannel] * tiltMax,
+			controls[pitchChannel] * tiltMax,
 			attitudeTarget.getYaw()));
-		ratesTarget.z = -controls[RC_CHANNEL_YAW] * maxRate.z; // positive yaw stick means clockwise rotation in FLU
+		ratesTarget.z = -controls[yawChannel] * maxRate.z; // positive yaw stick means clockwise rotation in FLU
 
 	} else if (mode == MANUAL) {
 		// passthrough mode
 		yawMode = YAW_RATE;
-		torqueTarget = Vector(controls[RC_CHANNEL_ROLL], controls[RC_CHANNEL_PITCH], -controls[RC_CHANNEL_YAW]) * 0.01;
+		torqueTarget = Vector(controls[rollChannel], controls[pitchChannel], -controls[yawChannel]) * 0.01;
 	}
 
 	if (yawMode == YAW_RATE || !motorsActive()) {

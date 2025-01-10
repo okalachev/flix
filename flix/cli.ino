@@ -8,6 +8,7 @@
 
 extern const int MOTOR_REAR_LEFT, MOTOR_REAR_RIGHT, MOTOR_FRONT_RIGHT, MOTOR_FRONT_LEFT;
 extern float loopRate;
+extern int rollChannel, pitchChannel, throttleChannel, yawChannel, armedChannel, modeChannel;
 
 const char* motd =
 "\nWelcome to\n"
@@ -65,11 +66,11 @@ void doCommand(String& command, String& arg0, String& arg1) {
 		Serial.printf("rate: %f\n", loopRate);
 	} else if (command == "rc") {
 		Serial.printf("Raw: throttle %d yaw %d pitch %d roll %d armed %d mode %d\n",
-			channels[RC_CHANNEL_THROTTLE], channels[RC_CHANNEL_YAW], channels[RC_CHANNEL_PITCH],
-			channels[RC_CHANNEL_ROLL], channels[RC_CHANNEL_ARMED], channels[RC_CHANNEL_MODE]);
+			channels[throttleChannel], channels[yawChannel], channels[pitchChannel],
+			channels[rollChannel], channels[armedChannel], channels[modeChannel]);
 		Serial.printf("Control: throttle %g yaw %g pitch %g roll %g armed %g mode %g\n",
-			controls[RC_CHANNEL_THROTTLE], controls[RC_CHANNEL_YAW], controls[RC_CHANNEL_PITCH],
-			controls[RC_CHANNEL_ROLL], controls[RC_CHANNEL_ARMED], controls[RC_CHANNEL_MODE]);
+			controls[throttleChannel], controls[yawChannel], controls[pitchChannel],
+			controls[rollChannel], controls[armedChannel], controls[modeChannel]);
 		Serial.printf("Mode: %s\n", getModeName());
 	} else if (command == "mot") {
 		Serial.printf("Motors: front-right %g front-left %g rear-right %g rear-left %g\n",
