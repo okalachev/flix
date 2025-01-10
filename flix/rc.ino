@@ -9,6 +9,7 @@
 // NOTE: use 'cr' command to calibrate the RC and put the values here
 int channelNeutral[] = {995, 883, 200, 972, 512, 512, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 int channelMax[] = {1651, 1540, 1713, 1630, 1472, 1472, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+float controlsTime; // time of the last controls update
 
 SBUS RC(Serial2); // NOTE: Use RC(Serial2, 16, 17) if you use the old UART2 pins
 
