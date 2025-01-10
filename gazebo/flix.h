@@ -15,7 +15,6 @@
 
 float t = NAN;
 float dt;
-float loopRate;
 float motors[4];
 int16_t channels[16]; // raw rc channels
 float controls[RC_CHANNELS];

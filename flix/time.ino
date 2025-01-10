@@ -3,6 +3,8 @@
 
 // Time related functions
 
+float loopRate; // Hz
+
 void step() {
 	float now = micros() / 1000000.0;
 	dt = now - t;
