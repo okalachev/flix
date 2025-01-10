@@ -96,7 +96,7 @@ Motor connection scheme:
 
 <img src="docs/img/mosfet-connection.png" height=400 alt="MOSFET connection scheme">
 
-Complete diagram is Work-in-Progress.
+You can see a user-contributed [variant of complete circuit diagram](https://miro.com/app/board/uXjVN-dTjoo=/?moveToWidget=3458764612338222067&cot=14) of the drone.
 
 ### Notes
 
