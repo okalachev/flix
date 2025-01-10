@@ -36,6 +36,10 @@ Parameter parameters[] = {
 	{"PITCH_I", &pitchPID.i},
 	{"PITCH_D", &pitchPID.d},
 	{"YAW_P", &yawPID.p},
+	{"PITCHRATE_MAX", &maxRate.y},
+	{"ROLLRATE_MAX", &maxRate.x},
+	{"YAWRATE_MAX", &maxRate.z},
+	{"TILT_MAX", &tiltMax},
 	// imu
 	{"ACC_BIAS_X", &accBias.x},
 	{"ACC_BIAS_Y", &accBias.y},

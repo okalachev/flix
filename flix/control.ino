@@ -29,8 +29,8 @@
 #define YAW_P 3
 #define PITCHRATE_MAX radians(360)
 #define ROLLRATE_MAX radians(360)
-#define YAWRATE_MAX radians(360)
-#define MAX_TILT radians(30)
+#define YAWRATE_MAX radians(300)
+#define TILT_MAX radians(30)
 
 #define RATES_D_LPF_ALPHA 0.2 // cutoff frequency ~ 40 Hz
 
@@ -44,6 +44,8 @@ PID yawRatePID(YAWRATE_P, YAWRATE_I, YAWRATE_D);
 PID rollPID(ROLL_P, ROLL_I, ROLL_D);
 PID pitchPID(PITCH_P, PITCH_I, PITCH_D);
 PID yawPID(YAW_P, 0, 0);
+Vector maxRate(ROLLRATE_MAX, PITCHRATE_MAX, YAWRATE_MAX);
+float tiltMax = TILT_MAX;
 
 Quaternion attitudeTarget;
 Vector ratesTarget;
@@ -83,18 +85,18 @@ void interpretRC() {
 
 	if (mode == ACRO) {
 		yawMode = YAW_RATE;
-		ratesTarget.x = controls[RC_CHANNEL_ROLL] * ROLLRATE_MAX;
-		ratesTarget.y = controls[RC_CHANNEL_PITCH] * PITCHRATE_MAX;
-		ratesTarget.z = -controls[RC_CHANNEL_YAW] * YAWRATE_MAX; // positive yaw stick means clockwise rotation in FLU
+		ratesTarget.x = controls[RC_CHANNEL_ROLL] * maxRate.x;
+		ratesTarget.y = controls[RC_CHANNEL_PITCH] * maxRate.y;
+		ratesTarget.z = -controls[RC_CHANNEL_YAW] * maxRate.z; // positive yaw stick means clockwise rotation in FLU
 
 	} else if (mode == STAB) {
 		yawMode = controls[RC_CHANNEL_YAW] == 0 ? YAW : YAW_RATE;
 
 		attitudeTarget = Quaternion::fromEulerZYX(Vector(
-			controls[RC_CHANNEL_ROLL] * MAX_TILT,
-			controls[RC_CHANNEL_PITCH] * MAX_TILT,
+			controls[RC_CHANNEL_ROLL] * tiltMax,
+			controls[RC_CHANNEL_PITCH] * tiltMax,
 			attitudeTarget.getYaw()));
-		ratesTarget.z = -controls[RC_CHANNEL_YAW] * YAWRATE_MAX; // positive yaw stick means clockwise rotation in FLU
+		ratesTarget.z = -controls[RC_CHANNEL_YAW] * maxRate.z; // positive yaw stick means clockwise rotation in FLU
 
 	} else if (mode == MANUAL) {
 		// passthrough mode
