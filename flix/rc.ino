@@ -4,6 +4,7 @@
 // Work with the RC receiver
 
 #include <SBUS.h>
+#include "util.h"
 
 // NOTE: use 'cr' command to calibrate the RC and put the values here
 int channelNeutral[] = {995, 883, 200, 972, 512, 512, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};

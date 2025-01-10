@@ -17,7 +17,6 @@
 
 #include "Arduino.h"
 #include "flix.h"
-#include "util.ino"
 #include "rc.ino"
 #include "time.ino"
 #include "motors.ino"
