@@ -7,7 +7,6 @@
 #include "quaternion.h"
 
 #define SERIAL_BAUDRATE 115200
-
 #define WIFI_ENABLED 1
 
 #define RC_CHANNELS 16
