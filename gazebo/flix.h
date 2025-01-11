@@ -10,7 +10,6 @@
 #include "Arduino.h"
 #include "wifi.h"
 
-#define RC_CHANNELS 16
 #define WIFI_ENABLED 1
 
 float t = NAN;
