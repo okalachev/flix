@@ -7,7 +7,8 @@
 #include "vector.h"
 
 extern const int MOTOR_REAR_LEFT, MOTOR_REAR_RIGHT, MOTOR_FRONT_RIGHT, MOTOR_FRONT_LEFT;
-extern float loopRate;
+extern float loopRate, dt;
+extern float t;
 extern int rollChannel, pitchChannel, throttleChannel, yawChannel, armedChannel, modeChannel;
 
 const char* motd =
@@ -24,6 +25,7 @@ const char* motd =
 "p <name> - show parameter\n"
 "p <name> <value> - set parameter\n"
 "preset - reset parameters\n"
+"time - show time info\n"
 "ps - show pitch/roll/yaw\n"
 "psq - show attitude quaternion\n"
 "imu - show IMU data\n"
@@ -53,6 +55,10 @@ void doCommand(const String& command, const String& arg0, const String& arg1) {
 		}
 	} else if (command == "preset") {
 		resetParameters();
+	} else if (command == "time") {
+		Serial.printf("Time: %f\n", t);
+		Serial.printf("Loop rate: %f\n", loopRate);
+		Serial.printf("dt: %f\n", dt);
 	} else if (command == "ps") {
 		Vector a = attitude.toEulerZYX();
 		Serial.printf("roll: %f pitch: %f yaw: %f\n", degrees(a.x), degrees(a.y), degrees(a.z));
