@@ -6,7 +6,7 @@
 
 The main loop is running at 1000 Hz. All the dataflow is happening through global variables (for simplicity):
 
-* `t` *(float)* — current step time, *s*.
+* `t` *(double)* — current step time, *s*.
 * `dt` *(float)* — time delta between the current and previous steps, *s*.
 * `gyro` *(Vector)* — data from the gyroscope, *rad/s*.
 * `acc` *(Vector)* — acceleration data from the accelerometer, *m/s<sup>2</sup>*.

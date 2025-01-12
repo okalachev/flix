@@ -113,7 +113,7 @@ bool setParameter(const char *name, const float value) {
 }
 
 void syncParameters() {
-	static float lastSync = 0;
+	static double lastSync = 0;
 	if (t - lastSync < 1) return; // sync once per second
 	if (motorsActive()) return; // don't use flash while flying, it may cause a delay
 	lastSync = t;

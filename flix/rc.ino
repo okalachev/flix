@@ -14,7 +14,7 @@ int yawChannel = 3;
 int armedChannel = 4;
 int modeChannel = 5;
 
-float controlsTime; // time of the last controls update
+double controlsTime; // time of the last controls update
 float channelNeutral[16] = {NAN}; // first element NAN means not calibrated
 float channelMax[16];
 

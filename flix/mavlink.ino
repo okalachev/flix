@@ -13,7 +13,7 @@
 #define MAVLINK_CONTROL_SCALE 0.7f
 #define MAVLINK_CONTROL_YAW_DEAD_ZONE 0.1f
 
-extern float controlsTime;
+extern double controlsTime;
 extern int rollChannel, pitchChannel, throttleChannel, yawChannel, armedChannel, modeChannel;
 
 void processMavlink() {
@@ -22,8 +22,8 @@ void processMavlink() {
 }
 
 void sendMavlink() {
-	static float lastSlow = 0;
-	static float lastFast = 0;
+	static double lastSlow = 0;
+	static double lastFast = 0;
 
 	mavlink_message_t msg;
 	uint32_t time = t * 1000;

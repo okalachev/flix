@@ -12,7 +12,7 @@
 
 #define WIFI_ENABLED 1
 
-float t = NAN;
+double t = NAN;
 float dt;
 float motors[4];
 int16_t channels[16]; // raw rc channels
