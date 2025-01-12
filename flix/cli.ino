@@ -37,7 +37,7 @@ const char* motd =
 "reset - reset drone's state\n"
 "reboot - reboot the drone\n";
 
-void doCommand(String& command, String& arg0, String& arg1) {
+void doCommand(const String& command, const String& arg0, const String& arg1) {
 	if (command == "help" || command == "motd") {
 		Serial.println(motd);
 	} else if (command == "p" && arg0 == "") {
