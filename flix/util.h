@@ -40,5 +40,5 @@ void printArray(const T (&arr)[N]) {
 
 // Disable reset on low voltage
 void disableBrownOut() {
-	WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0);
+	REG_CLR_BIT(RTC_CNTL_BROWN_OUT_REG, RTC_CNTL_BROWN_OUT_ENA);
 }
