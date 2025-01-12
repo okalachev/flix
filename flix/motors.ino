@@ -11,7 +11,7 @@
 #define MOTOR_2_PIN 14 // front right
 #define MOTOR_3_PIN 15 // front left
 
-#define PWM_FREQUENCY 500
+#define PWM_FREQUENCY 1000
 #define PWM_RESOLUTION 12
 #define PWM_STOP 0
 #define PWM_MIN 0
