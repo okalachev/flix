@@ -84,7 +84,7 @@ The latest version of Ubuntu supported by Gazebo 11 simulator is 20.04. If you h
 
 #### Control with smartphone
 
-1. Install [QGroundControl mobile app](https://docs.qgroundcontrol.com/master/en/qgc-user-guide/getting_started/download_and_install.html#android) on your smartphone.
+1. Install [QGroundControl mobile app](https://docs.qgroundcontrol.com/master/en/qgc-user-guide/getting_started/download_and_install.html#android) on your smartphone. For **iOS**, use [QGroundControl build from TAJISOFT](https://apps.apple.com/ru/app/qgc-from-tajisoft/id1618653051).
 2. Connect your smartphone to the same Wi-Fi network as the machine running the simulator.
 3. If you're using a virtual machine, make sure that its network is set to the **bridged** mode with Wi-Fi adapter selected.
 4. Run the simulation.
