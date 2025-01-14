@@ -161,8 +161,19 @@ Before flight using remote control, you need to calibrate it:
 
 1. Open Serial Monitor in Arduino IDE (use use `make monitor` command in the command line).
 2. Type `cr` command there and follow the instructions.
+3. Use the remote control to fly the drone!
 
-Then you can use your remote control to fly the drone!
+#### Control with USB remote control
+
+If your drone doesn't have RC receiver installed, you can use USB remote control and QGroundControl app to fly it.
+
+1. Install [QGroundControl](https://docs.qgroundcontrol.com/master/en/qgc-user-guide/getting_started/download_and_install.html) app on your computer.
+2. Connect your USB remote control to the computer.
+3. Power up the drone.
+4. Connect your computer to the appeared `flix` Wi-Fi network.
+5. Launch QGroundControl app. It should connect and begin showing the drone's telemetry automatically.
+6. Go the the QGroundControl menu ⇒ *Vehicle Setup* ⇒ *Joystick*. Calibrate you USB remote control there.
+7. Use the USB remote control to fly the drone!
 
 > [!NOTE]
 > If something goes wrong, go to the [Troubleshooting](troubleshooting.md) article.
