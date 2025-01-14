@@ -89,10 +89,12 @@ int parametersCount() {
 }
 
 const char *getParameterName(int index) {
+	if (index < 0 || index >= parametersCount()) return "";
 	return parameters[index].name;
 }
 
 float getParameter(int index) {
+	if (index < 0 || index >= parametersCount()) return NAN;
 	return *parameters[index].variable;
 }
 
