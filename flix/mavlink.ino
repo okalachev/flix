@@ -13,6 +13,8 @@
 #define MAVLINK_CONTROL_SCALE 0.7f
 #define MAVLINK_CONTROL_YAW_DEAD_ZONE 0.1f
 
+float mavlinkControlScale = 0.7;
+
 extern double controlsTime;
 extern int rollChannel, pitchChannel, throttleChannel, yawChannel, armedChannel, modeChannel;
 
@@ -92,9 +94,9 @@ void handleMavlink(const void *_msg) {
 		mavlink_manual_control_t manualControl;
 		mavlink_msg_manual_control_decode(msg, &manualControl);
 		controls[throttleChannel] = manualControl.z / 1000.0f;
-		controls[pitchChannel] = manualControl.x / 1000.0f * MAVLINK_CONTROL_SCALE;
-		controls[rollChannel] = manualControl.y / 1000.0f * MAVLINK_CONTROL_SCALE;
-		controls[yawChannel] = manualControl.r / 1000.0f * MAVLINK_CONTROL_SCALE;
+		controls[pitchChannel] = manualControl.x / 1000.0f * mavlinkControlScale;
+		controls[rollChannel] = manualControl.y / 1000.0f * mavlinkControlScale;
+		controls[yawChannel] = manualControl.r / 1000.0f * mavlinkControlScale;
 		controls[modeChannel] = 1; // STAB mode
 		controls[armedChannel] = 1; // armed
 		controlsTime = t;

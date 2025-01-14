@@ -7,6 +7,7 @@
 
 extern float channelNeutral[16];
 extern float channelMax[16];
+extern float mavlinkControlScale;
 
 Preferences storage;
 
@@ -66,7 +67,9 @@ Parameter parameters[] = {
 	{"RC_MAX_4", &channelMax[4]},
 	{"RC_MAX_5", &channelMax[5]},
 	{"RC_MAX_6", &channelMax[6]},
-	{"RC_MAX_7", &channelMax[7]}
+	{"RC_MAX_7", &channelMax[7]},
+	// MAVLink
+	{"MAV_CTRL_SCALE", &mavlinkControlScale},
 };
 
 void setupParameters() {
