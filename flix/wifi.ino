@@ -19,7 +19,6 @@ WiFiUDP udp;
 void setupWiFi() {
 	Serial.println("Setup Wi-Fi");
 	WiFi.softAP(WIFI_SSID, WIFI_PASSWORD);
-	IPAddress myIP = WiFi.softAPIP();
 	udp.begin(WIFI_UDP_PORT);
 }
 

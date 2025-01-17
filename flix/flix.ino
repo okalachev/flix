@@ -39,7 +39,6 @@ void setup() {
 #endif
 	setupIMU();
 	setupRC();
-
 	setLED(false);
 	Serial.println("Initializing complete");
 }
