@@ -117,10 +117,10 @@ You can see a user-contributed [variant of complete circuit diagram](https://mir
 
   |Motor|Position|Direction|Wires|GPIO|
   |-|-|-|-|-|
-  |Motor 0|Rear left|Counter-clockwise|Black & White|GPIO12|
-  |Motor 1|Rear right|Clockwise|Blue & Red|GPIO13|
-  |Motor 2|Front right|Counter-clockwise|Black & White|GPIO14|
-  |Motor 3|Front left|Clockwise|Blue & Red|GPIO15|
+  |Motor 0|Rear left|Counter-clockwise|Black & White|GPIO12 (*TDI*)|
+  |Motor 1|Rear right|Clockwise|Blue & Red|GPIO13 (*TCK*)|
+  |Motor 2|Front right|Counter-clockwise|Black & White|GPIO14 (*TMS*)|
+  |Motor 3|Front left|Clockwise|Blue & Red|GPIO15 (*TD0*)|
 
   Counter-clockwise motors have black and white wires and clockwise motors have blue and red wires.
 
