@@ -98,6 +98,8 @@ Motor connection scheme:
 
 You can see a user-contributed [variant of complete circuit diagram](https://miro.com/app/board/uXjVN-dTjoo=/?moveToWidget=3458764612338222067&cot=14) of the drone.
 
+See [assembly guide](docs/assembly.md) for instructions on assembling the drone.
+
 ### Notes
 
 * Power ESP32 Mini with Li-Po battery using VCC (+) and GND (-) pins.
