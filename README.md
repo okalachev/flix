@@ -4,11 +4,11 @@
 
 <table>
   <tr>
-    <td align=center><strong>Version 1</strong> (3D-printed frame)</td>
+    <td align=center><strong>Version 1.1</strong> (3D-printed frame)</td>
     <td align=center><strong>Version 0</strong></td>
   </tr>
   <tr>
-    <td><img src="docs/img/flix1.jpg" width=500 alt="Flix quadcopter"></td>
+    <td><img src="docs/img/flix1.1.jpg" width=500 alt="Flix quadcopter"></td>
     <td><img src="docs/img/flix.jpg" width=500 alt="Flix quadcopter"></td>
   </tr>
 </table>
