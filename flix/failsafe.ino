@@ -20,7 +20,7 @@ void descend() {
 	mode = STAB;
 	controls[rollChannel] = 0;
 	controls[pitchChannel] = 0;
-	controls[throttleChannel] = 0;
+	controls[yawChannel] = 0;
 	controls[throttleChannel] -= dt / DESCEND_TIME;
 	if (controls[throttleChannel] < 0) controls[throttleChannel] = 0;
 }
