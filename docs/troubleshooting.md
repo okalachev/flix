@@ -22,6 +22,7 @@ Do the following:
 * **Calibrate the accelerometer.** if is wasn't done before. Type `ca` command in Serial Monitor and follow the instructions.
 * **Check the attitude estimation**. Connect to the drone using QGroundControl. Rotate the drone in different orientations and check if the attitude estimation shown in QGroundControl is correct.
 * **Check the IMU orientation is set correctly**. If the attitude estimation is rotated, make sure `rotateIMU` function is defined correctly in `imu.ino` file.
+* **Check the motors type**. Motors with exact 3.7V voltage are needed, not ranged working voltage (3.7V — 6V).
 * **Check the motors**. Perform the following commands using Serial Monitor:
   * `mfr` — should rotate front right motor (counter-clockwise).
   * `mfl` — should rotate front left motor (clockwise).
