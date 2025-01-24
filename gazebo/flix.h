@@ -44,6 +44,8 @@ void sendMessage(const void *msg);
 void receiveMavlink();
 void handleMavlink(const void *_msg);
 void failsafe();
+void armingFailsafe();
+void rcLossFailsafe();
 void descend();
 inline Quaternion FLU2FRD(const Quaternion &q);
 
