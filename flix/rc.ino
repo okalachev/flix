@@ -6,6 +6,8 @@
 #include <SBUS.h>
 #include "util.h"
 
+SBUS RC(Serial2); // NOTE: Use RC(Serial2, 16, 17) if you use the old UART2 pins
+
 // RC channels mapping:
 int rollChannel = 0;
 int pitchChannel = 1;
@@ -17,8 +19,6 @@ int modeChannel = 5;
 double controlsTime; // time of the last controls update
 float channelNeutral[16] = {NAN}; // first element NAN means not calibrated
 float channelMax[16];
-
-SBUS RC(Serial2); // NOTE: Use RC(Serial2, 16, 17) if you use the old UART2 pins
 
 void setupRC() {
 	Serial.println("Setup RC");
