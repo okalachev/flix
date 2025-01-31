@@ -40,6 +40,10 @@ Version 1 test flight: https://t.me/opensourcequadcopter/42.
 
 <a href="https://t.me/opensourcequadcopter/42"><img width=500 src="docs/img/flight-video.jpg"></a>
 
+See the [user builds gallery](docs/user.md).
+
+<img src="docs/img/user/user.jpg" width=400>
+
 ## Simulation
 
 The simulator is implemented using Gazebo and runs the original Arduino code:
