@@ -7,7 +7,7 @@ This page contains user-built drones based on the Flix project. Publish your pro
 Author: [@Alexey_Karakash](https://t.me/Alexey_Karakash).<br>
 Files for 3D printing of the custom frame: https://drive.google.com/file/d/1tkNmujrHrKpTMVtsRH3mor2zdAM0JHum/view?usp=share_link.<br>
 
-<img width=500 src="img/user/alexey_karakash/video.jpg">
+<a href="https://t.me/opensourcequadcopter/61"><img width=500 src="img/user/alexey_karakash/video.jpg"></a>
 
 <table>
 	<tr>
