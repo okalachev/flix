@@ -54,7 +54,7 @@ jobs:
       run: sudo apt-get install libsdl2-dev
     - name: Build simulator
       run: make build_simulator
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       with:
         name: gazebo-plugin-binary
         path: gazebo/build/*.so
