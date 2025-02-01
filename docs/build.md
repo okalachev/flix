@@ -118,6 +118,13 @@ The latest version of Ubuntu supported by Gazebo 11 simulator is 20.04. If you h
 ### Command line (Windows, Linux, macOS)
 
 1. [Install Arduino CLI](https://arduino.github.io/arduino-cli/installation/).
+
+   On Linux, use:
+
+   ```bash
+   curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | BINDIR=~/.local/bin sh
+   ```
+
 2. Windows users might need to install [USB to UART bridge driver from Silicon Labs](https://www.silabs.com/developers/usb-to-uart-bridge-vcp-drivers).
 3. Compile the firmware using `make`. Arduino dependencies will be installed automatically:
 
