@@ -34,7 +34,7 @@ void setup() {
 	setupLED();
 	setupMotors();
 	setLED(true);
-#if WIFI_ENABLED == 1
+#if WIFI_ENABLED
 	setupWiFi();
 #endif
 	setupIMU();
@@ -51,7 +51,7 @@ void loop() {
 	control();
 	sendMotors();
 	parseInput();
-#if WIFI_ENABLED == 1
+#if WIFI_ENABLED
 	processMavlink();
 #endif
 	logData();
