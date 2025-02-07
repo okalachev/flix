@@ -3,7 +3,7 @@
 
 // MAVLink communication
 
-#if WIFI_ENABLED == 1
+#if WIFI_ENABLED
 
 #include <MAVLink.h>
 

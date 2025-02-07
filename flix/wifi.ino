@@ -3,7 +3,7 @@
 
 // Wi-Fi support
 
-#if WIFI_ENABLED == 1
+#if WIFI_ENABLED
 
 #include <WiFi.h>
 #include <WiFiAP.h>

@@ -68,7 +68,7 @@ Parameter parameters[] = {
 	{"RC_MAX_5", &channelMax[5]},
 	{"RC_MAX_6", &channelMax[6]},
 	{"RC_MAX_7", &channelMax[7]},
-#if WIFI_ENABLED == 1
+#if WIFI_ENABLED
 	// MAVLink
 	{"MAV_CTRL_SCALE", &mavlinkControlScale},
 #endif
