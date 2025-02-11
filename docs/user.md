@@ -17,7 +17,7 @@ Author: [@fisheyeu](https://t.me/fisheyeu).<br>
 ---
 
 Author: [@p_kabakov](https://t.me/p_kabakov).<br>
-Custom propellers guard 3D-model: https://drive.google.com/file/d/1TKnzwvrZYzYuRTLLERNmnKH71H9n4Xj_/view?usp=share_link.
+Custom propellers guard 3D-model: https://drive.google.com/file/d/1TKnzwvrZYzYuRTLLERNmnKH71H9n4Xj_/view?usp=share_link.<br>
 Features: ESP32-C3 microcontroller is used.<br>
 [Video](https://drive.google.com/file/d/1B0NMcsk0fgwUgNr9XuLOdR2yYCuaj008/view?usp=share_link).
 
@@ -44,11 +44,17 @@ Author: [@yi_lun](https://t.me/yi_lun).<br>
 ---
 
 Author: [@peter_ukhov](https://t.me/peter_ukhov).<br>
-Features: customized ESP32 holder, GY-ICM20948V2 IMU board.<br>
+Features: customized ESP32 holder, GY-ICM20948V2 IMU board, boost-converter for powering the ESP32.<br>
+Files for 3D-printing: https://drive.google.com/file/d/1Sma-FEzFBj2HA5ixJtUyH0uWixvr6vdK/view?usp=share_link.<br>
 Schematics: https://miro.com/app/board/uXjVN-dTjoo=/?moveToWidget=3458764612179508274&cot=14.<br>
 [Video](https://drive.google.com/file/d/1oqHHPezd0TfTT2kyues2TNFalR6Pt1Jz/view?usp=sharing).
 
-<img src="img/user/peter_ukhov-2/1.jpg" width=500>
+<table>
+	<tr>
+		<td><img src="img/user/peter_ukhov-2/1.jpg" width=300></td>
+		<td><img src="img/user/peter_ukhov-2/2.jpg" width=300></td>
+	</tr>
+</table>
 
 ---
 
