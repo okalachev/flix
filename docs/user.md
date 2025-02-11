@@ -4,6 +4,54 @@ This page contains user-built drones based on the Flix project. Publish your pro
 
 ---
 
+Author: [@fisheyeu](https://t.me/fisheyeu).<br>
+[Video](https://drive.google.com/file/d/1IT4eMmWPZpmaZR_qsIRmNJ52hYkFB_0q/view?usp=share_link).
+
+<table>
+	<tr>
+		<td><img src="img/user/fisheyeu/1.jpg" height=300></td>
+		<td><img src="img/user/fisheyeu/2.jpg" height=300></td>
+	</tr>
+</table>
+
+---
+
+Author: [@p_kabakov](https://t.me/p_kabakov).<br>
+Custom propellers guard 3D-model: https://drive.google.com/file/d/1TKnzwvrZYzYuRTLLERNmnKH71H9n4Xj_/view?usp=share_link.
+Features: ESP32-C3 microcontroller is used.<br>
+[Video](https://drive.google.com/file/d/1B0NMcsk0fgwUgNr9XuLOdR2yYCuaj008/view?usp=share_link).
+
+<table>
+	<tr>
+		<td><img src="img/user/p_kabakov/1.jpg" width=150></td>
+		<td><img src="img/user/p_kabakov/2.jpg" width=150></td>
+		<td><img src="img/user/p_kabakov/3.jpg" width=150></td>
+	</tr>
+</table>
+
+---
+
+Author: [@yi_lun](https://t.me/yi_lun).<br>
+[Video](https://drive.google.com/file/d/1TkSuvHQ_0qQPFUpY5XjJzmhnpX_07cTg/view?usp=share_link).
+
+<table>
+	<tr>
+		<td><img src="img/user/yi_lun/1.jpg" width=300></td>
+		<td><img src="img/user/yi_lun/2.jpg" width=300></td>
+	</tr>
+</table>
+
+---
+
+Author: [@peter_ukhov](https://t.me/peter_ukhov).<br>
+Features: customized ESP32 holder, GY-ICM20948V2 IMU board.<br>
+Schematics: https://miro.com/app/board/uXjVN-dTjoo=/?moveToWidget=3458764612179508274&cot=14.<br>
+[Video](https://drive.google.com/file/d/1oqHHPezd0TfTT2kyues2TNFalR6Pt1Jz/view?usp=sharing).
+
+<img src="img/user/peter_ukhov-2/1.jpg" width=500>
+
+---
+
 Author: [@Alexey_Karakash](https://t.me/Alexey_Karakash).<br>
 Files for 3D printing of the custom frame: https://drive.google.com/file/d/1tkNmujrHrKpTMVtsRH3mor2zdAM0JHum/view?usp=share_link.<br>
 
