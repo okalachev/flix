@@ -47,7 +47,6 @@ Author: [@peter_ukhov](https://t.me/peter_ukhov).<br>
 Features: customized ESP32 holder, GY-ICM20948V2 IMU board, boost-converter for powering the ESP32.<br>
 Files for 3D-printing: https://drive.google.com/file/d/1Sma-FEzFBj2HA5ixJtUyH0uWixvr6vdK/view?usp=share_link.<br>
 Schematics: https://miro.com/app/board/uXjVN-dTjoo=/?moveToWidget=3458764612179508274&cot=14.<br>
-[Video](https://drive.google.com/file/d/1oqHHPezd0TfTT2kyues2TNFalR6Pt1Jz/view?usp=sharing).
 
 <a href="https://www.youtube.com/watch?v=wi4w_hOmKcQ"><img width=500 src="img/user/peter_ukhov-2/video.jpg"></a>
 
