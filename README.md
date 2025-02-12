@@ -136,7 +136,7 @@ See [assembly guide](docs/assembly.md) for instructions on assembling the drone.
   |-|-|
   |GND|GND|
   |VIN|VCC (or 3.3V depending on the receiver)|
-  |Signal|GPIO4⁶|
+  |Signal (TX)|GPIO4⁶|
 
 *⁶ — UART2 RX pin was [changed](https://docs.espressif.com/projects/arduino-esp32/en/latest/migration_guides/2.x_to_3.0.html#id14) to GPIO4 in Arduino ESP32 core 3.0.*
 
