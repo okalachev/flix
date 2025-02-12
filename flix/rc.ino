@@ -18,13 +18,15 @@ void setupRC() {
 	RC.begin();
 }
 
-void readRC() {
+bool readRC() {
 	if (RC.read()) {
 		SBUSData data = RC.data();
 		memcpy(channels, data.ch, sizeof(channels)); // copy channels data
 		normalizeRC();
 		controlsTime = t;
+		return true;
 	}
+	return false;
 }
 
 void normalizeRC() {
@@ -37,14 +39,14 @@ void calibrateRC() {
 	Serial.println("Calibrate RC: move all sticks to maximum positions in 4 seconds");
 	Serial.println("··o     ··o\n···     ···\n···     ···");
 	delay(4000);
-	for (int i = 0; i < 30; i++) readRC(); // ensure the values are updated
+	while (!readRC());
 	for (int i = 0; i < 16; i++) {
 		channelMax[i] = channels[i];
 	}
 	Serial.println("Calibrate RC: move all sticks to neutral positions in 4 seconds");
 	Serial.println("···     ···\n···     ·o·\n·o·     ···");
 	delay(4000);
-	for (int i = 0; i < 30; i++) readRC(); // ensure the values are updated
+	while (!readRC());
 	for (int i = 0; i < 16; i++) {
 		channelNeutral[i] = channels[i];
 	}
