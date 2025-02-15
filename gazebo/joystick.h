@@ -29,7 +29,7 @@ bool joystickInit() {
 bool joystickGet(int16_t ch[16]) {
 	SDL_JoystickUpdate();
 
-	for (uint8_t i = 0; i < sizeof(channels) / sizeof(channels[0]); i++) {
+	for (uint8_t i = 0; i < 16; i++) {
 		ch[i] = SDL_JoystickGetAxis(joystick, i);
 	}
 	return true;
