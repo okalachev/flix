@@ -146,6 +146,9 @@ The latest version of Ubuntu supported by Gazebo 11 simulator is 20.04. If you h
 
 See other available Make commands in the [Makefile](../Makefile).
 
+> [!TIP]
+> You can test the firmware on a bare ESP32 board without connecting IMU and other peripherals. The Wi-Fi network `flix` should appear and all the basic functionality including CLI and QGroundControl connection should work.
+
 ### Setup and flight
 
 Before flight you need to calibrate the accelerometer:

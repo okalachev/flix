@@ -15,13 +15,7 @@ Vector accScale(1, 1, 1);
 
 void setupIMU() {
 	Serial.println("Setup IMU");
-	bool status = IMU.begin();
-	if (!status) {
-		while (true) {
-			Serial.println("IMU begin error");
-			delay(1000);
-		}
-	}
+	IMU.begin();
 	configureIMU();
 	delay(500); // wait a bit before calibrating
 	calibrateGyro();
@@ -129,6 +123,7 @@ void printIMUCal() {
 }
 
 void printIMUInfo() {
+	IMU.status() ? Serial.printf("status: ERROR %d\n", IMU.status()) : Serial.println("status: OK");
 	Serial.printf("model: %s\n", IMU.getModel());
 	Serial.printf("who am I: 0x%02X\n", IMU.whoAmI());
 }
