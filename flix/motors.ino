@@ -54,3 +54,14 @@ void sendMotors() {
 bool motorsActive() {
 	return motors[0] != 0 || motors[1] != 0 || motors[2] != 0 || motors[3] != 0;
 }
+
+void testMotor(uint8_t n) {
+	Serial.printf("Testing motor %d\n", n);
+	motors[n] = 1;
+	delay(50); // ESP32 may need to wait until the end of the current cycle to change duty https://github.com/espressif/arduino-esp32/issues/5306
+	sendMotors();
+	delay(3000);
+	motors[n] = 0;
+	sendMotors();
+	Serial.printf("Done\n");
+}

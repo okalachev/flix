@@ -81,7 +81,7 @@ public:
 		attitude.setYaw(this->model->WorldPose().Yaw());
 
 		control();
-		parseInput();
+		handleInput();
 		processMavlink();
 
 		applyMotorForces();

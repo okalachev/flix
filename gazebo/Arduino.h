@@ -41,12 +41,16 @@ class __FlashStringHelper;
 // https://www.arduino.cc/reference/en/language/variables/data-types/stringobject/
 class String: public std::string {
 public:
-	String(const char *str = "") : std::string(str) {}
+	String(const char *str = "") : std::string(str ? str : "") {}
 	long toInt() const { return atol(this->c_str()); }
 	float toFloat() const { return atof(this->c_str()); }
 	bool isEmpty() const { return this->empty(); }
 	void toCharArray(char *buf, unsigned int bufsize, unsigned int index = 0) const {
 		strlcpy(buf, this->c_str() + index, bufsize);
+	}
+	void trim() {
+		this->erase(0, this->find_first_not_of(" \t\n\r"));
+		this->erase(this->find_last_not_of(" \t\n\r") + 1);
 	}
 };
 

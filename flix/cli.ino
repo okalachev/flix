@@ -39,7 +39,12 @@ const char* motd =
 "reset - reset drone's state\n"
 "reboot - reboot the drone\n";
 
-void doCommand(const String& command, const String& arg0, const String& arg1) {
+void doCommand(String str) {
+	// parse command
+	String command, arg0, arg1;
+	splitString(str, command, arg0, arg1);
+
+	// execute command
 	if (command == "help" || command == "motd") {
 		Serial.println(motd);
 	} else if (command == "p" && arg0 == "") {
@@ -90,13 +95,13 @@ void doCommand(const String& command, const String& arg0, const String& arg1) {
 	} else if (command == "ca") {
 		calibrateAccel();
 	} else if (command == "mfr") {
-		cliTestMotor(MOTOR_FRONT_RIGHT);
+		testMotor(MOTOR_FRONT_RIGHT);
 	} else if (command == "mfl") {
-		cliTestMotor(MOTOR_FRONT_LEFT);
+		testMotor(MOTOR_FRONT_LEFT);
 	} else if (command == "mrr") {
-		cliTestMotor(MOTOR_REAR_RIGHT);
+		testMotor(MOTOR_REAR_RIGHT);
 	} else if (command == "mrl") {
-		cliTestMotor(MOTOR_REAR_LEFT);
+		testMotor(MOTOR_REAR_LEFT);
 	} else if (command == "reset") {
 		attitude = Quaternion();
 	} else if (command == "reboot") {
@@ -108,18 +113,7 @@ void doCommand(const String& command, const String& arg0, const String& arg1) {
 	}
 }
 
-void cliTestMotor(uint8_t n) {
-	Serial.printf("Testing motor %d\n", n);
-	motors[n] = 1;
-	delay(50); // ESP32 may need to wait until the end of the current cycle to change duty https://github.com/espressif/arduino-esp32/issues/5306
-	sendMotors();
-	delay(3000);
-	motors[n] = 0;
-	sendMotors();
-	Serial.println("Done");
-}
-
-void parseInput() {
+void handleInput() {
 	static bool showMotd = true;
 	static String input;
 
@@ -131,21 +125,10 @@ void parseInput() {
 	while (Serial.available()) {
 		char c = Serial.read();
 		if (c == '\n') {
-			char chars[input.length() + 1];
-			input.toCharArray(chars, input.length() + 1);
-			String command = stringToken(chars, " ");
-			String arg0 = stringToken(NULL, " ");
-			String arg1 = stringToken(NULL, "");
-			doCommand(command, arg0, arg1);
+			doCommand(input);
 			input.clear();
 		} else {
 			input += c;
 		}
 	}
-}
-
-// Helper function for parsing input
-String stringToken(char* str, const char* delim) {
-	char* token = strtok(str, delim);
-	return token == NULL ? "" : token;
 }
