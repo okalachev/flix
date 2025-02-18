@@ -21,7 +21,7 @@ float channelNeutral[16] = {NAN}; // first element NAN means not calibrated
 float channelMax[16];
 
 void setupRC() {
-	Serial.println("Setup RC");
+	print("Setup RC\n");
 	RC.begin();
 }
 
@@ -44,15 +44,15 @@ void normalizeRC() {
 }
 
 void calibrateRC() {
-	Serial.println("Calibrate RC: move all sticks to maximum positions in 4 seconds");
-	Serial.println("··o     ··o\n···     ···\n···     ···");
+	print("Calibrate RC: move all sticks to maximum positions in 4 seconds\n");
+	print("··o     ··o\n···     ···\n···     ···\n");
 	delay(4000);
 	while (!readRC());
 	for (int i = 0; i < 16; i++) {
 		channelMax[i] = channels[i];
 	}
-	Serial.println("Calibrate RC: move all sticks to neutral positions in 4 seconds");
-	Serial.println("···     ···\n···     ·o·\n·o·     ···");
+	print("Calibrate RC: move all sticks to neutral positions in 4 seconds\n");
+	print("···     ···\n···     ·o·\n·o·     ···\n");
 	delay(4000);
 	while (!readRC());
 	for (int i = 0; i < 16; i++) {
@@ -62,8 +62,8 @@ void calibrateRC() {
 }
 
 void printRCCal() {
-	for (int i = 0; i < sizeof(channelNeutral) / sizeof(channelNeutral[0]); i++) Serial.printf("%g ", channelNeutral[i]);
-	Serial.printf("\n");
-	for (int i = 0; i < sizeof(channelMax) / sizeof(channelMax[0]); i++) Serial.printf("%g ", channelMax[i]);
-	Serial.printf("\n");
+	for (int i = 0; i < sizeof(channelNeutral) / sizeof(channelNeutral[0]); i++) print("%g ", channelNeutral[i]);
+	print("\n");
+	for (int i = 0; i < sizeof(channelMax) / sizeof(channelMax[0]); i++) print("%g ", channelMax[i]);
+	print("\n");
 }

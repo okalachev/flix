@@ -67,13 +67,13 @@ void logData() {
 void dumpLog() {
 	// Print header
 	for (int i = 0; i < logColumns; i++) {
-		Serial.printf("%s%s", logEntries[i].name, i < logColumns - 1 ? "," : "\n");
+		print("%s%s", logEntries[i].name, i < logColumns - 1 ? "," : "\n");
 	}
 	// Print data
 	for (int i = 0; i < LOG_SIZE; i++) {
 		if (logBuffer[i][0] == 0) continue; // skip empty records
 		for (int j = 0; j < logColumns; j++) {
-			Serial.printf("%g%s", logBuffer[i][j], j < logColumns - 1 ? "," : "\n");
+			print("%g%s", logBuffer[i][j], j < logColumns - 1 ? "," : "\n");
 		}
 	}
 }

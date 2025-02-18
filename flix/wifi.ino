@@ -17,12 +17,13 @@
 WiFiUDP udp;
 
 void setupWiFi() {
-	Serial.println("Setup Wi-Fi");
+	print("Setup Wi-Fi\n");
 	WiFi.softAP(WIFI_SSID, WIFI_PASSWORD);
 	udp.begin(WIFI_UDP_PORT);
 }
 
 void sendWiFi(const uint8_t *buf, int len) {
+	if (WiFi.softAPIP() == IPAddress(0, 0, 0, 0) && WiFi.status() != WL_CONNECTED) return;
 	udp.beginPacket(WIFI_UDP_IP, WIFI_UDP_PORT);
 	udp.write(buf, len);
 	udp.endPacket();

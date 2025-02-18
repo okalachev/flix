@@ -14,7 +14,7 @@ Vector gyroBias;
 Vector accScale(1, 1, 1);
 
 void setupIMU() {
-	Serial.println("Setup IMU");
+	print("Setup IMU\n");
 	IMU.begin();
 	configureIMU();
 	delay(500); // wait a bit before calibrating
@@ -49,7 +49,7 @@ void rotateIMU(Vector& data) {
 
 void calibrateGyro() {
 	const int samples = 1000;
-	Serial.println("Calibrating gyro, stand still");
+	print("Calibrating gyro, stand still\n");
 	IMU.setGyroRange(IMU.GYRO_RANGE_250DPS); // the most sensitive mode
 
 	gyroBias = Vector(0, 0, 0);
@@ -65,7 +65,7 @@ void calibrateGyro() {
 }
 
 void calibrateAccel() {
-	Serial.println("Calibrating accelerometer");
+	print("Calibrating accelerometer\n");
 	IMU.setAccelRange(IMU.ACCEL_RANGE_2G); // the most sensitive mode
 
 	Serial.setTimeout(60000);
@@ -108,22 +108,22 @@ void calibrateAccelOnce() {
 	if (acc.x < accMin.x) accMin.x = acc.x;
 	if (acc.y < accMin.y) accMin.y = acc.y;
 	if (acc.z < accMin.z) accMin.z = acc.z;
-	Serial.printf("acc %f %f %f\n", acc.x, acc.y, acc.z);
-	Serial.printf("max %f %f %f\n", accMax.x, accMax.y, accMax.z);
-	Serial.printf("min %f %f %f\n", accMin.x, accMin.y, accMin.z);
+	print("acc %f %f %f\n", acc.x, acc.y, acc.z);
+	print("max %f %f %f\n", accMax.x, accMax.y, accMax.z);
+	print("min %f %f %f\n", accMin.x, accMin.y, accMin.z);
 	// Compute scale and bias
 	accScale = (accMax - accMin) / 2 / ONE_G;
 	accBias = (accMax + accMin) / 2;
 }
 
 void printIMUCal() {
-	Serial.printf("gyro bias: %f %f %f\n", gyroBias.x, gyroBias.y, gyroBias.z);
-	Serial.printf("accel bias: %f %f %f\n", accBias.x, accBias.y, accBias.z);
-	Serial.printf("accel scale: %f %f %f\n", accScale.x, accScale.y, accScale.z);
+	print("gyro bias: %f %f %f\n", gyroBias.x, gyroBias.y, gyroBias.z);
+	print("accel bias: %f %f %f\n", accBias.x, accBias.y, accBias.z);
+	print("accel scale: %f %f %f\n", accScale.x, accScale.y, accScale.z);
 }
 
 void printIMUInfo() {
-	IMU.status() ? Serial.printf("status: ERROR %d\n", IMU.status()) : Serial.println("status: OK");
-	Serial.printf("model: %s\n", IMU.getModel());
-	Serial.printf("who am I: 0x%02X\n", IMU.whoAmI());
+	IMU.status() ? print("status: ERROR %d\n", IMU.status()) : print("status: OK\n");
+	print("model: %s\n", IMU.getModel());
+	print("who am I: 0x%02X\n", IMU.whoAmI());
 }

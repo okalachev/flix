@@ -24,7 +24,7 @@ const int MOTOR_FRONT_RIGHT = 2;
 const int MOTOR_FRONT_LEFT = 3;
 
 void setupMotors() {
-	Serial.println("Setup Motors");
+	print("Setup Motors\n");
 
 	// configure pins
 	ledcAttach(MOTOR_0_PIN, PWM_FREQUENCY, PWM_RESOLUTION);
@@ -33,7 +33,7 @@ void setupMotors() {
 	ledcAttach(MOTOR_3_PIN, PWM_FREQUENCY, PWM_RESOLUTION);
 
 	sendMotors();
-	Serial.println("Motors initialized");
+	print("Motors initialized\n");
 }
 
 int getDutyCycle(float value) {
@@ -56,12 +56,12 @@ bool motorsActive() {
 }
 
 void testMotor(uint8_t n) {
-	Serial.printf("Testing motor %d\n", n);
+	print("Testing motor %d\n", n);
 	motors[n] = 1;
 	delay(50); // ESP32 may need to wait until the end of the current cycle to change duty https://github.com/espressif/arduino-esp32/issues/5306
 	sendMotors();
 	delay(3000);
 	motors[n] = 0;
 	sendMotors();
-	Serial.printf("Done\n");
+	print("Done\n");
 }

@@ -22,7 +22,7 @@ float motors[4]; // normalized motors thrust in range [-1..1]
 
 void setup() {
 	Serial.begin(SERIAL_BAUDRATE);
-	Serial.println("Initializing flix");
+	print("Initializing flix");
 	disableBrownOut();
 	setupParameters();
 	setupLED();
@@ -34,7 +34,7 @@ void setup() {
 	setupIMU();
 	setupRC();
 	setLED(false);
-	Serial.println("Initializing complete");
+	print("Initializing complete");
 }
 
 void loop() {

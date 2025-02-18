@@ -147,6 +147,14 @@ void handleMavlink(const void *_msg) {
 		sendMessage(&msg);
 	}
 
+	if (msg->msgid == MAVLINK_MSG_ID_SERIAL_CONTROL) {
+		mavlink_serial_control_t serialControl;
+		mavlink_msg_serial_control_decode(msg, &serialControl);
+		char data[MAVLINK_MSG_SERIAL_CONTROL_FIELD_DATA_LEN + 1];
+		strlcpy(data, (const char *)serialControl.data, serialControl.count); // data might be not null-terminated
+		doCommand(data, true);
+	}
+
 	// Handle commands
 	if (msg->msgid == MAVLINK_MSG_ID_COMMAND_LONG) {
 		mavlink_command_long_t commandLong;
@@ -164,6 +172,19 @@ void handleMavlink(const void *_msg) {
 			mavlink_msg_command_ack_pack(SYSTEM_ID, MAV_COMP_ID_AUTOPILOT1, &ack, commandLong.command, MAV_RESULT_UNSUPPORTED, UINT8_MAX, 0, msg->sysid, msg->compid);
 			sendMessage(&ack);
 		}
+	}
+}
+
+// Send shell output to GCS
+void mavlinkPrint(const char* str) {
+	// Send data in chunks
+	for (int i = 0; i < strlen(str); i += MAVLINK_MSG_SERIAL_CONTROL_FIELD_DATA_LEN) {
+		char data[MAVLINK_MSG_SERIAL_CONTROL_FIELD_DATA_LEN + 1];
+		strlcpy(data, str + i, sizeof(data));
+		mavlink_message_t msg;
+		mavlink_msg_serial_control_pack(SYSTEM_ID, MAV_COMP_ID_AUTOPILOT1, &msg,
+			SERIAL_CONTROL_DEV_SHELL, 0, 0, 0, strlen(data), (uint8_t *)data, 0, 0);
+		sendMessage(&msg);
 	}
 }
 

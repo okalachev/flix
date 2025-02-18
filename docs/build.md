@@ -191,6 +191,12 @@ You can adjust some of the drone's parameters (include PID coefficients) in QGro
 
 <img src="img/parameters.png" width="400">
 
+#### CLI access
+
+In addition to accessing the drone's command line interface (CLI) using the serial port, you can also access it with QGroundControl using Wi-Fi connection. To do that, go to the QGroundControl menu ⇒ *Vehicle Setup* ⇒ *Analyze Tools* ⇒ *MAVLink Console*.
+
+<img src="img/cli.png" width="400">
+
 > [!NOTE]
 > If something goes wrong, go to the [Troubleshooting](troubleshooting.md) article.
 

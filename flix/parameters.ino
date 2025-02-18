@@ -135,7 +135,7 @@ void syncParameters() {
 
 void printParameters() {
 	for (auto &parameter : parameters) {
-		Serial.printf("%s = %g\n", parameter.name, *parameter.variable);
+		print("%s = %g\n", parameter.name, *parameter.variable);
 	}
 }
 

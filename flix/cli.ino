@@ -5,6 +5,7 @@
 
 #include "pid.h"
 #include "vector.h"
+#include "util.h"
 
 extern const int MOTOR_REAR_LEFT, MOTOR_REAR_RIGHT, MOTOR_FRONT_RIGHT, MOTOR_FRONT_LEFT;
 extern float loopRate, dt;
@@ -39,52 +40,69 @@ const char* motd =
 "reset - reset drone's state\n"
 "reboot - reboot the drone\n";
 
-void doCommand(String str) {
+void print(const char* format, ...) {
+	char buf[1000];
+	va_list args;
+	va_start(args, format);
+	vsnprintf(buf, sizeof(buf), format, args);
+	va_end(args);
+	Serial.print(buf);
+#if WIFI_ENABLED
+	mavlinkPrint(buf);
+#endif
+}
+
+void doCommand(String str, bool echo = false) {
 	// parse command
 	String command, arg0, arg1;
 	splitString(str, command, arg0, arg1);
 
+	// echo command
+	if (echo && !command.isEmpty()) {
+		print("> %s\n", str.c_str());
+	}
+
 	// execute command
 	if (command == "help" || command == "motd") {
-		Serial.println(motd);
+		print("%s\n", motd);
 	} else if (command == "p" && arg0 == "") {
 		printParameters();
 	} else if (command == "p" && arg0 != "" && arg1 == "") {
-		Serial.printf("%s = %g\n", arg0.c_str(), getParameter(arg0.c_str()));
+		print("%s = %g\n", arg0.c_str(), getParameter(arg0.c_str()));
 	} else if (command == "p") {
 		bool success = setParameter(arg0.c_str(), arg1.toFloat());
 		if (success) {
-			Serial.printf("%s = %g\n", arg0.c_str(), arg1.toFloat());
+			print("%s = %g\n", arg0.c_str(), arg1.toFloat());
 		} else {
-			Serial.printf("Parameter not found: %s\n", arg0.c_str());
+			print("Parameter not found: %s\n", arg0.c_str());
 		}
 	} else if (command == "preset") {
 		resetParameters();
 	} else if (command == "time") {
-		Serial.printf("Time: %f\n", t);
-		Serial.printf("Loop rate: %f\n", loopRate);
-		Serial.printf("dt: %f\n", dt);
+		print("Time: %f\n", t);
+		print("Loop rate: %f\n", loopRate);
+		print("dt: %f\n", dt);
 	} else if (command == "ps") {
 		Vector a = attitude.toEulerZYX();
-		Serial.printf("roll: %f pitch: %f yaw: %f\n", degrees(a.x), degrees(a.y), degrees(a.z));
+		print("roll: %f pitch: %f yaw: %f\n", degrees(a.x), degrees(a.y), degrees(a.z));
 	} else if (command == "psq") {
-		Serial.printf("qx: %f qy: %f qz: %f qw: %f\n", attitude.x, attitude.y, attitude.z, attitude.w);
+		print("qx: %f qy: %f qz: %f qw: %f\n", attitude.x, attitude.y, attitude.z, attitude.w);
 	} else if (command == "imu") {
 		printIMUInfo();
-		Serial.printf("gyro: %f %f %f\n", rates.x, rates.y, rates.z);
-		Serial.printf("acc: %f %f %f\n", acc.x, acc.y, acc.z);
+		print("gyro: %f %f %f\n", rates.x, rates.y, rates.z);
+		print("acc: %f %f %f\n", acc.x, acc.y, acc.z);
 		printIMUCal();
-		Serial.printf("rate: %f\n", loopRate);
+		print("rate: %f\n", loopRate);
 	} else if (command == "rc") {
-		Serial.printf("Raw: throttle %d yaw %d pitch %d roll %d armed %d mode %d\n",
+		print("Raw: throttle %d yaw %d pitch %d roll %d armed %d mode %d\n",
 			channels[throttleChannel], channels[yawChannel], channels[pitchChannel],
 			channels[rollChannel], channels[armedChannel], channels[modeChannel]);
-		Serial.printf("Control: throttle %g yaw %g pitch %g roll %g armed %g mode %g\n",
+		print("Control: throttle %g yaw %g pitch %g roll %g armed %g mode %g\n",
 			controls[throttleChannel], controls[yawChannel], controls[pitchChannel],
 			controls[rollChannel], controls[armedChannel], controls[modeChannel]);
-		Serial.printf("Mode: %s\n", getModeName());
+		print("Mode: %s\n", getModeName());
 	} else if (command == "mot") {
-		Serial.printf("Motors: front-right %g front-left %g rear-right %g rear-left %g\n",
+		print("Motors: front-right %g front-left %g rear-right %g rear-left %g\n",
 			motors[MOTOR_FRONT_RIGHT], motors[MOTOR_FRONT_LEFT], motors[MOTOR_REAR_RIGHT], motors[MOTOR_REAR_LEFT]);
 	} else if (command == "log") {
 		dumpLog();
@@ -109,7 +127,7 @@ void doCommand(String str) {
 	} else if (command == "") {
 		// do nothing
 	} else {
-		Serial.println("Invalid command: " + command);
+		print("Invalid command: %s\n", command.c_str());
 	}
 }
 
@@ -118,7 +136,7 @@ void handleInput() {
 	static String input;
 
 	if (showMotd) {
-		Serial.println(motd);
+		print("%s\n", motd);
 		showMotd = false;
 	}
 
