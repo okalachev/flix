@@ -153,7 +153,7 @@ See other available Make commands in the [Makefile](../Makefile).
 
 Before flight you need to calibrate the accelerometer:
 
-1. Open Serial Monitor in Arduino IDE (use use `make monitor` command in the command line).
+1. Open Serial Monitor in Arduino IDE (or use `make monitor` command in the command line).
 2. Type `ca` command there and follow the instructions.
 
 #### Control with smartphone
@@ -169,7 +169,7 @@ Before flight you need to calibrate the accelerometer:
 
 Before flight using remote control, you need to calibrate it:
 
-1. Open Serial Monitor in Arduino IDE (use use `make monitor` command in the command line).
+1. Open Serial Monitor in Arduino IDE (or use `make monitor` command in the command line).
 2. Type `cr` command there and follow the instructions.
 3. Use the remote control to fly the drone!
 
@@ -184,6 +184,12 @@ If your drone doesn't have RC receiver installed, you can use USB remote control
 5. Launch QGroundControl app. It should connect and begin showing the drone's telemetry automatically.
 6. Go the the QGroundControl menu ⇒ *Vehicle Setup* ⇒ *Joystick*. Calibrate you USB remote control there.
 7. Use the USB remote control to fly the drone!
+
+#### Adjusting parameters
+
+You can adjust some of the drone's parameters (include PID coefficients) in QGroundControl app. In order to do that, go to the QGroundControl menu ⇒ *Vehicle Setup* ⇒ *Parameters*.
+
+<img src="img/parameters.png" width="400">
 
 > [!NOTE]
 > If something goes wrong, go to the [Troubleshooting](troubleshooting.md) article.
