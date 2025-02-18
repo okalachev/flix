@@ -30,14 +30,6 @@ float wrapAngle(float angle) {
 	return angle;
 }
 
-template <typename T, int N>
-void printArray(const T (&arr)[N]) {
-	for (int i = 0; i < N; i++) {
-		Serial.printf("%g ", static_cast<float>(arr[i]));
-	}
-	Serial.println();
-}
-
 // Disable reset on low voltage
 void disableBrownOut() {
 	REG_CLR_BIT(RTC_CNTL_BROWN_OUT_REG, RTC_CNTL_BROWN_OUT_ENA);

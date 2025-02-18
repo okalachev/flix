@@ -62,6 +62,8 @@ void calibrateRC() {
 }
 
 void printRCCal() {
-	printArray(channelNeutral);
-	printArray(channelMax);
+	for (int i = 0; i < sizeof(channelNeutral) / sizeof(channelNeutral[0]); i++) Serial.printf("%g ", channelNeutral[i]);
+	Serial.printf("\n");
+	for (int i = 0; i < sizeof(channelMax) / sizeof(channelMax[0]); i++) Serial.printf("%g ", channelMax[i]);
+	Serial.printf("\n");
 }
