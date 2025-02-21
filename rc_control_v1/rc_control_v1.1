@@ -1,43 +1,65 @@
 // ESP32 Dev Module
 // WiFi RC Control - MAVLink protocol
+// Отправка RC через MAVLink с кнопками и OLED-дисплеем
 // Отправка RC через MAVLink с кнопками и диагностическим выводом
 // подключение дисплея I2C SSD1306 (VCC	3.3V, GND	GND, SDA	GPIO21, SCL	GPIO22)
 
+#include <Wire.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
 #include <WiFi.h>
-#include <WiFiAP.h>
 #include <WiFiUdp.h>
 #include <MAVLink.h>
 
 #define WIFI_SSID "flix"
 #define WIFI_PASSWORD "flixwifi"
-#define WIFI_UDP_PORT 14550  // Используем уже существующий порт MAVLink
+#define WIFI_UDP_PORT 14550  // Порт MAVLink
 #define DRONE_IP "192.168.4.1"  //
 #define LED_BUILTIN 2  // Встроенный светодиод (обычно GPIO2)
 
+#define SCREEN_WIDTH 128
+#define SCREEN_HEIGHT 64
+#define OLED_RESET    -1
+#define SCREEN_ADDRESS 0x3C  // Адрес I2C дисплея SSD1306
+
+Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
+
 WiFiUDP udp;
-bool wifiConnected = false;  // Флаг соединения Wi-Fi
+bool wifiConnected = false;
+unsigned long lastHeartbeatTime = 0;
+int16_t lastRoll = 0, lastPitch = 0, lastThrottle = 0, lastYaw = 0;
+uint16_t lastButtons = 0;
 
 void setup() {
     Serial.begin(115200);
 
-    pinMode(LED_BUILTIN, OUTPUT);  // Настроим встроенный светодиод как выход
-    digitalWrite(LED_BUILTIN, LOW); // Сначала выключаем светодиод
+    pinMode(LED_BUILTIN, OUTPUT);
+    digitalWrite(LED_BUILTIN, LOW);
+
+    // Инициализация дисплея
+    if (!display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS)) {
+        // Serial.println("SSD1306 allocation failed");
+        while (1);
+    }
+    display.clearDisplay();
+    display.setTextSize(1);
+    display.setTextColor(SSD1306_WHITE);
+    display.display();
 
     connectWiFi();
-
     udp.begin(WIFI_UDP_PORT);
-    
-    analogReadResolution(12);  // Настройка точности ADC
 
-    // Настраиваем пины для джойстиков и кнопок
-    pinMode(34, INPUT); // Джойстик ROLL
-    pinMode(35, INPUT); // Джойстик PITCH
-    pinMode(32, INPUT); // Джойстик THROTTLE
-    pinMode(33, INPUT); // Джойстик YAW
-    pinMode(25, INPUT_PULLUP); // Кнопка Arm
-    pinMode(26, INPUT_PULLUP); // Кнопка Mode
+    analogReadResolution(12);
 
-    Serial.println("Transmitter Ready!");
+    pinMode(34, INPUT);
+    pinMode(35, INPUT);
+    pinMode(32, INPUT);
+    pinMode(33, INPUT);
+    pinMode(25, INPUT_PULLUP);
+    pinMode(26, INPUT_PULLUP);
+
+    // Serial.println("Transmitter Ready!");
+    updateDisplay();
 }
 
 void loop() {
@@ -46,7 +68,7 @@ void loop() {
     static uint32_t lastBlinkTime = 0;
     static bool ledState = false;
 
-    if (millis() - lastLoopTime >= 20) {  // Отправляем пакеты каждые 20 мс
+    if (millis() - lastLoopTime >= 40) { // частота опроса в мс 20мс - 50 Гц, 100мс - 10 Гц
         if (wifiConnected) {
             sendMAVLink();
             receiveMAVLink();
@@ -54,13 +76,11 @@ void loop() {
         lastLoopTime = millis();
     }
 
-    // Проверяем Wi-Fi раз в 5 секунд
     if (millis() - lastWiFiCheck >= 5000) {
         lastWiFiCheck = millis();
         checkWiFiStatus();
     }
 
-    // Индикация потери Wi-Fi (мигание раз в 1 сек)
     if (!wifiConnected) {
         if (millis() - lastBlinkTime >= 1000) {
             lastBlinkTime = millis();
@@ -69,64 +89,61 @@ void loop() {
         }
     }
 
+    updateDisplay();
 }
 
-
-// Функция подключения к Wi-Fi
+// Подключение к Wi-Fi
 void connectWiFi() {
-    Serial.println("Connecting to Wi-Fi...");
+    // Serial.println("Connecting to Wi-Fi...");
+    WiFi.disconnect();
     WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
-    
+
     unsigned long startAttemptTime = millis();
     while (WiFi.status() != WL_CONNECTED) {
         delay(500);
-        Serial.print(".");
-        if (millis() - startAttemptTime > 10000) {  // Таймаут 10 секунд
-            Serial.println("\nWi-Fi connection failed!");
+        // Serial.print(".");
+        if (millis() - startAttemptTime > 10000) {
+            // Serial.println("\nWi-Fi connection failed!");
             wifiConnected = false;
             return;
         }
     }
 
-    Serial.println("\nConnected to Wi-Fi");
+    // Serial.println("\nConnected to Wi-Fi");
     wifiConnected = true;
-    digitalWrite(LED_BUILTIN, HIGH);  // Включаем светодиод при успешном подключении
+    digitalWrite(LED_BUILTIN, HIGH);
 }
 
-// Функция проверки Wi-Fi соединения
+// Проверка статуса Wi-Fi
 void checkWiFiStatus() {
     if (WiFi.status() != WL_CONNECTED) {
-        Serial.println("Wi-Fi Disconnected! Reconnecting...");
+        // Serial.println("Wi-Fi Disconnected! Reconnecting...");
         wifiConnected = false;
-        digitalWrite(LED_BUILTIN, LOW);  // Выключаем светодиод
-        connectWiFi();  // Переподключение к сети
+        digitalWrite(LED_BUILTIN, LOW);
+        connectWiFi();
     } else {
         wifiConnected = true;
-        digitalWrite(LED_BUILTIN, HIGH);  // Светодиод горит, если Wi-Fi подключен
+        digitalWrite(LED_BUILTIN, HIGH);
     }
 }
 
+// Отправка MAVLink
 void sendMAVLink() {
-    // static uint32_t lastSent = 0;
     static int16_t prevRoll = 0, prevPitch = 0, prevThrottle = 0, prevYaw = 0;
     static uint16_t prevButtons = 0;
-
-    // if (millis() - lastSent < 20) return; // 50 Гц отправки
 
     mavlink_message_t msg;
     uint8_t buf[MAVLINK_MAX_PACKET_LEN];
 
-    // Читаем значения и меняем местами оси
-    int16_t pitch = -map(analogRead(35), 0, 4095, -1000, 1000); // БЫЛ ROLL, СТАЛ PITCH (и инверсия)
-    int16_t roll = -map(analogRead(34), 0, 4095, -1000, 1000);  // БЫЛ PITCH, СТАЛ ROLL (и инверсия)
-    int16_t yaw = -map(analogRead(33), 0, 4095, -1000, 1000);   // Инверсия
-    int16_t throttle = map(analogRead(32), 0, 4095, 1000, 0);   // Инверсия
+    int16_t pitch = -map(analogRead(35), 0, 4095, -1000, 1000);
+    int16_t roll = -map(analogRead(34), 0, 4095, -1000, 1000);
+    int16_t yaw = -map(analogRead(33), 0, 4095, -1000, 1000);
+    int16_t throttle = map(analogRead(32), 0, 4095, 1000, 0);
 
     uint16_t buttons = 0;
     if (digitalRead(25) == LOW) buttons |= (1 << 0);
     if (digitalRead(26) == LOW) buttons |= (1 << 1);
 
-    // Отправляем только если есть изменения
     if (roll == prevRoll && pitch == prevPitch && throttle == prevThrottle && yaw == prevYaw && buttons == prevButtons)
         return;
 
@@ -136,7 +153,6 @@ void sendMAVLink() {
     prevYaw = yaw;
     prevButtons = buttons;
 
-    // MAVLink Manual Control
     mavlink_msg_manual_control_pack(
         255, MAV_COMP_ID_AUTOPILOT1, &msg,
         0, roll, pitch, throttle, yaw, buttons,
@@ -147,16 +163,14 @@ void sendMAVLink() {
     udp.write(buf, len);
     udp.endPacket();
 
-    // lastSent = millis();
-
-    // Отображаем только обновленные данные
-    Serial.print("[SEND] R="); Serial.print(roll / 1000.0f);
-    Serial.print(" P="); Serial.print(pitch / 1000.0f);
-    Serial.print(" T="); Serial.print(throttle / 1000.0f);
-    Serial.print(" Y="); Serial.print(yaw / 1000.0f);
-    Serial.print(" Buttons="); Serial.println(buttons);
+    lastRoll = roll;
+    lastPitch = pitch;
+    lastThrottle = throttle;
+    lastYaw = yaw;
+    lastButtons = buttons;
 }
 
+// Прием MAVLink
 void receiveMAVLink() {
     int packetSize = udp.parsePacket();
     if (!packetSize) return;
@@ -170,31 +184,34 @@ void receiveMAVLink() {
         if (mavlink_parse_char(MAVLINK_COMM_0, buf[i], &msg, &status)) {
             switch (msg.msgid) {
                 case MAVLINK_MSG_ID_HEARTBEAT:
-                    Serial.println("Received HEARTBEAT");
-                    break;
-                case MAVLINK_MSG_ID_MANUAL_CONTROL:
-                    mavlink_manual_control_t manualControl;
-                    mavlink_msg_manual_control_decode(&msg, &manualControl);
-                    Serial.print("Received MANUAL_CONTROL: x=");
-                    Serial.print(manualControl.x);
-                    Serial.print(" y=");
-                    Serial.print(manualControl.y);
-                    Serial.print(" z=");
-                    Serial.print(manualControl.z);
-                    Serial.print(" r=");
-                    Serial.println(manualControl.r);
-                    Serial.print(" Buttons=");
-                    Serial.print(manualControl.buttons);
-                    Serial.print(" sysid=");
-                    Serial.print(msg.sysid);
-                    Serial.print(" compid=");
-                    Serial.println(msg.compid);
-                    break;
-                default:
-                    // Serial.print("Received message with ID ");
-                    // Serial.println(msg.msgid);
+                    // Serial.println("Received HEARTBEAT");
+                    lastHeartbeatTime = millis();
                     break;
             }
         }
     }
+}
+
+// Обновление дисплея
+void updateDisplay() {
+    display.clearDisplay();
+    display.setCursor(0, 0);
+
+    display.print("Wi-Fi: ");
+    display.println(wifiConnected ? "Connected" : "Disconnected");
+
+    display.print("Last HB: ");
+    display.print((millis() - lastHeartbeatTime) / 1000);
+    display.println("s ago");
+
+    display.println("-----------------");
+
+    display.print("ROLL: "); display.println(lastRoll / 1000.0, 2);
+    display.print("PITCH: "); display.println(lastPitch / 1000.0, 2);
+    display.print("THR: "); display.println(lastThrottle / 1000.0, 2);
+    display.print("YAW: "); display.println(lastYaw / 1000.0, 2);
+    
+    display.print("BTN: "); display.println(lastButtons, BIN);
+
+    display.display();
 }
