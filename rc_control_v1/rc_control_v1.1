@@ -1,0 +1,200 @@
+// ESP32 Dev Module
+// WiFi RC Control - MAVLink protocol
+// Отправка RC через MAVLink с кнопками и диагностическим выводом
+// подключение дисплея I2C SSD1306 (VCC	3.3V, GND	GND, SDA	GPIO21, SCL	GPIO22)
+
+#include <WiFi.h>
+#include <WiFiAP.h>
+#include <WiFiUdp.h>
+#include <MAVLink.h>
+
+#define WIFI_SSID "flix"
+#define WIFI_PASSWORD "flixwifi"
+#define WIFI_UDP_PORT 14550  // Используем уже существующий порт MAVLink
+#define DRONE_IP "192.168.4.1"  //
+#define LED_BUILTIN 2  // Встроенный светодиод (обычно GPIO2)
+
+WiFiUDP udp;
+bool wifiConnected = false;  // Флаг соединения Wi-Fi
+
+void setup() {
+    Serial.begin(115200);
+
+    pinMode(LED_BUILTIN, OUTPUT);  // Настроим встроенный светодиод как выход
+    digitalWrite(LED_BUILTIN, LOW); // Сначала выключаем светодиод
+
+    connectWiFi();
+
+    udp.begin(WIFI_UDP_PORT);
+    
+    analogReadResolution(12);  // Настройка точности ADC
+
+    // Настраиваем пины для джойстиков и кнопок
+    pinMode(34, INPUT); // Джойстик ROLL
+    pinMode(35, INPUT); // Джойстик PITCH
+    pinMode(32, INPUT); // Джойстик THROTTLE
+    pinMode(33, INPUT); // Джойстик YAW
+    pinMode(25, INPUT_PULLUP); // Кнопка Arm
+    pinMode(26, INPUT_PULLUP); // Кнопка Mode
+
+    Serial.println("Transmitter Ready!");
+}
+
+void loop() {
+    static uint32_t lastLoopTime = 0;
+    static uint32_t lastWiFiCheck = 0;
+    static uint32_t lastBlinkTime = 0;
+    static bool ledState = false;
+
+    if (millis() - lastLoopTime >= 20) {  // Отправляем пакеты каждые 20 мс
+        if (wifiConnected) {
+            sendMAVLink();
+            receiveMAVLink();
+        }
+        lastLoopTime = millis();
+    }
+
+    // Проверяем Wi-Fi раз в 5 секунд
+    if (millis() - lastWiFiCheck >= 5000) {
+        lastWiFiCheck = millis();
+        checkWiFiStatus();
+    }
+
+    // Индикация потери Wi-Fi (мигание раз в 1 сек)
+    if (!wifiConnected) {
+        if (millis() - lastBlinkTime >= 1000) {
+            lastBlinkTime = millis();
+            ledState = !ledState;
+            digitalWrite(LED_BUILTIN, ledState);
+        }
+    }
+
+}
+
+
+// Функция подключения к Wi-Fi
+void connectWiFi() {
+    Serial.println("Connecting to Wi-Fi...");
+    WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+    
+    unsigned long startAttemptTime = millis();
+    while (WiFi.status() != WL_CONNECTED) {
+        delay(500);
+        Serial.print(".");
+        if (millis() - startAttemptTime > 10000) {  // Таймаут 10 секунд
+            Serial.println("\nWi-Fi connection failed!");
+            wifiConnected = false;
+            return;
+        }
+    }
+
+    Serial.println("\nConnected to Wi-Fi");
+    wifiConnected = true;
+    digitalWrite(LED_BUILTIN, HIGH);  // Включаем светодиод при успешном подключении
+}
+
+// Функция проверки Wi-Fi соединения
+void checkWiFiStatus() {
+    if (WiFi.status() != WL_CONNECTED) {
+        Serial.println("Wi-Fi Disconnected! Reconnecting...");
+        wifiConnected = false;
+        digitalWrite(LED_BUILTIN, LOW);  // Выключаем светодиод
+        connectWiFi();  // Переподключение к сети
+    } else {
+        wifiConnected = true;
+        digitalWrite(LED_BUILTIN, HIGH);  // Светодиод горит, если Wi-Fi подключен
+    }
+}
+
+void sendMAVLink() {
+    // static uint32_t lastSent = 0;
+    static int16_t prevRoll = 0, prevPitch = 0, prevThrottle = 0, prevYaw = 0;
+    static uint16_t prevButtons = 0;
+
+    // if (millis() - lastSent < 20) return; // 50 Гц отправки
+
+    mavlink_message_t msg;
+    uint8_t buf[MAVLINK_MAX_PACKET_LEN];
+
+    // Читаем значения и меняем местами оси
+    int16_t pitch = -map(analogRead(35), 0, 4095, -1000, 1000); // БЫЛ ROLL, СТАЛ PITCH (и инверсия)
+    int16_t roll = -map(analogRead(34), 0, 4095, -1000, 1000);  // БЫЛ PITCH, СТАЛ ROLL (и инверсия)
+    int16_t yaw = -map(analogRead(33), 0, 4095, -1000, 1000);   // Инверсия
+    int16_t throttle = map(analogRead(32), 0, 4095, 1000, 0);   // Инверсия
+
+    uint16_t buttons = 0;
+    if (digitalRead(25) == LOW) buttons |= (1 << 0);
+    if (digitalRead(26) == LOW) buttons |= (1 << 1);
+
+    // Отправляем только если есть изменения
+    if (roll == prevRoll && pitch == prevPitch && throttle == prevThrottle && yaw == prevYaw && buttons == prevButtons)
+        return;
+
+    prevRoll = roll;
+    prevPitch = pitch;
+    prevThrottle = throttle;
+    prevYaw = yaw;
+    prevButtons = buttons;
+
+    // MAVLink Manual Control
+    mavlink_msg_manual_control_pack(
+        255, MAV_COMP_ID_AUTOPILOT1, &msg,
+        0, roll, pitch, throttle, yaw, buttons,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+
+    uint16_t len = mavlink_msg_to_send_buffer(buf, &msg);
+    udp.beginPacket(DRONE_IP, WIFI_UDP_PORT);
+    udp.write(buf, len);
+    udp.endPacket();
+
+    // lastSent = millis();
+
+    // Отображаем только обновленные данные
+    Serial.print("[SEND] R="); Serial.print(roll / 1000.0f);
+    Serial.print(" P="); Serial.print(pitch / 1000.0f);
+    Serial.print(" T="); Serial.print(throttle / 1000.0f);
+    Serial.print(" Y="); Serial.print(yaw / 1000.0f);
+    Serial.print(" Buttons="); Serial.println(buttons);
+}
+
+void receiveMAVLink() {
+    int packetSize = udp.parsePacket();
+    if (!packetSize) return;
+
+    uint8_t buf[MAVLINK_MAX_PACKET_LEN];
+    udp.read(buf, MAVLINK_MAX_PACKET_LEN);
+
+    mavlink_message_t msg;
+    mavlink_status_t status;
+    for (int i = 0; i < packetSize; i++) {
+        if (mavlink_parse_char(MAVLINK_COMM_0, buf[i], &msg, &status)) {
+            switch (msg.msgid) {
+                case MAVLINK_MSG_ID_HEARTBEAT:
+                    Serial.println("Received HEARTBEAT");
+                    break;
+                case MAVLINK_MSG_ID_MANUAL_CONTROL:
+                    mavlink_manual_control_t manualControl;
+                    mavlink_msg_manual_control_decode(&msg, &manualControl);
+                    Serial.print("Received MANUAL_CONTROL: x=");
+                    Serial.print(manualControl.x);
+                    Serial.print(" y=");
+                    Serial.print(manualControl.y);
+                    Serial.print(" z=");
+                    Serial.print(manualControl.z);
+                    Serial.print(" r=");
+                    Serial.println(manualControl.r);
+                    Serial.print(" Buttons=");
+                    Serial.print(manualControl.buttons);
+                    Serial.print(" sysid=");
+                    Serial.print(msg.sysid);
+                    Serial.print(" compid=");
+                    Serial.println(msg.compid);
+                    break;
+                default:
+                    // Serial.print("Received message with ID ");
+                    // Serial.println(msg.msgid);
+                    break;
+            }
+        }
+    }
+}
