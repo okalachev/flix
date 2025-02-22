@@ -45,7 +45,7 @@ void sendMavlink() {
 			time, attitudeFRD.w, attitudeFRD.x, attitudeFRD.y, attitudeFRD.z, rates.x, rates.y, rates.z, zeroQuat);
 		sendMessage(&msg);
 
-		mavlink_msg_rc_channels_scaled_pack(SYSTEM_ID, MAV_COMP_ID_AUTOPILOT1, &msg, time, 0,
+		mavlink_msg_rc_channels_scaled_pack(SYSTEM_ID, MAV_COMP_ID_AUTOPILOT1, &msg, controlsTime * 1000, 0,
 			controls[0] * 10000, controls[1] * 10000, controls[2] * 10000,
 			controls[3] * 10000, controls[4] * 10000, controls[5] * 10000,
 			INT16_MAX, INT16_MAX, UINT8_MAX);
