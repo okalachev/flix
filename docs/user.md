@@ -54,6 +54,12 @@ Features: ESP32-C3 microcontroller is used.<br>
 	</tr>
 </table>
 
+**Custom Wi-Fi RC control:**
+
+<a href="https://github.com/pavelkabakov/flix/blob/master/rc_control_v1/IMG_20250221_195756.jpg"><img height=300 src="img/user/p_kabakov/wifirc.jpg"></a>
+
+See source and description (in Russian): https://github.com/pavelkabakov/flix/tree/master/rc_control_v1.
+
 ---
 
 Author: [@yi_lun](https://t.me/yi_lun).<br>
