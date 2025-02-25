@@ -93,6 +93,8 @@ void handleMavlink(const void *_msg) {
 	if (msg.msgid == MAVLINK_MSG_ID_MANUAL_CONTROL) {
 		mavlink_manual_control_t m;
 		mavlink_msg_manual_control_decode(&msg, &m);
+		if (m.target && m.target != SYSTEM_ID) return; // 0 is broadcast
+
 		controls[throttleChannel] = m.z / 1000.0f;
 		controls[pitchChannel] = m.x / 1000.0f * mavlinkControlScale;
 		controls[rollChannel] = m.y / 1000.0f * mavlinkControlScale;
@@ -105,17 +107,23 @@ void handleMavlink(const void *_msg) {
 	}
 
 	if (msg.msgid == MAVLINK_MSG_ID_PARAM_REQUEST_LIST) {
-		mavlink_message_t m;
+		mavlink_param_request_list_t m;
+		mavlink_msg_param_request_list_decode(&msg, &m);
+		if (m.target_system && m.target_system != SYSTEM_ID) return;
+
+		mavlink_message_t msg;
 		for (int i = 0; i < parametersCount(); i++) {
-			mavlink_msg_param_value_pack(SYSTEM_ID, MAV_COMP_ID_AUTOPILOT1, &m,
+			mavlink_msg_param_value_pack(SYSTEM_ID, MAV_COMP_ID_AUTOPILOT1, &msg,
 				getParameterName(i), getParameter(i), MAV_PARAM_TYPE_REAL32, parametersCount(), i);
-			sendMessage(&m);
+			sendMessage(&msg);
 		}
 	}
 
 	if (msg.msgid == MAVLINK_MSG_ID_PARAM_REQUEST_READ) {
 		mavlink_param_request_read_t m;
 		mavlink_msg_param_request_read_decode(&msg, &m);
+		if (m.target_system && m.target_system != SYSTEM_ID) return;
+
 		char name[MAVLINK_MSG_PARAM_REQUEST_READ_FIELD_PARAM_ID_LEN + 1];
 		strlcpy(name, m.param_id, sizeof(name)); // param_id might be not null-terminated
 		float value = strlen(name) == 0 ? getParameter(m.param_index) : getParameter(name);
@@ -131,6 +139,8 @@ void handleMavlink(const void *_msg) {
 	if (msg.msgid == MAVLINK_MSG_ID_PARAM_SET) {
 		mavlink_param_set_t m;
 		mavlink_msg_param_set_decode(&msg, &m);
+		if (m.target_system && m.target_system != SYSTEM_ID) return;
+
 		char name[MAVLINK_MSG_PARAM_SET_FIELD_PARAM_ID_LEN + 1];
 		strlcpy(name, m.param_id, sizeof(name)); // param_id might be not null-terminated
 		setParameter(name, m.param_value);
@@ -142,6 +152,10 @@ void handleMavlink(const void *_msg) {
 	}
 
 	if (msg.msgid == MAVLINK_MSG_ID_MISSION_REQUEST_LIST) { // handle to make qgc happy
+		mavlink_mission_request_list_t m;
+		mavlink_msg_mission_request_list_decode(&msg, &m);
+		if (m.target_system && m.target_system != SYSTEM_ID) return;
+
 		mavlink_message_t msg;
 		mavlink_msg_mission_count_pack(SYSTEM_ID, MAV_COMP_ID_AUTOPILOT1, &msg, 0, 0, 0, MAV_MISSION_TYPE_MISSION, 0);
 		sendMessage(&msg);
@@ -150,6 +164,8 @@ void handleMavlink(const void *_msg) {
 	if (msg.msgid == MAVLINK_MSG_ID_SERIAL_CONTROL) {
 		mavlink_serial_control_t m;
 		mavlink_msg_serial_control_decode(&msg, &m);
+		if (m.target_system && m.target_system != SYSTEM_ID) return;
+
 		char data[MAVLINK_MSG_SERIAL_CONTROL_FIELD_DATA_LEN + 1];
 		strlcpy(data, (const char *)m.data, m.count); // data might be not null-terminated
 		doCommand(data, true);
@@ -159,6 +175,7 @@ void handleMavlink(const void *_msg) {
 	if (msg.msgid == MAVLINK_MSG_ID_COMMAND_LONG) {
 		mavlink_command_long_t m;
 		mavlink_msg_command_long_decode(&msg, &m);
+		if (m.target_system && m.target_system != SYSTEM_ID) return;
 		mavlink_message_t ack;
 		mavlink_message_t response;
 
