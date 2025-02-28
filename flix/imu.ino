@@ -75,17 +75,23 @@ void calibrateAccel() {
 	IMU.setAccelRange(IMU.ACCEL_RANGE_2G); // the most sensitive mode
 
 	Serial.setTimeout(60000);
-	Serial.print("Place level [enter] "); Serial.readStringUntil('\n');
+	Serial.print("Place level [enter] ");
+	Serial.readStringUntil('\n');
 	calibrateAccelOnce();
-	Serial.print("Place nose up [enter] "); Serial.readStringUntil('\n');
+	Serial.print("Place nose up [enter] ");
+	Serial.readStringUntil('\n');
 	calibrateAccelOnce();
-	Serial.print("Place nose down [enter] "); Serial.readStringUntil('\n');
+	Serial.print("Place nose down [enter] ");
+	Serial.readStringUntil('\n');
 	calibrateAccelOnce();
-	Serial.print("Place on right side [enter] "); Serial.readStringUntil('\n');
+	Serial.print("Place on right side [enter] ");
+	Serial.readStringUntil('\n');
 	calibrateAccelOnce();
-	Serial.print("Place on left side [enter] "); Serial.readStringUntil('\n');
+	Serial.print("Place on left side [enter] ");
+	Serial.readStringUntil('\n');
 	calibrateAccelOnce();
-	Serial.print("Place upside down [enter] "); Serial.readStringUntil('\n');
+	Serial.print("Place upside down [enter] ");
+	Serial.readStringUntil('\n');
 	calibrateAccelOnce();
 
 	printIMUCal();
