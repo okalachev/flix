@@ -28,7 +28,7 @@ void readRC() {
 }
 
 void normalizeRC() {
-	for (uint8_t i = 0; i < RC_CHANNELS; i++) {
+	for (uint8_t i = 0; i < 16; i++) {
 		controls[i] = mapf(channels[i], channelNeutral[i], channelMax[i], 0, 1);
 	}
 }
@@ -38,20 +38,20 @@ void calibrateRC() {
 	Serial.println("··o     ··o\n···     ···\n···     ···");
 	delay(4000);
 	for (int i = 0; i < 30; i++) readRC(); // ensure the values are updated
-	for (int i = 0; i < RC_CHANNELS; i++) {
+	for (int i = 0; i < 16; i++) {
 		channelMax[i] = channels[i];
 	}
 	Serial.println("Calibrate RC: move all sticks to neutral positions in 4 seconds");
 	Serial.println("···     ···\n···     ·o·\n·o·     ···");
 	delay(4000);
 	for (int i = 0; i < 30; i++) readRC(); // ensure the values are updated
-	for (int i = 0; i < RC_CHANNELS; i++) {
+	for (int i = 0; i < 16; i++) {
 		channelNeutral[i] = channels[i];
 	}
 	printRCCal();
 }
 
 void printRCCal() {
-	printArray(channelNeutral, RC_CHANNELS);
-	printArray(channelMax, RC_CHANNELS);
+	printArray(channelNeutral, 16);
+	printArray(channelMax, 16);
 }

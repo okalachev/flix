@@ -38,8 +38,8 @@ bool joystickInit() {
 	}
 
 	// apply calibration overrides
-	extern int channelNeutral[RC_CHANNELS];
-	extern int channelMax[RC_CHANNELS];
+	extern int channelNeutral[16];
+	extern int channelMax[16];
 	memcpy(channelNeutral, channelNeutralOverride, sizeof(channelNeutralOverride));
 	memcpy(channelMax, channelMaxOverride, sizeof(channelMaxOverride));
 

@@ -10,14 +10,13 @@
 #include "Arduino.h"
 #include "wifi.h"
 
-#define RC_CHANNELS 16
 #define WIFI_ENABLED 1
 
 float t = NAN;
 float dt;
 float motors[4];
 int16_t channels[16]; // raw rc channels
-float controls[RC_CHANNELS];
+float controls[16];
 Vector acc;
 Vector gyro;
 Vector rates;
