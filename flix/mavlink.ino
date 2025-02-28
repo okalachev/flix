@@ -40,7 +40,7 @@ void sendMavlink() {
 		lastFast = t;
 
 		const float zeroQuat[] = {0, 0, 0, 0};
-		Quaternion attitudeFRD = FLU2FRD(attitude); // MAVLink uses FRD coordinate system
+		Quaternion attitudeFRD = fluToFrd(attitude); // MAVLink uses FRD coordinate system
 		mavlink_msg_attitude_quaternion_pack(SYSTEM_ID, MAV_COMP_ID_AUTOPILOT1, &msg,
 			time, attitudeFRD.w, attitudeFRD.x, attitudeFRD.y, attitudeFRD.z, rates.x, rates.y, rates.z, zeroQuat);
 		sendMessage(&msg);
@@ -103,7 +103,7 @@ void handleMavlink(const void *_msg) {
 }
 
 // Convert Forward-Left-Up to Forward-Right-Down quaternion
-inline Quaternion FLU2FRD(const Quaternion &q) {
+inline Quaternion fluToFrd(const Quaternion &q) {
 	return Quaternion(q.w, q.x, -q.y, -q.z);
 }
 
