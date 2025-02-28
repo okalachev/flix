@@ -85,14 +85,15 @@ void receiveMavlink() {
 }
 
 void handleMavlink(const void *_msg) {
-	mavlink_message_t *msg = (mavlink_message_t *)_msg;
-	if (msg->msgid == MAVLINK_MSG_ID_MANUAL_CONTROL) {
-		mavlink_manual_control_t manualControl;
-		mavlink_msg_manual_control_decode(msg, &manualControl);
-		controls[RC_CHANNEL_THROTTLE] = manualControl.z / 1000.0f;
-		controls[RC_CHANNEL_PITCH] = manualControl.x / 1000.0f * MAVLINK_CONTROL_SCALE;
-		controls[RC_CHANNEL_ROLL] = manualControl.y / 1000.0f * MAVLINK_CONTROL_SCALE;
-		controls[RC_CHANNEL_YAW] = manualControl.r / 1000.0f * MAVLINK_CONTROL_SCALE;
+	const mavlink_message_t &msg = *(mavlink_message_t *)_msg;
+
+	if (msg.msgid == MAVLINK_MSG_ID_MANUAL_CONTROL) {
+		mavlink_manual_control_t m;
+		mavlink_msg_manual_control_decode(&msg, &m);
+		controls[RC_CHANNEL_THROTTLE] = m.z / 1000.0f;
+		controls[RC_CHANNEL_PITCH] = m.x / 1000.0f * MAVLINK_CONTROL_SCALE;
+		controls[RC_CHANNEL_ROLL] = m.y / 1000.0f * MAVLINK_CONTROL_SCALE;
+		controls[RC_CHANNEL_YAW] = m.r / 1000.0f * MAVLINK_CONTROL_SCALE;
 		controls[RC_CHANNEL_MODE] = 1; // STAB mode
 		controls[RC_CHANNEL_ARMED] = 1; // armed
 		controlsTime = t;
