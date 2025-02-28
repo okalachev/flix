@@ -30,8 +30,8 @@
 #define YAW_P 3
 #define PITCHRATE_MAX radians(360)
 #define ROLLRATE_MAX radians(360)
-#define YAWRATE_MAX radians(360)
-#define MAX_TILT radians(30)
+#define YAWRATE_MAX radians(300)
+#define TILT_MAX radians(30)
 
 #define RATES_D_LPF_ALPHA 0.2 // cutoff frequency ~ 40 Hz
 
@@ -92,8 +92,8 @@ void interpretRC() {
 		yawMode = controls[RC_CHANNEL_YAW] == 0 ? YAW : YAW_RATE;
 
 		attitudeTarget = Quaternion::fromEulerZYX(Vector(
-			controls[RC_CHANNEL_ROLL] * MAX_TILT,
-			controls[RC_CHANNEL_PITCH] * MAX_TILT,
+			controls[RC_CHANNEL_ROLL] * TILT_MAX,
+			controls[RC_CHANNEL_PITCH] * TILT_MAX,
 			attitudeTarget.getYaw()));
 		ratesTarget.z = -controls[RC_CHANNEL_YAW] * YAWRATE_MAX; // positive yaw stick means clockwise rotation in FLU
 

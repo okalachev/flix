@@ -36,14 +36,14 @@ void normalizeRC() {
 }
 
 void calibrateRC() {
-	Serial.println("Calibrate RC: move all sticks to maximum positions in 4 seconds");
+	Serial.println("Calibrate RC: move all sticks to maximum positions [4 sec]");
 	Serial.println("··o     ··o\n···     ···\n···     ···");
 	delay(4000);
 	while (!readRC());
 	for (int i = 0; i < 16; i++) {
 		channelMax[i] = channels[i];
 	}
-	Serial.println("Calibrate RC: move all sticks to neutral positions in 4 seconds");
+	Serial.println("Calibrate RC: move all sticks to neutral positions [4 sec]");
 	Serial.println("···     ···\n···     ·o·\n·o·     ···");
 	delay(4000);
 	while (!readRC());

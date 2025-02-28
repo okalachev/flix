@@ -8,14 +8,15 @@
 
 extern float controlsTime;
 
+// RC loss failsafe
 void failsafe() {
 	if (t - controlsTime > RC_LOSS_TIMEOUT) {
 		descend();
 	}
 }
 
+// Smooth descend on RC lost
 void descend() {
-	// Smooth descend on RC lost
 	mode = STAB;
 	controls[RC_CHANNEL_ROLL] = 0;
 	controls[RC_CHANNEL_PITCH] = 0;

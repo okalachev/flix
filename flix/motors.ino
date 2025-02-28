@@ -2,8 +2,6 @@
 // Repository: https://github.com/okalachev/flix
 
 // Motors output control using MOSFETs
-// In case of using ESC, use this version of the code: https://gist.github.com/okalachev/8871d3a94b6b6c0a298f41a4edd34c61.
-// Motor: 8520 3.7V
 
 #include "util.h"
 
