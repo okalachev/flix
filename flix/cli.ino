@@ -21,8 +21,6 @@ const char* motd =
 "|__|     |_______||__| /__/ \\__\\\n\n"
 "Commands:\n\n"
 "help - show help\n"
-"show - show all parameters\n"
-"<name> <value> - set parameter\n"
 "ps - show pitch/roll/yaw\n"
 "psq - show attitude quaternion\n"
 "imu - show IMU data\n"
@@ -35,36 +33,14 @@ const char* motd =
 "mfr, mfl, mrr, mrl - test motor (remove props)\n"
 "reset - reset drone's state\n";
 
-const struct Param {
-	const char* name;
-	float* value;
-	float* value2;
-} params[] = {
-	{"rp", &rollRatePID.p, &pitchRatePID.p},
-	{"ri", &rollRatePID.i, &pitchRatePID.i},
-	{"rd", &rollRatePID.d, &pitchRatePID.d},
+void doCommand(String str) {
+	// parse command
+	String command, arg0, arg1;
+	splitString(str, command, arg0, arg1);
 
-	{"ap", &rollPID.p, &pitchPID.p},
-	{"ai", &rollPID.i, &pitchPID.i},
-	{"ad", &rollPID.d, &pitchPID.d},
-
-	{"yp", &yawRatePID.p, nullptr},
-	{"yi", &yawRatePID.i, nullptr},
-	{"yd", &yawRatePID.d, nullptr},
-
-	{"lpr", &ratesFilter.alpha, nullptr},
-	{"lpd", &rollRatePID.lpf.alpha, &pitchRatePID.lpf.alpha},
-
-	{"ss", &loopRate, nullptr},
-	{"dt", &dt, nullptr},
-	{"t", &t, nullptr},
-};
-
-void doCommand(String& command, String& value) {
+	// execute command
 	if (command == "help" || command == "motd") {
 		Serial.println(motd);
-	} else if (command == "show") {
-		showTable();
 	} else if (command == "ps") {
 		Vector a = attitude.toEulerZYX();
 		Serial.printf("roll: %f pitch: %f yaw: %f\n", a.x * RAD_TO_DEG, a.y * RAD_TO_DEG, a.z * RAD_TO_DEG);
@@ -96,76 +72,38 @@ void doCommand(String& command, String& value) {
 	} else if (command == "ca") {
 		calibrateAccel();
 	} else if (command == "mfr") {
-		cliTestMotor(MOTOR_FRONT_RIGHT);
+		testMotor(MOTOR_FRONT_RIGHT);
 	} else if (command == "mfl") {
-		cliTestMotor(MOTOR_FRONT_LEFT);
+		testMotor(MOTOR_FRONT_LEFT);
 	} else if (command == "mrr") {
-		cliTestMotor(MOTOR_REAR_RIGHT);
+		testMotor(MOTOR_REAR_RIGHT);
 	} else if (command == "mrl") {
-		cliTestMotor(MOTOR_REAR_LEFT);
+		testMotor(MOTOR_REAR_LEFT);
 	} else if (command == "reset") {
 		attitude = Quaternion();
+	} else if (command == "") {
+		// do nothing
 	} else {
-		float val = value.toFloat();
-		// TODO: on error returns 0, check invalid value
-
-		for (uint8_t i = 0; i < sizeof(params) / sizeof(params[0]); i++) {
-			if (command == params[i].name) {
-				*params[i].value = val;
-				if (params[i].value2 != nullptr) *params[i].value2 = val;
-				Serial.print(command);
-				Serial.print(" = ");
-				Serial.println(val, 4);
-				return;
-			}
-		}
 		Serial.println("Invalid command: " + command);
 	}
 }
 
-void showTable() {
-	for (uint8_t i = 0; i < sizeof(params) / sizeof(params[0]); i++) {
-		Serial.print(params[i].name);
-		Serial.print(" ");
-		Serial.println(*params[i].value, 5);
-	}
-}
-
-void cliTestMotor(uint8_t n) {
-	Serial.printf("Testing motor %d\n", n);
-	motors[n] = 1;
-	delay(50); // ESP32 may need to wait until the end of the current cycle to change duty https://github.com/espressif/arduino-esp32/issues/5306
-	sendMotors();
-	delay(3000);
-	motors[n] = 0;
-	sendMotors();
-	Serial.println("Done");
-}
-
-void parseInput() {
+void handleInput() {
 	static bool showMotd = true;
-	static String command;
-	static String value;
-	static bool parsingCommand = true;
+	static String input;
 
 	if (showMotd) {
-		Serial.println(motd);
+		Serial.printf("%s\n", motd);
 		showMotd = false;
 	}
 
 	while (Serial.available()) {
 		char c = Serial.read();
 		if (c == '\n') {
-			parsingCommand = true;
-			if (!command.isEmpty()) {
-				doCommand(command, value);
-			}
-			command.clear();
-			value.clear();
-		} else if (c == ' ') {
-			parsingCommand = false;
+			doCommand(input);
+			input.clear();
 		} else {
-			(parsingCommand ? command : value) += c;
+			input += c;
 		}
 	}
 }

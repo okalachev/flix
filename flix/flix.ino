@@ -50,7 +50,7 @@ void loop() {
 	estimate();
 	control();
 	sendMotors();
-	parseInput();
+	handleInput();
 #if WIFI_ENABLED
 	processMavlink();
 #endif
