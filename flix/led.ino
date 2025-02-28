@@ -21,7 +21,3 @@ void setLED(bool on) {
 	digitalWrite(LED_BUILTIN, on ? HIGH : LOW);
 	state = on;
 }
-
-void blinkLED() {
-	setLED(micros() / BLINK_PERIOD % 2);
-}
