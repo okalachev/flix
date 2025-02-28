@@ -34,7 +34,7 @@ void controlTorque();
 void showTable();
 void sendMotors();
 bool motorsActive();
-void doCommand(String str);
+void doCommand(const String& command);
 void normalizeRC();
 void printRCCal();
 void processMavlink();

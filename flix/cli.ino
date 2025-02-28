@@ -33,12 +33,7 @@ const char* motd =
 "mfr, mfl, mrr, mrl - test motor (remove props)\n"
 "reset - reset drone's state\n";
 
-void doCommand(String str) {
-	// parse command
-	String command, arg0, arg1;
-	splitString(str, command, arg0, arg1);
-
-	// execute command
+void doCommand(const String& command) {
 	if (command == "help" || command == "motd") {
 		Serial.println(motd);
 	} else if (command == "ps") {
