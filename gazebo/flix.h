@@ -37,6 +37,7 @@ void sendMotors();
 bool motorsActive();
 void testMotor(uint8_t n);
 void print(const char* format, ...);
+void pause(float duration);
 void doCommand(String str, bool echo);
 void handleInput();
 void calibrateRC();

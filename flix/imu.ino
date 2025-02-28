@@ -68,18 +68,23 @@ void calibrateAccel() {
 	print("Calibrating accelerometer\n");
 	IMU.setAccelRange(IMU.ACCEL_RANGE_2G); // the most sensitive mode
 
-	Serial.setTimeout(5000);
-	print("Place level [enter | 5 sec] \n"); Serial.readStringUntil('\n');
+	print("Place level [8 sec]\n");
+	pause(8);
 	calibrateAccelOnce();
-	print("Place nose up [enter | 5 sec] \n"); Serial.readStringUntil('\n');
+	print("Place nose up [8 sec]\n");
+	pause(8);
 	calibrateAccelOnce();
-	print("Place nose down [enter | 5 sec] \n"); Serial.readStringUntil('\n');
+	print("Place nose down [8 sec]\n");
+	pause(8);
 	calibrateAccelOnce();
-	print("Place on right side [enter | 5 sec] \n"); Serial.readStringUntil('\n');
+	print("Place on right side [8 sec]\n");
+	pause(8);
 	calibrateAccelOnce();
-	print("Place on left side [enter | 5 sec] \n"); Serial.readStringUntil('\n');
+	print("Place on left side [8 sec]\n");
+	pause(8);
 	calibrateAccelOnce();
-	print("Place upside down [enter | 5 sec] \n"); Serial.readStringUntil('\n');
+	print("Place upside down [8 sec]\n");
+	pause(8);
 	calibrateAccelOnce();
 
 	printIMUCal();

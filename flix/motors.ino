@@ -60,7 +60,7 @@ void testMotor(uint8_t n) {
 	motors[n] = 1;
 	delay(50); // ESP32 may need to wait until the end of the current cycle to change duty https://github.com/espressif/arduino-esp32/issues/5306
 	sendMotors();
-	delay(3000);
+	pause(3);
 	motors[n] = 0;
 	sendMotors();
 	print("Done\n");

@@ -52,6 +52,22 @@ void print(const char* format, ...) {
 #endif
 }
 
+void pause(float duration) {
+#if ARDUINO
+	double start = t;
+	while (t - start < duration) {
+		step();
+		handleInput();
+#if WIFI_ENABLED
+		processMavlink();
+#endif
+	}
+#else
+	// Code above won't work in the simulation
+	delay(duration * 1000);
+#endif
+}
+
 void doCommand(String str, bool echo = false) {
 	// parse command
 	String command, arg0, arg1;
