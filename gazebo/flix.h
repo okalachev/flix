@@ -23,6 +23,7 @@ Vector rates;
 Quaternion attitude;
 
 // declarations
+void step();
 void computeLoopRate();
 void applyGyro();
 void applyAcc();
@@ -31,25 +32,36 @@ void interpretRC();
 void controlAttitude();
 void controlRate();
 void controlTorque();
-void showTable();
+const char* getModeName();
 void sendMotors();
 bool motorsActive();
+void testMotor(uint8_t n);
 void print(const char* format, ...);
+void pause(float duration);
 void doCommand(String str, bool echo);
-void cliTestMotor(uint8_t n);
+void handleInput();
+void calibrateRC();
 void normalizeRC();
 void printRCCal();
+void dumpLog();
 void processMavlink();
 void sendMavlink();
 void sendMessage(const void *msg);
 void receiveMavlink();
 void handleMavlink(const void *_msg);
 void mavlinkPrint(const char* str);
+inline Quaternion fluToFrd(const Quaternion &q);
 void failsafe();
 void armingFailsafe();
 void rcLossFailsafe();
 void descend();
-inline Quaternion FLU2FRD(const Quaternion &q);
+int parametersCount();
+const char *getParameterName(int index);
+float getParameter(int index);
+float getParameter(const char *name);
+bool setParameter(const char *name, const float value);
+void printParameters();
+void resetParameters();
 
 // mocks
 void setLED(bool on) {};

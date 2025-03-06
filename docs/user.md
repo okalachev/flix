@@ -4,6 +4,31 @@ This page contains user-built drones based on the Flix project. Publish your pro
 
 ---
 
+Author: [@jeka_chex](https://t.me/jeka_chex).<br>
+Features: custom frame, FPV camera, 3-blade 31 mm propellers.<br>
+Motor drivers: AON7410 MOSFET + capacitors.<br>
+Custom frame files: https://drive.google.com/drive/folders/1QCIc-_YYFxJN4cMhVLjL5SflqegvCowm?usp=share_link.<br>
+
+**Flight video:**
+
+<a href="https://drive.google.com/file/d/1VnWI5YVPojfqsfpyLX4v2V9zHi9adwcd/view?usp=sharing"><img height=300 src="img/user/jeka_chex/video.jpg"></a>
+
+**FPV flight video:**
+
+<a href="https://drive.google.com/file/d/1RSU6VWs9omsge4hGloH5NQqnxvLyhMKB/view?usp=sharing"><img height=300 src="img/user/jeka_chex/video-fpv.jpg"></a>
+
+<table>
+	<tr>
+		<td><img src="img/user/jeka_chex/1.jpg" height=150></td>
+		<td><img src="img/user/jeka_chex/2.jpg" height=150></td>
+		<td><img src="img/user/jeka_chex/3.jpg" height=150></td>
+		<td><img src="img/user/jeka_chex/4.jpg" height=150></td>
+		<td><img src="img/user/jeka_chex/5.jpg" height=150></td>
+	</tr>
+</table>
+
+---
+
 Author: [@fisheyeu](https://t.me/fisheyeu).<br>
 [Video](https://drive.google.com/file/d/1IT4eMmWPZpmaZR_qsIRmNJ52hYkFB_0q/view?usp=share_link).
 
@@ -28,6 +53,12 @@ Features: ESP32-C3 microcontroller is used.<br>
 		<td><img src="img/user/p_kabakov/3.jpg" width=150></td>
 	</tr>
 </table>
+
+**Custom Wi-Fi RC control:**
+
+<a href="https://github.com/pavelkabakov/flix/blob/master/rc_control_v1/IMG_20250221_195756.jpg"><img height=300 src="img/user/p_kabakov/wifirc.jpg"></a>
+
+See source and description (in Russian): https://github.com/pavelkabakov/flix/tree/master/rc_control_v1.
 
 ---
 

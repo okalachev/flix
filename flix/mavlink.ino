@@ -43,12 +43,12 @@ void sendMavlink() {
 		lastFast = t;
 
 		const float zeroQuat[] = {0, 0, 0, 0};
-		Quaternion attitudeFRD = FLU2FRD(attitude); // MAVLink uses FRD coordinate system
+		Quaternion attitudeFRD = fluToFrd(attitude); // MAVLink uses FRD coordinate system
 		mavlink_msg_attitude_quaternion_pack(SYSTEM_ID, MAV_COMP_ID_AUTOPILOT1, &msg,
 			time, attitudeFRD.w, attitudeFRD.x, attitudeFRD.y, attitudeFRD.z, rates.x, rates.y, rates.z, zeroQuat);
 		sendMessage(&msg);
 
-		mavlink_msg_rc_channels_scaled_pack(SYSTEM_ID, MAV_COMP_ID_AUTOPILOT1, &msg, time, 0,
+		mavlink_msg_rc_channels_scaled_pack(SYSTEM_ID, MAV_COMP_ID_AUTOPILOT1, &msg, controlsTime * 1000, 0,
 			controls[0] * 10000, controls[1] * 10000, controls[2] * 10000,
 			controls[3] * 10000, controls[4] * 10000, controls[5] * 10000,
 			INT16_MAX, INT16_MAX, UINT8_MAX);
@@ -88,15 +88,17 @@ void receiveMavlink() {
 }
 
 void handleMavlink(const void *_msg) {
-	mavlink_message_t *msg = (mavlink_message_t *)_msg;
+	const mavlink_message_t &msg = *(mavlink_message_t *)_msg;
 
-	if (msg->msgid == MAVLINK_MSG_ID_MANUAL_CONTROL) {
-		mavlink_manual_control_t manualControl;
-		mavlink_msg_manual_control_decode(msg, &manualControl);
-		controls[throttleChannel] = manualControl.z / 1000.0f;
-		controls[pitchChannel] = manualControl.x / 1000.0f * mavlinkControlScale;
-		controls[rollChannel] = manualControl.y / 1000.0f * mavlinkControlScale;
-		controls[yawChannel] = manualControl.r / 1000.0f * mavlinkControlScale;
+	if (msg.msgid == MAVLINK_MSG_ID_MANUAL_CONTROL) {
+		mavlink_manual_control_t m;
+		mavlink_msg_manual_control_decode(&msg, &m);
+		if (m.target && m.target != SYSTEM_ID) return; // 0 is broadcast
+
+		controls[throttleChannel] = m.z / 1000.0f;
+		controls[pitchChannel] = m.x / 1000.0f * mavlinkControlScale;
+		controls[rollChannel] = m.y / 1000.0f * mavlinkControlScale;
+		controls[yawChannel] = m.r / 1000.0f * mavlinkControlScale;
 		controls[modeChannel] = 1; // STAB mode
 		controls[armedChannel] = 1; // armed
 		controlsTime = t;
@@ -104,7 +106,11 @@ void handleMavlink(const void *_msg) {
 		if (abs(controls[yawChannel]) < MAVLINK_CONTROL_YAW_DEAD_ZONE) controls[yawChannel] = 0;
 	}
 
-	if (msg->msgid == MAVLINK_MSG_ID_PARAM_REQUEST_LIST) {
+	if (msg.msgid == MAVLINK_MSG_ID_PARAM_REQUEST_LIST) {
+		mavlink_param_request_list_t m;
+		mavlink_msg_param_request_list_decode(&msg, &m);
+		if (m.target_system && m.target_system != SYSTEM_ID) return;
+
 		mavlink_message_t msg;
 		for (int i = 0; i < parametersCount(); i++) {
 			mavlink_msg_param_value_pack(SYSTEM_ID, MAV_COMP_ID_AUTOPILOT1, &msg,
@@ -113,63 +119,74 @@ void handleMavlink(const void *_msg) {
 		}
 	}
 
-	if (msg->msgid == MAVLINK_MSG_ID_PARAM_REQUEST_READ) {
-		mavlink_param_request_read_t paramRequestRead;
-		mavlink_msg_param_request_read_decode(msg, &paramRequestRead);
-		char name[16 + 1];
-		strlcpy(name, paramRequestRead.param_id, sizeof(name)); // param_id might be not null-terminated
-		float value = strlen(name) == 0 ? getParameter(paramRequestRead.param_index) : getParameter(name);
-		if (paramRequestRead.param_index != -1) {
-			memcpy(name, getParameterName(paramRequestRead.param_index), 16);
+	if (msg.msgid == MAVLINK_MSG_ID_PARAM_REQUEST_READ) {
+		mavlink_param_request_read_t m;
+		mavlink_msg_param_request_read_decode(&msg, &m);
+		if (m.target_system && m.target_system != SYSTEM_ID) return;
+
+		char name[MAVLINK_MSG_PARAM_REQUEST_READ_FIELD_PARAM_ID_LEN + 1];
+		strlcpy(name, m.param_id, sizeof(name)); // param_id might be not null-terminated
+		float value = strlen(name) == 0 ? getParameter(m.param_index) : getParameter(name);
+		if (m.param_index != -1) {
+			memcpy(name, getParameterName(m.param_index), 16);
 		}
 		mavlink_message_t msg;
 		mavlink_msg_param_value_pack(SYSTEM_ID, MAV_COMP_ID_AUTOPILOT1, &msg,
-			name, value, MAV_PARAM_TYPE_REAL32, parametersCount(), paramRequestRead.param_index);
+			name, value, MAV_PARAM_TYPE_REAL32, parametersCount(), m.param_index);
 		sendMessage(&msg);
 	}
 
-	if (msg->msgid == MAVLINK_MSG_ID_PARAM_SET) {
-		mavlink_param_set_t paramSet;
-		mavlink_msg_param_set_decode(msg, &paramSet);
-		char name[16 + 1];
-		strlcpy(name, paramSet.param_id, sizeof(name)); // param_id might be not null-terminated
-		setParameter(name, paramSet.param_value);
+	if (msg.msgid == MAVLINK_MSG_ID_PARAM_SET) {
+		mavlink_param_set_t m;
+		mavlink_msg_param_set_decode(&msg, &m);
+		if (m.target_system && m.target_system != SYSTEM_ID) return;
+
+		char name[MAVLINK_MSG_PARAM_SET_FIELD_PARAM_ID_LEN + 1];
+		strlcpy(name, m.param_id, sizeof(name)); // param_id might be not null-terminated
+		setParameter(name, m.param_value);
 		// send ack
 		mavlink_message_t msg;
 		mavlink_msg_param_value_pack(SYSTEM_ID, MAV_COMP_ID_AUTOPILOT1, &msg,
-			paramSet.param_id, paramSet.param_value, MAV_PARAM_TYPE_REAL32, parametersCount(), 0); // index is unknown
+			m.param_id, m.param_value, MAV_PARAM_TYPE_REAL32, parametersCount(), 0); // index is unknown
 		sendMessage(&msg);
 	}
 
-	if (msg->msgid == MAVLINK_MSG_ID_MISSION_REQUEST_LIST) { // handle to make qgc happy
+	if (msg.msgid == MAVLINK_MSG_ID_MISSION_REQUEST_LIST) { // handle to make qgc happy
+		mavlink_mission_request_list_t m;
+		mavlink_msg_mission_request_list_decode(&msg, &m);
+		if (m.target_system && m.target_system != SYSTEM_ID) return;
+
 		mavlink_message_t msg;
 		mavlink_msg_mission_count_pack(SYSTEM_ID, MAV_COMP_ID_AUTOPILOT1, &msg, 0, 0, 0, MAV_MISSION_TYPE_MISSION, 0);
 		sendMessage(&msg);
 	}
 
-	if (msg->msgid == MAVLINK_MSG_ID_SERIAL_CONTROL) {
-		mavlink_serial_control_t serialControl;
-		mavlink_msg_serial_control_decode(msg, &serialControl);
+	if (msg.msgid == MAVLINK_MSG_ID_SERIAL_CONTROL) {
+		mavlink_serial_control_t m;
+		mavlink_msg_serial_control_decode(&msg, &m);
+		if (m.target_system && m.target_system != SYSTEM_ID) return;
+
 		char data[MAVLINK_MSG_SERIAL_CONTROL_FIELD_DATA_LEN + 1];
-		strlcpy(data, (const char *)serialControl.data, serialControl.count); // data might be not null-terminated
+		strlcpy(data, (const char *)m.data, m.count); // data might be not null-terminated
 		doCommand(data, true);
 	}
 
 	// Handle commands
-	if (msg->msgid == MAVLINK_MSG_ID_COMMAND_LONG) {
-		mavlink_command_long_t commandLong;
-		mavlink_msg_command_long_decode(msg, &commandLong);
+	if (msg.msgid == MAVLINK_MSG_ID_COMMAND_LONG) {
+		mavlink_command_long_t m;
+		mavlink_msg_command_long_decode(&msg, &m);
+		if (m.target_system && m.target_system != SYSTEM_ID) return;
 		mavlink_message_t ack;
 		mavlink_message_t response;
 
-		if (commandLong.command == MAV_CMD_REQUEST_MESSAGE && commandLong.param1 == MAVLINK_MSG_ID_AUTOPILOT_VERSION) {
-			mavlink_msg_command_ack_pack(SYSTEM_ID, MAV_COMP_ID_AUTOPILOT1, &ack, commandLong.command, MAV_RESULT_ACCEPTED, UINT8_MAX, 0, msg->sysid, msg->compid);
+		if (m.command == MAV_CMD_REQUEST_MESSAGE && m.param1 == MAVLINK_MSG_ID_AUTOPILOT_VERSION) {
+			mavlink_msg_command_ack_pack(SYSTEM_ID, MAV_COMP_ID_AUTOPILOT1, &ack, m.command, MAV_RESULT_ACCEPTED, UINT8_MAX, 0, msg.sysid, msg.compid);
 			sendMessage(&ack);
 			mavlink_msg_autopilot_version_pack(SYSTEM_ID, MAV_COMP_ID_AUTOPILOT1, &response,
 				MAV_PROTOCOL_CAPABILITY_PARAM_FLOAT | MAV_PROTOCOL_CAPABILITY_MAVLINK2, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0);
 			sendMessage(&response);
 		} else {
-			mavlink_msg_command_ack_pack(SYSTEM_ID, MAV_COMP_ID_AUTOPILOT1, &ack, commandLong.command, MAV_RESULT_UNSUPPORTED, UINT8_MAX, 0, msg->sysid, msg->compid);
+			mavlink_msg_command_ack_pack(SYSTEM_ID, MAV_COMP_ID_AUTOPILOT1, &ack, m.command, MAV_RESULT_UNSUPPORTED, UINT8_MAX, 0, msg.sysid, msg.compid);
 			sendMessage(&ack);
 		}
 	}
@@ -189,7 +206,7 @@ void mavlinkPrint(const char* str) {
 }
 
 // Convert Forward-Left-Up to Forward-Right-Down quaternion
-inline Quaternion FLU2FRD(const Quaternion &q) {
+inline Quaternion fluToFrd(const Quaternion &q) {
 	return Quaternion(q.w, q.x, -q.y, -q.z);
 }
 

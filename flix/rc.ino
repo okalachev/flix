@@ -44,16 +44,16 @@ void normalizeRC() {
 }
 
 void calibrateRC() {
-	print("Calibrate RC: move all sticks to maximum positions in 4 seconds\n");
+	print("Calibrate RC: move all sticks to maximum positions [4 sec]\n");
 	print("··o     ··o\n···     ···\n···     ···\n");
-	delay(4000);
+	pause(4);
 	while (!readRC());
 	for (int i = 0; i < 16; i++) {
 		channelMax[i] = channels[i];
 	}
-	print("Calibrate RC: move all sticks to neutral positions in 4 seconds\n");
+	print("Calibrate RC: move all sticks to neutral positions [4 sec]\n");
 	print("···     ···\n···     ·o·\n·o·     ···\n");
-	delay(4000);
+	pause(4);
 	while (!readRC());
 	for (int i = 0; i < 16; i++) {
 		channelNeutral[i] = channels[i];

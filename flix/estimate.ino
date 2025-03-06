@@ -8,7 +8,7 @@
 #include "lpf.h"
 #include "util.h"
 
-#define WEIGHT_ACC 0.5f
+#define WEIGHT_ACC 0.003
 #define RATES_LFP_ALPHA 0.2 // cutoff frequency ~ 40 Hz
 
 LowPassFilter<Vector> ratesFilter(RATES_LFP_ALPHA);
@@ -35,7 +35,7 @@ void applyAcc() {
 
 	// calculate accelerometer correction
 	Vector up = attitude.rotateVector(Vector(0, 0, 1));
-	Vector correction = Vector::angularRatesBetweenVectors(acc, up) * dt * WEIGHT_ACC;
+	Vector correction = Vector::angularRatesBetweenVectors(acc, up) * WEIGHT_ACC;
 
 	// apply correction
 	attitude = attitude.rotate(Quaternion::fromAngularRates(correction));
