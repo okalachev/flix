@@ -85,7 +85,7 @@ void receiveMavlink() {
 }
 
 void handleMavlink(const void *_msg) {
-	const mavlink_message_t &msg = *(mavlink_message_t *)_msg;
+	const mavlink_message_t& msg = *(mavlink_message_t *)_msg;
 
 	if (msg.msgid == MAVLINK_MSG_ID_MANUAL_CONTROL) {
 		mavlink_manual_control_t m;
