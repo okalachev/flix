@@ -48,9 +48,9 @@ Parameter parameters[] = {
 	{"ACC_SCALE_X", &accScale.x},
 	{"ACC_SCALE_Y", &accScale.y},
 	{"ACC_SCALE_Z", &accScale.z},
-	{"GYRO_BIAS_X", &gyroBias.x},
-	{"GYRO_BIAS_Y", &gyroBias.y},
-	{"GYRO_BIAS_Z", &gyroBias.z},
+	// {"GYRO_BIAS_X", &gyroBias.x},
+	// {"GYRO_BIAS_Y", &gyroBias.y},
+	// {"GYRO_BIAS_Z", &gyroBias.z},
 	// rc
 	{"RC_NEUTRAL_0", &channelNeutral[0]},
 	{"RC_NEUTRAL_1", &channelNeutral[1]},

@@ -125,7 +125,7 @@ void doCommand(String str, bool echo = false) {
 	} else if (command == "cr") {
 		calibrateRC();
 	} else if (command == "cg") {
-		calibrateGyro();
+		// calibrateGyro();
 	} else if (command == "ca") {
 		calibrateAccel();
 	} else if (command == "mfr") {

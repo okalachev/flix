@@ -21,6 +21,7 @@ Vector acc;
 Vector gyro;
 Vector rates;
 Quaternion attitude;
+bool landed;
 
 // declarations
 void step();
