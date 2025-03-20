@@ -38,7 +38,8 @@ const char* motd =
 "ca - calibrate accel\n"
 "mfr, mfl, mrr, mrl - test motor (remove props)\n"
 "reset - reset drone's state\n"
-"reboot - reboot the drone\n";
+"reboot - reboot the drone\n"
+"v - indicate bat level\n";
 
 void print(const char* format, ...) {
 	char buf[1000];
@@ -140,8 +141,10 @@ void doCommand(String str, bool echo = false) {
 		attitude = Quaternion();
 	} else if (command == "reboot") {
 		ESP.restart();
-	} else if (command == "") {
-		// do nothing
+	} else if (command == "v") {
+    print ("battery level = ");
+		print_volt();
+    print (" V \n");
 	} else {
 		print("Invalid command: %s\n", command.c_str());
 	}

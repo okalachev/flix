@@ -10,6 +10,8 @@
 #define SERIAL_BAUDRATE 115200
 #define WIFI_ENABLED 1
 
+#define v_input 32 // analog input pin IO32 
+
 double t = NAN; // current step time, s
 float dt; // time delta from previous step, s
 int16_t channels[16]; // raw rc channels
