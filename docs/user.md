@@ -17,27 +17,14 @@ Custom frame files: https://drive.google.com/drive/folders/1QCIc-_YYFxJN4cMhVLjL
 
 <a href="https://drive.google.com/file/d/1RSU6VWs9omsge4hGloH5NQqnxvLyhMKB/view?usp=sharing"><img height=300 src="img/user/jeka_chex/video-fpv.jpg"></a>
 
-<table>
-	<tr>
-		<td><img src="img/user/jeka_chex/1.jpg" height=150></td>
-		<td><img src="img/user/jeka_chex/2.jpg" height=150></td>
-		<td><img src="img/user/jeka_chex/3.jpg" height=150></td>
-		<td><img src="img/user/jeka_chex/4.jpg" height=150></td>
-		<td><img src="img/user/jeka_chex/5.jpg" height=150></td>
-	</tr>
-</table>
+<img src="img/user/jeka_chex/1.jpg" height=150> <img src="img/user/jeka_chex/2.jpg" height=150> <img src="img/user/jeka_chex/3.jpg" height=150> <img src="img/user/jeka_chex/4.jpg" height=150> <img src="img/user/jeka_chex/5.jpg" height=150>
 
 ---
 
 Author: [@fisheyeu](https://t.me/fisheyeu).<br>
 [Video](https://drive.google.com/file/d/1IT4eMmWPZpmaZR_qsIRmNJ52hYkFB_0q/view?usp=share_link).
 
-<table>
-	<tr>
-		<td><img src="img/user/fisheyeu/1.jpg" height=300></td>
-		<td><img src="img/user/fisheyeu/2.jpg" height=300></td>
-	</tr>
-</table>
+<img src="img/user/fisheyeu/1.jpg" height=300> <img src="img/user/fisheyeu/2.jpg" height=300>
 
 ---
 
@@ -46,13 +33,7 @@ Custom propellers guard 3D-model: https://drive.google.com/file/d/1TKnzwvrZYzYuR
 Features: ESP32-C3 microcontroller is used.<br>
 [Video](https://drive.google.com/file/d/1B0NMcsk0fgwUgNr9XuLOdR2yYCuaj008/view?usp=share_link).
 
-<table>
-	<tr>
-		<td><img src="img/user/p_kabakov/1.jpg" width=150></td>
-		<td><img src="img/user/p_kabakov/2.jpg" width=150></td>
-		<td><img src="img/user/p_kabakov/3.jpg" width=150></td>
-	</tr>
-</table>
+<img src="img/user/p_kabakov/1.jpg" width=150> <img src="img/user/p_kabakov/2.jpg" width=150> <img src="img/user/p_kabakov/3.jpg" width=150>
 
 **Custom Wi-Fi RC control:**
 
@@ -65,12 +46,7 @@ See source and description (in Russian): https://github.com/pavelkabakov/flix/tr
 Author: [@yi_lun](https://t.me/yi_lun).<br>
 [Video](https://drive.google.com/file/d/1TkSuvHQ_0qQPFUpY5XjJzmhnpX_07cTg/view?usp=share_link).
 
-<table>
-	<tr>
-		<td><img src="img/user/yi_lun/1.jpg" width=300></td>
-		<td><img src="img/user/yi_lun/2.jpg" width=300></td>
-	</tr>
-</table>
+<img src="img/user/yi_lun/1.jpg" width=300> <img src="img/user/yi_lun/2.jpg" width=300>
 
 ---
 
@@ -81,12 +57,7 @@ Schematics: https://miro.com/app/board/uXjVN-dTjoo=/?moveToWidget=34587646121795
 
 <a href="https://www.youtube.com/watch?v=wi4w_hOmKcQ"><img width=500 src="img/user/peter_ukhov-2/video.jpg"></a>
 
-<table>
-	<tr>
-		<td><img src="img/user/peter_ukhov-2/1.jpg" width=300></td>
-		<td><img src="img/user/peter_ukhov-2/2.jpg" width=300></td>
-	</tr>
-</table>
+<img src="img/user/peter_ukhov-2/1.jpg" width=300> <img src="img/user/peter_ukhov-2/2.jpg" width=300>
 
 ---
 
@@ -95,15 +66,7 @@ Files for 3D printing of the custom frame: https://drive.google.com/file/d/1tkNm
 
 <a href="https://t.me/opensourcequadcopter/61"><img width=500 src="img/user/alexey_karakash/video.jpg"></a>
 
-<table>
-	<tr>
-		<td><img src="img/user/alexey_karakash/1.jpg" height=150></td>
-		<td><img src="img/user/alexey_karakash/2.jpg" height=150></td>
-		<td><img src="img/user/alexey_karakash/3.jpg" height=150></td>
-		<td><img src="img/user/alexey_karakash/4.jpg" height=150></td>
-		<td><img src="img/user/alexey_karakash/5.jpg" height=150></td>
-	</tr>
-</table>
+<img src="img/user/alexey_karakash/1.jpg" height=150> <img src="img/user/alexey_karakash/2.jpg" height=150> <img src="img/user/alexey_karakash/3.jpg" height=150> <img src="img/user/alexey_karakash/4.jpg" height=150> <img src="img/user/alexey_karakash/5.jpg" height=150>
 
 ---
 
@@ -111,13 +74,7 @@ Author: [@rudpa](https://t.me/rudpa).<br>
 
 <a href="https://t.me/opensourcequadcopter/46"><img width=500 src="img/user/rudpa/video.jpg"></a>
 
-<table>
-	<tr>
-		<td><img src="img/user/rudpa/1.jpg" height=150></td>
-		<td><img src="img/user/rudpa/2.jpg" height=150></td>
-		<td><img src="img/user/rudpa/3.jpg" height=150></td>
-	</tr>
-</table>
+<img src="img/user/rudpa/1.jpg" height=150> <img src="img/user/rudpa/2.jpg" height=150> <img src="img/user/rudpa/3.jpg" height=150>
 
 ---
 
@@ -126,10 +83,4 @@ Schematics: https://miro.com/app/board/uXjVN-dTjoo=/?moveToWidget=34587646123382
 
 <a href="https://t.me/opensourcequadcopter/24"><img width=500 src="img/user/peter_ukhov/video.jpg"></a>
 
-<table>
-	<tr>
-		<td><img src="img/user/peter_ukhov/1.jpg" height=150></td>
-		<td><img src="img/user/peter_ukhov/2.jpg" height=150></td>
-		<td><img src="img/user/peter_ukhov/3.jpg" height=150></td>
-	</tr>
-</table>
+<img src="img/user/peter_ukhov/1.jpg" height=150> <img src="img/user/peter_ukhov/2.jpg" height=150> <img src="img/user/peter_ukhov/3.jpg" height=150>
