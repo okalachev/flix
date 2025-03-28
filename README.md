@@ -42,7 +42,7 @@ Version 1 test flight: https://t.me/opensourcequadcopter/42.
 
 See the [user builds gallery](docs/user.md).
 
-<img src="docs/img/user/user.jpg" width=400>
+<a href="docs/user.md"><img src="docs/img/user/user.jpg" width=400></a>
 
 ## Simulation
 
