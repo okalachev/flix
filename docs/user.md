@@ -4,6 +4,17 @@ This page contains user-built drones based on the Flix project. Publish your pro
 
 ---
 
+Author: [@cryptokobans](https://t.me/cryptokobans).<br>
+Features: ESP32-C3 SuperMini board, INA226 power monitor, IRLZ44N MOSFETs, MPU-6500 IMU.
+
+**Flight video:**
+
+<a href="https://drive.google.com/file/d/1-4ciDsj8slTEaxxRl1-QAkx0cUDkb8iy/view?usp=sharing"><img height=300 src="img/user/cryptokobans/video.jpg"></a>
+
+<img src="img/user/cryptokobans/1.jpg" height=150> <img src="img/user/cryptokobans/2.jpg" height=150>
+
+---
+
 Author: [@jeka_chex](https://t.me/jeka_chex).<br>
 Features: custom frame, FPV camera, 3-blade 31 mm propellers.<br>
 Motor drivers: AON7410 MOSFET + capacitors.<br>
