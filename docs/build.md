@@ -160,7 +160,7 @@ Before flight you need to calibrate the accelerometer:
 
 1. Install [QGroundControl mobile app](https://docs.qgroundcontrol.com/master/en/qgc-user-guide/getting_started/download_and_install.html#android) on your smartphone.
 2. Power the drone using the battery.
-3. Connect your smartphone to the appeared `flix` Wi-Fi network.
+3. Connect your smartphone to the appeared `flix` Wi-Fi network (password: `flixwifi`).
 4. Open QGroundControl app. It should connect and begin showing the drone's telemetry automatically.
 5. Go to the settings and enable *Virtual Joystick*. *Auto-Center Throttle* setting **should be disabled**.
 6. Use the virtual joystick to fly the drone!
@@ -180,7 +180,7 @@ If your drone doesn't have RC receiver installed, you can use USB remote control
 1. Install [QGroundControl](https://docs.qgroundcontrol.com/master/en/qgc-user-guide/getting_started/download_and_install.html) app on your computer.
 2. Connect your USB remote control to the computer.
 3. Power up the drone.
-4. Connect your computer to the appeared `flix` Wi-Fi network.
+4. Connect your computer to the appeared `flix` Wi-Fi network (password: `flixwifi`).
 5. Launch QGroundControl app. It should connect and begin showing the drone's telemetry automatically.
 6. Go the the QGroundControl menu ⇒ *Vehicle Setup* ⇒ *Joystick*. Calibrate you USB remote control there.
 7. Use the USB remote control to fly the drone!
