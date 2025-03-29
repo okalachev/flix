@@ -108,6 +108,7 @@ void doCommand(String str, bool echo = false) {
 		print("acc: %f %f %f\n", acc.x, acc.y, acc.z);
 		printIMUCal();
 		print("rate: %f\n", loopRate);
+		print("landed: %d\n", landed);
 	} else if (command == "rc") {
 		print("Raw: throttle %d yaw %d pitch %d roll %d armed %d mode %d\n",
 			channels[throttleChannel], channels[yawChannel], channels[pitchChannel],
