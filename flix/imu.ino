@@ -5,6 +5,7 @@
 
 #include <SPI.h>
 #include <MPU9250.h>
+#include "lpf.h"
 #include "util.h"
 
 MPU9250 IMU(SPI);
@@ -17,8 +18,6 @@ void setupIMU() {
 	print("Setup IMU\n");
 	IMU.begin();
 	configureIMU();
-	delay(500); // wait a bit before calibrating
-	calibrateGyro();
 }
 
 void configureIMU() {
@@ -32,6 +31,7 @@ void readIMU() {
 	IMU.waitForData();
 	IMU.getGyro(gyro.x, gyro.y, gyro.z);
 	IMU.getAccel(acc.x, acc.y, acc.z);
+	calibrateGyroOnce();
 	// apply scale and bias
 	acc = (acc - accBias) / accScale;
 	gyro = gyro - gyroBias;
@@ -47,21 +47,13 @@ void rotateIMU(Vector& data) {
 	// Axes orientation for various boards: https://github.com/okalachev/flixperiph#imu-axes-orientation
 }
 
-void calibrateGyro() {
-	const int samples = 1000;
-	print("Calibrating gyro, stand still\n");
-	IMU.setGyroRange(IMU.GYRO_RANGE_250DPS); // the most sensitive mode
+void calibrateGyroOnce() {
+	static float landedTime = 0;
+	landedTime = landed ? landedTime + dt : 0;
+	if (landedTime < 2) return; // calibrate only if definitely stationary
 
-	gyroBias = Vector(0, 0, 0);
-	for (int i = 0; i < samples; i++) {
-		IMU.waitForData();
-		IMU.getGyro(gyro.x, gyro.y, gyro.z);
-		gyroBias = gyroBias + gyro;
-	}
-	gyroBias = gyroBias / samples;
-
-	printIMUCal();
-	configureIMU();
+	static LowPassFilter<Vector> gyroCalibrationFilter(0.001);
+	gyroBias = gyroCalibrationFilter.update(gyro);
 }
 
 void calibrateAccel() {
