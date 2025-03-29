@@ -34,7 +34,6 @@ const char* motd =
 "mot - show motor output\n"
 "log - dump in-RAM log\n"
 "cr - calibrate RC\n"
-"cg - calibrate gyro\n"
 "ca - calibrate accel\n"
 "mfr, mfl, mrr, mrl - test motor (remove props)\n"
 "reset - reset drone's state\n"
@@ -124,8 +123,6 @@ void doCommand(String str, bool echo = false) {
 		dumpLog();
 	} else if (command == "cr") {
 		calibrateRC();
-	} else if (command == "cg") {
-		// calibrateGyro();
 	} else if (command == "ca") {
 		calibrateAccel();
 	} else if (command == "mfr") {
