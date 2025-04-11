@@ -109,7 +109,7 @@ The latest version of Ubuntu supported by Gazebo 11 simulator is 20.04. If you h
 3. Install ESP32 core, version 3.1.0 (version 2.x is not supported). See the [official Espressif's instructions](https://docs.espressif.com/projects/arduino-esp32/en/latest/installing.html#installing-using-arduino-ide) on installing ESP32 Core in Arduino IDE.
 4. Install the following libraries using [Library Manager](https://docs.arduino.cc/software/ide-v2/tutorials/ide-v2-installing-a-library):
    * `FlixPeriph`, the latest version.
-   * `MAVLink`, version 2.0.12.
+   * `MAVLink`, version 2.0.16.
 5. Clone the project using git or [download the source code as a ZIP archive](https://codeload.github.com/okalachev/flix/zip/refs/heads/master).
 6. Open the downloaded Arduino sketch `flix/flix.ino` in Arduino IDE.
 7. Connect your ESP32 board to the computer and choose correct board type in Arduino IDE (*WEMOS D1 MINI ESP32* for ESP32 Mini) and the port.
