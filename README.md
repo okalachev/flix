@@ -32,13 +32,13 @@
 
 ## It actually flies
 
-See detailed demo video (for version 0): https://youtu.be/8GzzIQ3C6DQ.
+See detailed demo video: https://youtu.be/hT46CZ1CgC4.
+
+<a href="https://youtu.be/hT46CZ1CgC4"><img width=500 src="https://i3.ytimg.com/vi/hT46CZ1CgC4/maxresdefault.jpg"></a>
+
+Version 0 demo video: https://youtu.be/8GzzIQ3C6DQ.
 
 <a href="https://youtu.be/8GzzIQ3C6DQ"><img width=500 src="https://i3.ytimg.com/vi/8GzzIQ3C6DQ/maxresdefault.jpg"></a>
-
-Version 1 test flight: https://t.me/opensourcequadcopter/42.
-
-<a href="https://t.me/opensourcequadcopter/42"><img width=500 src="docs/img/flight-video.jpg"></a>
 
 See the [user builds gallery](docs/user.md).
 
