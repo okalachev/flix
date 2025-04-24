@@ -45,7 +45,7 @@ jobs:
       run: python3 tools/check_c_cpp_properties.py
 
   build_simulator:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
     - name: Install Arduino CLI
       uses: arduino/setup-arduino-cli@v1.1.1
