@@ -46,7 +46,7 @@ jobs:
       run: python3 tools/check_c_cpp_properties.py
 
   build_simulator:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
     - name: Install Arduino CLI
       uses: arduino/setup-arduino-cli@v1.1.1
@@ -57,6 +57,28 @@ jobs:
       run: sudo apt-get install libsdl2-dev
     - name: Build simulator
       run: make build_simulator
+    - uses: actions/upload-artifact@v4
+      with:
+        name: gazebo-plugin-binary
+        path: gazebo/build/*.so
+        retention-days: 1
+
+  build_simulator_docker:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Set up Docker
+      uses: docker/setup-buildx-action@v2
+    - name: Pull Docker image
+      run: docker pull ubuntu:20.04
+    - name: Run build in Docker
+      run: |
+        docker run --rm -v ${{ github.workspace }}:/workspace -w /workspace ubuntu:20.04 /bin/bash -c "
+          apt-get update &&
+          apt-get install -y curl sudo build-essential libsdl2-dev &&
+          curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | BINDIR=/usr/local/bin sh &&
+          curl -sSL http://get.gazebosim.org | sh &&
+          make build_simulator
+        "
     - uses: actions/upload-artifact@v4
       with:
         name: gazebo-plugin-binary
