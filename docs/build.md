@@ -9,9 +9,9 @@ cd flix
 
 ## Simulation
 
-### Ubuntu 20.04
+### Ubuntu
 
-The latest version of Ubuntu supported by Gazebo 11 simulator is 20.04. If you have a newer version, consider using a virtual machine.
+The latest version of Ubuntu supported by Gazebo 11 simulator is 22.04. If you have a newer version, consider using a virtual machine.
 
 1. Install Arduino CLI:
 
