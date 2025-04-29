@@ -15,18 +15,15 @@
 
 ## Features
 
-* Simple and clean Arduino based source code.
-* Acro and Stabilized flight using remote control.
-* Precise simulation using Gazebo.
-* [In-RAM logging](docs/log.md).
-* Command line interface through USB port.
-* Wi-Fi support.
-* MAVLink support.
-* Control using mobile phone (with QGroundControl app).
-* Completely 3D-printed frame.
-* Textbook for students on writing a flight controller ([in development](https://quadcopter.dev)).
-* *Position control and autonomous flights using external camera¹*.
-* [Building and running instructions](docs/build.md).
+* Dedicated for education and research.
+* Made from general-purpose components.
+* Simple and clean source code in Arduino.
+* Control using remote control or smartphone.
+* Precise simulation with Gazebo.
+* Wi-Fi and MAVLink support.
+* Wireless command line interface and analyzing.
+* Textbook on flight control theory and practice ([in development](https://quadcopter.dev)).
+* *Position control (using external camera) and autonomous flights¹*.
 
 *¹ — planned.*
 
@@ -42,7 +39,7 @@ Version 0 demo video: https://youtu.be/8GzzIQ3C6DQ.
 
 See the [user builds gallery](docs/user.md).
 
-<a href="docs/user.md"><img src="docs/img/user/user.jpg" width=400></a>
+<a href="docs/user.md"><img src="docs/img/user/user.jpg" width=500></a>
 
 ## Simulation
 
@@ -50,14 +47,22 @@ The simulator is implemented using Gazebo and runs the original Arduino code:
 
 <img src="docs/img/simulator1.png" width=500 alt="Flix simulator">
 
-See [instructions on running the simulation](docs/build.md).
+## Articles
 
-## Components (version 1)
+* [Assembly instructions](docs/assembly.md).
+* [Building and running the code](docs/build.md).
+* [Troubleshooting](docs/troubleshooting.md).
+* [Firmware architecture overview](docs/firmware.md).
+* [Log analysis](docs/log.md).
+* [User builds gallery](docs/user.md).
+
+## Components
 
 |Type|Part|Image|Quantity|
 |-|-|:-:|:-:|
 |Microcontroller board|ESP32 Mini|<img src="docs/img/esp32.jpg" width=100>|1|
 |IMU (and barometer²) board|GY‑91, MPU-9265 (or other MPU‑9250/MPU‑6500 board), ICM‑20948³|<img src="docs/img/gy-91.jpg" width=90 align=center><img src="docs/img/icm-20948.jpg" width=100>|1|
+|<span style="background:yellow">(Recommended) Buck-boost converter</span>|To be determined, output 5V or 3.3V, see [user-contributed schematics](https://miro.com/app/board/uXjVN-dTjoo=/?moveToWidget=3458764612179508274&cot=14)|<img src="docs/img/buck-boost.jpg" width=100>|1|
 |Motor|8520 3.7V brushed motor (shaft 0.8mm).<br>Motor with exact 3.7V voltage is needed, not ranged working voltage (3.7V — 6V).|<img src="docs/img/motor.jpeg" width=100>|4|
 |Propeller|Hubsan 55 mm|<img src="docs/img/prop.jpg" width=100>|4|
 |MOSFET (transistor)|100N03A or [analog](https://t.me/opensourcequadcopter/33)|<img src="docs/img/100n03a.jpg" width=100>|4|
@@ -90,7 +95,7 @@ Tools required for assembly:
 
 Feel free to modify the design and or code, and create your own improved versions of Flix! Send your results to the [official Telegram chat](https://t.me/opensourcequadcopterchat), or directly to the author ([E-mail](mailto:okalachev@gmail.com), [Telegram](https://t.me/okalachev)).
 
-## Schematics (version 1)
+## Schematics
 
 ### Simplified connection diagram
 

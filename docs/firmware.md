@@ -1,5 +1,7 @@
 # Firmware overview
 
+The firmware is a regular Arduino sketch, and follows the classic Arduino one-threaded design. The initialization code is in the `setup()` function, and the main loop is in the `loop()` function. The sketch includes multiple files, each responsible for a specific part of the system.
+
 ## Dataflow
 
 <img src="img/dataflow.svg" width=800 alt="Firmware dataflow diagram">
