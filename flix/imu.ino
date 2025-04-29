@@ -96,6 +96,7 @@ void calibrateAccel() {
 	calibrateAccelOnce();
 
 	printIMUCal();
+	Serial.print("✓ Calibration done!\n");
 	configureIMU();
 }
 
@@ -121,9 +122,6 @@ void calibrateAccelOnce() {
 	if (acc.x < accMin.x) accMin.x = acc.x;
 	if (acc.y < accMin.y) accMin.y = acc.y;
 	if (acc.z < accMin.z) accMin.z = acc.z;
-	Serial.printf("acc %f %f %f\n", acc.x, acc.y, acc.z);
-	Serial.printf("max %f %f %f\n", accMax.x, accMax.y, accMax.z);
-	Serial.printf("min %f %f %f\n", accMin.x, accMin.y, accMin.z);
 	// Compute scale and bias
 	accScale = (accMax - accMin) / 2 / ONE_G;
 	accBias = (accMax + accMin) / 2;
