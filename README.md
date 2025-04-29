@@ -48,7 +48,7 @@ See the [user builds gallery](docs/user.md).
 
 The simulator is implemented using Gazebo and runs the original Arduino code:
 
-<img src="docs/img/simulator.png" width=500 alt="Flix simulator">
+<img src="docs/img/simulator1.png" width=500 alt="Flix simulator">
 
 See [instructions on running the simulation](docs/build.md).
 
