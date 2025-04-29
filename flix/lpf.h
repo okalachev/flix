@@ -22,7 +22,8 @@ public:
 			output = input;
 			initialized = true;
 		}
-		return output = output * (1 - alpha) + input * alpha;
+
+		return output += alpha * (input - output);
 	}
 
 	void setCutOffFrequency(float cutOffFreq, float dt) {
