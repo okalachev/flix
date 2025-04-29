@@ -28,6 +28,10 @@ public:
 		z /= n;
 	}
 
+	Vector operator + (const float b) const {
+		return Vector(x + b, y + b, z + b);
+	}
+
 	Vector operator * (const float b) const {
 		return Vector(x * b, y * b, z * b);
 	}
@@ -42,6 +46,14 @@ public:
 
 	Vector operator - (const Vector& b) const {
 		return Vector(x - b.x, y - b.y, z - b.z);
+	}
+
+	Vector& operator += (const Vector& b) {
+		return *this = *this + b;
+	}
+
+	Vector& operator -= (const Vector& b) {
+		return *this = *this - b;
 	}
 
 	// Element-wise multiplication
@@ -96,3 +108,6 @@ public:
 			p.print(z, 15);
 	}
 };
+
+Vector operator * (const float a, const Vector& b) { return b * a; }
+Vector operator + (const float a, const Vector& b) { return b + a; }
