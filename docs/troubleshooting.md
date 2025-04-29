@@ -16,6 +16,7 @@ Do the following:
 * **Make sure correct IMU model is chosen**. If using ICM-20948 board, change `MPU9250` to `ICM20948` everywhere in the `imu.ino` file.
 * **Check if the CLI is working**. Perform `help` command in Serial Monitor. You should see the list of available commands. You can also access the CLI using QGroundControl (*Vehicle Setup* ⇒ *Analyze Tools* ⇒ *MAVLink Console*).
 * **Configure QGroundControl correctly before connecting to the drone** if you use it to control the drone. Go to the settings and enable *Virtual Joystick*. *Auto-Center Throttle* setting **should be disabled**.
+* **If QGroundControl doesn't connect**, you might need to disable the firewall and/or VPN on your computer.
 * **Check the IMU is working**. Perform `imu` command and check its output:
   * The `status` field should be `OK`.
   * The `rate` field should be about 1000 (Hz).
