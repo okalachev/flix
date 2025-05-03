@@ -10,7 +10,6 @@
 #define SYSTEM_ID 1
 #define PERIOD_SLOW 1.0
 #define PERIOD_FAST 0.1
-#define MAVLINK_CONTROL_SCALE 0.7f
 #define MAVLINK_CONTROL_YAW_DEAD_ZONE 0.1f
 
 float mavlinkControlScale = 0.7;
