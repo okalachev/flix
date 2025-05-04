@@ -13,6 +13,7 @@
 #define MAVLINK_CONTROL_YAW_DEAD_ZONE 0.1f
 
 float mavlinkControlScale = 0.7;
+String mavlinkPrintBuffer;
 
 extern double controlsTime;
 extern int rollChannel, pitchChannel, throttleChannel, yawChannel, armedChannel, modeChannel;
@@ -23,6 +24,8 @@ void processMavlink() {
 }
 
 void sendMavlink() {
+	sendMavlinkPrint();
+
 	static double lastSlow = 0;
 	static double lastFast = 0;
 
@@ -197,7 +200,12 @@ void handleMavlink(const void *_msg) {
 
 // Send shell output to GCS
 void mavlinkPrint(const char* str) {
-	// Send data in chunks
+	mavlinkPrintBuffer += str;
+}
+
+void sendMavlinkPrint() {
+	// Send mavlink print data in chunks
+	const char *str = mavlinkPrintBuffer.c_str();
 	for (int i = 0; i < strlen(str); i += MAVLINK_MSG_SERIAL_CONTROL_FIELD_DATA_LEN) {
 		char data[MAVLINK_MSG_SERIAL_CONTROL_FIELD_DATA_LEN + 1];
 		strlcpy(data, str + i, sizeof(data));
@@ -206,6 +214,7 @@ void mavlinkPrint(const char* str) {
 			SERIAL_CONTROL_DEV_SHELL, 0, 0, 0, strlen(data), (uint8_t *)data, 0, 0);
 		sendMessage(&msg);
 	}
+	mavlinkPrintBuffer.clear();
 }
 
 // Convert Forward-Left-Up to Forward-Right-Down quaternion
