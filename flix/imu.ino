@@ -60,22 +60,22 @@ void calibrateAccel() {
 	print("Calibrating accelerometer\n");
 	IMU.setAccelRange(IMU.ACCEL_RANGE_2G); // the most sensitive mode
 
-	print("Place level [8 sec]\n");
+	print("1/6 Place level [8 sec]\n");
 	pause(8);
 	calibrateAccelOnce();
-	print("Place nose up [8 sec]\n");
+	print("2/6 Place nose up [8 sec]\n");
 	pause(8);
 	calibrateAccelOnce();
-	print("Place nose down [8 sec]\n");
+	print("3/6 Place nose down [8 sec]\n");
 	pause(8);
 	calibrateAccelOnce();
-	print("Place on right side [8 sec]\n");
+	print("4/6 Place on right side [8 sec]\n");
 	pause(8);
 	calibrateAccelOnce();
-	print("Place on left side [8 sec]\n");
+	print("5/6 Place on left side [8 sec]\n");
 	pause(8);
 	calibrateAccelOnce();
-	print("Place upside down [8 sec]\n");
+	print("6/6 Place upside down [8 sec]\n");
 	pause(8);
 	calibrateAccelOnce();
 
