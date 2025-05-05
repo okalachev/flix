@@ -36,6 +36,7 @@ const char* motd =
 "cr - calibrate RC\n"
 "ca - calibrate accel\n"
 "mfr, mfl, mrr, mrl - test motor (remove props)\n"
+"sys - show system information\n"
 "reset - reset drone's state\n"
 "reboot - reboot the drone\n";
 
@@ -134,6 +135,24 @@ void doCommand(String str, bool echo = false) {
 		testMotor(MOTOR_REAR_RIGHT);
 	} else if (command == "mrl") {
 		testMotor(MOTOR_REAR_LEFT);
+	} else if (command == "sys") {
+#ifdef ESP32
+		print("Chip: %s\n", ESP.getChipModel());
+		print("Free heap: %d\n", ESP.getFreeHeap());
+		// Print tasks table
+		print("Num  Task                Stack  Prio  Core  CPU%%\n");
+		int taskCount = uxTaskGetNumberOfTasks();
+		TaskStatus_t *systemState = new TaskStatus_t[taskCount];
+		uint32_t totalRunTime;
+		uxTaskGetSystemState(systemState, taskCount, &totalRunTime);
+		for (int i = 0; i < taskCount; i++) {
+			int core = systemState[i].xCoreID == tskNO_AFFINITY ? -1 : systemState[i].xCoreID;
+			int cpuPercentage = systemState[i].ulRunTimeCounter / (totalRunTime / 100);
+			print("%-5d%-20s%-7d%-6d%-6d%d\n",systemState[i].xTaskNumber, systemState[i].pcTaskName,
+				systemState[i].usStackHighWaterMark, systemState[i].uxCurrentPriority, core, cpuPercentage);
+		}
+		delete[] systemState;
+#endif
 	} else if (command == "reset") {
 		attitude = Quaternion();
 	} else if (command == "reboot") {
