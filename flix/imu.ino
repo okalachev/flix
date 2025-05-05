@@ -25,6 +25,7 @@ void configureIMU() {
 	IMU.setGyroRange(IMU.GYRO_RANGE_2000DPS);
 	IMU.setDLPF(IMU.DLPF_MAX);
 	IMU.setRate(IMU.RATE_1KHZ_APPROX);
+	IMU.setupInterrupt();
 }
 
 void readIMU() {
