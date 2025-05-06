@@ -11,7 +11,6 @@
 
 #define WIFI_SSID "flix"
 #define WIFI_PASSWORD "flixwifi"
-#define WIFI_UDP_IP "255.255.255.255"
 #define WIFI_UDP_PORT 14550
 
 WiFiUDP udp;
@@ -23,7 +22,7 @@ void setupWiFi() {
 }
 
 void sendWiFi(const uint8_t *buf, int len) {
-	udp.beginPacket(WIFI_UDP_IP, WIFI_UDP_PORT);
+	udp.beginPacket(WiFi.softAPBroadcastIP(), WIFI_UDP_PORT);
 	udp.write(buf, len);
 	udp.endPacket();
 }
