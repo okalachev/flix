@@ -5,18 +5,18 @@
 			"includePath": [
 				"${workspaceFolder}/flix",
 				"${workspaceFolder}/gazebo",
-				"~/.arduino15/packages/esp32/hardware/esp32/3.1.0/cores/esp32",
-				"~/.arduino15/packages/esp32/hardware/esp32/3.1.0/libraries/**",
-				"~/.arduino15/packages/esp32/hardware/esp32/3.1.0/variants/d1_mini32",
-				"~/.arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-083aad99-v2/esp32/**",
-				"~/.arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-083aad99-v2/esp32/dio_qspi/include",
+				"~/.arduino15/packages/esp32/hardware/esp32/3.2.0/cores/esp32",
+				"~/.arduino15/packages/esp32/hardware/esp32/3.2.0/libraries/**",
+				"~/.arduino15/packages/esp32/hardware/esp32/3.2.0/variants/d1_mini32",
+				"~/.arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.4-2f7dcd86-v1/esp32/**",
+				"~/.arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.4-2f7dcd86-v1/esp32/dio_qspi/include",
 				"~/Arduino/libraries/**",
 				"/usr/include/**"
 			],
 			"forcedInclude": [
 				"${workspaceFolder}/.vscode/intellisense.h",
-				"~/.arduino15/packages/esp32/hardware/esp32/3.1.0/cores/esp32/Arduino.h",
-				"~/.arduino15/packages/esp32/hardware/esp32/3.1.0/variants/d1_mini32/pins_arduino.h",
+				"~/.arduino15/packages/esp32/hardware/esp32/3.2.0/cores/esp32/Arduino.h",
+				"~/.arduino15/packages/esp32/hardware/esp32/3.2.0/variants/d1_mini32/pins_arduino.h",
 				"${workspaceFolder}/flix/cli.ino",
 				"${workspaceFolder}/flix/control.ino",
 				"${workspaceFolder}/flix/estimate.ino",
@@ -31,7 +31,7 @@
 				"${workspaceFolder}/flix/wifi.ino",
 				"${workspaceFolder}/flix/parameters.ino"
 			],
-			"compilerPath": "~/.arduino15/packages/esp32/tools/esp-x32/2405/bin/xtensa-esp32-elf-g++",
+			"compilerPath": "~/.arduino15/packages/esp32/tools/esp-x32/2411/bin/xtensa-esp32-elf-g++",
 			"cStandard": "c11",
 			"cppStandard": "c++17",
 			"defines": [
@@ -51,19 +51,19 @@
 			"name": "Mac",
 			"includePath": [
 				"${workspaceFolder}/flix",
-				"${workspaceFolder}/gazebo",
-				"~/Library/Arduino15/packages/esp32/hardware/esp32/3.1.0/cores/esp32",
-				"~/Library/Arduino15/packages/esp32/hardware/esp32/3.1.0/libraries/**",
-				"~/Library/Arduino15/packages/esp32/hardware/esp32/3.1.0/variants/d1_mini32",
-				"~/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-083aad99-v2/esp32/include/**",
-				"~/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-083aad99-v2/esp32/dio_qspi/include",
+				// "${workspaceFolder}/gazebo",
+				"~/Library/Arduino15/packages/esp32/hardware/esp32/3.2.0/cores/esp32",
+				"~/Library/Arduino15/packages/esp32/hardware/esp32/3.2.0/libraries/**",
+				"~/Library/Arduino15/packages/esp32/hardware/esp32/3.2.0/variants/d1_mini32",
+				"~/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.4-2f7dcd86-v1/esp32/include/**",
+				"~/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.4-2f7dcd86-v1/esp32/dio_qspi/include",
 				"~/Documents/Arduino/libraries/**",
 				"/opt/homebrew/include/**"
 			],
 			"forcedInclude": [
 				"${workspaceFolder}/.vscode/intellisense.h",
-				"~/Library/Arduino15/packages/esp32/hardware/esp32/3.1.0/cores/esp32/Arduino.h",
-				"~/Library/Arduino15/packages/esp32/hardware/esp32/3.1.0/variants/d1_mini32/pins_arduino.h",
+				"~/Library/Arduino15/packages/esp32/hardware/esp32/3.2.0/cores/esp32/Arduino.h",
+				"~/Library/Arduino15/packages/esp32/hardware/esp32/3.2.0/variants/d1_mini32/pins_arduino.h",
 				"${workspaceFolder}/flix/flix.ino",
 				"${workspaceFolder}/flix/cli.ino",
 				"${workspaceFolder}/flix/control.ino",
@@ -78,7 +78,7 @@
 				"${workspaceFolder}/flix/wifi.ino",
 				"${workspaceFolder}/flix/parameters.ino"
 			],
-			"compilerPath": "~/Library/Arduino15/packages/esp32/tools/esp-x32/2405/bin/xtensa-esp32-elf-g++",
+			"compilerPath": "~/Library/Arduino15/packages/esp32/tools/esp-x32/2411/bin/xtensa-esp32-elf-g++",
 			"cStandard": "c11",
 			"cppStandard": "c++17",
 			"defines": [
@@ -100,17 +100,17 @@
 			"includePath": [
 				"${workspaceFolder}/flix",
 				"${workspaceFolder}/gazebo",
-				"~/AppData/Local/Arduino15/packages/esp32/hardware/esp32/3.1.0/cores/esp32",
-				"~/AppData/Local/Arduino15/packages/esp32/hardware/esp32/3.1.0/libraries/**",
-				"~/AppData/Local/Arduino15/packages/esp32/hardware/esp32/3.1.0/variants/d1_mini32",
-				"~/AppData/Local/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-083aad99-v2/esp32/**",
-				"~/AppData/Local/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-083aad99-v2/esp32/dio_qspi/include",
+				"~/AppData/Local/Arduino15/packages/esp32/hardware/esp32/3.2.0/cores/esp32",
+				"~/AppData/Local/Arduino15/packages/esp32/hardware/esp32/3.2.0/libraries/**",
+				"~/AppData/Local/Arduino15/packages/esp32/hardware/esp32/3.2.0/variants/d1_mini32",
+				"~/AppData/Local/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.4-2f7dcd86-v1/esp32/**",
+				"~/AppData/Local/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.4-2f7dcd86-v1/esp32/dio_qspi/include",
 				"~/Documents/Arduino/libraries/**"
 			],
 			"forcedInclude": [
 				"${workspaceFolder}/.vscode/intellisense.h",
-				"~/AppData/Local/Arduino15/packages/esp32/hardware/esp32/3.1.0/cores/esp32/Arduino.h",
-				"~/AppData/Local/Arduino15/packages/esp32/hardware/esp32/3.1.0/variants/d1_mini32/pins_arduino.h",
+				"~/AppData/Local/Arduino15/packages/esp32/hardware/esp32/3.2.0/cores/esp32/Arduino.h",
+				"~/AppData/Local/Arduino15/packages/esp32/hardware/esp32/3.2.0/variants/d1_mini32/pins_arduino.h",
 				"${workspaceFolder}/flix/cli.ino",
 				"${workspaceFolder}/flix/control.ino",
 				"${workspaceFolder}/flix/estimate.ino",
@@ -125,7 +125,7 @@
 				"${workspaceFolder}/flix/wifi.ino",
 				"${workspaceFolder}/flix/parameters.ino"
 			],
-			"compilerPath": "~/AppData/Local/Arduino15/packages/esp32/tools/esp-x32/2405/bin/xtensa-esp32-elf-g++.exe",
+			"compilerPath": "~/AppData/Local/Arduino15/packages/esp32/tools/esp-x32/2411/bin/xtensa-esp32-elf-g++.exe",
 			"cStandard": "c11",
 			"cppStandard": "c++17",
 			"defines": [
