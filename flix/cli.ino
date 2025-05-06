@@ -36,7 +36,7 @@ const char* motd =
 "cr - calibrate RC\n"
 "ca - calibrate accel\n"
 "mfr, mfl, mrr, mrl - test motor (remove props)\n"
-"sys - show system information\n"
+"sys - show system info\n"
 "reset - reset drone's state\n"
 "reboot - reboot the drone\n";
 
@@ -96,7 +96,7 @@ void doCommand(String str, bool echo = false) {
 		resetParameters();
 	} else if (command == "time") {
 		print("Time: %f\n", t);
-		print("Loop rate: %f\n", loopRate);
+		print("Loop rate: %.0f\n", loopRate);
 		print("dt: %f\n", dt);
 	} else if (command == "ps") {
 		Vector a = attitude.toEulerZYX();
@@ -108,7 +108,7 @@ void doCommand(String str, bool echo = false) {
 		print("gyro: %f %f %f\n", rates.x, rates.y, rates.z);
 		print("acc: %f %f %f\n", acc.x, acc.y, acc.z);
 		printIMUCal();
-		print("rate: %f\n", loopRate);
+		print("rate: %.0f\n", loopRate);
 		print("landed: %d\n", landed);
 	} else if (command == "rc") {
 		print("Raw: throttle %d yaw %d pitch %d roll %d armed %d mode %d\n",
@@ -138,6 +138,7 @@ void doCommand(String str, bool echo = false) {
 	} else if (command == "sys") {
 #ifdef ESP32
 		print("Chip: %s\n", ESP.getChipModel());
+		print("Temperature: %.1f °C\n", temperatureRead());
 		print("Free heap: %d\n", ESP.getFreeHeap());
 		// Print tasks table
 		print("Num  Task                Stack  Prio  Core  CPU%%\n");
