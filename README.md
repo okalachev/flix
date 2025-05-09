@@ -72,7 +72,7 @@ The simulator is implemented using Gazebo and runs the original Arduino code:
 |Li-Po Battery charger|Any|<img src="docs/img/charger.jpg" width=100>|1|
 |Screws for IMU board mounting|M3x5|<img src="docs/img/screw-m3.jpg" width=100>|2|
 |Screws for frame assembly|M1.4x5|<img src="docs/img/screw-m1.4.jpg" height=30 align=center>|4|
-|Frame bottom part|3D printed⁴:<br>[`flix-frame-1.1.stl`](docs/assets/flix-frame-1.1.stl) [`flix-frame-1.1.step`](docs/assets/flix-frame-1.1.step)|<img src="docs/img/frame1.jpg" width=100>|1|
+|Frame main part|3D printed⁴:<br>[`flix-frame-1.1.stl`](docs/assets/flix-frame-1.1.stl) [`flix-frame-1.1.step`](docs/assets/flix-frame-1.1.step)<br>Recommended settings: layer 0.2 mm, line 0.4 mm, infill 100%.|<img src="docs/img/frame1.jpg" width=100>|1|
 |Frame top part|3D printed:<br>[`esp32-holder.stl`](docs/assets/esp32-holder.stl) [`esp32-holder.step`](docs/assets/esp32-holder.step)|<img src="docs/img/esp32-holder.jpg" width=100>|1|
 |Washer for IMU board mounting|3D printed:<br>[`washer-m3.stl`](docs/assets/washer-m3.stl) [`washer-m3.step`](docs/assets/washer-m3.step)|<img src="docs/img/washer-m3.jpg" width=100>|2|
 |*RC transmitter (optional)*|*KINGKONG TINY X8 (warning: lacks USB support) or other⁵*|<img src="docs/img/tx.jpg" width=100>|1|
