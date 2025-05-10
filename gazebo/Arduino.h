@@ -52,6 +52,10 @@ public:
 		this->erase(0, this->find_first_not_of(" \t\n\r"));
 		this->erase(this->find_last_not_of(" \t\n\r") + 1);
 	}
+	void toLowerCase() {
+		std::transform(this->begin(), this->end(), this->begin(),
+			[](unsigned char c) { return std::tolower(c); });
+	}
 };
 
 class Print;

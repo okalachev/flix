@@ -78,6 +78,8 @@ void doCommand(String str, bool echo = false) {
 		print("> %s\n", str.c_str());
 	}
 
+	command.toLowerCase();
+
 	// execute command
 	if (command == "help" || command == "motd") {
 		print("%s\n", motd);
