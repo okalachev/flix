@@ -19,11 +19,12 @@ void setupWiFi() {
 	print("Setup Wi-Fi\n");
 	WiFi.softAP(WIFI_SSID, WIFI_PASSWORD);
 	udp.begin(WIFI_UDP_PORT);
+	udp.beginPacket("255.255.255.255", WIFI_UDP_PORT); // broadcast packets until connected
 }
 
 void sendWiFi(const uint8_t *buf, int len) {
 	if (WiFi.softAPIP() == IPAddress(0, 0, 0, 0) && WiFi.status() != WL_CONNECTED) return;
-	udp.beginPacket(WiFi.softAPBroadcastIP(), WIFI_UDP_PORT);
+	udp.beginPacket();
 	udp.write(buf, len);
 	udp.endPacket();
 }
