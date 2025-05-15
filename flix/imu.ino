@@ -11,8 +11,8 @@
 MPU9250 IMU(SPI);
 
 Vector accBias;
-Vector gyroBias;
 Vector accScale(1, 1, 1);
+Vector gyroBias;
 
 void setupIMU() {
 	print("Setup IMU\n");
