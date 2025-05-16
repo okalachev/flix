@@ -36,7 +36,7 @@ void controlTorque();
 const char* getModeName();
 void sendMotors();
 bool motorsActive();
-void testMotor(uint8_t n);
+void testMotor(int n);
 void print(const char* format, ...);
 void pause(float duration);
 void doCommand(String str, bool echo);
