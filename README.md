@@ -155,10 +155,6 @@ In case of using other IMU orientation, modify the `rotateIMU` function in the `
 
 See [FlixPeriph documentation](https://github.com/okalachev/flixperiph?tab=readme-ov-file#imu-axes-orientation) to learn axis orientation of other IMU boards.
 
-## Version 0
-
-See the information on the obsolete version 0 in the [corresponding article](docs/version0.md).
-
 ## Materials
 
 Subscribe to the Telegram channel on developing the drone and the flight controller (in Russian): https://t.me/opensourcequadcopter.
@@ -166,6 +162,8 @@ Subscribe to the Telegram channel on developing the drone and the flight control
 Join the official Telegram chat: https://t.me/opensourcequadcopterchat.
 
 Detailed article on Habr.com about the development of the drone (in Russian): https://habr.com/ru/articles/814127/.
+
+See the information on the obsolete version 0 in the [corresponding article](docs/version0.md).
 
 ## Disclaimer
 
