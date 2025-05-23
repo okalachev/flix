@@ -166,3 +166,9 @@ Subscribe to the Telegram channel on developing the drone and the flight control
 Join the official Telegram chat: https://t.me/opensourcequadcopterchat.
 
 Detailed article on Habr.com about the development of the drone (in Russian): https://habr.com/ru/articles/814127/.
+
+## Disclaimer
+
+This is a fun DIY project, and I hope you find it interesting and useful. However, it's not easy to assemble and set up, and it's provided "as is" without any warranties. There’s no guarantee that it will work perfectly — or even work at all.
+
+⚠️ The author is not responsible for any damage, injury, or loss resulting from the use of this project. Use at your own risk!
