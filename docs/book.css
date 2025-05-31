@@ -53,6 +53,12 @@ footer a.telegram, footer a.github {
 	border: 1px solid #c9c9c9;
 }
 
+@media (max-width: 600px) {
+	.MathJax_Display {
+		overflow-x: auto;
+	}
+}
+
 .firmware {
 	position: relative;
 	margin: 20px 0;

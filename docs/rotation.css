@@ -1,0 +1,29 @@
+.diagram svg {
+	display: block;
+	width: 100%;
+	height: 400px;
+}
+.diagram .label {
+	font-family: Arial, sans-serif;
+	font-size: 20px;
+	pointer-events: none;
+	color: black;
+	opacity: 0.8;
+	user-select: none;
+}
+.diagram label {
+	display: block;
+}
+@media (min-width: 800px) {
+	.diagram b {
+		width: 200px;
+		display: inline-block;
+	}
+}
+.diagram p.quaternion {
+	overflow-x: auto;
+}
+.diagram input {
+	text-align: center;
+	width: 100%;
+}

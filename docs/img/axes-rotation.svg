@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 533 646.91">
+  <defs>
+    <style>
+      .a {
+        font-size: 50px;
+        font-family: Tahoma;
+      }
+
+      .b {
+        opacity: 0.8;
+      }
+
+      .c, .e, .g, .i {
+        fill: none;
+      }
+
+      .c {
+        stroke: #0076ba;
+      }
+
+      .c, .e, .g {
+        stroke-linejoin: bevel;
+        stroke-width: 13px;
+      }
+
+      .d {
+        fill: #0076ba;
+      }
+
+      .e {
+        stroke: #d80100;
+      }
+
+      .f {
+        fill: #d80100;
+      }
+
+      .g {
+        stroke: #57ed00;
+      }
+
+      .h {
+        fill: #57ed00;
+      }
+
+      .i {
+        stroke: #000;
+        stroke-miterlimit: 10;
+        stroke-width: 10px;
+      }
+    </style>
+  </defs>
+  <g>
+    <text class="a" transform="translate(58.62 636.12)">x</text>
+    <text class="a" transform="translate(505.06 562.18)">y</text>
+    <text class="a" transform="translate(370.06 43.18)">z</text>
+    <g class="b">
+      <g>
+        <line class="c" x1="347" y1="420.2" x2="347" y2="61.78"/>
+        <polygon class="d" points="370.34 68.61 347 28.2 323.66 68.61 370.34 68.61"/>
+      </g>
+    </g>
+    <g class="b">
+      <g>
+        <line class="e" x1="347" y1="420.2" x2="29.31" y2="597.81"/>
+        <polygon class="f" points="23.89 574.11 0 614.2 46.66 614.84 23.89 574.11"/>
+      </g>
+    </g>
+    <g class="b">
+      <g>
+        <line class="g" x1="347" y1="420.2" x2="503.22" y2="501.67"/>
+        <polygon class="h" points="486.38 519.2 533 517.2 507.96 477.82 486.38 519.2"/>
+      </g>
+    </g>
+    <g class="b">
+      <g>
+        <path class="i" d="M103.19,617.68a52.66,52.66,0,1,0-55.51-89.19"/>
+        <polygon points="41.63 516.97 34.76 541.97 59.85 535.42 41.63 516.97"/>
+      </g>
+    </g>
+    <g class="b">
+      <g>
+        <path class="i" d="M295.58,87.51a52.66,52.66,0,1,0,103.78,16.31"/>
+        <polygon points="412.03 106.78 397.6 85.24 386.16 108.51 412.03 106.78"/>
+      </g>
+    </g>
+    <g class="b">
+      <g>
+        <path class="i" d="M505,452.58a52.66,52.66,0,1,0-76,72.53"/>
+        <polygon points="418.96 533.38 444.84 535 433.31 511.78 418.96 533.38"/>
+      </g>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 533 646.91">
+  <defs>
+    <style>
+      .a {
+        opacity: 0.8;
+      }
+
+      .b, .d, .f {
+        fill: none;
+        stroke-linejoin: bevel;
+        stroke-width: 13px;
+      }
+
+      .b {
+        stroke: #57ed00;
+      }
+
+      .c {
+        fill: #57ed00;
+      }
+
+      .d {
+        stroke: #d80100;
+      }
+
+      .e {
+        fill: #d80100;
+      }
+
+      .f {
+        stroke: #0076ba;
+      }
+
+      .g {
+        fill: #0076ba;
+      }
+
+      .h {
+        font-size: 50px;
+        font-family: Tahoma;
+      }
+    </style>
+  </defs>
+  <g>
+    <g class="a">
+      <g>
+        <line class="b" x1="347" y1="420.2" x2="503.22" y2="501.67"/>
+        <polygon class="c" points="486.38 519.2 533 517.2 507.96 477.82 486.38 519.2"/>
+      </g>
+    </g>
+    <g class="a">
+      <g>
+        <line class="d" x1="347" y1="420.2" x2="29.31" y2="597.81"/>
+        <polygon class="e" points="23.89 574.11 0 614.2 46.66 614.84 23.89 574.11"/>
+      </g>
+    </g>
+    <g class="a">
+      <g>
+        <line class="f" x1="347" y1="420.2" x2="347" y2="61.78"/>
+        <polygon class="g" points="370.34 68.61 347 28.2 323.66 68.61 370.34 68.61"/>
+      </g>
+    </g>
+    <text class="h" transform="translate(58.62 636.12)">x</text>
+    <text class="h" transform="translate(505.06 562.18)">y</text>
+    <text class="h" transform="translate(370.06 43.18)">z</text>
+  </g>
+</svg>

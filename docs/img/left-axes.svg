@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 533 646.68">
+  <defs>
+    <style>
+      .a {
+        font-size: 50px;
+        font-family: Tahoma;
+      }
+
+      .b {
+        opacity: 0.8;
+      }
+
+      .c, .e, .g {
+        fill: none;
+        stroke-linejoin: bevel;
+        stroke-width: 13px;
+      }
+
+      .c {
+        stroke: #0076ba;
+      }
+
+      .d {
+        fill: #0076ba;
+      }
+
+      .e {
+        stroke: #57ed00;
+      }
+
+      .f {
+        fill: #57ed00;
+      }
+
+      .g {
+        stroke: #d80100;
+      }
+
+      .h {
+        fill: #d80100;
+      }
+    </style>
+  </defs>
+  <g>
+    <text class="a" transform="translate(500.62 556.12)">x</text>
+    <text class="a" transform="translate(370.06 43.18)">z</text>
+    <g class="b">
+      <g>
+        <line class="c" x1="347" y1="420.2" x2="347" y2="61.78"/>
+        <polygon class="d" points="370.34 68.61 347 28.2 323.66 68.61 370.34 68.61"/>
+      </g>
+    </g>
+    <g class="b">
+      <g>
+        <line class="e" x1="347" y1="420.2" x2="29.31" y2="597.81"/>
+        <polygon class="f" points="23.89 574.11 0 614.2 46.66 614.84 23.89 574.11"/>
+      </g>
+    </g>
+    <g class="b">
+      <g>
+        <line class="g" x1="347" y1="420.2" x2="503.22" y2="501.67"/>
+        <polygon class="h" points="486.38 519.2 533 517.2 507.96 477.82 486.38 519.2"/>
+      </g>
+    </g>
+    <text class="a" transform="translate(58.06 635.89)">y</text>
+  </g>
+</svg>
