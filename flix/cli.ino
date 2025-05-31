@@ -101,7 +101,7 @@ void doCommand(String str, bool echo = false) {
 		print("Loop rate: %.0f\n", loopRate);
 		print("dt: %f\n", dt);
 	} else if (command == "ps") {
-		Vector a = attitude.toEulerZYX();
+		Vector a = attitude.toEuler();
 		print("roll: %f pitch: %f yaw: %f\n", degrees(a.x), degrees(a.y), degrees(a.z));
 	} else if (command == "psq") {
 		print("qx: %f qy: %f qz: %f qw: %f\n", attitude.x, attitude.y, attitude.z, attitude.w);

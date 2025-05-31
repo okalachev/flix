@@ -41,8 +41,8 @@ float logBuffer[LOG_SIZE][logColumns];
 
 void prepareLogData() {
 	tFloat = t;
-	attitudeEuler = attitude.toEulerZYX();
-	attitudeTargetEuler = attitudeTarget.toEulerZYX();
+	attitudeEuler = attitude.toEuler();
+	attitudeTargetEuler = attitudeTarget.toEuler();
 }
 
 void logData() {
