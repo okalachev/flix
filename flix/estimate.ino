@@ -23,7 +23,7 @@ void applyGyro() {
 	rates = ratesFilter.update(gyro);
 
 	// apply rates to attitude
-	attitude = attitude.rotate(Quaternion::fromAngularRates(rates * dt));
+	attitude = Quaternion::rotate(attitude, Quaternion::fromRotationVector(rates * dt));
 }
 
 void applyAcc() {
@@ -34,9 +34,9 @@ void applyAcc() {
 	if (!landed) return;
 
 	// calculate accelerometer correction
-	Vector up = attitude.rotateVector(Vector(0, 0, 1));
-	Vector correction = Vector::angularRatesBetweenVectors(acc, up) * WEIGHT_ACC;
+	Vector up = Quaternion::rotateVector(Vector(0, 0, 1), attitude);
+	Vector correction = Vector::rotationVectorBetween(acc, up) * WEIGHT_ACC;
 
 	// apply correction
-	attitude = attitude.rotate(Quaternion::fromAngularRates(correction));
+	attitude = Quaternion::rotate(attitude, Quaternion::fromRotationVector(correction));
 }

@@ -35,7 +35,7 @@ void doCommand(const String& command) {
 	if (command == "help" || command == "motd") {
 		Serial.println(motd);
 	} else if (command == "ps") {
-		Vector a = attitude.toEulerZYX();
+		Vector a = attitude.toEuler();
 		Serial.printf("roll: %f pitch: %f yaw: %f\n", a.x * RAD_TO_DEG, a.y * RAD_TO_DEG, a.z * RAD_TO_DEG);
 	} else if (command == "psq") {
 		Serial.printf("qx: %f qy: %f qz: %f qw: %f\n", attitude.x, attitude.y, attitude.z, attitude.w);

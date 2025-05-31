@@ -26,12 +26,12 @@ void logData() {
 	logBuffer[logPointer][4] = ratesTarget.x;
 	logBuffer[logPointer][5] = ratesTarget.y;
 	logBuffer[logPointer][6] = ratesTarget.z;
-	logBuffer[logPointer][7] = attitude.toEulerZYX().x;
-	logBuffer[logPointer][8] = attitude.toEulerZYX().y;
-	logBuffer[logPointer][9] = attitude.toEulerZYX().z;
-	logBuffer[logPointer][10] = attitudeTarget.toEulerZYX().x;
-	logBuffer[logPointer][11] = attitudeTarget.toEulerZYX().y;
-	logBuffer[logPointer][12] = attitudeTarget.toEulerZYX().z;
+	logBuffer[logPointer][7] = attitude.toEuler().x;
+	logBuffer[logPointer][8] = attitude.toEuler().y;
+	logBuffer[logPointer][9] = attitude.toEuler().z;
+	logBuffer[logPointer][10] = attitudeTarget.toEuler().x;
+	logBuffer[logPointer][11] = attitudeTarget.toEuler().y;
+	logBuffer[logPointer][12] = attitudeTarget.toEuler().z;
 	logBuffer[logPointer][13] = thrustTarget;
 
 	logPointer++;

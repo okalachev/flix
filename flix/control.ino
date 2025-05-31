@@ -91,7 +91,7 @@ void interpretRC() {
 	} else if (mode == STAB) {
 		yawMode = controls[RC_CHANNEL_YAW] == 0 ? YAW : YAW_RATE;
 
-		attitudeTarget = Quaternion::fromEulerZYX(Vector(
+		attitudeTarget = Quaternion::fromEuler(Vector(
 			controls[RC_CHANNEL_ROLL] * TILT_MAX,
 			controls[RC_CHANNEL_PITCH] * TILT_MAX,
 			attitudeTarget.getYaw()));
@@ -118,10 +118,10 @@ void controlAttitude() {
 	}
 
 	const Vector up(0, 0, 1);
-	Vector upActual = attitude.rotateVector(up);
-	Vector upTarget = attitudeTarget.rotateVector(up);
+	Vector upActual = Quaternion::rotateVector(up, attitude);
+	Vector upTarget = Quaternion::rotateVector(up, attitudeTarget);
 
-	Vector error = Vector::angularRatesBetweenVectors(upTarget, upActual);
+	Vector error = Vector::rotationVectorBetween(upTarget, upActual);
 
 	ratesTarget.x = rollPID.update(error.x, dt);
 	ratesTarget.y = pitchPID.update(error.y, dt);

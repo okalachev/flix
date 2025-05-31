@@ -15,22 +15,22 @@ public:
 
 	Quaternion(float w, float x, float y, float z): w(w), x(x), y(y), z(z) {};
 
-	static Quaternion fromAxisAngle(float a, float b, float c, float angle) {
+	static Quaternion fromAxisAngle(const Vector& axis, float angle) {
 		float halfAngle = angle * 0.5;
 		float sin2 = sin(halfAngle);
 		float cos2 = cos(halfAngle);
-		float sinNorm = sin2 / sqrt(a * a + b * b + c * c);
-		return Quaternion(cos2, a * sinNorm, b * sinNorm, c * sinNorm);
+		float sinNorm = sin2 / axis.norm();
+		return Quaternion(cos2, axis.x * sinNorm, axis.y * sinNorm, axis.z * sinNorm);
 	}
 
-	static Quaternion fromAngularRates(const Vector& rates) {
-		if (rates.zero()) {
+	static Quaternion fromRotationVector(const Vector& rotation) {
+		if (rotation.zero()) {
 			return Quaternion();
 		}
-		return Quaternion::fromAxisAngle(rates.x, rates.y, rates.z, rates.norm());
+		return Quaternion::fromAxisAngle(rotation, rotation.norm());
 	}
 
-	static Quaternion fromEulerZYX(const Vector& euler) {
+	static Quaternion fromEuler(const Vector& euler) {
 		float cx = cos(euler.x / 2);
 		float cy = cos(euler.y / 2);
 		float cz = cos(euler.z / 2);
@@ -60,14 +60,37 @@ public:
 		return ret;
 	}
 
-	void toAxisAngle(float& a, float& b, float& c, float& angle) const {
-		angle = acos(w) * 2;
-		a = x / sin(angle / 2);
-		b = y / sin(angle / 2);
-		c = z / sin(angle / 2);
+	bool finite() const {
+		return isfinite(w) && isfinite(x) && isfinite(y) && isfinite(z);
 	}
 
-	Vector toEulerZYX() const {
+	float norm() const {
+		return sqrt(w * w + x * x + y * y + z * z);
+	}
+
+	void normalize() {
+		float n = norm();
+		w /= n;
+		x /= n;
+		y /= n;
+		z /= n;
+	}
+
+	void toAxisAngle(Vector& axis, float& angle) const {
+		angle = acos(w) * 2;
+		axis.x = x / sin(angle / 2);
+		axis.y = y / sin(angle / 2);
+		axis.z = z / sin(angle / 2);
+	}
+
+	Vector toRotationVector() const {
+		float angle;
+		Vector axis;
+		toAxisAngle(axis, angle);
+		return angle * axis;
+	}
+
+	Vector toEuler() const {
 		// https://github.com/ros/geometry2/blob/589caf083cae9d8fae7effdb910454b4681b9ec1/tf2/include/tf2/impl/utils.h#L87
 		Vector euler;
 		float sqx = x * x;
@@ -112,18 +135,9 @@ public:
 
 	void setYaw(float yaw) {
 		// TODO: optimize?
-		Vector euler = toEulerZYX();
+		Vector euler = toEuler();
 		euler.z = yaw;
-		(*this) = Quaternion::fromEulerZYX(euler);
-	}
-
-	Quaternion& operator *= (const Quaternion& q) {
-		Quaternion ret(
-			w * q.w - x * q.x - y * q.y - z * q.z,
-			w * q.x + x * q.w + y * q.z - z * q.y,
-			w * q.y + y * q.w + z * q.x - x * q.z,
-			w * q.z + z * q.w + x * q.y - y * q.x);
-		return (*this = ret);
+		(*this) = Quaternion::fromEuler(euler);
 	}
 
 	Quaternion operator * (const Quaternion& q) const {
@@ -143,18 +157,6 @@ public:
 			-z * normSqInv);
 	}
 
-	float norm() const {
-		return sqrt(w * w + x * x + y * y + z * z);
-	}
-
-	void normalize() {
-		float n = norm();
-		w /= n;
-		x /= n;
-		y /= n;
-		z /= n;
-	}
-
 	Vector conjugate(const Vector& v) const {
 		Quaternion qv(0, v.x, v.y, v.z);
 		Quaternion res = (*this) * qv * inversed();
@@ -167,22 +169,27 @@ public:
 		return Vector(res.x, res.y, res.z);
 	}
 
-	// Rotate vector by quaternion
-	Vector rotateVector(const Vector& v) const {
-		return conjugateInversed(v);
-	}
-
 	// Rotate quaternion by quaternion
-	Quaternion rotate(const Quaternion& q, const bool normalize = true) const {
-		Quaternion rotated = (*this) * q;
+	static Quaternion rotate(const Quaternion& a, const Quaternion& b, const bool normalize = true) {
+		Quaternion rotated = a * b;
 		if (normalize) {
 			rotated.normalize();
 		}
 		return rotated;
 	}
 
-	bool finite() const {
-		return isfinite(w) && isfinite(x) && isfinite(y) && isfinite(z);
+	// Rotate vector by quaternion
+	static Vector rotateVector(const Vector& v, const Quaternion& q) {
+		return q.conjugateInversed(v);
+	}
+
+	// Quaternion between two quaternions a and b
+	static Quaternion between(const Quaternion& a, const Quaternion& b, const bool normalize = true) {
+		Quaternion q = a * b.inversed();
+		if (normalize) {
+			q.normalize();
+		}
+		return q;
 	}
 
 	size_t printTo(Print& p) const {
