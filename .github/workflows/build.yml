@@ -15,7 +15,14 @@ jobs:
     - name: Install Arduino CLI
       run: curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | BINDIR=/usr/local/bin sh
     - name: Build firmware
+      env:
+        ARDUINO_SKETCH_ALWAYS_EXPORT_BINARIES: 1
       run: make
+    - name: Upload binaries
+      uses: actions/upload-artifact@v4
+      with:
+        name: firmware-binary
+        path: flix/build
     - name: Build firmware without Wi-Fi
       run: sed -i 's/^#define WIFI_ENABLED 1$/#define WIFI_ENABLED 0/' flix/flix.ino && make
     - name: Check c_cpp_properties.json
