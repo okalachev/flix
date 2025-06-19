@@ -4,6 +4,19 @@ This page contains user-built drones based on the Flix project. Publish your pro
 
 ---
 
+Author: [@chkroko](https://t.me/chkroko) ([@cryptokobans](https://t.me/cryptokobans)).<br>
+Modification: Control using Bluetooth with **Flydigi Vader 3** gamepad. Source code: https://github.com/Krokodilushka/flix/tree/gamepad.<br>
+Features: ESP32-C3 SuperMini, BMP580 barometer, INA226 power monitor, IRLZ44N MOSFETs.<br>
+Full description: https://telegra.ph/Flix-dron-06-13.
+
+**Flight video:**
+
+<a href="https://drive.google.com/file/d/1orVKA_-gsezDTns2Xt8xW1BCWPcyPitR/view?usp=sharing"><img height=300 src="img/user/chkroko/video.jpg"></a>
+
+<img src="img/user/chkroko/1.jpg" height=150> <img src="img/user/chkroko/2.jpg" height=150>
+
+---
+
 Author: [@cryptokobans](https://t.me/cryptokobans).<br>
 Features: ESP32-C3 SuperMini board, INA226 power monitor, IRLZ44N MOSFETs, MPU-6500 IMU.
 
