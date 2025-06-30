@@ -84,6 +84,7 @@ public:
 	}
 
 	Vector toRotationVector() const {
+		if (w == 1 && x == 0 && y == 0 && z == 0) return Vector(0, 0, 0); // neutral quaternion
 		float angle;
 		Vector axis;
 		toAxisAngle(axis, angle);
