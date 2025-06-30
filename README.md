@@ -61,7 +61,7 @@ The simulator is implemented using Gazebo and runs the original Arduino code:
 |Type|Part|Image|Quantity|
 |-|-|:-:|:-:|
 |Microcontroller board|ESP32 Mini|<img src="docs/img/esp32.jpg" width=100>|1|
-|IMU (and barometer²) board|GY‑91, MPU-9265 (or other MPU‑9250/MPU‑6500 board), ICM‑20948³|<img src="docs/img/gy-91.jpg" width=90 align=center><img src="docs/img/icm-20948.jpg" width=100>|1|
+|IMU (and barometer²) board|GY‑91, MPU-9265 (or other MPU‑9250/MPU‑6500 board)<br>ICM‑20948³<br>GY-521 (MPU-6050)³⁻¹|<img src="docs/img/gy-91.jpg" width=90 align=center><br><img src="docs/img/icm-20948.jpg" width=100><br><img src="docs/img/gy-521.jpg" width=100>|1|
 |<span style="background:yellow">(Recommended) Buck-boost converter</span>|To be determined, output 5V or 3.3V, see [user-contributed schematics](https://miro.com/app/board/uXjVN-dTjoo=/?moveToWidget=3458764612179508274&cot=14)|<img src="docs/img/buck-boost.jpg" width=100>|1|
 |Motor|8520 3.7V brushed motor (shaft 0.8mm).<br>Motor with exact 3.7V voltage is needed, not ranged working voltage (3.7V — 6V).|<img src="docs/img/motor.jpeg" width=100>|4|
 |Propeller|Hubsan 55 mm|<img src="docs/img/prop.jpg" width=100>|4|
@@ -82,6 +82,7 @@ The simulator is implemented using Gazebo and runs the original Arduino code:
 
 *² — barometer is not used for now.*<br>
 *³ — change `MPU9250` to `ICM20948` in `imu.ino` file if using ICM-20948 board.*<br>
+*³⁻¹ — MPU-6050 supports I²C interface only (not recommended). To use it change IMU declaration to `MPU6050 IMU(Wire)`.*<br>
 *⁴ — this frame is optimized for GY-91 board, if using other, the board mount holes positions should be modified.*<br>
 *⁵ — you may use any transmitter-receiver pair with SBUS interface.*
 
