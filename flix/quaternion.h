@@ -148,6 +148,14 @@ public:
 			w * q.z + z * q.w + x * q.y - y * q.x);
 	}
 
+	bool operator == (const Quaternion& q) const {
+		return w == q.w && x == q.x && y == q.y && z == q.z;
+	}
+
+	bool operator != (const Quaternion& q) const {
+		return !(*this == q);
+	}
+
 	Quaternion inversed() const {
 		float normSqInv = 1 / (w * w + x * x + y * y + z * z);
 		return Quaternion(
