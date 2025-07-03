@@ -10,8 +10,8 @@
 #define MOTOR_2_PIN 14 // front right
 #define MOTOR_3_PIN 15 // front left
 
-#define PWM_FREQUENCY 1000
-#define PWM_RESOLUTION 12
+#define PWM_FREQUENCY 78000
+#define PWM_RESOLUTION 10
 
 // Motors array indexes:
 const int MOTOR_REAR_LEFT = 0;
