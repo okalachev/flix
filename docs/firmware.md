@@ -14,8 +14,8 @@ The main loop is running at 1000 Hz. All the dataflow is happening through globa
 * `acc` *(Vector)* — acceleration data from the accelerometer, *m/s<sup>2</sup>*.
 * `rates` *(Vector)* — filtered angular rates, *rad/s*.
 * `attitude` *(Quaternion)* — estimated attitude (orientation) of drone.
-* `controls` *(float[])* — user control inputs from the RC, normalized to [-1, 1] range.
-* `motors` *(float[])* — motor outputs, normalized to [0, 1] range; reverse rotation is possible.
+* `controls` *(float[])* — pilot's control inputs, range [-1, 1].
+* `motors` *(float[])* — motor outputs, range [0, 1].
 
 ## Source files
 
