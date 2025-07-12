@@ -156,8 +156,11 @@ public:
 	void restart() { Serial.println("Ignore reboot in simulation"); }
 } ESP;
 
+unsigned long __delayTime = 0;
+
 void delay(uint32_t ms) {
 	std::this_thread::sleep_for(std::chrono::milliseconds(ms));
+	__delayTime += ms * 1000;
 }
 
 bool ledcAttach(uint8_t pin, uint32_t freq, uint8_t resolution) { return true; }
@@ -167,5 +170,5 @@ unsigned long __micros;
 unsigned long __resetTime = 0;
 
 unsigned long micros() {
-	return __micros + __resetTime; // keep the time monotonic
+	return __micros + __resetTime + __delayTime; // keep the time monotonic
 }
