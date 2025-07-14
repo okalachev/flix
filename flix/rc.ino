@@ -16,7 +16,6 @@ float channelMax[16]; // calibration max values
 // Channels mapping (using float to store in parameters):
 float rollChannel = NAN, pitchChannel = NAN, throttleChannel = NAN, yawChannel = NAN, armedChannel = NAN, modeChannel = NAN;
 
-
 void setupRC() {
 	print("Setup RC\n");
 	RC.begin();

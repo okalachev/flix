@@ -118,7 +118,7 @@ void doCommand(String str, bool echo = false) {
 			controlRoll, controlPitch, controlYaw, controlThrottle, controlArmed, controlMode);
 		print("mode: %s\n", getModeName());
 	} else if (command == "mot") {
-		print("Motors: front-right %g front-left %g rear-right %g rear-left %g\n",
+		print("front-right %g front-left %g rear-right %g rear-left %g\n",
 			motors[MOTOR_FRONT_RIGHT], motors[MOTOR_FRONT_LEFT], motors[MOTOR_REAR_RIGHT], motors[MOTOR_REAR_LEFT]);
 	} else if (command == "log") {
 		dumpLog();
