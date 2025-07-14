@@ -55,7 +55,7 @@ void doCommand(const String& command) {
 			controlRoll, controlPitch, controlYaw, controlThrottle, controlArmed, controlMode);
 		Serial.printf("mode: %s\n", getModeName());
 	} else if (command == "mot") {
-		Serial.printf("MOTOR front-right %f front-left %f rear-right %f rear-left %f\n",
+		Serial.printf("front-right %f front-left %f rear-right %f rear-left %f\n",
 			motors[MOTOR_FRONT_RIGHT], motors[MOTOR_FRONT_LEFT], motors[MOTOR_REAR_RIGHT], motors[MOTOR_REAR_LEFT]);
 	} else if (command == "log") {
 		dumpLog();
