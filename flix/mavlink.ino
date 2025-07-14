@@ -13,7 +13,7 @@
 #define MAVLINK_CONTROL_SCALE 0.7f
 #define MAVLINK_CONTROL_YAW_DEAD_ZONE 0.1f
 
-extern float controlsTime;
+extern float controlTime;
 
 void processMavlink() {
 	sendMavlink();
@@ -45,10 +45,8 @@ void sendMavlink() {
 			time, att.w, att.x, att.y, att.z, rates.x, rates.y, rates.z, zeroQuat);
 		sendMessage(&msg);
 
-		mavlink_msg_rc_channels_scaled_pack(SYSTEM_ID, MAV_COMP_ID_AUTOPILOT1, &msg, controlsTime * 1000, 0,
-			controls[0] * 10000, controls[1] * 10000, controls[2] * 10000,
-			controls[3] * 10000, controls[4] * 10000, controls[5] * 10000,
-			INT16_MAX, INT16_MAX, UINT8_MAX);
+		mavlink_msg_rc_channels_raw_pack(SYSTEM_ID, MAV_COMP_ID_AUTOPILOT1, &msg, controlTime * 1000, 0,
+			channels[0], channels[1], channels[2], channels[3], channels[4], channels[5], channels[6], channels[7], UINT8_MAX);
 		sendMessage(&msg);
 
 		float actuator[32];
@@ -90,15 +88,15 @@ void handleMavlink(const void *_msg) {
 	if (msg.msgid == MAVLINK_MSG_ID_MANUAL_CONTROL) {
 		mavlink_manual_control_t m;
 		mavlink_msg_manual_control_decode(&msg, &m);
-		controls[RC_CHANNEL_THROTTLE] = m.z / 1000.0f;
-		controls[RC_CHANNEL_PITCH] = m.x / 1000.0f * MAVLINK_CONTROL_SCALE;
-		controls[RC_CHANNEL_ROLL] = m.y / 1000.0f * MAVLINK_CONTROL_SCALE;
-		controls[RC_CHANNEL_YAW] = m.r / 1000.0f * MAVLINK_CONTROL_SCALE;
-		controls[RC_CHANNEL_MODE] = 1; // STAB mode
-		controls[RC_CHANNEL_ARMED] = 1; // armed
-		controlsTime = t;
+		controlThrottle = m.z / 1000.0f;
+		controlPitch = m.x / 1000.0f * MAVLINK_CONTROL_SCALE;
+		controlRoll = m.y / 1000.0f * MAVLINK_CONTROL_SCALE;
+		controlYaw = m.r / 1000.0f * MAVLINK_CONTROL_SCALE;
+		controlMode = 1; // STAB mode
+		controlArmed = 1; // armed
+		controlTime = t;
 
-		if (abs(controls[RC_CHANNEL_YAW]) < MAVLINK_CONTROL_YAW_DEAD_ZONE) controls[RC_CHANNEL_YAW] = 0;
+		if (abs(controlYaw) < MAVLINK_CONTROL_YAW_DEAD_ZONE) controlYaw = 0;
 	}
 }
 

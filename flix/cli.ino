@@ -8,6 +8,7 @@
 
 extern const int MOTOR_REAR_LEFT, MOTOR_REAR_RIGHT, MOTOR_FRONT_RIGHT, MOTOR_FRONT_LEFT;
 extern float loopRate;
+extern uint16_t channels[16];
 
 const char* motd =
 "\nWelcome to\n"
@@ -46,13 +47,13 @@ void doCommand(const String& command) {
 		printIMUCal();
 		Serial.printf("rate: %f\n", loopRate);
 	} else if (command == "rc") {
-		Serial.printf("Raw: throttle %d yaw %d pitch %d roll %d armed %d mode %d\n",
-			channels[RC_CHANNEL_THROTTLE], channels[RC_CHANNEL_YAW], channels[RC_CHANNEL_PITCH],
-			channels[RC_CHANNEL_ROLL], channels[RC_CHANNEL_ARMED], channels[RC_CHANNEL_MODE]);
-		Serial.printf("Control: throttle %f yaw %f pitch %f roll %f armed %f mode %f\n",
-			controls[RC_CHANNEL_THROTTLE], controls[RC_CHANNEL_YAW], controls[RC_CHANNEL_PITCH],
-			controls[RC_CHANNEL_ROLL], controls[RC_CHANNEL_ARMED], controls[RC_CHANNEL_MODE]);
-		Serial.printf("Mode: %s\n", getModeName());
+		Serial.printf("channels: ");
+		for (int i = 0; i < 16; i++) {
+			Serial.printf("%u ", channels[i]);
+		}
+		Serial.printf("\nroll: %g pitch: %g yaw: %g throttle: %g armed: %g mode: %g\n",
+			controlRoll, controlPitch, controlYaw, controlThrottle, controlArmed, controlMode);
+		Serial.printf("mode: %s\n", getModeName());
 	} else if (command == "mot") {
 		Serial.printf("MOTOR front-right %f front-left %f rear-right %f rear-left %f\n",
 			motors[MOTOR_FRONT_RIGHT], motors[MOTOR_FRONT_LEFT], motors[MOTOR_REAR_RIGHT], motors[MOTOR_REAR_LEFT]);

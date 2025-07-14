@@ -18,6 +18,9 @@ public:
 	SBUSData data() {
 		SBUSData data;
 		joystickGet(data.ch);
+		for (int i = 0; i < 16; i++) {
+			data.ch[i] = map(data.ch[i], -32768, 32767, 1000, 2000); // convert to pulse width style
+		}
 		return data;
 	};
 };

@@ -8,15 +8,16 @@
 #include <iostream>
 
 // simulation calibration overrides, NOTE: use `cr` command and replace with the actual values
-const int channelNeutralOverride[] = {-258, -258, -27349, 0, -27349, 0};
-const int channelMaxOverride[] = {27090, 27090, 27090, 27090, -5676, 1};
+const int channelZeroOverride[] = {1500, 0, 1000, 1500, 1500, 1000};
+const int channelMaxOverride[] = {2000, 2000, 2000, 2000, 2000, 2000};
 
-#define RC_CHANNEL_ROLL 0
-#define RC_CHANNEL_PITCH 1
-#define RC_CHANNEL_THROTTLE 2
-#define RC_CHANNEL_YAW 3
-#define RC_CHANNEL_ARMED 5
-#define RC_CHANNEL_MODE 4
+// channels mapping overrides
+const int rollChannelOverride = 3;
+const int pitchChannelOverride = 4;
+const int throttleChannelOverride = 5;
+const int yawChannelOverride = 0;
+const int armedChannelOverride = 2;
+const int modeChannelOverride = 1;
 
 SDL_Joystick *joystick;
 
@@ -37,11 +38,19 @@ bool joystickInit() {
 		warnShown = true;
 	}
 
-	// apply calibration overrides
-	extern int channelNeutral[16];
+	// apply overrides
+	extern int channelZero[16];
 	extern int channelMax[16];
-	memcpy(channelNeutral, channelNeutralOverride, sizeof(channelNeutralOverride));
+	memcpy(channelZero, channelZeroOverride, sizeof(channelZeroOverride));
 	memcpy(channelMax, channelMaxOverride, sizeof(channelMaxOverride));
+
+	extern int rollChannel, pitchChannel, throttleChannel, yawChannel, armedChannel, modeChannel;
+	rollChannel = rollChannelOverride;
+	pitchChannel = pitchChannelOverride;
+	throttleChannel = throttleChannelOverride;
+	yawChannel = yawChannelOverride;
+	armedChannel = armedChannelOverride;
+	modeChannel = modeChannelOverride;
 
 	return joystickInitialized;
 }

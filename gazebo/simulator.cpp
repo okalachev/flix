@@ -70,8 +70,8 @@ public:
 
 		// read rc
 		readRC();
-		controls[RC_CHANNEL_MODE] = 1; // 0 acro, 1 stab
-		controls[RC_CHANNEL_ARMED] = 1; // armed
+		controlMode = 1; // 0 acro, 1 stab
+		controlArmed = 1; // armed
 
 		estimate();
 
