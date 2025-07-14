@@ -66,7 +66,7 @@ void calibrateGyro() {
 	}
 	gyroBias = gyroBias / samples;
 
-	printIMUCal();
+	printIMUCalibration();
 	configureIMU();
 }
 
@@ -94,7 +94,7 @@ void calibrateAccel() {
 	Serial.readStringUntil('\n');
 	calibrateAccelOnce();
 
-	printIMUCal();
+	printIMUCalibration();
 	Serial.print("✓ Calibration done!\n");
 	configureIMU();
 }
@@ -126,7 +126,7 @@ void calibrateAccelOnce() {
 	accBias = (accMax + accMin) / 2;
 }
 
-void printIMUCal() {
+void printIMUCalibration() {
 	Serial.printf("gyro bias: %f %f %f\n", gyroBias.x, gyroBias.y, gyroBias.z);
 	Serial.printf("accel bias: %f %f %f\n", accBias.x, accBias.y, accBias.z);
 	Serial.printf("accel scale: %f %f %f\n", accScale.x, accScale.y, accScale.z);

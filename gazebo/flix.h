@@ -49,5 +49,5 @@ inline Quaternion fluToFrd(const Quaternion &q);
 void setLED(bool on) {};
 void calibrateGyro() { printf("Skip gyro calibrating\n"); };
 void calibrateAccel() { printf("Skip accel calibrating\n"); };
-void printIMUCal() { printf("cal: N/A\n"); };
+void printIMUCalibration() { printf("cal: N/A\n"); };
 void printIMUInfo() {};

@@ -44,7 +44,7 @@ void doCommand(const String& command) {
 		printIMUInfo();
 		Serial.printf("gyro: %f %f %f\n", rates.x, rates.y, rates.z);
 		Serial.printf("acc: %f %f %f\n", acc.x, acc.y, acc.z);
-		printIMUCal();
+		printIMUCalibration();
 		Serial.printf("rate: %f\n", loopRate);
 	} else if (command == "rc") {
 		Serial.printf("channels: ");
