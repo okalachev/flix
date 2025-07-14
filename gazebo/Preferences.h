@@ -14,10 +14,9 @@ private:
 
 	void readFromFile() {
 		std::ifstream file(storagePath);
-		std::string key;
-		float value;
+		std::string key, value;
 		while (file >> key >> value) {
-			storage[key] = value;
+			storage[key] = std::stof(value); // using stof to support NaN and Infinity
 		}
 	}
 
