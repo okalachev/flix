@@ -106,7 +106,7 @@ void doCommand(String str, bool echo = false) {
 		printIMUInfo();
 		print("gyro: %f %f %f\n", rates.x, rates.y, rates.z);
 		print("acc: %f %f %f\n", acc.x, acc.y, acc.z);
-		printIMUCal();
+		printIMUCalibration();
 		print("rate: %.0f\n", loopRate);
 		print("landed: %d\n", landed);
 	} else if (command == "rc") {

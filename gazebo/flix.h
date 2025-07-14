@@ -69,6 +69,6 @@ void resetParameters();
 void setLED(bool on) {};
 void calibrateGyro() { print("Skip gyro calibrating\n"); };
 void calibrateAccel() { print("Skip accel calibrating\n"); };
-void printIMUCal() { print("cal: N/A\n"); };
+void printIMUCalibration() { print("cal: N/A\n"); };
 void printIMUInfo() {};
 Vector accBias, gyroBias, accScale(1, 1, 1);
