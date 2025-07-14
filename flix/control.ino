@@ -21,7 +21,7 @@
 #define YAWRATE_I 0.0
 #define YAWRATE_D 0.0
 #define YAWRATE_I_LIM 0.3
-#define ROLL_P 4.5
+#define ROLL_P 6
 #define ROLL_I 0
 #define ROLL_D 0
 #define PITCH_P ROLL_P
@@ -54,7 +54,7 @@ Vector torqueTarget;
 float thrustTarget;
 
 extern const int MOTOR_REAR_LEFT, MOTOR_REAR_RIGHT, MOTOR_FRONT_RIGHT, MOTOR_FRONT_LEFT;
-extern int rollChannel, pitchChannel, throttleChannel, yawChannel, armedChannel, modeChannel;
+extern float controlRoll, controlPitch, controlThrottle, controlYaw, controlArmed, controlMode;
 
 void control() {
 	interpretRC();
@@ -72,39 +72,38 @@ void control() {
 }
 
 void interpretRC() {
-	armed = controls[throttleChannel] >= 0.05 &&
-		(controls[armedChannel] >= 0.5 || isnan(controls[armedChannel])); // assume armed if armed channel is not defined
+	armed = controlThrottle >= 0.05 && controlArmed >= 0.5;
 
 	// NOTE: put ACRO or MANUAL modes there if you want to use them
-	if (controls[modeChannel] < 0.25) {
+	if (controlMode < 0.25) {
 		mode = STAB;
-	} else if (controls[modeChannel] < 0.75) {
+	} else if (controlMode < 0.75) {
 		mode = STAB;
 	} else {
 		mode = STAB;
 	}
 
-	thrustTarget = controls[throttleChannel];
+	thrustTarget = controlThrottle;
 
 	if (mode == ACRO) {
 		yawMode = YAW_RATE;
-		ratesTarget.x = controls[rollChannel] * maxRate.x;
-		ratesTarget.y = controls[pitchChannel] * maxRate.y;
-		ratesTarget.z = -controls[yawChannel] * maxRate.z; // positive yaw stick means clockwise rotation in FLU
+		ratesTarget.x = controlRoll * maxRate.x;
+		ratesTarget.y = controlPitch* maxRate.y;
+		ratesTarget.z = -controlYaw * maxRate.z; // positive yaw stick means clockwise rotation in FLU
 
 	} else if (mode == STAB) {
-		yawMode = controls[yawChannel] == 0 ? YAW : YAW_RATE;
+		yawMode = controlYaw == 0 ? YAW : YAW_RATE;
 
 		attitudeTarget = Quaternion::fromEuler(Vector(
-			controls[rollChannel] * tiltMax,
-			controls[pitchChannel] * tiltMax,
+			controlRoll * tiltMax,
+			controlPitch * tiltMax,
 			attitudeTarget.getYaw()));
-		ratesTarget.z = -controls[yawChannel] * maxRate.z; // positive yaw stick means clockwise rotation in FLU
+		ratesTarget.z = -controlYaw * maxRate.z; // positive yaw stick means clockwise rotation in FLU
 
 	} else if (mode == MANUAL) {
 		// passthrough mode
 		yawMode = YAW_RATE;
-		torqueTarget = Vector(controls[rollChannel], controls[pitchChannel], -controls[yawChannel]) * 0.01;
+		torqueTarget = Vector(controlRoll, controlPitch, -controlYaw) * 0.01;
 	}
 
 	if (yawMode == YAW_RATE || !motorsActive()) {

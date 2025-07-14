@@ -71,11 +71,7 @@ public:
 		gyro = Vector(imu->AngularVelocity().X(), imu->AngularVelocity().Y(), imu->AngularVelocity().Z());
 		acc = this->accFilter.update(Vector(imu->LinearAcceleration().X(), imu->LinearAcceleration().Y(), imu->LinearAcceleration().Z()));
 
-		// read rc
 		readRC();
-		controls[modeChannel] = 1; // 0 acro, 1 stab
-		controls[armedChannel] = 1; // armed
-
 		estimate();
 
 		// correct yaw to the actual yaw

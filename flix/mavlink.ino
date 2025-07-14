@@ -15,8 +15,8 @@
 float mavlinkControlScale = 0.7;
 String mavlinkPrintBuffer;
 
-extern double controlsTime;
-extern int rollChannel, pitchChannel, throttleChannel, yawChannel, armedChannel, modeChannel;
+extern double controlTime;
+extern float controlRoll, controlPitch, controlThrottle, controlYaw, controlArmed, controlMode;
 
 void processMavlink() {
 	sendMavlink();
@@ -54,11 +54,9 @@ void sendMavlink() {
 			time, att.w, att.x, att.y, att.z, rates.x, rates.y, rates.z, zeroQuat);
 		sendMessage(&msg);
 
-		mavlink_msg_rc_channels_scaled_pack(SYSTEM_ID, MAV_COMP_ID_AUTOPILOT1, &msg, controlsTime * 1000, 0,
-			controls[0] * 10000, controls[1] * 10000, controls[2] * 10000,
-			controls[3] * 10000, controls[4] * 10000, controls[5] * 10000,
-			INT16_MAX, INT16_MAX, UINT8_MAX);
-		sendMessage(&msg);
+		mavlink_msg_rc_channels_raw_pack(SYSTEM_ID, MAV_COMP_ID_AUTOPILOT1, &msg, controlTime * 1000, 0,
+			channels[0], channels[1], channels[2], channels[3], channels[4], channels[5], channels[6], channels[7], UINT8_MAX);
+		if (channels[0] != 0) sendMessage(&msg); // 0 means no RC input
 
 		float actuator[32];
 		memcpy(actuator, motors, sizeof(motors));
@@ -101,15 +99,15 @@ void handleMavlink(const void *_msg) {
 		mavlink_msg_manual_control_decode(&msg, &m);
 		if (m.target && m.target != SYSTEM_ID) return; // 0 is broadcast
 
-		controls[throttleChannel] = m.z / 1000.0f;
-		controls[pitchChannel] = m.x / 1000.0f * mavlinkControlScale;
-		controls[rollChannel] = m.y / 1000.0f * mavlinkControlScale;
-		controls[yawChannel] = m.r / 1000.0f * mavlinkControlScale;
-		controls[modeChannel] = 1; // STAB mode
-		controls[armedChannel] = 1; // armed
-		controlsTime = t;
+		controlThrottle = m.z / 1000.0f;
+		controlPitch = m.x / 1000.0f * mavlinkControlScale;
+		controlRoll = m.y / 1000.0f * mavlinkControlScale;
+		controlYaw = m.r / 1000.0f * mavlinkControlScale;
+		controlMode = 1; // STAB mode
+		controlArmed = 1; // armed
+		controlTime = t;
 
-		if (abs(controls[yawChannel]) < MAVLINK_CONTROL_YAW_DEAD_ZONE) controls[yawChannel] = 0;
+		if (abs(controlYaw) < MAVLINK_CONTROL_YAW_DEAD_ZONE) controlYaw = 0;
 	}
 
 	if (msg.msgid == MAVLINK_MSG_ID_PARAM_REQUEST_LIST) {

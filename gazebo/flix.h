@@ -15,8 +15,7 @@
 double t = NAN;
 float dt;
 float motors[4];
-int16_t channels[16]; // raw rc channels
-float controls[16];
+float controlRoll, controlPitch, controlYaw, controlThrottle, controlArmed, controlMode;
 Vector acc;
 Vector gyro;
 Vector rates;
@@ -41,9 +40,10 @@ void print(const char* format, ...);
 void pause(float duration);
 void doCommand(String str, bool echo);
 void handleInput();
-void calibrateRC();
 void normalizeRC();
-void printRCCal();
+void calibrateRC();
+void calibrateRCChannel(float *channel, uint16_t zero[16], uint16_t max[16], const char *str);
+void printRCCalibration();
 void dumpLog();
 void processMavlink();
 void sendMavlink();

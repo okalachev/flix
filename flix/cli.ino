@@ -10,7 +10,8 @@
 extern const int MOTOR_REAR_LEFT, MOTOR_REAR_RIGHT, MOTOR_FRONT_RIGHT, MOTOR_FRONT_LEFT;
 extern float loopRate, dt;
 extern double t;
-extern int rollChannel, pitchChannel, throttleChannel, yawChannel, armedChannel, modeChannel;
+extern uint16_t channels[16];
+extern float controlRoll, controlPitch, controlThrottle, controlYaw, controlArmed, controlMode;
 
 const char* motd =
 "\nWelcome to\n"
@@ -109,13 +110,13 @@ void doCommand(String str, bool echo = false) {
 		print("rate: %.0f\n", loopRate);
 		print("landed: %d\n", landed);
 	} else if (command == "rc") {
-		print("Raw: throttle %d yaw %d pitch %d roll %d armed %d mode %d\n",
-			channels[throttleChannel], channels[yawChannel], channels[pitchChannel],
-			channels[rollChannel], channels[armedChannel], channels[modeChannel]);
-		print("Control: throttle %g yaw %g pitch %g roll %g armed %g mode %g\n",
-			controls[throttleChannel], controls[yawChannel], controls[pitchChannel],
-			controls[rollChannel], controls[armedChannel], controls[modeChannel]);
-		print("Mode: %s\n", getModeName());
+		print("channels: ");
+		for (int i = 0; i < 16; i++) {
+			print("%u ", channels[i]);
+		}
+		print("\nroll: %g pitch: %g yaw: %g throttle: %g armed: %g mode: %g\n",
+			controlRoll, controlPitch, controlYaw, controlThrottle, controlArmed, controlMode);
+		print("mode: %s\n", getModeName());
 	} else if (command == "mot") {
 		print("Motors: front-right %g front-left %g rear-right %g rear-left %g\n",
 			motors[MOTOR_FRONT_RIGHT], motors[MOTOR_FRONT_LEFT], motors[MOTOR_REAR_RIGHT], motors[MOTOR_REAR_LEFT]);

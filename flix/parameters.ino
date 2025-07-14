@@ -5,8 +5,9 @@
 
 #include <Preferences.h>
 
-extern float channelNeutral[16];
+extern float channelZero[16];
 extern float channelMax[16];
+extern float rollChannel, pitchChannel, throttleChannel, yawChannel, armedChannel, modeChannel;
 extern float mavlinkControlScale;
 
 Preferences storage;
@@ -49,14 +50,14 @@ Parameter parameters[] = {
 	{"ACC_SCALE_Y", &accScale.y},
 	{"ACC_SCALE_Z", &accScale.z},
 	// rc
-	{"RC_NEUTRAL_0", &channelNeutral[0]},
-	{"RC_NEUTRAL_1", &channelNeutral[1]},
-	{"RC_NEUTRAL_2", &channelNeutral[2]},
-	{"RC_NEUTRAL_3", &channelNeutral[3]},
-	{"RC_NEUTRAL_4", &channelNeutral[4]},
-	{"RC_NEUTRAL_5", &channelNeutral[5]},
-	{"RC_NEUTRAL_6", &channelNeutral[6]},
-	{"RC_NEUTRAL_7", &channelNeutral[7]},
+	{"RC_ZERO_0", &channelZero[0]},
+	{"RC_ZERO_1", &channelZero[1]},
+	{"RC_ZERO_2", &channelZero[2]},
+	{"RC_ZERO_3", &channelZero[3]},
+	{"RC_ZERO_4", &channelZero[4]},
+	{"RC_ZERO_5", &channelZero[5]},
+	{"RC_ZERO_6", &channelZero[6]},
+	{"RC_ZERO_7", &channelZero[7]},
 	{"RC_MAX_0", &channelMax[0]},
 	{"RC_MAX_1", &channelMax[1]},
 	{"RC_MAX_2", &channelMax[2]},
@@ -65,6 +66,12 @@ Parameter parameters[] = {
 	{"RC_MAX_5", &channelMax[5]},
 	{"RC_MAX_6", &channelMax[6]},
 	{"RC_MAX_7", &channelMax[7]},
+	{"RC_ROLL", &rollChannel},
+	{"RC_PITCH", &pitchChannel},
+	{"RC_THROTTLE", &throttleChannel},
+	{"RC_YAW", &yawChannel},
+	{"RC_ARMED", &armedChannel},
+	{"RC_MODE", &modeChannel},
 #if WIFI_ENABLED
 	// MAVLink
 	{"MAV_CTRL_SCALE", &mavlinkControlScale},
