@@ -5,6 +5,19 @@ This page contains user-built drones based on the Flix project. Publish your pro
 ---
 
 Author: [@chkroko](https://t.me/chkroko) ([@cryptokobans](https://t.me/cryptokobans)).<br>
+Description: the first Flix drone built with **brushless motors** (DShot interface).<br>
+Features: SpeedyBee BLS 35A Mini V2 ESC, ESP32-S3 board, EMAX ACO 2 2207 1700kv motors, ICM20948V2 IMU, INA226 power monitor and Bluetooth gamepad for control.<br>
+Patch for DShot ESC: https://github.com/Krokodilushka/flix/commit/568345a45ca7ed5b458a11a9d0a9f4c8a91e70ac.
+
+**Flight video:**
+
+<a href="https://drive.google.com/file/d/1GFRanASxKmXINi70fxS5RuzV3LJp7f3m/view?usp=share_link"><img height=300 src="img/user/chkroko-bldc/video.jpg"></a>
+
+<img src="img/user/chkroko-bldc/1.jpg" height=150> <img src="img/user/chkroko-bldc/2.jpg" height=150> <img src="img/user/chkroko-bldc/3.jpg" height=150>
+
+---
+
+Author: [@chkroko](https://t.me/chkroko) ([@cryptokobans](https://t.me/cryptokobans)).<br>
 Modification: Control using Bluetooth with **Flydigi Vader 3** gamepad. Source code: https://github.com/Krokodilushka/flix/tree/dev.<br>
 Features: ESP32-C3 SuperMini, BMP580 barometer, INA226 power monitor, IRLZ44N MOSFETs.<br>
 Full description: https://telegra.ph/Flix-dron-06-13.
