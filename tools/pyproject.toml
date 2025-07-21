@@ -1,0 +1,22 @@
+[project]
+name = "pyflix"
+version = "0.1.0"
+description = "Python API for Flix drone"
+authors = [{ name="Oleg Kalachev", email="okalachev@gmail.com" }]
+license = "MIT"
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = [
+    "pymavlink",
+]
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["pyflix"]
+
+[project.urls]
+Homepage = "https://github.com/okalachev/flix/tree/master/tools/pyflix"
+Issues = "https://github.com/okalachev/flix/issues"

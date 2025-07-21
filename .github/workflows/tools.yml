@@ -19,6 +19,21 @@ jobs:
         echo -e "t,x,y,z\n0,1,2,3\n1,4,5,6" > log.csv
         ./csv_to_ulog log.csv
         test $(stat -c %s log.ulg) -eq 196
+  pyflix:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Install Python build tools
+      run: pip install build
+    - name: Build pyflix
+      run: python3 -m build tools
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: pyflix
+        path: |
+          tools/dist/pyflix-*.tar.gz
+          tools/dist/pyflix-*.whl
   python_tools:
     runs-on: ubuntu-latest
     steps:
