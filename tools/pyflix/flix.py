@@ -294,6 +294,8 @@ class Flix:
 
     def cli(self, cmd: str, wait_response: bool = True) -> str:
         cmd = cmd.strip()
+        if cmd == 'reboot':
+            wait_response = False  # reboot command doesn't respond
         cmd_bytes = (cmd + '\n').encode('utf-8')
         if len(cmd_bytes) > 70:
             raise ValueError(f'Command is too long: {len(cmd_bytes)} > 70')
@@ -310,9 +312,3 @@ class Flix:
             except TimeoutError:
                 continue
         raise RuntimeError(f'Failed to send command {cmd} after 3 attempts')
-
-    def reboot(self):
-        self.cli('reboot', wait_response=False)
-
-    def reset(self):
-        self.cli('reset')
