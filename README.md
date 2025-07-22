@@ -22,6 +22,7 @@
 * Precise simulation with Gazebo.
 * Wi-Fi and MAVLink support.
 * Wireless command line interface and analyzing.
+* Python library.
 * Textbook on flight control theory and practice ([in development](https://quadcopter.dev)).
 * *Position control (using external camera) and autonomous flights¹*.
 
@@ -53,6 +54,7 @@ The simulator is implemented using Gazebo and runs the original Arduino code:
 * [Building and running the code](docs/build.md).
 * [Troubleshooting](docs/troubleshooting.md).
 * [Firmware architecture overview](docs/firmware.md).
+* [Python library tutorial](tools/pyflix/README.md).
 * [Log analysis](docs/log.md).
 * [User builds gallery](docs/user.md).
 
