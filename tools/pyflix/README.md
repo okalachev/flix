@@ -157,7 +157,7 @@ Now you can run `pyflix` scripts and QGroundControl simultaneously.
 The following scripts demonstrate how to use the library:
 
 * [`cli.py`](../cli.py) — remote access to the drone's command line interface.
-* `log.py` — download flight logs from the drone.
+* [`log.py`](../log.py) — download flight logs from the drone.
 * [`example.py`](../example.py) — a simple example, prints telemetry data and waits for events.
 
 ## Advanced usage
