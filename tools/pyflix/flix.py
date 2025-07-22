@@ -283,7 +283,7 @@ class Flix:
 
     def set_controls(self, roll: float, pitch: float, yaw: float, throttle: float):
         """Send pilot's controls. Warning: not intended for automatic control"""
-        if -1 <= roll <= 1 and -1 <= pitch <= 1 and -1 <= yaw <= 1:
+        if not (-1 <= roll <= 1 and -1 <= pitch <= 1 and -1 <= yaw <= 1):
             raise ValueError('roll, pitch, yaw must be in range [-1, 1]')
         if not 0 <= throttle <= 1:
             raise ValueError('throttle must be in range [0, 1]')
