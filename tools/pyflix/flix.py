@@ -6,7 +6,7 @@
 import os
 import time
 from queue import Queue, Empty
-from typing import Literal, Optional, Callable, List, Any, Union
+from typing import Literal, Optional, Callable, List, Dict, Any, Union
 import logging
 import errno
 from threading import Thread, Timer
@@ -35,8 +35,8 @@ class Flix:
     gyro: List[float] = [0, 0, 0]
 
     mav_id: int
-    messages: dict[str, dict[str, Any]]  # MAVLink messages storage
-    values: dict[Union[str, int], Union[float, List[float]]] = {}  # named values
+    messages: Dict[str, Dict[str, Any]]  # MAVLink messages storage
+    values: Dict[Union[str, int], Union[float, List[float]]] = {}  # named values
 
     _connection_timeout = 3
     _print_buffer: str = ''
@@ -58,7 +58,7 @@ class Flix:
             self.connection: mavutil.mavfile = mavutil.mavlink_connection('udpin:0.0.0.0:14555', source_system=254)  # type: ignore
         self.connection.target_system = mav_id
         self.mavlink: mavlink.MAVLink = self.connection.mav
-        self._event_listeners: dict[str, List[Callable[..., Any]]] = {}
+        self._event_listeners: Dict[str, List[Callable[..., Any]]] = {}
         self.messages = {}
         self._disconnected_timer = Timer(0, self._disconnected)
         self._reader_thread = Thread(target=self._read_mavlink, daemon=True)
@@ -274,7 +274,7 @@ class Flix:
     def set_rates(self, rates: List[float], thrust: float):
         raise NotImplementedError('Automatic flight is not implemented yet')
 
-    def set_motors(self, motors: list[float]):
+    def set_motors(self, motors: List[float]):
         if len(motors) != 4:
             raise ValueError('motors must have 4 values')
         if not all(0 <= m <= 1 for m in motors):
