@@ -53,9 +53,9 @@ class Flix:
         except OSError as e:
             if e.errno != errno.EADDRINUSE:
                 raise
-            # Port busy with QGC - using forwarding
-            logger.debug('Listening on port 14445 (QGC forwarding)')
-            self.connection: mavutil.mavfile = mavutil.mavlink_connection('udpin:0.0.0.0:14445', source_system=254)  # type: ignore
+            # Port busy - using proxy
+            logger.debug('Listening on port 14560 (proxy)')
+            self.connection: mavutil.mavfile = mavutil.mavlink_connection('udpin:0.0.0.0:14555', source_system=254)  # type: ignore
         self.connection.target_system = mav_id
         self.mavlink: mavlink.MAVLink = self.connection.mav
         self._event_listeners: dict[str, List[Callable[..., Any]]] = {}
