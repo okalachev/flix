@@ -4,15 +4,13 @@ The Flix Python library allows you to remotely connect to a Flix quadcopter. It 
 
 To use the library, connect to the drone's Wi-Fi. To use it with the simulator, ensure the script runs on the same local network as the simulator.
 
-You also can run the script alongside the QGroundControl app. To do this, go to QGroundControl settings ⇒ *Telemetry* (*MAVLink* in older versions), and enable *MAVLink forwarding*. Set the host to `localhost:14445. The Flix library automatically detects the connection type (direct or forwarded).
-
 ## Installation
 
 If you have cloned the [repo](https://github.com/okalachev/flix), install the library from the repo:
 
 ```bash
 cd /path/to/flix/repo
-pip install -e tools/pkg
+pip install -e tools
 ```
 
 Alternatively, install from pip:
@@ -141,7 +139,6 @@ The following scripts demonstrate how to use the library:
 * [`cli.py`](../cli.py) — remote access to the drone's command line interface.
 * `log.py` — download flight logs from the drone.
 * [`example.py`](../example.py) — a simple example, prints telemetry data and waits for events.
-* `flight.py` — a simple flight script example.
 
 ## Advanced usage
 
