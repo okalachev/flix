@@ -1,1 +1,1 @@
-from .flix import Flix, logger
+from .flix import Flix

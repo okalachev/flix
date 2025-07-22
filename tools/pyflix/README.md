@@ -191,6 +191,18 @@ mavlink_msg_debug_vect_pack(SYSTEM_ID, MAV_COMP_ID_AUTOPILOT1, &msg, "some_vecto
 sendMessage(&msg);
 ```
 
+### Logging
+
+You can control Flix library verbosity using Python's `logging` module:
+
+```python
+import logging
+
+logger = logging.getLogger('flix')
+logger.setLevel(logging.DEBUG)  # be more verbose
+logger.setLevel(logging.WARNING)  # be less verbose
+```
+
 ## Stability
 
 The library is in development stage. The API is not stable.
