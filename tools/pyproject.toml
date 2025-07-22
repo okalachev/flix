@@ -17,6 +17,9 @@ build-backend = "setuptools.build_meta"
 [tool.setuptools]
 packages = ["pyflix"]
 
+[tool.setuptools.package-data]
+pyflix = ["README.md"]
+
 [project.urls]
 Homepage = "https://github.com/okalachev/flix/tree/master/tools/pyflix"
 Issues = "https://github.com/okalachev/flix/issues"
