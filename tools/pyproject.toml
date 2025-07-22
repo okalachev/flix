@@ -11,7 +11,7 @@ dependencies = [
 ]
 
 [project.scripts]
-flixproxy = "pyflix.proxy:main"
+flix-proxy = "pyflix.proxy:main"
 
 [build-system]
 requires = ["setuptools>=61.0"]

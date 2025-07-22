@@ -132,6 +132,26 @@ The flight control feature is in development. List of methods intended for autom
 * `set_controls`
 * `set_mode`
 
+## Usage alongside QGroundControl
+
+You can use the Flix library alongside the QGroundControl app, using a proxy mode. To do that:
+
+1. Run proxy for `pyflix` and QGroundControl in background:
+
+   ```bash
+   flix-proxy
+   ```
+
+2. Go to QGroundControl settings ⇒ *Comm Links*.
+3. Add new link with the following settings:
+   * *Name*: Proxy
+   * *Automatically Connect on Start*: ✓
+   * *Type*: UDP
+   * *Port*: 14560
+4. Restart QGroundControl.
+
+Now you can run `pyflix` scripts and QGroundControl simultaneously.
+
 ## Tools
 
 The following scripts demonstrate how to use the library:
