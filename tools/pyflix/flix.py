@@ -26,13 +26,13 @@ class Flix:
     mode: str = ''
     armed: bool = False
     landed: bool = False
-    attitude: List[float] = [1, 0, 0, 0]
-    attitude_euler: List[float] = [0, 0, 0]  # roll, pitch, yaw
-    rates: List[float] = [0, 0, 0]
-    channels: List[int] = [0, 0, 0, 0, 0, 0, 0, 0]
-    motors: List[float] = [0, 0, 0, 0]
-    acc: List[float] = [0, 0, 0]
-    gyro: List[float] = [0, 0, 0]
+    attitude: List[float]
+    attitude_euler: List[float]  # roll, pitch, yaw
+    rates: List[float]
+    channels: List[int]
+    motors: List[float]
+    acc: List[float]
+    gyro: List[float]
 
     mav_id: int
     messages: Dict[str, Dict[str, Any]]  # MAVLink messages storage
@@ -46,6 +46,7 @@ class Flix:
             raise ValueError('mav_id must be in range [0, 255]')
         self._setup_mavlink()
         self.mav_id = mav_id
+        self._init_state()
         try:
             # Direct connection
             logger.debug('Listening on port 14550')
@@ -68,6 +69,15 @@ class Flix:
         if wait_connection:
             self.wait('mavlink.HEARTBEAT')
             time.sleep(0.2) # give some time to receive initial state
+
+    def _init_state(self):
+        self.attitude = [1, 0, 0, 0]
+        self.attitude_euler = [0, 0, 0]
+        self.rates = [0, 0, 0]
+        self.channels = [0, 0, 0, 0, 0, 0, 0, 0]
+        self.motors = [0, 0, 0, 0]
+        self.acc = [0, 0, 0]
+        self.gyro = [0, 0, 0]
 
     def on(self, event: str, callback: Callable):
         event = event.lower()
