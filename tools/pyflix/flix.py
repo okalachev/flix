@@ -36,7 +36,7 @@ class Flix:
 
     mav_id: int
     messages: dict[str, dict[str, Any]]  # MAVLink messages storage
-    values: dict[Union[str, int], Union[float, List[float]]] = {}  # debug values
+    values: dict[Union[str, int], Union[float, List[float]]] = {}  # named values
 
     _connection_timeout = 3
     _print_buffer: str = ''
@@ -60,11 +60,11 @@ class Flix:
         self.mavlink: mavlink.MAVLink = self.connection.mav
         self._event_listeners: dict[str, List[Callable[..., Any]]] = {}
         self.messages = {}
+        self._disconnected_timer = Timer(0, self._disconnected)
         self._reader_thread = Thread(target=self._read_mavlink, daemon=True)
         self._reader_thread.start()
         self._heartbeat_thread = Thread(target=self._send_heartbeat, daemon=True)
         self._heartbeat_thread.start()
-        self._disconnected_timer = Timer(0, self._disconnected)
         if wait_connection:
             self.wait('mavlink.HEARTBEAT')
             time.sleep(0.2) # give some time to receive initial state
@@ -171,6 +171,7 @@ class Flix:
         if isinstance(msg, mavlink.MAVLink_serial_control_message):
             # new chunk of data
             text = bytes(msg.data)[:msg.count].decode('utf-8', errors='ignore')
+            logger.debug(f'Console: {repr(text)}')
             self._trigger('print', text)
             self._print_buffer += text
             if msg.flags & mavlink.SERIAL_CONTROL_FLAG_MULTI == 0:
@@ -241,6 +242,7 @@ class Flix:
             raise ValueError('Parameter name must be 16 characters or less')
         for attempt in range(3):
             try:
+                logger.debug(f'Get param {name} (attempt #{attempt + 1})')
                 self.mavlink.param_request_read_send(self.mav_id, 0, name.encode('ascii'), -1)
                 msg: mavlink.MAVLink_param_value_message = \
                     self.wait('mavlink.PARAM_VALUE', value=lambda msg: msg.param_id == name, timeout=0.1)
@@ -254,6 +256,7 @@ class Flix:
             raise ValueError('Parameter name must be 16 characters or less')
         for attempt in range(3):
             try:
+                logger.debug(f'Set param {name} to {value} (attempt #{attempt + 1})')
                 self.mavlink.param_set_send(self.mav_id, 0, name.encode('ascii'), value, mavlink.MAV_PARAM_TYPE_REAL32)
                 self.wait('mavlink.PARAM_VALUE', value=lambda msg: msg.param_id == name, timeout=0.1)
                 return
@@ -297,6 +300,7 @@ class Flix:
         cmd_bytes = cmd_bytes.ljust(70, b'\0')
         response_prefix = f'> {cmd}\n'
         for attempt in range(3):
+            logger.debug(f'Send command {cmd} (attempt #{attempt + 1})')
             try:
                 self.mavlink.serial_control_send(0, 0, 0, 0, len(cmd_bytes), cmd_bytes)
                 if not wait_response:

@@ -1,6 +1,6 @@
 # Flix Python library
 
-The Flix Python library allows you to remotely connect to a Flix quadcopter from a Python script. It provides access to telemetry data, supports executing CLI commands, and controlling the drone's flight.
+The Flix Python library allows you to remotely connect to a Flix quadcopter. It provides access to telemetry data, supports executing CLI commands, and controlling the drone's flight.
 
 To use the library, connect to the drone's Wi-Fi. To use it with the simulator, ensure the script runs on the same local network as the simulator.
 
@@ -8,7 +8,7 @@ You also can run the script alongside the QGroundControl app. To do this, go to 
 
 ## Installation
 
-If you have cloned the repo, install the library from the repo:
+If you have cloned the [repo](https://github.com/okalachev/flix), install the library from the repo:
 
 ```bash
 cd /path/to/flix/repo
@@ -32,7 +32,7 @@ flix = Flix()  # create a Flix object and wait for connection
 
 ### Telemetry
 
-Basic telemetry is available through object properties. Their names generally match the corresponding variables in the firmware itself:
+Basic telemetry is available through object properties. The properties names generally match the corresponding variables in the firmware itself:
 
 ```python
 print(flix.connected)       # True if connected to the drone
@@ -165,7 +165,7 @@ You can send raw messages using `mavlink` property:
 from pymavlink.dialects.v20 import common as mavlink
 
 flix.mavlink.heartbeat_send(mavlink.MAV_TYPE_GCS, mavlink.MAV_AUTOPILOT_INVALID,
-                            0, mavlink.MAV_MODE_FLAG_CUSTOM_MODE_ENABLED, 0, 0)
+                            mavlink.MAV_MODE_FLAG_CUSTOM_MODE_ENABLED, 0, 0)
 ```
 
 ### Named values
