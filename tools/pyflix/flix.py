@@ -137,7 +137,7 @@ class Flix:
 
     def _handle_mavlink_message(self, msg: mavlink.MAVLink_message):
         if isinstance(msg, mavlink.MAVLink_heartbeat_message):
-            self.mode = ['MANUAL', 'ACRO', 'STAB', 'AUTO', 'USER'][msg.custom_mode]
+            self.mode = ['MANUAL', 'ACRO', 'STAB', 'USER'][msg.custom_mode]
             self.armed = msg.base_mode & mavlink.MAV_MODE_FLAG_SAFETY_ARMED != 0
             self._trigger('mode', self.mode)
             self._trigger('armed', self.armed)
@@ -289,7 +289,7 @@ class Flix:
             raise ValueError('throttle must be in range [0, 1]')
         self.mavlink.manual_control_send(self.mav_id, roll * 1000, pitch * 1000, yaw * 1000, throttle * 1000, 0)  # type: ignore
 
-    def set_mode(self, mode: Literal['MANUAL', 'ACRO', 'STAB', 'AUTO']):
+    def set_mode(self, mode: Literal['MANUAL', 'ACRO', 'STAB', 'USER']):
         raise NotImplementedError('Setting mode is not implemented yet')
 
     def cli(self, cmd: str, wait_response: bool = True) -> str:
