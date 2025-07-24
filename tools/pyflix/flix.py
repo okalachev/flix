@@ -34,18 +34,18 @@ class Flix:
     acc: List[float]
     gyro: List[float]
 
-    mav_id: int
+    system_id: int
     messages: Dict[str, Dict[str, Any]]  # MAVLink messages storage
     values: Dict[Union[str, int], Union[float, List[float]]] = {}  # named values
 
     _connection_timeout = 3
     _print_buffer: str = ''
 
-    def __init__(self, mav_id: int=1, wait_connection: bool=True):
-        if not (0 <= mav_id < 256):
-            raise ValueError('mav_id must be in range [0, 255]')
+    def __init__(self, system_id: int=1, wait_connection: bool=True):
+        if not (0 <= system_id < 256):
+            raise ValueError('system_id must be in range [0, 255]')
         self._setup_mavlink()
-        self.mav_id = mav_id
+        self.system_id = system_id
         self._init_state()
         try:
             # Direct connection
@@ -57,7 +57,7 @@ class Flix:
             # Port busy - using proxy
             logger.debug('Listening on port 14560 (proxy)')
             self.connection: mavutil.mavfile = mavutil.mavlink_connection('udpin:0.0.0.0:14555', source_system=254)  # type: ignore
-        self.connection.target_system = mav_id
+        self.connection.target_system = system_id
         self.mavlink: mavlink.MAVLink = self.connection.mav
         self._event_listeners: Dict[str, List[Callable[..., Any]]] = {}
         self.messages = {}
@@ -253,7 +253,7 @@ class Flix:
         for attempt in range(3):
             try:
                 logger.debug(f'Get param {name} (attempt #{attempt + 1})')
-                self.mavlink.param_request_read_send(self.mav_id, 0, name.encode('ascii'), -1)
+                self.mavlink.param_request_read_send(self.system_id, 0, name.encode('ascii'), -1)
                 msg: mavlink.MAVLink_param_value_message = \
                     self.wait('mavlink.PARAM_VALUE', value=lambda msg: msg.param_id == name, timeout=0.1)
                 return msg.param_value
@@ -267,7 +267,7 @@ class Flix:
         for attempt in range(3):
             try:
                 logger.debug(f'Set param {name} to {value} (attempt #{attempt + 1})')
-                self.mavlink.param_set_send(self.mav_id, 0, name.encode('ascii'), value, mavlink.MAV_PARAM_TYPE_REAL32)
+                self.mavlink.param_set_send(self.system_id, 0, name.encode('ascii'), value, mavlink.MAV_PARAM_TYPE_REAL32)
                 self.wait('mavlink.PARAM_VALUE', value=lambda msg: msg.param_id == name, timeout=0.1)
                 return
             except TimeoutError:
@@ -297,7 +297,7 @@ class Flix:
             raise ValueError('roll, pitch, yaw must be in range [-1, 1]')
         if not 0 <= throttle <= 1:
             raise ValueError('throttle must be in range [0, 1]')
-        self.mavlink.manual_control_send(self.mav_id, roll * 1000, pitch * 1000, yaw * 1000, throttle * 1000, 0)  # type: ignore
+        self.mavlink.manual_control_send(self.system_id, roll * 1000, pitch * 1000, yaw * 1000, throttle * 1000, 0)  # type: ignore
 
     def set_mode(self, mode: Literal['MANUAL', 'ACRO', 'STAB', 'USER']):
         raise NotImplementedError('Setting mode is not implemented yet')

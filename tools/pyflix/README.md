@@ -71,7 +71,7 @@ The `value` argument specifies a condition for filtering events. It can be eithe
 ```python
 flix.wait('armed', value=True)  # wait until armed
 flix.wait('armed', value=False)  # wait until disarmed
-flix.wait('motors', value=lambda motors: all(m == 0 for m in motors))  # wait until all motors stop
+flix.wait('motors', value=lambda motors: not any(motors))  # wait until all motors stop
 flix.wait('attitude_euler', value=lambda att: att[0] > 0)  # wait until roll angle is positive
 ```
 
@@ -106,7 +106,7 @@ Full list of events:
 Get and set firmware parameters using `get_param` and `set_param` methods:
 
 ```python
-print(flix.get_param('PITCH_P'))  # get parameter value
+pitch_p = flix.get_param('PITCH_P')  # get parameter value
 flix.set_param('PITCH_P', 5)      # set parameter value
 ```
 
