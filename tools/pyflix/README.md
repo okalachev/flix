@@ -126,6 +126,7 @@ flix.cli('reboot')       # reboot the drone
 The flight control feature is in development. List of methods intended for automatic flight control:
 
 * `set_position`
+* `set_velocity`
 * `set_attitude`
 * `set_rates`
 * `set_motors`

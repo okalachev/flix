@@ -278,6 +278,9 @@ class Flix:
     def set_position(self, position: List[float], yaw: Optional[float] = None, wait: bool = False, tolerance: float = 0.1):
         raise NotImplementedError('Position control is not implemented yet')
 
+    def set_velocity(self, velocity: List[float], yaw: Optional[float] = None):
+        raise NotImplementedError('Velocity control is not implemented yet')
+
     def set_attitude(self, attitude: List[float], thrust: float):
         raise NotImplementedError('Automatic flight is not implemented yet')
 
