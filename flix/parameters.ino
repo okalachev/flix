@@ -13,7 +13,7 @@ extern float mavlinkControlScale;
 Preferences storage;
 
 struct Parameter {
-	const char *name;
+	const char *name; // max length is 16
 	float *variable;
 	float value; // cache
 };

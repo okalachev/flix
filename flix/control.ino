@@ -32,7 +32,6 @@
 #define ROLLRATE_MAX radians(360)
 #define YAWRATE_MAX radians(300)
 #define TILT_MAX radians(30)
-
 #define RATES_D_LPF_ALPHA 0.2 // cutoff frequency ~ 40 Hz
 
 enum { MANUAL, ACRO, STAB, USER } mode = STAB;
