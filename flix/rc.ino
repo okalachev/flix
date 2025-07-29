@@ -42,7 +42,7 @@ void normalizeRC() {
 	controlPitch = pitchChannel >= 0 ? controls[(int)pitchChannel] : NAN;
 	controlYaw = yawChannel >= 0 ? controls[(int)yawChannel] : NAN;
 	controlThrottle = throttleChannel >= 0 ? controls[(int)throttleChannel] : NAN;
-	controlArmed = armedChannel >= 0 ? controls[(int)armedChannel] : 1; // assume armed by default
+	controlArmed = armedChannel >= 0 ? controls[(int)armedChannel] : NAN;
 	controlMode = modeChannel >= 0 ? controls[(int)modeChannel] : NAN;
 }
 
