@@ -144,7 +144,9 @@ void doCommand(String str, bool echo = false) {
 	} else if (command == "mrl") {
 		testMotor(MOTOR_REAR_LEFT);
 	} else if (command == "wifi") {
+#if WIFI_ENABLED
 		printWiFiInfo();
+#endif
 	} else if (command == "sys") {
 #ifdef ESP32
 		print("Chip: %s\n", ESP.getChipModel());
