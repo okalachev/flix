@@ -79,7 +79,7 @@ void interpretControls() {
 
 	if (mode == STAB) {
 		float yawTarget = attitudeTarget.getYaw();
-		if (invalid(yawTarget) || controlYaw != 0) yawTarget = attitude.getYaw(); // reset yaw target if NAN or yaw rate is set
+		if (invalid(yawTarget) || controlYaw != 0) yawTarget = attitude.getYaw(); // reset yaw target if NAN or pilot commands yaw rate
 		attitudeTarget = Quaternion::fromEuler(Vector(controlRoll * tiltMax, controlPitch * tiltMax, yawTarget));
 		ratesExtra = Vector(0, 0, -controlYaw * maxRate.z); // positive yaw stick means clockwise rotation in FLU
 	}
@@ -139,7 +139,7 @@ void controlTorque() {
 	if (!torqueTarget.valid()) return; // skip torque control
 
 	if (!armed || thrustTarget < 0.05) {
-		memset(motors, 0, sizeof(motors));
+		memset(motors, 0, sizeof(motors)); // stop motors if no thrust
 		return;
 	}
 
