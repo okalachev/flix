@@ -125,6 +125,7 @@ void doCommand(String str, bool echo = false) {
 		print("\nroll: %g pitch: %g yaw: %g throttle: %g armed: %g mode: %g\n",
 			controlRoll, controlPitch, controlYaw, controlThrottle, controlArmed, controlMode);
 		print("mode: %s\n", getModeName());
+		print("armed: %d\n", armed);
 	} else if (command == "mot") {
 		print("front-right %g front-left %g rear-right %g rear-left %g\n",
 			motors[MOTOR_FRONT_RIGHT], motors[MOTOR_FRONT_LEFT], motors[MOTOR_REAR_RIGHT], motors[MOTOR_REAR_LEFT]);
