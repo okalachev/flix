@@ -13,6 +13,7 @@
 #define WIFI_PASSWORD "flixwifi"
 #define WIFI_UDP_PORT 14550
 #define WIFI_UDP_REMOTE_PORT 14550
+#define WIFI_UDP_ALWAYS_BROADCAST 1
 
 WiFiUDP udp;
 
@@ -24,7 +25,9 @@ void setupWiFi() {
 
 void sendWiFi(const uint8_t *buf, int len) {
 	if (WiFi.softAPIP() == IPAddress(0, 0, 0, 0) && WiFi.status() != WL_CONNECTED) return;
-	udp.beginPacket(WiFi.softAPBroadcastIP(), WIFI_UDP_REMOTE_PORT);
+	IPAddress remote = WiFi.softAPBroadcastIP();
+	if (!WIFI_UDP_ALWAYS_BROADCAST && udp.remoteIP()) remote = udp.remoteIP();
+	udp.beginPacket(remote, WIFI_UDP_REMOTE_PORT);
 	udp.write(buf, len);
 	udp.endPacket();
 }
@@ -32,6 +35,15 @@ void sendWiFi(const uint8_t *buf, int len) {
 int receiveWiFi(uint8_t *buf, int len) {
 	udp.parsePacket();
 	return udp.read(buf, len);
+}
+
+void printWiFiInfo() {
+	print("SSID: %s\n", WiFi.softAPSSID().c_str());
+	print("Clients: %d\n", WiFi.softAPgetStationNum());
+	print("Status: %d\n", WiFi.status());
+	print("IP: %s\n", WiFi.softAPIP().toString().c_str());
+	print("Remote IP: %s\n", udp.remoteIP().toString().c_str());
+	print("Broadcast IP: %s\n", WiFi.softAPBroadcastIP().toString().c_str());
 }
 
 #endif

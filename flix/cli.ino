@@ -40,6 +40,7 @@ const char* motd =
 "cr - calibrate RC\n"
 "ca - calibrate accel\n"
 "mfr, mfl, mrr, mrl - test motor (remove props)\n"
+"wifi - show Wi-Fi info\n"
 "sys - show system info\n"
 "reset - reset drone's state\n"
 "reboot - reboot the drone\n";
@@ -141,6 +142,8 @@ void doCommand(String str, bool echo = false) {
 		testMotor(MOTOR_REAR_RIGHT);
 	} else if (command == "mrl") {
 		testMotor(MOTOR_REAR_LEFT);
+	} else if (command == "wifi") {
+		printWiFiInfo();
 	} else if (command == "sys") {
 #ifdef ESP32
 		print("Chip: %s\n", ESP.getChipModel());
