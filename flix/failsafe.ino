@@ -3,9 +3,9 @@
 
 // Fail-safe functions
 
-#define RC_LOSS_TIMEOUT 0.2
 #include "util.h"
 
+#define RC_LOSS_TIMEOUT 0.5
 #define DESCEND_TIME 3.0 // time to descend from full throttle to zero
 
 extern double controlTime;
