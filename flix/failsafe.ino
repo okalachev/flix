@@ -29,7 +29,6 @@ void autoFailsafe() {
 
 	if (roll != controlRoll || pitch != controlPitch || yaw != controlYaw || abs(throttle - controlThrottle) > 0.05) {
 		if (mode == AUTO && !isfinite(controlMode)) {
-			print("Failsafe: regain control to pilot\n");
 			mode = STAB; // regain control to the pilot
 		}
 	}

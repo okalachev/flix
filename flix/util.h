@@ -19,6 +19,14 @@ float mapff(float x, float in_min, float in_max, float out_min, float out_max) {
 	return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
+bool invalid(float x) {
+	return !isfinite(x);
+}
+
+bool valid(float x) {
+	return isfinite(x);
+}
+
 // Wrap angle to [-PI, PI)
 float wrapAngle(float angle) {
 	angle = fmodf(angle, 2 * PI);
