@@ -4,6 +4,8 @@
 // Fail-safe functions
 
 #define RC_LOSS_TIMEOUT 0.2
+#include "util.h"
+
 #define DESCEND_TIME 3.0 // time to descend from full throttle to zero
 
 extern double controlTime;
@@ -28,7 +30,7 @@ void autoFailsafe() {
 	static float roll, pitch, yaw, throttle;
 
 	if (roll != controlRoll || pitch != controlPitch || yaw != controlYaw || abs(throttle - controlThrottle) > 0.05) {
-		if (mode == AUTO && !isfinite(controlMode)) {
+		if (mode == AUTO && invalid(controlMode)) {
 			mode = STAB; // regain control to the pilot
 		}
 	}
