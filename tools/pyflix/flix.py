@@ -56,7 +56,7 @@ class Flix:
             if e.errno != errno.EADDRINUSE:
                 raise
             # Port busy - using proxy
-            logger.debug('Listening on port 14560 (proxy)')
+            logger.debug('Listening on port 14555 (proxy)')
             self.connection: mavutil.mavfile = mavutil.mavlink_connection('udpin:0.0.0.0:14555', source_system=254)  # type: ignore
         self.connection.target_system = system_id
         self.mavlink: mavlink.MAVLink = self.connection.mav
@@ -169,8 +169,8 @@ class Flix:
                              msg.chan5_raw, msg.chan6_raw, msg.chan7_raw, msg.chan8_raw]
             self._trigger('channels', self.channels)
 
-        if isinstance(msg, mavlink.MAVLink_actuator_output_status_message):
-            self.motors = msg.actuator[:4]  # type: ignore
+        if isinstance(msg, mavlink.MAVLink_actuator_control_target_message):
+            self.motors = msg.controls[:4]  # type: ignore
             self._trigger('motors', self.motors)
 
         if isinstance(msg, mavlink.MAVLink_scaled_imu_message):

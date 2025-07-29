@@ -10,32 +10,40 @@ extern double controlTime;
 extern float controlRoll, controlPitch, controlThrottle, controlYaw;
 
 void failsafe() {
-	armingFailsafe();
 	rcLossFailsafe();
-}
-
-// Prevent arming without zero throttle input
-void armingFailsafe() {
-	static double zeroThrottleTime;
-	static double armingTime;
-	if (!armed) armingTime = t; // stores the last time when the drone was disarmed, therefore contains arming time
-	if (controlTime > 0 && controlThrottle < 0.05) zeroThrottleTime = controlTime;
-	if (armingTime - zeroThrottleTime > 0.1) armed = false; // prevent arming if there was no zero throttle for 0.1 sec
+	autoFailsafe();
 }
 
 // RC loss failsafe
 void rcLossFailsafe() {
+	if (mode == AUTO) return;
+	if (!armed) return;
 	if (t - controlTime > RC_LOSS_TIMEOUT) {
 		descend();
 	}
 }
 
+// Allow pilot to interrupt automatic flight
+void autoFailsafe() {
+	static float roll, pitch, yaw, throttle;
+
+	if (roll != controlRoll || pitch != controlPitch || yaw != controlYaw || abs(throttle - controlThrottle) > 0.05) {
+		if (mode == AUTO && !isfinite(controlMode)) {
+			print("Failsafe: regain control to pilot\n");
+			mode = STAB; // regain control to the pilot
+		}
+	}
+
+	roll = controlRoll;
+	pitch = controlPitch;
+	yaw = controlYaw;
+	throttle = controlThrottle;
+}
+
 // Smooth descend on RC lost
 void descend() {
-	mode = STAB;
-	controlRoll = 0;
-	controlPitch = 0;
-	controlYaw = 0;
-	controlThrottle -= dt / DESCEND_TIME;
-	if (controlThrottle < 0) controlThrottle = 0;
+	mode = AUTO;
+	thrustTarget -= dt / DESCEND_TIME;
+	if (thrustTarget < 0) thrustTarget = 0;
+	if (thrustTarget == 0) armed = false;
 }

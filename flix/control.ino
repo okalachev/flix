@@ -34,8 +34,7 @@
 #define TILT_MAX radians(30)
 #define RATES_D_LPF_ALPHA 0.2 // cutoff frequency ~ 40 Hz
 
-enum { MANUAL, ACRO, STAB, USER } mode = STAB;
-enum { YAW, YAW_RATE } yawMode = YAW;
+enum { MANUAL, ACRO, STAB, AUTO } mode = STAB;
 bool armed = false;
 
 PID rollRatePID(ROLLRATE_P, ROLLRATE_I, ROLLRATE_D, ROLLRATE_I_LIM, RATES_D_LPF_ALPHA);
@@ -49,6 +48,7 @@ float tiltMax = TILT_MAX;
 
 Quaternion attitudeTarget;
 Vector ratesTarget;
+Vector ratesExtra; // feedforward rates
 Vector torqueTarget;
 float thrustTarget;
 
@@ -56,63 +56,50 @@ extern const int MOTOR_REAR_LEFT, MOTOR_REAR_RIGHT, MOTOR_FRONT_RIGHT, MOTOR_FRO
 extern float controlRoll, controlPitch, controlThrottle, controlYaw, controlArmed, controlMode;
 
 void control() {
-	interpretRC();
+	interpretControls();
 	failsafe();
-	if (mode == STAB) {
-		controlAttitude();
-		controlRate();
-		controlTorque();
-	} else if (mode == ACRO) {
-		controlRate();
-		controlTorque();
-	} else if (mode == MANUAL) {
-		controlTorque();
-	}
+	controlAttitude();
+	controlRates();
+	controlTorque();
 }
 
-void interpretRC() {
-	armed = controlThrottle >= 0.05 && controlArmed >= 0.5;
-
+void interpretControls() {
 	// NOTE: put ACRO or MANUAL modes there if you want to use them
-	if (controlMode < 0.25) {
-		mode = STAB;
-	} else if (controlMode < 0.75) {
-		mode = STAB;
-	} else {
-		mode = STAB;
-	}
+	if (controlMode < 0.25) mode = STAB;
+	if (controlMode < 0.75) mode = STAB;
+	if (controlMode > 0.75) mode = AUTO;
+	if (controlArmed < 0.5) armed = false;
+
+	if (mode == AUTO) return; // pilot is not effective in AUTO mode
+
+	if (landed && controlThrottle == 0 && controlYaw > 0.95) armed = true; // arm gesture
+	if (landed && controlThrottle == 0 && controlYaw < -0.95) armed = false; // disarm gesture
 
 	thrustTarget = controlThrottle;
 
-	if (mode == ACRO) {
-		yawMode = YAW_RATE;
-		ratesTarget.x = controlRoll * maxRate.x;
-		ratesTarget.y = controlPitch* maxRate.y;
-		ratesTarget.z = -controlYaw * maxRate.z; // positive yaw stick means clockwise rotation in FLU
-
-	} else if (mode == STAB) {
-		yawMode = controlYaw == 0 ? YAW : YAW_RATE;
-
-		attitudeTarget = Quaternion::fromEuler(Vector(
-			controlRoll * tiltMax,
-			controlPitch * tiltMax,
-			attitudeTarget.getYaw()));
-		ratesTarget.z = -controlYaw * maxRate.z; // positive yaw stick means clockwise rotation in FLU
-
-	} else if (mode == MANUAL) {
-		// passthrough mode
-		yawMode = YAW_RATE;
-		torqueTarget = Vector(controlRoll, controlPitch, -controlYaw) * 0.01;
+	if (mode == STAB) {
+		float yawTarget = attitudeTarget.getYaw();
+		if (invalid(yawTarget) || controlYaw != 0) yawTarget = attitude.getYaw(); // reset yaw target if NAN or yaw rate is set
+		attitudeTarget = Quaternion::fromEuler(Vector(controlRoll * tiltMax, controlPitch * tiltMax, yawTarget));
+		ratesExtra = Vector(0, 0, -controlYaw * maxRate.z); // positive yaw stick means clockwise rotation in FLU
 	}
 
-	if (yawMode == YAW_RATE || !motorsActive()) {
-		// update yaw target as we don't have control over the yaw
-		attitudeTarget.setYaw(attitude.getYaw());
+	if (mode == ACRO) {
+		attitudeTarget.invalidate();
+		ratesTarget.x = controlRoll * maxRate.x;
+		ratesTarget.y = controlPitch * maxRate.y;
+		ratesTarget.z = -controlYaw * maxRate.z; // positive yaw stick means clockwise rotation in FLU
+	}
+
+	if (mode == MANUAL) { // passthrough mode
+		attitudeTarget.invalidate();
+		ratesTarget.invalidate();
+		torqueTarget = Vector(controlRoll, controlPitch, -controlYaw) * 0.01;
 	}
 }
 
 void controlAttitude() {
-	if (!armed) {
+	if (!armed || attitudeTarget.invalid()) { // skip attitude control
 		rollPID.reset();
 		pitchPID.reset();
 		yawPID.reset();
@@ -125,17 +112,15 @@ void controlAttitude() {
 
 	Vector error = Vector::rotationVectorBetween(upTarget, upActual);
 
-	ratesTarget.x = rollPID.update(error.x, dt);
-	ratesTarget.y = pitchPID.update(error.y, dt);
+	ratesTarget.x = rollPID.update(error.x, dt) + ratesExtra.x;
+	ratesTarget.y = pitchPID.update(error.y, dt) + ratesExtra.y;
 
-	if (yawMode == YAW) {
-		float yawError = wrapAngle(attitudeTarget.getYaw() - attitude.getYaw());
-		ratesTarget.z = yawPID.update(yawError, dt);
-	}
+	float yawError = wrapAngle(attitudeTarget.getYaw() - attitude.getYaw());
+	ratesTarget.z = yawPID.update(yawError, dt) + ratesExtra.z;
 }
 
-void controlRate() {
-	if (!armed) {
+void controlRates() {
+	if (!armed || ratesTarget.invalid()) { // skip rates control
 		rollRatePID.reset();
 		pitchRatePID.reset();
 		yawRatePID.reset();
@@ -151,7 +136,9 @@ void controlRate() {
 }
 
 void controlTorque() {
-	if (!armed) {
+	if (!torqueTarget.valid()) return; // skip torque control
+
+	if (!armed || thrustTarget < 0.05) {
 		memset(motors, 0, sizeof(motors));
 		return;
 	}
@@ -172,7 +159,7 @@ const char* getModeName() {
 		case MANUAL: return "MANUAL";
 		case ACRO: return "ACRO";
 		case STAB: return "STAB";
-		case USER: return "USER";
+		case AUTO: return "AUTO";
 		default: return "UNKNOWN";
 	}
 }

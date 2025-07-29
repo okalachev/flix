@@ -12,6 +12,7 @@ extern float loopRate, dt;
 extern double t;
 extern uint16_t channels[16];
 extern float controlRoll, controlPitch, controlThrottle, controlYaw, controlArmed, controlMode;
+extern bool armed;
 
 const char* motd =
 "\nWelcome to\n"
@@ -31,6 +32,8 @@ const char* motd =
 "ps - show pitch/roll/yaw\n"
 "psq - show attitude quaternion\n"
 "imu - show IMU data\n"
+"arm - arm the drone (when no mode switch)\n"
+"disarm - disarm the drone (when no mode switch)\n"
 "rc - show RC data\n"
 "mot - show motor output\n"
 "log - dump in-RAM log\n"
@@ -109,6 +112,10 @@ void doCommand(String str, bool echo = false) {
 		printIMUCalibration();
 		print("rate: %.0f\n", loopRate);
 		print("landed: %d\n", landed);
+	} else if (command == "arm") {
+		armed = true;
+	} else if (command == "disarm") {
+		armed = false;
 	} else if (command == "rc") {
 		print("channels: ");
 		for (int i = 0; i < 16; i++) {
