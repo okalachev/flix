@@ -231,6 +231,12 @@ void handleMavlink(const void *_msg) {
 			mavlink_msg_command_ack_pack(SYSTEM_ID, MAV_COMP_ID_AUTOPILOT1, &ack, m.command, MAV_RESULT_ACCEPTED, UINT8_MAX, 0, msg.sysid, msg.compid);
 			sendMessage(&ack);
 		}
+
+		if (m.command == MAV_CMD_COMPONENT_ARM_DISARM) {
+			armed = m.param1 == 1;
+			mavlink_msg_command_ack_pack(SYSTEM_ID, MAV_COMP_ID_AUTOPILOT1, &ack, m.command, MAV_RESULT_ACCEPTED, UINT8_MAX, 0, msg.sysid, msg.compid);
+			sendMessage(&ack);
+		}
 	}
 }
 
