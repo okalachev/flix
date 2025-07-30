@@ -12,7 +12,7 @@
 #define PERIOD_FAST 0.1
 #define MAVLINK_CONTROL_YAW_DEAD_ZONE 0.1f
 
-float mavlinkControlScale = 0.7;
+float mavlinkControlScale = 1;
 String mavlinkPrintBuffer;
 
 extern double controlTime;
