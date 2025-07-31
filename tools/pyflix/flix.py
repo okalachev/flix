@@ -173,6 +173,10 @@ class Flix:
             self.motors = msg.controls[:4]  # type: ignore
             self._trigger('motors', self.motors)
 
+        # TODO: to be removed: the old way of passing motor outputs
+        if isinstance(msg, mavlink.MAVLink_actuator_output_status_message):
+            self.motors = msg.actuator[:4]  # type: ignore
+
         if isinstance(msg, mavlink.MAVLink_scaled_imu_message):
             self.acc = self._mavlink_to_flu([msg.xacc / 1000, msg.yacc / 1000, msg.zacc / 1000])
             self.gyro = self._mavlink_to_flu([msg.xgyro / 1000, msg.ygyro / 1000, msg.zgyro / 1000])
