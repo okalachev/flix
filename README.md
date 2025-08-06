@@ -63,8 +63,8 @@ The simulator is implemented using Gazebo and runs the original Arduino code:
 |Type|Part|Image|Quantity|
 |-|-|:-:|:-:|
 |Microcontroller board|ESP32 Mini|<img src="docs/img/esp32.jpg" width=100>|1|
-|IMU (and barometer²) board|GY‑91, MPU-9265 (or other MPU‑9250/MPU‑6500 board)<br>ICM‑20948³<br>GY-521 (MPU-6050)³⁻¹|<img src="docs/img/gy-91.jpg" width=90 align=center><br><img src="docs/img/icm-20948.jpg" width=100><br><img src="docs/img/gy-521.jpg" width=100>|1|
-|<span style="background:yellow">(Recommended) Buck-boost converter</span>|To be determined, output 5V or 3.3V, see [user-contributed schematics](https://miro.com/app/board/uXjVN-dTjoo=/?moveToWidget=3458764612179508274&cot=14)|<img src="docs/img/buck-boost.jpg" width=100>|1|
+|IMU (and barometer²) board|GY‑91, MPU-9265 (or other MPU‑9250/MPU‑6500 board)<br>ICM20948V2 (ICM‑20948)³<br>GY-521 (MPU-6050)³⁻¹|<img src="docs/img/gy-91.jpg" width=90 align=center><br><img src="docs/img/icm-20948.jpg" width=100><br><img src="docs/img/gy-521.jpg" width=100>|1|
+|<span style="background:yellow">Buck-boost converter</span> (recommended)|To be determined, output 5V or 3.3V, see [user-contributed schematics](https://miro.com/app/board/uXjVN-dTjoo=/?moveToWidget=3458764612179508274&cot=14)|<img src="docs/img/buck-boost.jpg" width=100>|1|
 |Motor|8520 3.7V brushed motor (shaft 0.8mm).<br>Motor with exact 3.7V voltage is needed, not ranged working voltage (3.7V — 6V).|<img src="docs/img/motor.jpeg" width=100>|4|
 |Propeller|Hubsan 55 mm|<img src="docs/img/prop.jpg" width=100>|4|
 |MOSFET (transistor)|100N03A or [analog](https://t.me/opensourcequadcopter/33)|<img src="docs/img/100n03a.jpg" width=100>|4|
@@ -77,7 +77,7 @@ The simulator is implemented using Gazebo and runs the original Arduino code:
 |Frame main part|3D printed⁴:<br>[`flix-frame-1.1.stl`](docs/assets/flix-frame-1.1.stl) [`flix-frame-1.1.step`](docs/assets/flix-frame-1.1.step)<br>Recommended settings: layer 0.2 mm, line 0.4 mm, infill 100%.|<img src="docs/img/frame1.jpg" width=100>|1|
 |Frame top part|3D printed:<br>[`esp32-holder.stl`](docs/assets/esp32-holder.stl) [`esp32-holder.step`](docs/assets/esp32-holder.step)|<img src="docs/img/esp32-holder.jpg" width=100>|1|
 |Washer for IMU board mounting|3D printed:<br>[`washer-m3.stl`](docs/assets/washer-m3.stl) [`washer-m3.step`](docs/assets/washer-m3.step)|<img src="docs/img/washer-m3.jpg" width=100>|2|
-|*RC transmitter (optional)*|*KINGKONG TINY X8 (warning: lacks USB support) or other⁵*|<img src="docs/img/tx.jpg" width=100>|1|
+|RC transmitter (recommended)|BetaFPV LiteRadio (CC2500) — with USB support (can control via Wi-Fi).<br>KINGKONG TINY X8 — warning: lacks USB support.<br>Or other⁵|<img src="docs/img/tx.jpg" width=100>|1|
 |*RC receiver (optional)*|*DF500 or other⁵*|<img src="docs/img/rx.jpg" width=100>|1|
 |Wires|28 AWG recommended|<img src="docs/img/wire-28awg.jpg" width=100>||
 |Tape, double-sided tape||||
@@ -86,7 +86,7 @@ The simulator is implemented using Gazebo and runs the original Arduino code:
 *³ — change `MPU9250` to `ICM20948` in `imu.ino` file if using ICM-20948 board.*<br>
 *³⁻¹ — MPU-6050 supports I²C interface only (not recommended). To use it change IMU declaration to `MPU6050 IMU(Wire)`.*<br>
 *⁴ — this frame is optimized for GY-91 board, if using other, the board mount holes positions should be modified.*<br>
-*⁵ — you may use any transmitter-receiver pair with SBUS interface.*
+*⁵ — you may use any transmitter-receiver pair with SBUS interface, or any transmitter with USB support*
 
 Tools required for assembly:
 
