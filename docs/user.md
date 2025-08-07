@@ -4,6 +4,24 @@ This page contains user-built drones based on the Flix project. Publish your pro
 
 ---
 
+## RoboCamp
+
+Author: RoboCamp participants.<br>
+Description: 3D-printed and wooden frames, ESP32 Mini, DC-DC buck-boost converters. BetaFPV LiteRadio 3 to control the drones via Wi-Fi connection.<br>
+Features: altitude hold, obstacle avoidance, autonomous flight elements.
+
+RoboCamp took place in July 2025, Saint Petersburg, where 9 participants designed and built their own drones using the Flix project, and then modified the firmware to complete specific flight tasks.
+
+See the detailed video about the event:
+
+<a href="https://youtu.be/Wd3yaorjTx0"><img width=500 src="https://img.youtube.com/vi/Wd3yaorjTx0/sddefault.jpg"></a>
+
+Built drones:
+
+<img src="img/user/robocamp/1.jpg" width=500>
+
+---
+
 Author: chkroko.<br>
 Description: the first Flix drone built with **brushless motors** (DShot interface).<br>
 Features: SpeedyBee BLS 35A Mini V2 ESC, ESP32-S3 board, EMAX ECO 2 2207 1700kv motors, ICM20948V2 IMU, INA226 power monitor and Bluetooth gamepad for control.<br>
