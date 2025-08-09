@@ -116,29 +116,31 @@ public:
 		return euler;
 	}
 
+	float getRoll() const {
+		return toEuler().x;
+	}
+
+	float getPitch() const {
+		return toEuler().y;
+	}
+
 	float getYaw() const {
-		// https://github.com/ros/geometry2/blob/589caf083cae9d8fae7effdb910454b4681b9ec1/tf2/include/tf2/impl/utils.h#L122
-		float yaw;
-		float sqx = x * x;
-		float sqy = y * y;
-		float sqz = z * z;
-		float sqw = w * w;
-		double sarg = -2 * (x * z - w * y) / (sqx + sqy + sqz + sqw);
-		if (sarg <= -0.99999) {
-			yaw = -2 * atan2(y, x);
-		} else if (sarg >= 0.99999) {
-			yaw = 2 * atan2(y, x);
-		} else {
-			yaw = atan2(2 * (x * y + w * z), sqw + sqx - sqy - sqz);
-		}
-		return yaw;
+		return toEuler().z;
+	}
+
+	void setRoll(float roll) {
+		Vector euler = toEuler();
+		*this = Quaternion::fromEuler(Vector(roll, euler.y, euler.z));
+	}
+
+	void setPitch(float pitch) {
+		Vector euler = toEuler();
+		*this = Quaternion::fromEuler(Vector(euler.x, pitch, euler.z));
 	}
 
 	void setYaw(float yaw) {
-		// TODO: optimize?
 		Vector euler = toEuler();
-		euler.z = yaw;
-		(*this) = Quaternion::fromEuler(euler);
+		*this = Quaternion::fromEuler(Vector(euler.x, euler.y, yaw));
 	}
 
 	Quaternion operator * (const Quaternion& q) const {
