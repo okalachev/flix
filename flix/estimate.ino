@@ -11,8 +11,6 @@
 #define WEIGHT_ACC 0.003
 #define RATES_LFP_ALPHA 0.2 // cutoff frequency ~ 40 Hz
 
-LowPassFilter<Vector> ratesFilter(RATES_LFP_ALPHA);
-
 void estimate() {
 	applyGyro();
 	applyAcc();
@@ -20,6 +18,7 @@ void estimate() {
 
 void applyGyro() {
 	// filter gyro to get angular rates
+	static LowPassFilter<Vector> ratesFilter(RATES_LFP_ALPHA);
 	rates = ratesFilter.update(gyro);
 
 	// apply rates to attitude
