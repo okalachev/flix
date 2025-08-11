@@ -8,10 +8,12 @@
 #include "util.h"
 
 extern const int MOTOR_REAR_LEFT, MOTOR_REAR_RIGHT, MOTOR_FRONT_RIGHT, MOTOR_FRONT_LEFT;
+extern const int ACRO, STAB, AUTO;
 extern float loopRate, dt;
 extern double t;
 extern uint16_t channels[16];
 extern float controlRoll, controlPitch, controlThrottle, controlYaw, controlArmed, controlMode;
+extern int mode;
 extern bool armed;
 
 const char* motd =
@@ -34,6 +36,7 @@ const char* motd =
 "imu - show IMU data\n"
 "arm - arm the drone (when no armed switch)\n"
 "disarm - disarm the drone (when no armed switch)\n"
+"stab/acro/auto - set mode (when no mode switch)\n"
 "rc - show RC data\n"
 "mot - show motor output\n"
 "log - dump in-RAM log\n"
@@ -116,6 +119,12 @@ void doCommand(String str, bool echo = false) {
 		armed = true;
 	} else if (command == "disarm") {
 		armed = false;
+	} else if (command == "stab") {
+		mode = STAB;
+	} else if (command == "acro") {
+		mode = ACRO;
+	} else if (command == "auto") {
+		mode = AUTO;
 	} else if (command == "rc") {
 		print("channels: ");
 		for (int i = 0; i < 16; i++) {

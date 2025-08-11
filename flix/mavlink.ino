@@ -226,8 +226,8 @@ void handleMavlink(const void *_msg) {
 		}
 
 		if (m.command == MAV_CMD_DO_SET_MODE) {
-			if (!(m.param2 >= 0 && m.param2 <= AUTO)) return;
-			mode = static_cast<decltype(mode)>(m.param2);
+			if (!(m.param2 >= 0 && m.param2 <= AUTO)) return; // incorrect mode
+			mode = m.param2;
 			mavlink_msg_command_ack_pack(SYSTEM_ID, MAV_COMP_ID_AUTOPILOT1, &ack, m.command, MAV_RESULT_ACCEPTED, UINT8_MAX, 0, msg.sysid, msg.compid);
 			sendMessage(&ack);
 		}

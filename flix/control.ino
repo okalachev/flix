@@ -34,7 +34,8 @@
 #define TILT_MAX radians(30)
 #define RATES_D_LPF_ALPHA 0.2 // cutoff frequency ~ 40 Hz
 
-enum { MANUAL, ACRO, STAB, AUTO } mode = STAB;
+const int MANUAL = 0, ACRO = 1, STAB = 2, AUTO = 3; // flight modes
+int mode = STAB;
 bool armed = false;
 
 PID rollRatePID(ROLLRATE_P, ROLLRATE_I, ROLLRATE_D, ROLLRATE_I_LIM, RATES_D_LPF_ALPHA);
