@@ -30,7 +30,7 @@ Firmware source files are located in `flix` directory. The key files are:
 
 Utility files include:
 
-* [`vector.h`](../flix/vector.h), [`quaternion.h`](../flix/quaternion.h) — project's vector and quaternion libraries implementation.
+* [`vector.h`](../flix/vector.h), [`quaternion.h`](../flix/quaternion.h) — vector and quaternion libraries implementation.
 * [`pid.h`](../flix/pid.h) — generic PID controller implementation.
 * [`lpf.h`](../flix/lpf.h) — generic low-pass filter implementation.
 

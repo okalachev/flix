@@ -27,6 +27,6 @@
 
 Вспомогательные файлы включают:
 
-* [`vector.h`](https://github.com/okalachev/flix/blob/canonical/flix/vector.h), [`quaternion.h`](https://github.com/okalachev/flix/blob/canonical/flix/quaternion.h) — реализация библиотек векторов и кватернионов проекта.
+* [`vector.h`](https://github.com/okalachev/flix/blob/canonical/flix/vector.h), [`quaternion.h`](https://github.com/okalachev/flix/blob/canonical/flix/quaternion.h) — реализация библиотек векторов и кватернионов.
 * [`pid.h`](https://github.com/okalachev/flix/blob/canonical/flix/pid.h) — реализация общего ПИД-регулятора.
 * [`lpf.h`](https://github.com/okalachev/flix/blob/canonical/flix/lpf.h) — реализация общего фильтра нижних частот.
