@@ -8,7 +8,8 @@ This page contains user-built drones based on the Flix project. Publish your pro
 
 Author: RoboCamp participants.<br>
 Description: 3D-printed and wooden frames, ESP32 Mini, DC-DC buck-boost converters. BetaFPV LiteRadio 3 to control the drones via Wi-Fi connection.<br>
-Features: altitude hold, obstacle avoidance, autonomous flight elements.
+Features: altitude hold, obstacle avoidance, autonomous flight elements.<br>
+Some of the designed model files: https://drive.google.com/drive/folders/18YHWGquKeIevzrMH4-OUT-zKXMETTEUu?usp=share_link.
 
 RoboCamp took place in July 2025, Saint Petersburg, where 9 participants designed and built their own drones using the Flix project, and then modified the firmware to complete specific flight tasks.
 
