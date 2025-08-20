@@ -173,7 +173,7 @@ Before flight using remote control, you need to calibrate it:
 2. Type `cr` command there and follow the instructions.
 3. Use the remote control to fly the drone!
 
-#### Control with USB remote control
+#### Control with USB remote control (Wi-Fi)
 
 If your drone doesn't have RC receiver installed, you can use USB remote control and QGroundControl app to fly it.
 

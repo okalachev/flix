@@ -17,11 +17,11 @@
 
 * Dedicated for education and research.
 * Made from general-purpose components.
-* Simple and clean source code in Arduino.
-* Control using remote control or smartphone.
-* Precise simulation with Gazebo.
+* Simple and clean source code in Arduino (<2k lines firmware).
+* Control using USB gamepad, remote control or smartphone.
 * Wi-Fi and MAVLink support.
 * Wireless command line interface and analyzing.
+* Precise simulation with Gazebo.
 * Python library.
 * Textbook on flight control theory and practice ([in development](https://quadcopter.dev)).
 * *Position control (using external camera) and autonomous flights¹*.
@@ -38,7 +38,11 @@ Version 0 demo video: https://youtu.be/8GzzIQ3C6DQ.
 
 <a href="https://youtu.be/8GzzIQ3C6DQ"><img width=500 src="https://i3.ytimg.com/vi/8GzzIQ3C6DQ/maxresdefault.jpg"></a>
 
-See the [user builds gallery](docs/user.md).
+Usage in education (RoboCamp): https://youtu.be/Wd3yaorjTx0.
+
+<a href="https://youtu.be/Wd3yaorjTx0"><img width=500 src="https://i3.ytimg.com/vi/Wd3yaorjTx0/sddefault.jpg"></a>
+
+See the [user builds gallery](docs/user.md):
 
 <a href="docs/user.md"><img src="docs/img/user/user.jpg" width=500></a>
 
@@ -77,7 +81,7 @@ The simulator is implemented using Gazebo and runs the original Arduino code:
 |Frame main part|3D printed⁴:<br>[`flix-frame-1.1.stl`](docs/assets/flix-frame-1.1.stl) [`flix-frame-1.1.step`](docs/assets/flix-frame-1.1.step)<br>Recommended settings: layer 0.2 mm, line 0.4 mm, infill 100%.|<img src="docs/img/frame1.jpg" width=100>|1|
 |Frame top part|3D printed:<br>[`esp32-holder.stl`](docs/assets/esp32-holder.stl) [`esp32-holder.step`](docs/assets/esp32-holder.step)|<img src="docs/img/esp32-holder.jpg" width=100>|1|
 |Washer for IMU board mounting|3D printed:<br>[`washer-m3.stl`](docs/assets/washer-m3.stl) [`washer-m3.step`](docs/assets/washer-m3.step)|<img src="docs/img/washer-m3.jpg" width=100>|2|
-|RC transmitter (recommended)|BetaFPV LiteRadio (CC2500) — with USB support (can control via Wi-Fi).<br>KINGKONG TINY X8 — warning: lacks USB support.<br>Or other⁵|<img src="docs/img/tx.jpg" width=100>|1|
+|Controller (recommended)|CC2500 transmitter, like BetaFPV LiteRadio CC2500 (RC receiver/Wi-Fi).<br>Two-sticks gamepad (Wi-Fi only) — see [recommended gamepads](https://docs.qgroundcontrol.com/master/en/qgc-user-guide/setup_view/joystick.html#supported-joysticks).<br>Other⁵|<img src="docs/img/betafpv.jpg" width=100><img src="docs/img/logitech.jpg" width=80>|1|
 |*RC receiver (optional)*|*DF500 or other⁵*|<img src="docs/img/rx.jpg" width=100>|1|
 |Wires|28 AWG recommended|<img src="docs/img/wire-28awg.jpg" width=100>||
 |Tape, double-sided tape||||
@@ -86,7 +90,7 @@ The simulator is implemented using Gazebo and runs the original Arduino code:
 *³ — change `MPU9250` to `ICM20948` in `imu.ino` file if using ICM-20948 board.*<br>
 *³⁻¹ — MPU-6050 supports I²C interface only (not recommended). To use it change IMU declaration to `MPU6050 IMU(Wire)`.*<br>
 *⁴ — this frame is optimized for GY-91 board, if using other, the board mount holes positions should be modified.*<br>
-*⁵ — you may use any transmitter-receiver pair with SBUS interface, or any transmitter with USB support*
+*⁵ — you also may use any transmitter-receiver pair with SBUS interface.*
 
 Tools required for assembly:
 
