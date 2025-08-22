@@ -122,4 +122,12 @@ void printIMUInfo() {
 	IMU.status() ? print("status: ERROR %d\n", IMU.status()) : print("status: OK\n");
 	print("model: %s\n", IMU.getModel());
 	print("who am I: 0x%02X\n", IMU.whoAmI());
+	print("rate: %.0f\n", loopRate);
+	print("gyro: %f %f %f\n", rates.x, rates.y, rates.z);
+	print("acc: %f %f %f\n", acc.x, acc.y, acc.z);
+	Vector rawGyro, rawAcc;
+	IMU.getGyro(rawGyro.x, rawGyro.y, rawGyro.z);
+	IMU.getAccel(rawAcc.x, rawAcc.y, rawAcc.z);
+	print("raw gyro: %f %f %f\n", rawGyro.x, rawGyro.y, rawGyro.z);
+	print("raw acc: %f %f %f\n", rawAcc.x, rawAcc.y, rawAcc.z);
 }
