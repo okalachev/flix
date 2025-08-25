@@ -102,8 +102,8 @@ void handleMavlink(const void *_msg) {
 		controlPitch = m.x / 1000.0f * mavlinkControlScale;
 		controlRoll = m.y / 1000.0f * mavlinkControlScale;
 		controlYaw = m.r / 1000.0f * mavlinkControlScale;
-		controlMode = 1; // STAB mode
-		controlArmed = 1; // armed
+		controlMode = NAN;
+		controlArmed = NAN;
 		controlTime = t;
 
 		if (abs(controlYaw) < MAVLINK_CONTROL_YAW_DEAD_ZONE) controlYaw = 0;

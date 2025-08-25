@@ -21,6 +21,21 @@ public:
 		return isfinite(x) && isfinite(y) && isfinite(z);
 	}
 
+	bool valid() const {
+		return finite();
+	}
+
+	bool invalid() const {
+		return !valid();
+	}
+
+	void invalidate() {
+		x = NAN;
+		y = NAN;
+		z = NAN;
+	}
+
+
 	float norm() const {
 		return sqrt(x * x + y * y + z * z);
 	}

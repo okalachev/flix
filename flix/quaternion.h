@@ -64,6 +64,22 @@ public:
 		return isfinite(w) && isfinite(x) && isfinite(y) && isfinite(z);
 	}
 
+	bool valid() const {
+		return finite();
+	}
+
+	bool invalid() const {
+		return !valid();
+	}
+
+	void invalidate() {
+		w = NAN;
+		x = NAN;
+		y = NAN;
+		z = NAN;
+	}
+
+
 	float norm() const {
 		return sqrt(w * w + x * x + y * y + z * z);
 	}

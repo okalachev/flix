@@ -12,7 +12,8 @@
 
 double t = NAN; // current step time, s
 float dt; // time delta from previous step, s
-float controlRoll, controlPitch, controlYaw, controlThrottle, controlArmed, controlMode; // pilot's inputs, range [-1, 1]
+float controlRoll, controlPitch, controlYaw, controlThrottle; // pilot's inputs, range [-1, 1]
+float controlArmed = NAN, controlMode = NAN;
 Vector gyro; // gyroscope data
 Vector acc; // accelerometer data, m/s/s
 Vector rates; // filtered angular rates, rad/s
