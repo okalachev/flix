@@ -8,10 +8,12 @@
 #include "util.h"
 
 extern const int MOTOR_REAR_LEFT, MOTOR_REAR_RIGHT, MOTOR_FRONT_RIGHT, MOTOR_FRONT_LEFT;
+extern const int ACRO, STAB;
 extern float loopRate, dt;
 extern double t;
 extern uint16_t channels[16];
 extern float controlRoll, controlPitch, controlThrottle, controlYaw, controlArmed, controlMode;
+extern int mode;
 
 const char* motd =
 "\nWelcome to\n"
@@ -31,6 +33,7 @@ const char* motd =
 "ps - show pitch/roll/yaw\n"
 "psq - show attitude quaternion\n"
 "imu - show IMU data\n"
+"stab / acro - set mode\n"
 "rc - show RC data\n"
 "mot - show motor output\n"
 "log - dump in-RAM log\n"
@@ -106,6 +109,10 @@ void doCommand(String str, bool echo = false) {
 		printIMUInfo();
 		printIMUCalibration();
 		print("landed: %d\n", landed);
+	} else if (command == "stab") {
+		mode = STAB;
+	} else if (command == "acro") {
+		mode = ACRO;
 	} else if (command == "rc") {
 		print("channels: ");
 		for (int i = 0; i < 16; i++) {
