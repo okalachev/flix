@@ -12,7 +12,7 @@ extern const int ACRO, STAB;
 extern float loopRate, dt;
 extern double t;
 extern uint16_t channels[16];
-extern float controlRoll, controlPitch, controlThrottle, controlYaw, controlArmed, controlMode;
+extern float controlRoll, controlPitch, controlThrottle, controlYaw, controlMode;
 extern int mode;
 
 const char* motd =
@@ -118,8 +118,8 @@ void doCommand(String str, bool echo = false) {
 		for (int i = 0; i < 16; i++) {
 			print("%u ", channels[i]);
 		}
-		print("\nroll: %g pitch: %g yaw: %g throttle: %g armed: %g mode: %g\n",
-			controlRoll, controlPitch, controlYaw, controlThrottle, controlArmed, controlMode);
+		print("\nroll: %g pitch: %g yaw: %g throttle: %g mode: %g\n",
+			controlRoll, controlPitch, controlYaw, controlThrottle, controlMode);
 		print("mode: %s\n", getModeName());
 	} else if (command == "mot") {
 		print("front-right %g front-left %g rear-right %g rear-left %g\n",
