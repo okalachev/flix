@@ -57,6 +57,7 @@ inline Quaternion fluToFrd(const Quaternion &q);
 void failsafe();
 void rcLossFailsafe();
 void descend();
+void autoFailsafe();
 int parametersCount();
 const char *getParameterName(int index);
 float getParameter(int index);
