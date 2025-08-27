@@ -177,19 +177,25 @@ void handleMavlink(const void *_msg) {
 		mavlink_command_long_t m;
 		mavlink_msg_command_long_decode(&msg, &m);
 		if (m.target_system && m.target_system != SYSTEM_ID) return;
-		mavlink_message_t ack;
 		mavlink_message_t response;
+		bool accepted = false;
 
 		if (m.command == MAV_CMD_REQUEST_MESSAGE && m.param1 == MAVLINK_MSG_ID_AUTOPILOT_VERSION) {
-			mavlink_msg_command_ack_pack(SYSTEM_ID, MAV_COMP_ID_AUTOPILOT1, &ack, m.command, MAV_RESULT_ACCEPTED, UINT8_MAX, 0, msg.sysid, msg.compid);
-			sendMessage(&ack);
+			accepted = true;
 			mavlink_msg_autopilot_version_pack(SYSTEM_ID, MAV_COMP_ID_AUTOPILOT1, &response,
 				MAV_PROTOCOL_CAPABILITY_PARAM_FLOAT | MAV_PROTOCOL_CAPABILITY_MAVLINK2, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0);
 			sendMessage(&response);
-		} else {
-			mavlink_msg_command_ack_pack(SYSTEM_ID, MAV_COMP_ID_AUTOPILOT1, &ack, m.command, MAV_RESULT_UNSUPPORTED, UINT8_MAX, 0, msg.sysid, msg.compid);
-			sendMessage(&ack);
 		}
+
+		if (m.command == MAV_CMD_COMPONENT_ARM_DISARM) {
+			accepted = true;
+			armed = m.param1 == 1;
+		}
+
+		// send command ack
+		mavlink_message_t ack;
+		mavlink_msg_command_ack_pack(SYSTEM_ID, MAV_COMP_ID_AUTOPILOT1, &ack, m.command, accepted ? MAV_RESULT_ACCEPTED : MAV_RESULT_UNSUPPORTED, UINT8_MAX, 0, msg.sysid, msg.compid);
+		sendMessage(&ack);
 	}
 }
 
