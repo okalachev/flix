@@ -9,6 +9,7 @@
 #include "lpf.h"
 #include "util.h"
 
+#define ARMED_THRUST 0.1 // thrust to indicate armed state
 #define PITCHRATE_P 0.05
 #define PITCHRATE_I 0.2
 #define PITCHRATE_D 0.001
@@ -54,7 +55,7 @@ Vector torqueTarget;
 float thrustTarget;
 
 extern const int MOTOR_REAR_LEFT, MOTOR_REAR_RIGHT, MOTOR_FRONT_RIGHT, MOTOR_FRONT_LEFT;
-extern float controlRoll, controlPitch, controlThrottle, controlYaw, controlArmed, controlMode;
+extern float controlRoll, controlPitch, controlThrottle, controlYaw, controlMode;
 
 void control() {
 	interpretControls();
@@ -65,13 +66,13 @@ void control() {
 }
 
 void interpretControls() {
-	armed = controlThrottle >= 0.05;
-	if (controlArmed < 0.5) armed = false;
-
 	// NOTE: put ACRO or MANUAL modes there if you want to use them
 	if (controlMode < 0.25) mode = STAB;
 	if (controlMode < 0.75) mode = STAB;
 	if (controlMode > 0.75) mode = STAB;
+
+	if (controlThrottle < 0.05 && controlYaw > 0.95) armed = true; // arm gesture
+	if (controlThrottle < 0.05 && controlYaw < -0.95) armed = false; // disarm gesture
 
 	thrustTarget = controlThrottle;
 
@@ -137,8 +138,17 @@ void controlRates() {
 void controlTorque() {
 	if (!torqueTarget.valid()) return; // skip torque control
 
-	if (!armed || thrustTarget < 0.05) {
-		memset(motors, 0, sizeof(motors)); // stop motors if no thrust
+	if (!armed) {
+		memset(motors, 0, sizeof(motors)); // stop motors if disarmed
+		return;
+	}
+
+	if (thrustTarget < 0.05) {
+		// minimal thrust to indicate armed state
+		motors[0] = ARMED_THRUST;
+		motors[1] = ARMED_THRUST;
+		motors[2] = ARMED_THRUST;
+		motors[3] = ARMED_THRUST;
 		return;
 	}
 

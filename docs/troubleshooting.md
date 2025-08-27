@@ -4,7 +4,7 @@
 
 Do the following:
 
-* **Check ESP32 core is installed**. Check if the version matches the one used in the [tutorial](build.md#firmware).
+* **Check ESP32 core is installed**. Check if the version matches the one used in the [tutorial](usage.md#firmware).
 * **Check libraries**. Install all the required libraries from the tutorial. Make sure there are no MPU9250 or other peripherals libraries that may conflict with the ones used in the tutorial.
 * **Check the chosen board**. The correct board to choose in Arduino IDE for ESP32 Mini is *WEMOS D1 MINI ESP32*.
 

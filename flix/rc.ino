@@ -14,7 +14,7 @@ float channelZero[16]; // calibration zero values
 float channelMax[16]; // calibration max values
 
 // Channels mapping (using float to store in parameters):
-float rollChannel = NAN, pitchChannel = NAN, throttleChannel = NAN, yawChannel = NAN, armedChannel = NAN, modeChannel = NAN;
+float rollChannel = NAN, pitchChannel = NAN, throttleChannel = NAN, yawChannel = NAN, modeChannel = NAN;
 
 void setupRC() {
 	print("Setup RC\n");
@@ -42,7 +42,6 @@ void normalizeRC() {
 	controlPitch = pitchChannel >= 0 ? controls[(int)pitchChannel] : NAN;
 	controlYaw = yawChannel >= 0 ? controls[(int)yawChannel] : NAN;
 	controlThrottle = throttleChannel >= 0 ? controls[(int)throttleChannel] : NAN;
-	controlArmed = armedChannel >= 0 ? controls[(int)armedChannel] : NAN;
 	controlMode = modeChannel >= 0 ? controls[(int)modeChannel] : NAN;
 }
 
@@ -58,8 +57,7 @@ void calibrateRC() {
 	calibrateRCChannel(&yawChannel, center, max, "5/9 Move sticks [3 sec]\n...     ...\n..o     .o.\n...     ...\n");
 	calibrateRCChannel(&pitchChannel, zero, max, "6/9 Move sticks [3 sec]\n...     .o.\n...     ...\n.o.     ...\n");
 	calibrateRCChannel(&rollChannel, zero, max, "7/9 Move sticks [3 sec]\n...     ...\n...     ..o\n.o.     ...\n");
-	calibrateRCChannel(&armedChannel, zero, max, "8/9 Switch to armed [3 sec]\n");
-	calibrateRCChannel(&modeChannel, zero, max, "9/9 Disarm and switch mode to max [3 sec]\n");
+	calibrateRCChannel(&modeChannel, zero, max, "9/9 Put mode switch to max [3 sec]\n");
 	printRCCalibration();
 }
 
@@ -94,6 +92,5 @@ void printRCCalibration() {
 	print("Pitch     %-7g%-7g%-7g\n", pitchChannel, pitchChannel >= 0 ? channelZero[(int)pitchChannel] : NAN, pitchChannel >= 0 ? channelMax[(int)pitchChannel] : NAN);
 	print("Yaw       %-7g%-7g%-7g\n", yawChannel, yawChannel >= 0 ? channelZero[(int)yawChannel] : NAN, yawChannel >= 0 ? channelMax[(int)yawChannel] : NAN);
 	print("Throttle  %-7g%-7g%-7g\n", throttleChannel, throttleChannel >= 0 ? channelZero[(int)throttleChannel] : NAN, throttleChannel >= 0 ? channelMax[(int)throttleChannel] : NAN);
-	print("Armed     %-7g%-7g%-7g\n", armedChannel, armedChannel >= 0 ? channelZero[(int)armedChannel] : NAN, armedChannel >= 0 ? channelMax[(int)armedChannel] : NAN);
 	print("Mode      %-7g%-7g%-7g\n", modeChannel, modeChannel >= 0 ? channelZero[(int)modeChannel] : NAN, modeChannel >= 0 ? channelMax[(int)modeChannel] : NAN);
 }

@@ -53,4 +53,4 @@ Armed state is stored in `armed` variable, and current mode is stored in `mode` 
 
 ## Building
 
-See build instructions in [build.md](build.md).
+See build instructions in [usage.md](usage.md).

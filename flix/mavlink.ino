@@ -12,11 +12,10 @@
 #define PERIOD_FAST 0.1
 #define MAVLINK_CONTROL_YAW_DEAD_ZONE 0.1f
 
-float mavlinkControlScale = 0.7;
 String mavlinkPrintBuffer;
 
 extern double controlTime;
-extern float controlRoll, controlPitch, controlThrottle, controlYaw, controlArmed, controlMode;
+extern float controlRoll, controlPitch, controlThrottle, controlYaw, controlMode;
 
 void processMavlink() {
 	sendMavlink();
@@ -99,11 +98,10 @@ void handleMavlink(const void *_msg) {
 		if (m.target && m.target != SYSTEM_ID) return; // 0 is broadcast
 
 		controlThrottle = m.z / 1000.0f;
-		controlPitch = m.x / 1000.0f * mavlinkControlScale;
-		controlRoll = m.y / 1000.0f * mavlinkControlScale;
-		controlYaw = m.r / 1000.0f * mavlinkControlScale;
+		controlPitch = m.x / 1000.0f;
+		controlRoll = m.y / 1000.0f;
+		controlYaw = m.r / 1000.0f;
 		controlMode = NAN;
-		controlArmed = NAN;
 		controlTime = t;
 
 		if (abs(controlYaw) < MAVLINK_CONTROL_YAW_DEAD_ZONE) controlYaw = 0;

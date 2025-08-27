@@ -55,7 +55,7 @@ The simulator is implemented using Gazebo and runs the original Arduino code:
 ## Articles
 
 * [Assembly instructions](docs/assembly.md).
-* [Building and running the code](docs/build.md).
+* [Usage: build, setup and flight](docs/usage.md).
 * [Troubleshooting](docs/troubleshooting.md).
 * [Firmware architecture overview](docs/firmware.md).
 * [Python library tutorial](tools/pyflix/README.md).

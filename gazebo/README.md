@@ -4,7 +4,7 @@
 
 ## Building and running
 
-See [building and running instructions](../docs/build.md#simulation).
+See [building and running instructions](../docs/usage.md#simulation).
 
 ## Code structure
 

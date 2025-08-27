@@ -14,6 +14,7 @@ extern double t;
 extern uint16_t channels[16];
 extern float controlRoll, controlPitch, controlThrottle, controlYaw, controlMode;
 extern int mode;
+extern bool armed;
 
 const char* motd =
 "\nWelcome to\n"
@@ -33,6 +34,8 @@ const char* motd =
 "ps - show pitch/roll/yaw\n"
 "psq - show attitude quaternion\n"
 "imu - show IMU data\n"
+"arm - arm the drone\n"
+"disarm - disarm the drone\n"
 "stab / acro - set mode\n"
 "rc - show RC data\n"
 "mot - show motor output\n"
@@ -109,6 +112,10 @@ void doCommand(String str, bool echo = false) {
 		printIMUInfo();
 		printIMUCalibration();
 		print("landed: %d\n", landed);
+	} else if (command == "arm") {
+		armed = true;
+	} else if (command == "disarm") {
+		armed = false;
 	} else if (command == "stab") {
 		mode = STAB;
 	} else if (command == "acro") {
@@ -121,6 +128,7 @@ void doCommand(String str, bool echo = false) {
 		print("\nroll: %g pitch: %g yaw: %g throttle: %g mode: %g\n",
 			controlRoll, controlPitch, controlYaw, controlThrottle, controlMode);
 		print("mode: %s\n", getModeName());
+		print("armed: %d\n", armed);
 	} else if (command == "mot") {
 		print("front-right %g front-left %g rear-right %g rear-left %g\n",
 			motors[MOTOR_FRONT_RIGHT], motors[MOTOR_FRONT_LEFT], motors[MOTOR_REAR_RIGHT], motors[MOTOR_REAR_LEFT]);

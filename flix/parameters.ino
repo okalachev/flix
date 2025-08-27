@@ -70,12 +70,7 @@ Parameter parameters[] = {
 	{"RC_PITCH", &pitchChannel},
 	{"RC_THROTTLE", &throttleChannel},
 	{"RC_YAW", &yawChannel},
-	{"RC_ARMED", &armedChannel},
 	{"RC_MODE", &modeChannel},
-#if WIFI_ENABLED
-	// MAVLink
-	{"MAV_CTRL_SCALE", &mavlinkControlScale},
-#endif
 };
 
 void setupParameters() {
