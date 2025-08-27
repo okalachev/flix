@@ -151,6 +151,8 @@ You can use the Flix library alongside the QGroundControl app, using a proxy mod
    * *Port*: 14560
 4. Restart QGroundControl.
 
+<img src="../../docs/img/qgc-proxy.png" width="300">
+
 Now you can run `pyflix` scripts and QGroundControl simultaneously.
 
 ## Tools
