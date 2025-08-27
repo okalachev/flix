@@ -35,7 +35,7 @@
 #define TILT_MAX radians(30)
 #define RATES_D_LPF_ALPHA 0.2 // cutoff frequency ~ 40 Hz
 
-const int MANUAL = 0, ACRO = 1, STAB = 2; // flight modes
+const int MANUAL = 0, ACRO = 1, STAB = 2, AUTO = 3; // flight modes
 int mode = STAB;
 bool armed = false;
 
@@ -70,6 +70,8 @@ void interpretControls() {
 	if (controlMode < 0.25) mode = STAB;
 	if (controlMode < 0.75) mode = STAB;
 	if (controlMode > 0.75) mode = STAB;
+
+	if (mode == AUTO) return; // pilot is not effective in AUTO mode
 
 	if (controlThrottle < 0.05 && controlYaw > 0.95) armed = true; // arm gesture
 	if (controlThrottle < 0.05 && controlYaw < -0.95) armed = false; // disarm gesture
@@ -168,6 +170,7 @@ const char* getModeName() {
 		case MANUAL: return "MANUAL";
 		case ACRO: return "ACRO";
 		case STAB: return "STAB";
+		case AUTO: return "AUTO";
 		default: return "UNKNOWN";
 	}
 }

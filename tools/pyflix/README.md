@@ -66,13 +66,14 @@ gyro = flix.wait('gyro')  # wait for gyroscope update
 attitude = flix.wait('attitude', timeout=3)  # wait for attitude update, raise TimeoutError after 3 seconds
 ```
 
-The `value` argument specifies a condition for filtering events. It can be either an expected value or a callable:
+The second argument (`value`) specifies a condition for filtering events. It can be either an expected value or a callable:
 
 ```python
-flix.wait('armed', value=True)  # wait until armed
-flix.wait('armed', value=False)  # wait until disarmed
-flix.wait('motors', value=lambda motors: not any(motors))  # wait until all motors stop
-flix.wait('attitude_euler', value=lambda att: att[0] > 0)  # wait until roll angle is positive
+flix.wait('armed', True)  # wait until armed
+flix.wait('armed', False)  # wait until disarmed
+flix.wait('mode', 'AUTO')  # wait until flight mode is switched to AUTO
+flix.wait('motors', lambda motors: not any(motors))  # wait until all motors stop
+flix.wait('attitude_euler', lambda att: att[0] > 0)  # wait until roll angle is positive
 ```
 
 Full list of events:
@@ -107,7 +108,7 @@ Get and set firmware parameters using `get_param` and `set_param` methods:
 
 ```python
 pitch_p = flix.get_param('PITCH_P')  # get parameter value
-flix.set_param('PITCH_P', 5)      # set parameter value
+flix.set_param('PITCH_P', 5)         # set parameter value
 ```
 
 Execute CLI commands using `cli` method. This method returns command response:
@@ -121,17 +122,54 @@ flix.cli('reboot')       # reboot the drone
 > [!TIP]
 > Use `help` command to get the list of available commands.
 
+You can imitate pilot's controls using `set_controls` method:
+
+```python
+flix.set_controls(roll=0, pitch=0, yaw=0, throttle=0.6)
+```
+
+> [!WARNING]
+> This method **is not intended for automatic flights**, only for adding support for a custom pilot input device.
+
 ### Automatic flight
 
-The flight control feature is in development. List of methods intended for automatic flight control:
+To perform automatic flight, switch the mode to *AUTO*, either from the remote control, or from the code:
 
-* `set_position`
-* `set_velocity`
-* `set_attitude`
-* `set_rates`
-* `set_motors`
-* `set_controls`
-* `set_mode`
+```python
+flix.set_mode('AUTO')
+```
+
+In this mode you can set flight control targets. Setting attitude target:
+
+```python
+flix.set_attitude([0.1, 0.2, 0.3], 0.6)  # set target roll, pitch, yaw and thrust
+flix.set_attitude([1, 0, 0, 0], 0.6)  # set target attitude quaternion and thrust
+```
+
+Setting angular rates target:
+
+```python
+flix.set_rates([0.1, 0.2, 0.3], 0.6)  # set target roll rate, pitch rate, yaw rate and thrust
+```
+
+You also can control raw motors outputs directly:
+
+```python
+flix.set_motors([0.5, 0.5, 0.5, 0.5])  # set motors outputs in range [0, 1]
+```
+
+In *AUTO* mode, the drone will arm automatically if the thrust is greater than zero, and disarm if thrust is zero. Therefore, to disarm the drone, set thrust to zero:
+
+```python
+flix.set_attitude([0, 0, 0], 0)  # disarm the drone
+```
+
+The following methods are in development and are not functional yet:
+
+* `set_position` — set target position.
+* `set_velocity` — set target velocity.
+
+To exit from *AUTO* mode move control sticks and the drone will switch to *STAB* mode.
 
 ## Usage alongside QGroundControl
 

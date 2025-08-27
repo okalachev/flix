@@ -205,7 +205,7 @@ To start the motors, you should **arm** the drone. To do that, move the left sti
 
 <img src="img/arming.svg" width="150">
 
-After that, the motors will start spinning at low speed, indicating that the drone is armed and ready to fly.
+After that, the motors **will start spinning** at low speed, indicating that the drone is armed and ready to fly.
 
 When finished flying, **disarm** the drone, moving the left stick to the bottom left corner:
 
@@ -229,6 +229,12 @@ In this mode, the pilot controls the angular rates. This control method is diffi
 ### MANUAL
 
 Manual mode disables all the stabilization, and the pilot inputs are passed directly to the motors. This mode is intended for testing and demonstration purposes only, and basically the drone **cannot fly in this mode**.
+
+### AUTO
+
+In this mode, the pilot inputs are ignored (except the mode switch, if configured). The drone can be controlled using [pyflix](../tools/pyflix/) Python library, or by modifying the firmware to implement the needed autonomous behavior.
+
+If the pilot moves the control sticks, the drone will switch back to *STAB* mode.
 
 ## Adjusting parameters
 
