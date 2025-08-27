@@ -13,6 +13,7 @@
 #define WIFI_PASSWORD "flixwifi"
 #define WIFI_UDP_PORT 14550
 #define WIFI_UDP_REMOTE_PORT 14550
+#define WIFI_UDP_REMOTE_ADDR "255.255.255.255"
 
 WiFiUDP udp;
 
@@ -24,7 +25,7 @@ void setupWiFi() {
 
 void sendWiFi(const uint8_t *buf, int len) {
 	if (WiFi.softAPIP() == IPAddress(0, 0, 0, 0) && WiFi.status() != WL_CONNECTED) return;
-	udp.beginPacket(WiFi.softAPBroadcastIP(), WIFI_UDP_REMOTE_PORT);
+	udp.beginPacket(udp.remoteIP() ? udp.remoteIP() : WIFI_UDP_REMOTE_ADDR, WIFI_UDP_REMOTE_PORT);
 	udp.write(buf, len);
 	udp.endPacket();
 }

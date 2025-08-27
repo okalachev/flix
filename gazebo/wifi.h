@@ -13,6 +13,7 @@
 
 #define WIFI_UDP_PORT 14580
 #define WIFI_UDP_REMOTE_PORT 14550
+#define WIFI_UDP_REMOTE_ADDR "255.255.255.255"
 
 int wifiSocket;
 
@@ -35,7 +36,7 @@ void sendWiFi(const uint8_t *buf, int len) {
 	if (wifiSocket == 0) setupWiFi();
 	sockaddr_in addr; // remote address
 	addr.sin_family = AF_INET;
-	addr.sin_addr.s_addr = INADDR_BROADCAST; // send UDP broadcast
+	addr.sin_addr.s_addr = inet_addr(WIFI_UDP_REMOTE_ADDR);
 	addr.sin_port = htons(WIFI_UDP_REMOTE_PORT);
 	sendto(wifiSocket, buf, len, 0, (sockaddr *)&addr, sizeof(addr));
 }
