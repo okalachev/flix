@@ -36,7 +36,7 @@ const char* motd =
 "imu - show IMU data\n"
 "arm - arm the drone\n"
 "disarm - disarm the drone\n"
-"stab / acro - set mode\n"
+"stab/acro - set mode\n"
 "rc - show RC data\n"
 "mot - show motor output\n"
 "log - dump in-RAM log\n"
