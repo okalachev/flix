@@ -215,22 +215,22 @@ When finished flying, **disarm** the drone, moving the left stick to the bottom 
 
 Flight mode is changed using mode switch on the remote control or using the command line.
 
-### STAB
+#### STAB
 
 The default mode is *STAB*. In this mode, the drone stabilizes its attitude (orientation). The left stick controls throttle and yaw rate, the right stick controls pitch and roll angles.
 
 > [!IMPORTANT]
 > The drone doesn't stabilize its position, so slight drift is possible. The pilot should compensate it manually.
 
-### ACRO
+#### ACRO
 
 In this mode, the pilot controls the angular rates. This control method is difficult to fly and mostly used in FPV racing.
 
-### MANUAL
+#### MANUAL
 
 Manual mode disables all the stabilization, and the pilot inputs are passed directly to the motors. This mode is intended for testing and demonstration purposes only, and basically the drone **cannot fly in this mode**.
 
-### AUTO
+#### AUTO
 
 In this mode, the pilot inputs are ignored (except the mode switch, if configured). The drone can be controlled using [pyflix](../tools/pyflix/) Python library, or by modifying the firmware to implement the needed autonomous behavior.
 
