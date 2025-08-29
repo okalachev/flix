@@ -226,6 +226,7 @@ void handleMavlink(const void *_msg) {
 		}
 
 		if (m.command == MAV_CMD_COMPONENT_ARM_DISARM) {
+			if (m.param1 && controlThrottle > 0.05) return; // don't arm if throttle is not low
 			accepted = true;
 			armed = m.param1 == 1;
 		}
