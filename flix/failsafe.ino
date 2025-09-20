@@ -16,6 +16,8 @@ void failsafe() {
 
 // RC loss failsafe
 void rcLossFailsafe() {
+	if (mode == AUTO) return;
+	if (!armed) return;
 	if (t - controlTime > RC_LOSS_TIMEOUT) {
 		descend();
 	}
