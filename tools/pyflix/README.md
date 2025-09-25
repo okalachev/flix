@@ -122,6 +122,13 @@ flix.cli('reboot')       # reboot the drone
 > [!TIP]
 > Use `help` command to get the list of available commands.
 
+You can arm and disarm the drone using `set_armed` method (warning: the drone will fall if disarmed in the air):
+
+```python
+flix.set_armed(True)   # arm the drone
+flix.set_armed(False)  # disarm the drone
+```
+
 You can imitate pilot's controls using `set_controls` method:
 
 ```python
@@ -173,7 +180,7 @@ To exit from *AUTO* mode move control sticks and the drone will switch to *STAB*
 
 ## Usage alongside QGroundControl
 
-You can use the Flix library alongside the QGroundControl app, using a proxy mode. To do that:
+You can use the Flix library alongside the QGroundControl app, using proxy mode. To do that:
 
 1. Run proxy for `pyflix` and QGroundControl in background:
 
@@ -241,11 +248,11 @@ You can send values from the firmware like this (`mavlink.ino`):
 
 ```cpp
 // Send float named value
-mavlink_msg_named_value_float_pack(SYSTEM_ID, MAV_COMP_ID_AUTOPILOT1, &msg, t, "some_value", loopRate);
+mavlink_msg_named_value_float_pack(SYSTEM_ID, MAV_COMP_ID_AUTOPILOT1, &msg, t, "loop_rate", loopRate);
 sendMessage(&msg);
 
 // Send vector named value
-mavlink_msg_debug_vect_pack(SYSTEM_ID, MAV_COMP_ID_AUTOPILOT1, &msg, "some_vector", t, gyroBias.x, gyroBias.y, gyroBias.z);
+mavlink_msg_debug_vect_pack(SYSTEM_ID, MAV_COMP_ID_AUTOPILOT1, &msg, "gyro_bias", t, gyroBias.x, gyroBias.y, gyroBias.z);
 sendMessage(&msg);
 ```
 
