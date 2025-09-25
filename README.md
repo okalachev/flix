@@ -106,7 +106,9 @@ Feel free to modify the design and or code, and create your own improved version
 
 ### Simplified connection diagram
 
-<img src="docs/img/schematics1.svg" width=800 alt="Flix version 1 schematics">
+<img src="docs/img/schematics1.svg" width=700 alt="Flix version 1 schematics">
+
+*(Dashed is optional).*
 
 Motor connection scheme:
 
