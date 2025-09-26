@@ -232,7 +232,7 @@ void handleMavlink(const void *_msg) {
 		}
 
 		if (m.command == MAV_CMD_DO_SET_MODE) {
-			if (!(m.param2 >= 0 && m.param2 <= AUTO)) return; // incorrect mode
+			if (m.param2 < 0 || m.param2 > AUTO) return; // incorrect mode
 			accepted = true;
 			mode = m.param2;
 		}
