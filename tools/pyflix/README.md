@@ -59,6 +59,13 @@ flix.on('disconnected', lambda: print('Disconnected from Flix'))
 flix.on('print', lambda text: print(f'Flix says: {text}'))
 ```
 
+Unsubscribe from events using `off` method:
+
+```python
+flix.off('print')  # unsubscribe from print events
+flix.off(callback)  # unsubscribe specific callback
+```
+
 You can also wait for specific events using `wait` method. This method returns the data associated with the event:
 
 ```python

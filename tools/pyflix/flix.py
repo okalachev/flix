@@ -87,10 +87,15 @@ class Flix:
             self._event_listeners[event] = []
         self._event_listeners[event].append(callback)
 
-    def off(self, callback: Callable):
-        for event in self._event_listeners:
-            if callback in self._event_listeners[event]:
-                self._event_listeners[event].remove(callback)
+    def off(self, event_or_callback: Union[str, Callable]):
+        if isinstance(event_or_callback, str):
+            event = event_or_callback.lower()
+            if event in self._event_listeners:
+                del self._event_listeners[event]
+        else:
+            for event in self._event_listeners:
+                if event_or_callback in self._event_listeners[event]:
+                    self._event_listeners[event].remove(event_or_callback)
 
     def _trigger(self, event: str, *args):
         event = event.lower()
