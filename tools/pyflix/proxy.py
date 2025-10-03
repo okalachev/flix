@@ -24,13 +24,16 @@ def main():
         if addr in TARGETS:  # packet from target
             if source_addr is None:
                 continue
-            sock.sendto(data, source_addr)
+            try:
+                sock.sendto(data, source_addr)
+                packets += 1
+            except: pass
         else:  # packet from source
             source_addr = addr
             for target in TARGETS:
                 sock.sendto(data, target)
+                packets += 1
 
-        packets += 1
         print(f'\rPackets: {packets}', end='')
 
 if __name__ == '__main__':
