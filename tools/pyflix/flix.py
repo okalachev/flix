@@ -370,7 +370,9 @@ class Flix:
                 self.mavlink.serial_control_send(0, 0, 0, 0, len(cmd_bytes), cmd_bytes)
                 if not wait_response:
                     return ''
-                response = self.wait('print_full', timeout=0.1, value=lambda text: text.startswith(response_prefix))
+                timeout = 0.1
+                if cmd == 'log': timeout = 10 # log download may take more time
+                response = self.wait('print_full', timeout=timeout, value=lambda text: text.startswith(response_prefix))
                 return response[len(response_prefix):].strip()
             except TimeoutError:
                 continue
