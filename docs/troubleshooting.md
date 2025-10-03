@@ -35,4 +35,3 @@ Do the following:
 * **Calibrate the RC** if you use it. Type `cr` command in Serial Monitor and follow the instructions.
 * **Check the RC data** if you use it. Use `rc` command, `Control` should show correct values between -1 and 1, and between 0 and 1 for the throttle.
 * **Check the IMU output using QGroundControl**. Connect to the drone using QGroundControl on your computer. Go to the *Analyze* tab, *MAVLINK Inspector*. Plot the data from the `SCALED_IMU` message. The gyroscope and accelerometer data should change according to the drone movement.
-* **Check the gyroscope only attitude estimation**. Comment out `applyAcc();` line in `estimate.ino` and check if the attitude estimation in QGroundControl. It should be stable, but only drift very slowly.
