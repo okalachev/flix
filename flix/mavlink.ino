@@ -12,6 +12,7 @@
 #define PERIOD_FAST 0.1
 #define MAVLINK_CONTROL_YAW_DEAD_ZONE 0.1f
 
+bool mavlinkConnected = false;
 String mavlinkPrintBuffer;
 
 extern float controlTime;
@@ -41,12 +42,14 @@ void sendMavlink() {
 			mode, MAV_STATE_STANDBY);
 		sendMessage(&msg);
 
+		if (!mavlinkConnected) return; // send only heartbeat until connected
+
 		mavlink_msg_extended_sys_state_pack(SYSTEM_ID, MAV_COMP_ID_AUTOPILOT1, &msg,
 			MAV_VTOL_STATE_UNDEFINED, landed ? MAV_LANDED_STATE_ON_GROUND : MAV_LANDED_STATE_IN_AIR);
 		sendMessage(&msg);
 	}
 
-	if (t - lastFast >= PERIOD_FAST) {
+	if (t - lastFast >= PERIOD_FAST && mavlinkConnected) {
 		lastFast = t;
 
 		const float zeroQuat[] = {0, 0, 0, 0};
@@ -80,6 +83,7 @@ void sendMessage(const void *msg) {
 void receiveMavlink() {
 	uint8_t buf[MAVLINK_MAX_PACKET_LEN];
 	int len = receiveWiFi(buf, MAVLINK_MAX_PACKET_LEN);
+	if (len) mavlinkConnected = true;
 
 	// New packet, parse it
 	mavlink_message_t msg;
