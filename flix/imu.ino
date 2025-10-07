@@ -125,6 +125,7 @@ void printIMUInfo() {
 	print("rate: %.0f\n", loopRate);
 	print("gyro: %f %f %f\n", rates.x, rates.y, rates.z);
 	print("acc: %f %f %f\n", acc.x, acc.y, acc.z);
+	IMU.waitForData();
 	Vector rawGyro, rawAcc;
 	IMU.getGyro(rawGyro.x, rawGyro.y, rawGyro.z);
 	IMU.getAccel(rawAcc.x, rawAcc.y, rawAcc.z);
