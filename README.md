@@ -87,7 +87,7 @@ The simulator is implemented using Gazebo and runs the original Arduino code:
 |Tape, double-sided tape||||
 
 *² — barometer is not used for now.*<br>
-*³ — change `MPU9250` to `ICM20948` in `imu.ino` file if using ICM-20948 board.*<br>
+*³ — change `MPU9250` to `ICM20948` or `MPU6050` in `imu.ino` file for using the appropriate boards.*<br>
 *³⁻¹ — MPU-6050 supports I²C interface only (not recommended). To use it change IMU declaration to `MPU6050 IMU(Wire)`.*<br>
 *⁴ — this frame is optimized for GY-91 board, if using other, the board mount holes positions should be modified.*<br>
 *⁵ — you also may use any transmitter-receiver pair with SBUS interface.*
