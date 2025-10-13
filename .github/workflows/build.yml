@@ -53,15 +53,25 @@ jobs:
       run: python3 tools/check_c_cpp_properties.py
 
   build_simulator:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
+    container:
+      image: ubuntu:20.04
     steps:
+    - name: Install dependencies
+      run: |
+        apt-get update
+        DEBIAN_FRONTEND=noninteractive apt-get install -y curl wget build-essential cmake g++ pkg-config gnupg2 lsb-release sudo
     - name: Install Arduino CLI
       uses: arduino/setup-arduino-cli@v1.1.1
     - uses: actions/checkout@v4
     - name: Install Gazebo
-      run: curl -sSL http://get.gazebosim.org | sh
+      run: |
+        sudo sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-stable.list'
+        wget https://packages.osrfoundation.org/gazebo.key -O - | sudo apt-key add -
+        sudo apt-get update
+        sudo apt-get install -y gazebo11 libgazebo11-dev
     - name: Install SDL2
-      run: sudo apt-get install libsdl2-dev
+      run: sudo apt-get install -y libsdl2-dev
     - name: Build simulator
       run: make build_simulator
     - uses: actions/upload-artifact@v4
