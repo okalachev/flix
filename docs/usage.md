@@ -13,7 +13,7 @@ cd flix
 
 ### Ubuntu
 
-The latest version of Ubuntu supported by Gazebo 11 simulator is 22.04. If you have a newer version, consider using a virtual machine.
+The latest version of Ubuntu supported by Gazebo 11 simulator is 20.04. If you have a newer version, consider using a virtual machine.
 
 1. Install Arduino CLI:
 
@@ -24,7 +24,10 @@ The latest version of Ubuntu supported by Gazebo 11 simulator is 22.04. If you h
 2. Install Gazebo 11:
 
    ```bash
-   curl -sSL http://get.gazebosim.org | sh
+   sudo sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-stable.list'
+   wget https://packages.osrfoundation.org/gazebo.key -O - | sudo apt-key add -
+   sudo apt-get update
+   sudo apt-get install -y gazebo11 libgazebo11-dev
    ```
 
    Set up your Gazebo environment variables:
