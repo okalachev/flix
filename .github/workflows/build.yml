@@ -23,7 +23,9 @@ jobs:
       with:
         name: firmware-binary
         path: flix/build
-    - name: Build firmware without Wi-Fi
+    - name: Build firmware for ESP32-S3
+      run: make BOARD=esp32:esp32:esp32s3
+    - name: Build firmware with WiFi disabled
       run: sed -i 's/^#define WIFI_ENABLED 1$/#define WIFI_ENABLED 0/' flix/flix.ino && make
     - name: Check c_cpp_properties.json
       run: tools/check_c_cpp_properties.py
