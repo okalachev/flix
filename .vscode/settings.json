@@ -1,5 +1,6 @@
 {
 	"C_Cpp.intelliSenseEngineFallback": "enabled",
+	"C_Cpp.errorSquiggles": "disabled",
 	"files.associations": {
 		"*.sdf": "xml",
 		"*.ino": "cpp",
