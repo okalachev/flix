@@ -5,13 +5,15 @@
 			"includePath": [
 				"${workspaceFolder}/flix",
 				"${workspaceFolder}/gazebo",
+				"${workspaceFolder}/tools/**",
 				"~/.arduino15/packages/esp32/hardware/esp32/3.2.0/cores/esp32",
 				"~/.arduino15/packages/esp32/hardware/esp32/3.2.0/libraries/**",
 				"~/.arduino15/packages/esp32/hardware/esp32/3.2.0/variants/d1_mini32",
 				"~/.arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.4-2f7dcd86-v1/esp32/**",
 				"~/.arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.4-2f7dcd86-v1/esp32/dio_qspi/include",
 				"~/Arduino/libraries/**",
-				"/usr/include/**"
+				"/usr/include/gazebo-11/",
+				"/usr/include/ignition/math6/"
 			],
 			"forcedInclude": [
 				"${workspaceFolder}/.vscode/intellisense.h",
@@ -51,14 +53,14 @@
 			"name": "Mac",
 			"includePath": [
 				"${workspaceFolder}/flix",
-				// "${workspaceFolder}/gazebo",
 				"~/Library/Arduino15/packages/esp32/hardware/esp32/3.2.0/cores/esp32",
 				"~/Library/Arduino15/packages/esp32/hardware/esp32/3.2.0/libraries/**",
 				"~/Library/Arduino15/packages/esp32/hardware/esp32/3.2.0/variants/d1_mini32",
 				"~/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.4-2f7dcd86-v1/esp32/include/**",
 				"~/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.4-2f7dcd86-v1/esp32/dio_qspi/include",
 				"~/Documents/Arduino/libraries/**",
-				"/opt/homebrew/include/**"
+				"/opt/homebrew/include/gazebo-11/",
+				"/opt/homebrew/include/ignition/math6/"
 			],
 			"forcedInclude": [
 				"${workspaceFolder}/.vscode/intellisense.h",
@@ -100,6 +102,7 @@
 			"includePath": [
 				"${workspaceFolder}/flix",
 				"${workspaceFolder}/gazebo",
+				"${workspaceFolder}/tools/**",
 				"~/AppData/Local/Arduino15/packages/esp32/hardware/esp32/3.2.0/cores/esp32",
 				"~/AppData/Local/Arduino15/packages/esp32/hardware/esp32/3.2.0/libraries/**",
 				"~/AppData/Local/Arduino15/packages/esp32/hardware/esp32/3.2.0/variants/d1_mini32",

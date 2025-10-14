@@ -49,6 +49,8 @@ for configuration in props['configurations']:
     print('Check configuration', configuration['name'])
 
     for include_path in configuration.get('includePath', []):
+        if include_path.startswith('/opt/') or include_path.startswith('/usr/'): # don't check non-Arduino libs
+            continue
         check_path(include_path)
 
     for forced_include in configuration.get('forcedInclude', []):
