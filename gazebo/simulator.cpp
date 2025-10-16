@@ -21,7 +21,7 @@
 #include "cli.ino"
 #include "control.ino"
 #include "estimate.ino"
-#include "failsafe.ino"
+#include "safety.ino"
 #include "log.ino"
 #include "lpf.h"
 #include "mavlink.ino"
