@@ -135,7 +135,7 @@ void controlTorque() {
 		return;
 	}
 
-	if (thrustTarget < 0.05) {
+	if (thrustTarget < ARMED_THRUST) {
 		// minimal thrust to indicate armed state
 		motors[0] = ARMED_THRUST;
 		motors[1] = ARMED_THRUST;
