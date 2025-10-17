@@ -10,6 +10,7 @@
 #include <soc/rtc_cntl_reg.h>
 
 const float ONE_G = 9.80665;
+extern double t;
 
 float mapf(long x, long in_min, long in_max, float out_min, float out_max) {
 	return (float)(x - in_min) * (out_max - out_min) / (float)(in_max - in_min) + out_min;
@@ -52,3 +53,23 @@ void splitString(String& str, String& token0, String& token1, String& token2) {
 	token1 = strtok(NULL, " "); // String(NULL) creates empty string
 	token2 = strtok(NULL, "");
 }
+
+// Delay filter for boolean signals - ensures the signal is on for at least 'delay' seconds
+class Delay {
+public:
+	float delay;
+	float start = NAN;
+
+	Delay(float delay) : delay(delay) {}
+
+	bool update(bool on) {
+		if (!on) {
+			start = NAN;
+			return false;
+		}
+		if (isnan(start)) {
+			start = t;
+		}
+		return t - start >= delay;
+	}
+};
