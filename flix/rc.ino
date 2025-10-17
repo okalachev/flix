@@ -6,7 +6,7 @@
 #include <SBUS.h>
 #include "util.h"
 
-SBUS RC(Serial2); // NOTE: Use RC(Serial2, 16, 17) if you use the old UART2 pins
+SBUS rc(Serial2); // NOTE: Use RC(Serial2, 16, 17) if you use the old UART2 pins
 
 uint16_t channels[16]; // raw rc channels
 double controlTime; // time of the last controls update
@@ -18,12 +18,12 @@ float rollChannel = NAN, pitchChannel = NAN, throttleChannel = NAN, yawChannel =
 
 void setupRC() {
 	print("Setup RC\n");
-	RC.begin();
+	rc.begin();
 }
 
 bool readRC() {
-	if (RC.read()) {
-		SBUSData data = RC.data();
+	if (rc.read()) {
+		SBUSData data = rc.data();
 		for (int i = 0; i < 16; i++) channels[i] = data.ch[i]; // copy channels data
 		normalizeRC();
 		controlTime = t;
