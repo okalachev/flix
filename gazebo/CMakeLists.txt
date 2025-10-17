@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
 project(flix_gazebo)
 
-# === gazebo plugin
+# Gazebo plugin
 find_package(gazebo REQUIRED)
 find_package(SDL2 REQUIRED)
 include_directories(${GAZEBO_INCLUDE_DIRS})
