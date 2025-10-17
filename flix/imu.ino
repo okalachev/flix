@@ -49,9 +49,8 @@ void rotateIMU(Vector& data) {
 }
 
 void calibrateGyroOnce() {
-	static float landedTime = 0;
-	landedTime = landed ? landedTime + dt : 0;
-	if (landedTime < 2) return; // calibrate only if definitely stationary
+	static Delay landedDelay(2);
+	if (!landedDelay.update(landed)) return; // calibrate only if definitely stationary
 
 	static LowPassFilter<Vector> gyroCalibrationFilter(0.001);
 	gyroBias = gyroCalibrationFilter.update(gyro);
