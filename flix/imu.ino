@@ -8,7 +8,7 @@
 #include "lpf.h"
 #include "util.h"
 
-MPU9250 IMU(SPI);
+MPU9250 imu(SPI);
 
 Vector accBias;
 Vector accScale(1, 1, 1);
@@ -16,22 +16,22 @@ Vector gyroBias;
 
 void setupIMU() {
 	print("Setup IMU\n");
-	IMU.begin();
+	imu.begin();
 	configureIMU();
 }
 
 void configureIMU() {
-	IMU.setAccelRange(IMU.ACCEL_RANGE_4G);
-	IMU.setGyroRange(IMU.GYRO_RANGE_2000DPS);
-	IMU.setDLPF(IMU.DLPF_MAX);
-	IMU.setRate(IMU.RATE_1KHZ_APPROX);
-	IMU.setupInterrupt();
+	imu.setAccelRange(imu.ACCEL_RANGE_4G);
+	imu.setGyroRange(imu.GYRO_RANGE_2000DPS);
+	imu.setDLPF(imu.DLPF_MAX);
+	imu.setRate(imu.RATE_1KHZ_APPROX);
+	imu.setupInterrupt();
 }
 
 void readIMU() {
-	IMU.waitForData();
-	IMU.getGyro(gyro.x, gyro.y, gyro.z);
-	IMU.getAccel(acc.x, acc.y, acc.z);
+	imu.waitForData();
+	imu.getGyro(gyro.x, gyro.y, gyro.z);
+	imu.getAccel(acc.x, acc.y, acc.z);
 	calibrateGyroOnce();
 	// apply scale and bias
 	acc = (acc - accBias) / accScale;
@@ -59,7 +59,7 @@ void calibrateGyroOnce() {
 
 void calibrateAccel() {
 	print("Calibrating accelerometer\n");
-	IMU.setAccelRange(IMU.ACCEL_RANGE_2G); // the most sensitive mode
+	imu.setAccelRange(imu.ACCEL_RANGE_2G); // the most sensitive mode
 
 	print("1/6 Place level [8 sec]\n");
 	pause(8);
@@ -93,9 +93,9 @@ void calibrateAccelOnce() {
 	// Compute the average of the accelerometer readings
 	acc = Vector(0, 0, 0);
 	for (int i = 0; i < samples; i++) {
-		IMU.waitForData();
+		imu.waitForData();
 		Vector sample;
-		IMU.getAccel(sample.x, sample.y, sample.z);
+		imu.getAccel(sample.x, sample.y, sample.z);
 		acc = acc + sample;
 	}
 	acc = acc / samples;
@@ -119,16 +119,16 @@ void printIMUCalibration() {
 }
 
 void printIMUInfo() {
-	IMU.status() ? print("status: ERROR %d\n", IMU.status()) : print("status: OK\n");
-	print("model: %s\n", IMU.getModel());
-	print("who am I: 0x%02X\n", IMU.whoAmI());
+	imu.status() ? print("status: ERROR %d\n", imu.status()) : print("status: OK\n");
+	print("model: %s\n", imu.getModel());
+	print("who am I: 0x%02X\n", imu.whoAmI());
 	print("rate: %.0f\n", loopRate);
 	print("gyro: %f %f %f\n", rates.x, rates.y, rates.z);
 	print("acc: %f %f %f\n", acc.x, acc.y, acc.z);
-	IMU.waitForData();
+	imu.waitForData();
 	Vector rawGyro, rawAcc;
-	IMU.getGyro(rawGyro.x, rawGyro.y, rawGyro.z);
-	IMU.getAccel(rawAcc.x, rawAcc.y, rawAcc.z);
+	imu.getGyro(rawGyro.x, rawGyro.y, rawGyro.z);
+	imu.getAccel(rawAcc.x, rawAcc.y, rawAcc.z);
 	print("raw gyro: %f %f %f\n", rawGyro.x, rawGyro.y, rawGyro.z);
 	print("raw acc: %f %f %f\n", rawAcc.x, rawAcc.y, rawAcc.z);
 }
