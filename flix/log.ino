@@ -10,7 +10,6 @@
 #define LOG_PERIOD 1.0 / LOG_RATE
 #define LOG_SIZE LOG_DURATION * LOG_RATE
 
-float tFloat;
 Vector attitudeEuler;
 Vector attitudeTargetEuler;
 
@@ -20,7 +19,7 @@ struct LogEntry {
 };
 
 LogEntry logEntries[] = {
-	{"t", &tFloat},
+	{"t", &t},
 	{"rates.x", &rates.x},
 	{"rates.y", &rates.y},
 	{"rates.z", &rates.z},
@@ -40,7 +39,6 @@ const int logColumns = sizeof(logEntries) / sizeof(logEntries[0]);
 float logBuffer[LOG_SIZE][logColumns];
 
 void prepareLogData() {
-	tFloat = t;
 	attitudeEuler = attitude.toEuler();
 	attitudeTargetEuler = attitudeTarget.toEuler();
 }
@@ -48,7 +46,7 @@ void prepareLogData() {
 void logData() {
 	if (!armed) return;
 	static int logPointer = 0;
-	static double logTime = 0;
+	static float logTime = 0;
 	if (t - logTime < LOG_PERIOD) return;
 	logTime = t;
 

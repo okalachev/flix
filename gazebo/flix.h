@@ -12,7 +12,7 @@
 
 #define WIFI_ENABLED 1
 
-double t = NAN;
+float t = NAN;
 float dt;
 float motors[4];
 float controlRoll, controlPitch, controlYaw, controlThrottle = NAN;

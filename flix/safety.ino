@@ -6,7 +6,7 @@
 #define RC_LOSS_TIMEOUT 1
 #define DESCEND_TIME 10
 
-extern double controlTime;
+extern float controlTime;
 extern float controlRoll, controlPitch, controlThrottle, controlYaw;
 
 void failsafe() {
