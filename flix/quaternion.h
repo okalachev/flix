@@ -221,9 +221,9 @@ public:
 
 	size_t printTo(Print& p) const {
 		size_t r = 0;
-		r += p.print(w, 15) + p.print(' ');
-		r += p.print(x, 15) + p.print(' ');
-		r += p.print(y, 15) + p.print(' ');
+		r += p.print(w, 15) + p.print(" ");
+		r += p.print(x, 15) + p.print(" ");
+		r += p.print(y, 15) + p.print(" ");
 		r += p.print(z, 15);
 		return r;
 	}
