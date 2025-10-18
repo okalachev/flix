@@ -18,7 +18,8 @@ public:
 
 	LowPassFilter<float> lpf; // low pass filter for derivative term
 
-	PID(float p, float i, float d, float windup = 0, float dAlpha = 1, float maxdt = 0.1) : p(p), i(i), d(d), windup(windup), lpf(dAlpha), maxdt(maxdt) {}
+	PID(float p, float i, float d, float windup = 0, float dAlpha = 1, float maxdt = 0.1) :
+		p(p), i(i), d(d), windup(windup), lpf(dAlpha), maxdt(maxdt) {}
 
 	float update(float error) {
 		float dt = t - prevTime;
