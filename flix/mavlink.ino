@@ -14,7 +14,7 @@
 
 String mavlinkPrintBuffer;
 
-extern double controlTime;
+extern float controlTime;
 extern float controlRoll, controlPitch, controlThrottle, controlYaw, controlMode;
 
 void processMavlink() {
@@ -25,8 +25,8 @@ void processMavlink() {
 void sendMavlink() {
 	sendMavlinkPrint();
 
-	static double lastSlow = 0;
-	static double lastFast = 0;
+	static float lastSlow = 0;
+	static float lastFast = 0;
 
 	mavlink_message_t msg;
 	uint32_t time = t * 1000;

@@ -8,7 +8,7 @@ The firmware is a regular Arduino sketch, and it follows the classic Arduino one
 
 The main loop is running at 1000 Hz. All the dataflow goes through global variables (for simplicity):
 
-* `t` *(double)* — current step time, *s*.
+* `t` *(float)* — current step time, *s*.
 * `dt` *(float)* — time delta between the current and previous steps, *s*.
 * `gyro` *(Vector)* — data from the gyroscope, *rad/s*.
 * `acc` *(Vector)* — acceleration data from the accelerometer, *m/s<sup>2</sup>*.

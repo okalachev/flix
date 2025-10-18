@@ -10,7 +10,7 @@
 #include <soc/rtc_cntl_reg.h>
 
 const float ONE_G = 9.80665;
-extern double t;
+extern float t;
 
 float mapf(long x, long in_min, long in_max, float out_min, float out_max) {
 	return (float)(x - in_min) * (out_max - out_min) / (float)(in_max - in_min) + out_min;

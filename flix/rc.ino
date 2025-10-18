@@ -9,7 +9,7 @@
 SBUS rc(Serial2); // NOTE: Use RC(Serial2, 16, 17) if you use the old UART2 pins
 
 uint16_t channels[16]; // raw rc channels
-double controlTime; // time of the last controls update
+float controlTime; // time of the last controls update
 float channelZero[16]; // calibration zero values
 float channelMax[16]; // calibration max values
 

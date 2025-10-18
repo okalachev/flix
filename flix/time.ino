@@ -6,7 +6,7 @@
 float loopRate; // Hz
 
 void step() {
-	double now = micros() / 1000000.0;
+	float now = micros() / 1000000.0;
 	dt = now - t;
 	t = now;
 
@@ -18,7 +18,7 @@ void step() {
 }
 
 void computeLoopRate() {
-	static double windowStart = 0;
+	static float windowStart = 0;
 	static uint32_t rate = 0;
 	rate++;
 	if (t - windowStart >= 1) { // 1 second window

@@ -10,7 +10,7 @@
 #define SERIAL_BAUDRATE 115200
 #define WIFI_ENABLED 1
 
-double t = NAN; // current step time, s
+float t = NAN; // current step time, s
 float dt; // time delta from previous step, s
 float controlRoll, controlPitch, controlYaw, controlThrottle; // pilot's inputs, range [-1, 1]
 float controlMode = NAN;
