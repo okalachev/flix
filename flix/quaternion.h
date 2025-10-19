@@ -45,7 +45,7 @@ public:
 			cx * cy * sz - sx * sy * cz);
 	}
 
-	static Quaternion fromBetweenVectors(Vector u, Vector v) {
+	static Quaternion fromBetweenVectors(const Vector& u, const Vector& v) {
 		float dot = u.x * v.x + u.y * v.y + u.z * v.z;
 		float w1 = u.y * v.z - u.z * v.y;
 		float w2 = u.z * v.x - u.x * v.z;
