@@ -9,7 +9,6 @@
 #include "lpf.h"
 #include "util.h"
 
-#define ARMED_THRUST 0.1 // thrust to indicate armed state
 #define PITCHRATE_P 0.05
 #define PITCHRATE_I 0.2
 #define PITCHRATE_D 0.001
@@ -100,12 +99,7 @@ void interpretControls() {
 }
 
 void controlAttitude() {
-	if (!armed || attitudeTarget.invalid()) { // skip attitude control
-		rollPID.reset();
-		pitchPID.reset();
-		yawPID.reset();
-		return;
-	}
+	if (!armed || attitudeTarget.invalid()) return; // skip attitude control
 
 	const Vector up(0, 0, 1);
 	Vector upActual = Quaternion::rotateVector(up, attitude);
@@ -113,28 +107,23 @@ void controlAttitude() {
 
 	Vector error = Vector::rotationVectorBetween(upTarget, upActual);
 
-	ratesTarget.x = rollPID.update(error.x, dt) + ratesExtra.x;
-	ratesTarget.y = pitchPID.update(error.y, dt) + ratesExtra.y;
+	ratesTarget.x = rollPID.update(error.x) + ratesExtra.x;
+	ratesTarget.y = pitchPID.update(error.y) + ratesExtra.y;
 
 	float yawError = wrapAngle(attitudeTarget.getYaw() - attitude.getYaw());
-	ratesTarget.z = yawPID.update(yawError, dt) + ratesExtra.z;
+	ratesTarget.z = yawPID.update(yawError) + ratesExtra.z;
 }
 
 
 void controlRates() {
-	if (!armed || ratesTarget.invalid()) { // skip rates control
-		rollRatePID.reset();
-		pitchRatePID.reset();
-		yawRatePID.reset();
-		return;
-	}
+	if (!armed || ratesTarget.invalid()) return; // skip rates control
 
 	Vector error = ratesTarget - rates;
 
 	// Calculate desired torque, where 0 - no torque, 1 - maximum possible torque
-	torqueTarget.x = rollRatePID.update(error.x, dt);
-	torqueTarget.y = pitchRatePID.update(error.y, dt);
-	torqueTarget.z = yawRatePID.update(error.z, dt);
+	torqueTarget.x = rollRatePID.update(error.x);
+	torqueTarget.y = pitchRatePID.update(error.y);
+	torqueTarget.z = yawRatePID.update(error.z);
 }
 
 void controlTorque() {
@@ -145,12 +134,11 @@ void controlTorque() {
 		return;
 	}
 
-	if (thrustTarget < 0.05) {
-		// minimal thrust to indicate armed state
-		motors[0] = ARMED_THRUST;
-		motors[1] = ARMED_THRUST;
-		motors[2] = ARMED_THRUST;
-		motors[3] = ARMED_THRUST;
+	if (thrustTarget < 0.1) {
+		motors[0] = 0.1; // idle thrust
+		motors[1] = 0.1;
+		motors[2] = 0.1;
+		motors[3] = 0.1;
 		return;
 	}
 
