@@ -3,6 +3,9 @@
 
 // Wi-Fi support
 
+#include "config.h"
+#include "flix.h"
+
 #if WIFI_ENABLED
 
 #include <WiFi.h>

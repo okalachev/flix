@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include <Arduino.h>
 #include "vector.h"
 
 class Quaternion : public Printable {

@@ -5,14 +5,19 @@
 
 #include <SPI.h>
 #include <FlixPeriph.h>
+#include "vector.h"
 #include "lpf.h"
 #include "util.h"
 
 MPU9250 imu(SPI);
 
-Vector accBias;
-Vector accScale(1, 1, 1);
-Vector gyroBias;
+Vector gyro; // gyroscope data
+Vector gyroBias; // gyroscope bias
+Vector acc; // accelerometer data, m/s/s
+Vector accBias; // accelerometer bias
+Vector accScale(1, 1, 1); // accelerometer scale
+
+extern float loopRate;
 
 void setupIMU() {
 	print("Setup IMU\n");

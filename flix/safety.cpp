@@ -3,11 +3,13 @@
 
 // Fail-safe functions
 
+#include "flix.h"
+
 #define RC_LOSS_TIMEOUT 1
 #define DESCEND_TIME 10
 
 extern float controlTime;
-extern float controlRoll, controlPitch, controlThrottle, controlYaw;
+extern const int AUTO, STAB;
 
 void failsafe() {
 	rcLossFailsafe();

@@ -5,6 +5,8 @@
 
 #pragma once
 
+#include "Arduino.h"
+#include "flix.h"
 #include "lpf.h"
 
 class PID {

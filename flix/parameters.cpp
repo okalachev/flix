@@ -4,11 +4,17 @@
 // Parameters storage in flash memory
 
 #include <Preferences.h>
+#include "flix.h"
+#include "pid.h"
 
 extern float channelZero[16];
 extern float channelMax[16];
 extern float rollChannel, pitchChannel, throttleChannel, yawChannel, armedChannel, modeChannel;
-extern float mavlinkControlScale;
+extern float tiltMax;
+extern PID rollPID, pitchPID, yawPID;
+extern PID rollRatePID, pitchRatePID, yawRatePID;
+extern Vector maxRate;
+extern Vector accBias, accScale;
 
 Preferences storage;
 

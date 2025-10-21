@@ -5,6 +5,8 @@
 
 #pragma once
 
+#include <Arduino.h>
+
 class Vector : public Printable {
 public:
 	float x, y, z;
@@ -124,5 +126,5 @@ public:
 	}
 };
 
-Vector operator * (const float a, const Vector& b) { return b * a; }
-Vector operator + (const float a, const Vector& b) { return b + a; }
+inline Vector operator * (const float a, const Vector& b) { return b * a; }
+inline Vector operator + (const float a, const Vector& b) { return b + a; }

@@ -1,0 +1,1 @@
+#define WIFI_ENABLED 1

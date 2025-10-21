@@ -3,6 +3,8 @@
 
 // Board's LED control
 
+#include <Arduino.h>
+
 #define BLINK_PERIOD 500000
 
 #ifndef LED_BUILTIN

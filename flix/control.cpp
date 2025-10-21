@@ -34,9 +34,19 @@
 #define TILT_MAX radians(30)
 #define RATES_D_LPF_ALPHA 0.2 // cutoff frequency ~ 40 Hz
 
-const int MANUAL = 0, ACRO = 1, STAB = 2, AUTO = 3; // flight modes
+extern const int MANUAL = 0, ACRO = 1, STAB = 2, AUTO = 3; // flight modes
+extern const int MOTOR_REAR_LEFT, MOTOR_REAR_RIGHT, MOTOR_FRONT_RIGHT, MOTOR_FRONT_LEFT;
+
 int mode = STAB;
 bool armed = false;
+float controlRoll, controlPitch, controlThrottle, controlYaw, controlMode;
+float controlTime;
+
+Quaternion attitudeTarget;
+Vector ratesTarget;
+Vector ratesExtra; // feedforward rates
+Vector torqueTarget;
+float thrustTarget;
 
 PID rollRatePID(ROLLRATE_P, ROLLRATE_I, ROLLRATE_D, ROLLRATE_I_LIM, RATES_D_LPF_ALPHA);
 PID pitchRatePID(PITCHRATE_P, PITCHRATE_I, PITCHRATE_D, PITCHRATE_I_LIM, RATES_D_LPF_ALPHA);
@@ -46,15 +56,6 @@ PID pitchPID(PITCH_P, PITCH_I, PITCH_D);
 PID yawPID(YAW_P, 0, 0);
 Vector maxRate(ROLLRATE_MAX, PITCHRATE_MAX, YAWRATE_MAX);
 float tiltMax = TILT_MAX;
-
-Quaternion attitudeTarget;
-Vector ratesTarget;
-Vector ratesExtra; // feedforward rates
-Vector torqueTarget;
-float thrustTarget;
-
-extern const int MOTOR_REAR_LEFT, MOTOR_REAR_RIGHT, MOTOR_FRONT_RIGHT, MOTOR_FRONT_LEFT;
-extern float controlRoll, controlPitch, controlThrottle, controlYaw, controlMode;
 
 void control() {
 	interpretControls();

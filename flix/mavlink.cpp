@@ -3,6 +3,10 @@
 
 // MAVLink communication
 
+#include <Arduino.h>
+#include "flix.h"
+#include "config.h"
+
 #if WIFI_ENABLED
 
 #include <MAVLink.h>
@@ -14,8 +18,10 @@
 
 String mavlinkPrintBuffer;
 
+extern uint16_t channels[16];
 extern float controlTime;
 extern float controlRoll, controlPitch, controlThrottle, controlYaw, controlMode;
+extern const int STAB, AUTO;
 
 void processMavlink() {
 	sendMavlink();

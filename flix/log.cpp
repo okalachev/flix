@@ -3,6 +3,7 @@
 
 // In-RAM logging
 
+#include "flix.h"
 #include "vector.h"
 
 #define LOG_RATE 100

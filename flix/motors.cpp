@@ -4,6 +4,8 @@
 // Motors output control using MOSFETs
 // In case of using ESCs, change PWM_STOP, PWM_MIN and PWM_MAX to appropriate values in μs, decrease PWM_FREQUENCY (to 400)
 
+#include <Arduino.h>
+#include "flix.h"
 #include "util.h"
 
 #define MOTOR_0_PIN 12 // rear left
@@ -17,11 +19,11 @@
 #define PWM_MIN 0
 #define PWM_MAX 1000000 / PWM_FREQUENCY
 
-// Motors array indexes:
-const int MOTOR_REAR_LEFT = 0;
-const int MOTOR_REAR_RIGHT = 1;
-const int MOTOR_FRONT_RIGHT = 2;
-const int MOTOR_FRONT_LEFT = 3;
+float motors[4]; // normalized motors thrust in range [0..1]
+extern const int MOTOR_REAR_LEFT = 0;
+extern const int MOTOR_REAR_RIGHT = 1;
+extern const int MOTOR_FRONT_RIGHT = 2;
+extern const int MOTOR_FRONT_LEFT = 3;
 
 void setupMotors() {
 	print("Setup Motors\n");

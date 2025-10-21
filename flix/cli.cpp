@@ -3,6 +3,8 @@
 
 // Implementation of command line interface
 
+#include <Arduino.h>
+#include "flix.h"
 #include "pid.h"
 #include "vector.h"
 #include "util.h"
@@ -11,7 +13,6 @@ extern const int MOTOR_REAR_LEFT, MOTOR_REAR_RIGHT, MOTOR_FRONT_RIGHT, MOTOR_FRO
 extern const int ACRO, STAB, AUTO;
 extern float t, dt, loopRate;
 extern uint16_t channels[16];
-extern float controlRoll, controlPitch, controlThrottle, controlYaw, controlMode;
 extern int mode;
 extern bool armed;
 
@@ -70,7 +71,7 @@ void pause(float duration) {
 	}
 }
 
-void doCommand(String str, bool echo = false) {
+void doCommand(String str, bool echo) {
 	// parse command
 	String command, arg0, arg1;
 	splitString(str, command, arg0, arg1);

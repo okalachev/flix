@@ -8,28 +8,28 @@
 #include <math.h>
 #include <soc/soc.h>
 #include <soc/rtc_cntl_reg.h>
+#include "flix.h"
 
 const float ONE_G = 9.80665;
-extern float t;
 
-float mapf(long x, long in_min, long in_max, float out_min, float out_max) {
+inline float mapf(long x, long in_min, long in_max, float out_min, float out_max) {
 	return (float)(x - in_min) * (out_max - out_min) / (float)(in_max - in_min) + out_min;
 }
 
-float mapff(float x, float in_min, float in_max, float out_min, float out_max) {
+inline float mapff(float x, float in_min, float in_max, float out_min, float out_max) {
 	return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
-bool invalid(float x) {
+inline bool invalid(float x) {
 	return !isfinite(x);
 }
 
-bool valid(float x) {
+inline bool valid(float x) {
 	return isfinite(x);
 }
 
 // Wrap angle to [-PI, PI)
-float wrapAngle(float angle) {
+inline float wrapAngle(float angle) {
 	angle = fmodf(angle, 2 * PI);
 	if (angle > PI) {
 		angle -= 2 * PI;
@@ -40,12 +40,12 @@ float wrapAngle(float angle) {
 }
 
 // Disable reset on low voltage
-void disableBrownOut() {
+inline void disableBrownOut() {
 	REG_CLR_BIT(RTC_CNTL_BROWN_OUT_REG, RTC_CNTL_BROWN_OUT_ENA);
 }
 
 // Trim and split string by spaces
-void splitString(String& str, String& token0, String& token1, String& token2) {
+inline void splitString(String& str, String& token0, String& token1, String& token2) {
 	str.trim();
 	char chars[str.length() + 1];
 	str.toCharArray(chars, str.length() + 1);

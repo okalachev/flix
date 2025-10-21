@@ -3,26 +3,14 @@
 
 // Main firmware file
 
+#include "config.h"
 #include "vector.h"
 #include "quaternion.h"
 #include "util.h"
-
-#define SERIAL_BAUDRATE 115200
-#define WIFI_ENABLED 1
-
-float t = NAN; // current step time, s
-float dt; // time delta from previous step, s
-float controlRoll, controlPitch, controlYaw, controlThrottle; // pilot's inputs, range [-1, 1]
-float controlMode = NAN;
-Vector gyro; // gyroscope data
-Vector acc; // accelerometer data, m/s/s
-Vector rates; // filtered angular rates, rad/s
-Quaternion attitude; // estimated attitude
-bool landed; // are we landed and stationary
-float motors[4]; // normalized motors thrust in range [0..1]
+#include "flix.h"
 
 void setup() {
-	Serial.begin(SERIAL_BAUDRATE);
+	Serial.begin(115200);
 	print("Initializing flix\n");
 	disableBrownOut();
 	setupParameters();
