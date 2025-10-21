@@ -74,9 +74,10 @@ void doCommand(String str, bool echo = false) {
 	// parse command
 	String command, arg0, arg1;
 	splitString(str, command, arg0, arg1);
+	if (command.isEmpty()) return;
 
 	// echo command
-	if (echo && !command.isEmpty()) {
+	if (echo) {
 		print("> %s\n", str.c_str());
 	}
 
@@ -170,8 +171,6 @@ void doCommand(String str, bool echo = false) {
 		attitude = Quaternion();
 	} else if (command == "reboot") {
 		ESP.restart();
-	} else if (command == "") {
-		// do nothing
 	} else {
 		print("Invalid command: %s\n", command.c_str());
 	}
