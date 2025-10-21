@@ -32,6 +32,6 @@ Do the following:
   * `mfl` — should rotate front left motor (clockwise).
   * `mrl` — should rotate rear left motor (counter-clockwise).
   * `mrr` — should rotate rear right motor (clockwise).
-* **Calibrate the RC** if you use it. Type `cr` command in Serial Monitor and follow the instructions.
-* **Check the RC data** if you use it. Use `rc` command, `Control` should show correct values between -1 and 1, and between 0 and 1 for the throttle.
+* **Check the remote control**. Using `rc` command, check the control values reflect your sticks movement. All the controls should change between -1 and 1, and throttle between 0 and 1.
+* If using SBUS receiver, **calibrate the RC**. Type `cr` command in Serial Monitor and follow the instructions.
 * **Check the IMU output using QGroundControl**. Connect to the drone using QGroundControl on your computer. Go to the *Analyze* tab, *MAVLINK Inspector*. Plot the data from the `SCALED_IMU` message. The gyroscope and accelerometer data should change according to the drone movement.
