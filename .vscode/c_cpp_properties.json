@@ -52,7 +52,7 @@
 			"forcedInclude": [
 				"${workspaceFolder}/.vscode/intellisense.h",
 				"~/Library/Arduino15/packages/esp32/hardware/esp32/3.2.0/cores/esp32/Arduino.h",
-				"~/Library/Arduino15/packages/esp32/hardware/esp32/3.2.0/variants/d1_mini32/pins_arduino.h",
+				"~/Library/Arduino15/packages/esp32/hardware/esp32/3.2.0/variants/d1_mini32/pins_arduino.h"
 			],
 			"compilerPath": "~/Library/Arduino15/packages/esp32/tools/esp-x32/2411/bin/xtensa-esp32-elf-g++",
 			"cStandard": "c11",
