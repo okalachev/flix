@@ -3,36 +3,12 @@
 
 // Flight control
 
+#include "config.h"
 #include "vector.h"
 #include "quaternion.h"
 #include "pid.h"
 #include "lpf.h"
 #include "util.h"
-
-#define PITCHRATE_P 0.05
-#define PITCHRATE_I 0.2
-#define PITCHRATE_D 0.001
-#define PITCHRATE_I_LIM 0.3
-#define ROLLRATE_P PITCHRATE_P
-#define ROLLRATE_I PITCHRATE_I
-#define ROLLRATE_D PITCHRATE_D
-#define ROLLRATE_I_LIM PITCHRATE_I_LIM
-#define YAWRATE_P 0.3
-#define YAWRATE_I 0.0
-#define YAWRATE_D 0.0
-#define YAWRATE_I_LIM 0.3
-#define ROLL_P 6
-#define ROLL_I 0
-#define ROLL_D 0
-#define PITCH_P ROLL_P
-#define PITCH_I ROLL_I
-#define PITCH_D ROLL_D
-#define YAW_P 3
-#define PITCHRATE_MAX radians(360)
-#define ROLLRATE_MAX radians(360)
-#define YAWRATE_MAX radians(300)
-#define TILT_MAX radians(30)
-#define RATES_D_LPF_ALPHA 0.2 // cutoff frequency ~ 40 Hz
 
 extern const int MANUAL = 0, ACRO = 1, STAB = 2, AUTO = 3; // flight modes
 extern const int MOTOR_REAR_LEFT, MOTOR_REAR_RIGHT, MOTOR_FRONT_RIGHT, MOTOR_FRONT_LEFT;

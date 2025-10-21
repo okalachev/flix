@@ -12,12 +12,6 @@
 #include <WiFiAP.h>
 #include <WiFiUdp.h>
 
-#define WIFI_SSID "flix"
-#define WIFI_PASSWORD "flixwifi"
-#define WIFI_UDP_PORT 14550
-#define WIFI_UDP_REMOTE_PORT 14550
-#define WIFI_UDP_REMOTE_ADDR "255.255.255.255"
-
 WiFiUDP udp;
 
 void setupWiFi() {

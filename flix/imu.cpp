@@ -11,11 +11,8 @@
 
 MPU9250 imu(SPI);
 
-Vector gyro; // gyroscope data
-Vector gyroBias; // gyroscope bias
-Vector acc; // accelerometer data, m/s/s
-Vector accBias; // accelerometer bias
-Vector accScale(1, 1, 1); // accelerometer scale
+Vector gyro, gyroBias;
+Vector acc, accBias, accScale(1, 1, 1);
 
 extern float loopRate;
 

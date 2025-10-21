@@ -5,19 +5,9 @@
 // In case of using ESCs, change PWM_STOP, PWM_MIN and PWM_MAX to appropriate values in μs, decrease PWM_FREQUENCY (to 400)
 
 #include <Arduino.h>
+#include "config.h"
 #include "flix.h"
 #include "util.h"
-
-#define MOTOR_0_PIN 12 // rear left
-#define MOTOR_1_PIN 13 // rear right
-#define MOTOR_2_PIN 14 // front right
-#define MOTOR_3_PIN 15 // front left
-
-#define PWM_FREQUENCY 78000
-#define PWM_RESOLUTION 10
-#define PWM_STOP 0
-#define PWM_MIN 0
-#define PWM_MAX 1000000 / PWM_FREQUENCY
 
 float motors[4]; // normalized motors thrust in range [0..1]
 extern const int MOTOR_REAR_LEFT = 0;

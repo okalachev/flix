@@ -4,14 +4,13 @@
 // MAVLink communication
 
 #include <Arduino.h>
-#include "flix.h"
 #include "config.h"
+#include "flix.h"
 
 #if WIFI_ENABLED
 
 #include <MAVLink.h>
 
-#define SYSTEM_ID 1
 #define PERIOD_SLOW 1.0
 #define PERIOD_FAST 0.1
 #define MAVLINK_CONTROL_YAW_DEAD_ZONE 0.1f

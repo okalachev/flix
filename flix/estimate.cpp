@@ -3,14 +3,12 @@
 
 // Attitude estimation from gyro and accelerometer
 
+#include "config.h"
 #include "flix.h"
 #include "quaternion.h"
 #include "vector.h"
 #include "lpf.h"
 #include "util.h"
-
-#define WEIGHT_ACC 0.003
-#define RATES_LFP_ALPHA 0.2 // cutoff frequency ~ 40 Hz
 
 Vector rates; // filtered angular rates, rad/s
 Quaternion attitude; // estimated attitude

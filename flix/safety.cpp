@@ -3,10 +3,8 @@
 
 // Fail-safe functions
 
+#include "config.h"
 #include "flix.h"
-
-#define RC_LOSS_TIMEOUT 1
-#define DESCEND_TIME 10
 
 extern float controlTime;
 extern const int AUTO, STAB;
