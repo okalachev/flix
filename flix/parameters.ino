@@ -8,7 +8,6 @@
 extern float channelZero[16];
 extern float channelMax[16];
 extern float rollChannel, pitchChannel, throttleChannel, yawChannel, armedChannel, modeChannel;
-extern float mavlinkControlScale;
 
 Preferences storage;
 
