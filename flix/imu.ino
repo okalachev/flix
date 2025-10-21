@@ -5,6 +5,7 @@
 
 #include <SPI.h>
 #include <FlixPeriph.h>
+#include "vector.h"
 #include "lpf.h"
 #include "util.h"
 
