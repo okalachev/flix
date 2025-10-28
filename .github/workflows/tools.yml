@@ -46,3 +46,14 @@ jobs:
         echo -e "t,x,y,z\n0,1,2,3\n1,4,5,6" > log.csv
         ./csv_to_mcap.py log.csv
         test $(stat -c %s log.mcap) -eq 883
+
+  sloc:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Install cloc
+      run: sudo apt-get install -y cloc
+    - name: Firmware source lines count
+      run: cloc --by-file-by-lang flix
+    - name: Overall source lines count
+      run: cloc --by-file-by-lang --exclude-ext=svg,dae,css,hbs .
