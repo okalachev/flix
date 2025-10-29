@@ -6,10 +6,11 @@
 #if WIFI_ENABLED
 
 #include <MAVLink.h>
+#include "util.h"
 
 #define SYSTEM_ID 1
-#define PERIOD_SLOW 1.0
-#define PERIOD_FAST 0.1
+#define MAVLINK_RATE_SLOW 1
+#define MAVLINK_RATE_FAST 10
 #define MAVLINK_CONTROL_YAW_DEAD_ZONE 0.1f
 
 bool mavlinkConnected = false;
@@ -26,15 +27,12 @@ void processMavlink() {
 void sendMavlink() {
 	sendMavlinkPrint();
 
-	static float lastSlow = 0;
-	static float lastFast = 0;
-
 	mavlink_message_t msg;
 	uint32_t time = t * 1000;
 
-	if (t - lastSlow >= PERIOD_SLOW) {
-		lastSlow = t;
+	static Rate slow(MAVLINK_RATE_SLOW), fast(MAVLINK_RATE_FAST);
 
+	if (slow) {
 		mavlink_msg_heartbeat_pack(SYSTEM_ID, MAV_COMP_ID_AUTOPILOT1, &msg, MAV_TYPE_QUADROTOR, MAV_AUTOPILOT_GENERIC,
 			(armed ? MAV_MODE_FLAG_SAFETY_ARMED : 0) |
 			((mode == STAB) ? MAV_MODE_FLAG_STABILIZE_ENABLED : 0) |
@@ -49,9 +47,7 @@ void sendMavlink() {
 		sendMessage(&msg);
 	}
 
-	if (t - lastFast >= PERIOD_FAST && mavlinkConnected) {
-		lastFast = t;
-
+	if (fast && mavlinkConnected) {
 		const float zeroQuat[] = {0, 0, 0, 0};
 		mavlink_msg_attitude_quaternion_pack(SYSTEM_ID, MAV_COMP_ID_AUTOPILOT1, &msg,
 			time, attitude.w, attitude.x, -attitude.y, -attitude.z, rates.x, -rates.y, -rates.z, zeroQuat); // convert to frd
