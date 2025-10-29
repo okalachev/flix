@@ -56,4 +56,4 @@ jobs:
     - name: Firmware source lines count
       run: cloc --by-file-by-lang flix
     - name: Overall source lines count
-      run: cloc --by-file-by-lang --exclude-ext=svg,dae,css,hbs .
+      run: cloc --by-file-by-lang --exclude-ext=svg,dae,css,hbs,md,json,yaml,yml,toml .
