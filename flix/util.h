@@ -50,18 +50,14 @@ void splitString(String& str, String& token0, String& token1, String& token2) {
 	token2 = strtok(NULL, "");
 }
 
-// Helper for running code at a fixed rate
+// Rate limiter
 class Rate {
 public:
 	float rate;
-	float last = NAN;
+	float last = 0;
 	Rate(float rate) : rate(rate) {}
 
 	operator bool() {
-		if (isnan(last)) {
-			last = t;
-			return true;
-		}
 		if (t - last >= 1 / rate) {
 			last = t;
 			return true;
@@ -81,8 +77,7 @@ public:
 		if (!on) {
 			start = NAN;
 			return false;
-		}
-		if (isnan(start)) {
+		} else if (isnan(start)) {
 			start = t;
 		}
 		return t - start >= delay;
