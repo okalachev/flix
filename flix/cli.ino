@@ -38,7 +38,7 @@ const char* motd =
 "stab/acro/auto - set mode\n"
 "rc - show RC data\n"
 "mot - show motor output\n"
-"log - dump in-RAM log\n"
+"log [dump] - print log header [and data]\n"
 "cr - calibrate RC\n"
 "ca - calibrate accel\n"
 "mfr, mfl, mrr, mrl - test motor (remove props)\n"
@@ -135,7 +135,8 @@ void doCommand(String str, bool echo = false) {
 		print("front-right %g front-left %g rear-right %g rear-left %g\n",
 			motors[MOTOR_FRONT_RIGHT], motors[MOTOR_FRONT_LEFT], motors[MOTOR_REAR_RIGHT], motors[MOTOR_REAR_LEFT]);
 	} else if (command == "log") {
-		dumpLog();
+		printLogHeader();
+		if (arg0 == "dump") printLogData();
 	} else if (command == "cr") {
 		calibrateRC();
 	} else if (command == "ca") {

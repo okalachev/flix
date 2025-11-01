@@ -61,12 +61,13 @@ void logData() {
 	}
 }
 
-void dumpLog() {
-	// Print header
+void printLogHeader() {
 	for (int i = 0; i < logColumns; i++) {
 		print("%s%s", logEntries[i].name, i < logColumns - 1 ? "," : "\n");
 	}
-	// Print data
+}
+
+void printLogData() {
 	for (int i = 0; i < LOG_SIZE; i++) {
 		if (logBuffer[i][0] == 0) continue; // skip empty records
 		for (int j = 0; j < logColumns; j++) {
