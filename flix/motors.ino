@@ -38,9 +38,9 @@ void setupMotors() {
 
 int getDutyCycle(float value) {
 	value = constrain(value, 0, 1);
-	float pwm = mapff(value, 0, 1, PWM_MIN, PWM_MAX);
+	float pwm = mapf(value, 0, 1, PWM_MIN, PWM_MAX);
 	if (value == 0) pwm = PWM_STOP;
-	float duty = mapff(pwm, 0, 1000000 / PWM_FREQUENCY, 0, (1 << PWM_RESOLUTION) - 1);
+	float duty = mapf(pwm, 0, 1000000 / PWM_FREQUENCY, 0, (1 << PWM_RESOLUTION) - 1);
 	return round(duty);
 }
 
