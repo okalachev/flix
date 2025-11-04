@@ -29,6 +29,12 @@ jobs:
       run: sed -i 's/^#define WIFI_ENABLED 1$/#define WIFI_ENABLED 0/' flix/flix.ino && make
     - name: Check c_cpp_properties.json
       run: tools/check_c_cpp_properties.py
+    - name: Build for Black Pill F411CE (STM32)
+      run: |
+        arduino-cli config set board_manager.additional_urls https://github.com/stm32duino/BoardManagerFiles/raw/main/package_stmicroelectronics_index.json
+        arduino-cli core install STMicroelectronics:stm32
+        arduino-cli board listall STMicroelectronics:stm32
+        make BOARD=STMicroelectronics:stm32:GenF4:pnum=BLACKPILL_F411CE
 
   build_macos:
     runs-on: macos-latest
