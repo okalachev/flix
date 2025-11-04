@@ -6,8 +6,10 @@
 #pragma once
 
 #include <math.h>
+#ifdef ESP32
 #include <soc/soc.h>
 #include <soc/rtc_cntl_reg.h>
+#endif
 
 const float ONE_G = 9.80665;
 extern float t;
@@ -37,7 +39,9 @@ float wrapAngle(float angle) {
 
 // Disable reset on low voltage
 void disableBrownOut() {
+#ifdef ESP32
 	REG_CLR_BIT(RTC_CNTL_BROWN_OUT_REG, RTC_CNTL_BROWN_OUT_ENA);
+#endif
 }
 
 // Trim and split string by spaces
