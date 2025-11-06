@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 355.49 357.47">
+  <defs>
+    <style>
+      .a, .e {
+        fill: none;
+        stroke-miterlimit: 10;
+      }
+
+      .a {
+        stroke: #d5d5d5;
+        stroke-width: 31px;
+      }
+
+      .b {
+        fill: #c1c1c1;
+      }
+
+      .c {
+        fill: #ff9400;
+      }
+
+      .d {
+        opacity: 0.12;
+      }
+
+      .e {
+        stroke: #cc5200;
+        stroke-width: 8px;
+      }
+
+      .f {
+        fill: #cc5200;
+      }
+
+      .g {
+        font-size: 50px;
+        fill: #fff;
+      }
+
+      .g, .h {
+        font-family: Tahoma;
+      }
+
+      .h {
+        font-size: 20px;
+      }
+
+      .i {
+        letter-spacing: 0em;
+      }
+    </style>
+  </defs>
+  <g>
+    <g>
+      <line class="a" x1="77" y1="279.14" x2="277" y2="78.14"/>
+      <line class="a" x1="78" y1="79.14" x2="278" y2="280.14"/>
+      <circle class="b" cx="177.5" cy="178.64" r="41.5"/>
+      <circle class="c" cx="77.57" cy="78.64" r="77.95"/>
+      <circle class="c" cx="277.13" cy="78.42" r="77.95"/>
+      <circle class="c" cx="276.13" cy="279.42" r="77.95"/>
+      <circle class="c" cx="77.13" cy="279.42" r="77.95"/>
+    </g>
+    <path class="d" d="M173.89,164.07l-8.44,26.05a4.31,4.31,0,0,0,4.1,5.65h16.9a4.32,4.32,0,0,0,4.11-5.65l-8.45-26.05A4.32,4.32,0,0,0,173.89,164.07Z"/>
+    <g>
+      <path class="e" d="M307.07,123A52.66,52.66,0,1,0,235,47"/>
+      <polygon class="f" points="228.28 38.98 227.04 59.68 245.59 50.41 228.28 38.98"/>
+    </g>
+    <g>
+      <path class="e" d="M42.57,237.58a52.66,52.66,0,1,0,72.08,76"/>
+      <polygon class="f" points="121.36 321.6 122.6 300.9 104.05 310.17 121.36 321.6"/>
+    </g>
+    <g>
+      <path class="e" d="M311.89,237.58a52.66,52.66,0,1,1-72.08,76"/>
+      <polygon class="f" points="250.41 310.17 231.86 300.9 233.1 321.6 250.41 310.17"/>
+    </g>
+    <g>
+      <path class="e" d="M47.71,122.69a52.66,52.66,0,1,1,72.08-75.95"/>
+      <polygon class="f" points="109.19 50.1 127.74 59.38 126.5 38.67 109.19 50.1"/>
+    </g>
+    <text class="g" transform="translate(64.5 99.24)">3</text>
+    <text class="g" transform="translate(63.52 297.27)">0</text>
+    <text class="g" transform="translate(263.52 298.27)">1</text>
+    <text class="g" transform="translate(260.52 99.27)">2</text>
+    <text class="h" transform="translate(65.66 129.73)">p<tspan class="i" x="11.05" y="0">r</tspan><tspan x="18.16" y="0">op A</tspan></text>
+    <text class="h" transform="translate(233.66 245.73)">p<tspan class="i" x="11.05" y="0">r</tspan><tspan x="18.16" y="0">op A</tspan></text>
+    <text class="h" transform="translate(232.15 129.42)">p<tspan class="i" x="11.05" y="0">r</tspan><tspan x="18.16" y="0">op B</tspan></text>
+    <text class="h" transform="translate(67.15 245.42)">p<tspan class="i" x="11.05" y="0">r</tspan><tspan x="18.16" y="0">op B</tspan></text>
+  </g>
+</svg>
