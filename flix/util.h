@@ -50,20 +50,34 @@ void splitString(String& str, String& token0, String& token1, String& token2) {
 	token2 = strtok(NULL, "");
 }
 
+// Rate limiter
+class Rate {
+public:
+	float rate;
+	float last = 0;
+	Rate(float rate) : rate(rate) {}
+
+	operator bool() {
+		if (t - last >= 1 / rate) {
+			last = t;
+			return true;
+		}
+		return false;
+	}
+};
+
 // Delay filter for boolean signals - ensures the signal is on for at least 'delay' seconds
 class Delay {
 public:
 	float delay;
 	float start = NAN;
-
 	Delay(float delay) : delay(delay) {}
 
 	bool update(bool on) {
 		if (!on) {
 			start = NAN;
 			return false;
-		}
-		if (isnan(start)) {
+		} else if (isnan(start)) {
 			start = t;
 		}
 		return t - start >= delay;
