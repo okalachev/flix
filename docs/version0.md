@@ -14,7 +14,7 @@ Flix version 0 (obsolete):
 |Motor|8520 3.7V brushed motor (**shaft 0.8mm!**)|<img src="img/motor.jpeg" width=100>|4|
 |Propeller|Hubsan 55 mm|<img src="img/prop.jpg" width=100>|4|
 |Motor ESC|2.7A 1S Dual Way Micro Brush ESC|<img src="img/esc.jpg" width=100>|4|
-|RC transmitter|KINGKONG TINY X8|<img src="img/tx.jpg" width=100>|1|
+|RC transmitter|KINGKONG TINY X8|<img src="img/kingkong.jpg" width=100>|1|
 |RC receiver|DF500 (SBUS)|<img src="img/rx.jpg" width=100>|1|
 |~~SBUS inverter~~*||<img src="img/inv.jpg" width=100>|~~1~~|
 |Battery|3.7 Li-Po 850 MaH 60C|||

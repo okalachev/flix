@@ -1,0 +1,110 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 664.49 478.47">
+  <defs>
+    <style>
+      .a, .d, .f, .j {
+        fill: none;
+      }
+
+      .a {
+        stroke: #d5d5d5;
+        stroke-miterlimit: 10;
+        stroke-width: 31px;
+      }
+
+      .b {
+        fill: #ff9400;
+      }
+
+      .c {
+        opacity: 0.8;
+      }
+
+      .d {
+        stroke: #d80100;
+      }
+
+      .d, .f, .j {
+        stroke-linejoin: bevel;
+        stroke-width: 13px;
+      }
+
+      .e {
+        fill: #d80100;
+      }
+
+      .f {
+        stroke: #57ed00;
+      }
+
+      .g {
+        fill: #57ed00;
+      }
+
+      .h {
+        fill: #c1c1c1;
+      }
+
+      .i {
+        opacity: 0.12;
+      }
+
+      .j {
+        stroke: #0076ba;
+      }
+
+      .k {
+        fill: #0076ba;
+      }
+
+      .l {
+        font-size: 50px;
+        font-family: Tahoma;
+      }
+
+      .m {
+        letter-spacing: -0.01em;
+      }
+
+      .n {
+        letter-spacing: -0.01em;
+      }
+
+      .o {
+        letter-spacing: 0em;
+      }
+    </style>
+  </defs>
+  <g>
+    <g>
+      <line class="a" x1="207.39" y1="402.28" x2="480.71" y2="309.67"/>
+      <line class="a" x1="259.93" y1="282.6" x2="429.86" y2="430.83"/>
+      <ellipse class="b" cx="259.59" cy="282.24" rx="88.68" ry="47.94"/>
+      <ellipse class="b" cx="480.77" cy="309.86" rx="88.68" ry="47.94"/>
+      <ellipse class="b" cx="427.96" cy="430.14" rx="88.68" ry="47.94"/>
+      <ellipse class="b" cx="207.45" cy="402.47" rx="88.68" ry="47.94"/>
+    </g>
+    <g class="c">
+      <g>
+        <line class="d" x1="344.89" y1="356.27" x2="422.02" y2="172.47"/>
+        <polygon class="e" points="440.89 187.79 435.01 141.5 397.86 169.74 440.89 187.79"/>
+      </g>
+    </g>
+    <g class="c">
+      <g>
+        <line class="f" x1="345.01" y1="356.5" x2="79.27" y2="319.17"/>
+        <polygon class="g" points="89.28 297.01 46.01 314.5 82.78 343.23 89.28 297.01"/>
+      </g>
+    </g>
+    <ellipse class="h" cx="344.6" cy="356.05" rx="47.21" ry="25.52"/>
+    <path class="i" d="M346.25,345.11l-14.41,12.95a4.32,4.32,0,0,0,2.34,7.5L351,367.67a4.33,4.33,0,0,0,4.8-5l-2.39-15.06A4.31,4.31,0,0,0,346.25,345.11Z"/>
+    <g class="c">
+      <g>
+        <line class="j" x1="345.01" y1="355" x2="345.01" y2="62.08"/>
+        <polygon class="k" points="368.35 68.91 345.01 28.5 321.67 68.91 368.35 68.91"/>
+      </g>
+    </g>
+    <text class="l" transform="translate(-0.76 281.71)">y/left</text>
+    <text class="l" transform="translate(371.65 38.02)">z/up</text>
+    <text class="l" transform="translate(455.23 152.62)">x/<tspan class="m" x="43.87" y="0">f</tspan><tspan x="59.3" y="0">or</tspan><tspan class="n" x="104.47" y="0">w</tspan><tspan x="141.14" y="0">a</tspan><tspan class="o" x="167.38" y="0">r</tspan><tspan x="185.16" y="0">d</tspan></text>
+  </g>
+</svg>

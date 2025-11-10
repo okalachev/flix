@@ -46,8 +46,11 @@ print(flix.acc)             # accelerometer output (list)
 print(flix.gyro)            # gyroscope output (list)
 ```
 
-> [!NOTE]
-> The library uses the Front-Left-Up coordinate system — the same as in the firmware. All angles are in radians.
+The library uses the Front-Left-Up coordinate system — the same as the firmware:
+
+<img src="../../docs/img/drone-axes-rotate.svg" width="300">
+
+All angles are in radians.
 
 ### Events
 
@@ -107,7 +110,7 @@ Full list of events:
 |`value.<name>`|Specific named value update (see bellow)|Value|
 
 > [!NOTE]
-> Update events trigger on every new data from the drone, and do not mean the value is changed.
+> Update events trigger on every new data from the drone, and do not mean the value has changed.
 
 ### Common methods
 
@@ -118,7 +121,7 @@ pitch_p = flix.get_param('PITCH_P')  # get parameter value
 flix.set_param('PITCH_P', 5)         # set parameter value
 ```
 
-Execute CLI commands using `cli` method. This method returns command response:
+Execute console commands using `cli` method. This method returns command response:
 
 ```python
 imu = flix.cli('imu')    # get detailed IMU data
@@ -136,7 +139,7 @@ flix.set_armed(True)   # arm the drone
 flix.set_armed(False)  # disarm the drone
 ```
 
-You can imitate pilot's controls using `set_controls` method:
+You can pass pilot's controls using `set_controls` method:
 
 ```python
 flix.set_controls(roll=0, pitch=0, yaw=0, throttle=0.6)
