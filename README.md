@@ -54,15 +54,17 @@ The simulator is implemented using Gazebo and runs the original Arduino code:
 
 ## Documentation
 
-* [Assembly instructions](docs/assembly.md).
-* [Usage: build, setup and flight](docs/usage.md).
-* [Troubleshooting](docs/troubleshooting.md).
-* [Simulation](gazebo/README.md).
-* [Firmware architectural overview](docs/firmware.md).
-* [Python library](tools/pyflix/README.md).
-* [Log analysis](docs/log.md).
+1. [Assembly instructions](docs/assembly.md).
+2. [Usage: build, setup and flight](docs/usage.md).
+3. [Simulation](gazebo/README.md).
+4. [Python library](tools/pyflix/README.md).
+
+Additional articles:
+
 * [User builds gallery](docs/user.md).
-* [Version 0 (obsolete)](docs/version0.md).
+* [Firmware architectural overview](docs/firmware.md).
+* [Troubleshooting](docs/troubleshooting.md).
+* [Log analysis](docs/log.md).
 
 ## Components
 
@@ -80,9 +82,9 @@ The simulator is implemented using Gazebo and runs the original Arduino code:
 |Li-Po Battery charger|Any|<img src="docs/img/charger.jpg" width=100>|1|
 |Screws for IMU board mounting|M3x5|<img src="docs/img/screw-m3.jpg" width=100>|2|
 |Screws for frame assembly|M1.4x5|<img src="docs/img/screw-m1.4.jpg" height=30 align=center>|4|
-|Frame main part|3D printed²:<br>[`flix-frame-1.1.stl`](docs/assets/flix-frame-1.1.stl) [`flix-frame-1.1.step`](docs/assets/flix-frame-1.1.step)<br>Recommended settings: layer 0.2 mm, line 0.4 mm, infill 100%.|<img src="docs/img/frame1.jpg" width=100>|1|
-|Frame top part|3D printed:<br>[`esp32-holder.stl`](docs/assets/esp32-holder.stl) [`esp32-holder.step`](docs/assets/esp32-holder.step)|<img src="docs/img/esp32-holder.jpg" width=100>|1|
-|Washer for IMU board mounting|3D printed:<br>[`washer-m3.stl`](docs/assets/washer-m3.stl) [`washer-m3.step`](docs/assets/washer-m3.step)|<img src="docs/img/washer-m3.jpg" width=100>|2|
+|Frame main part|3D printed²: [`stl`](docs/assets/flix-frame-1.1.stl) [`step`](docs/assets/flix-frame-1.1.step)<br>Recommended settings: layer 0.2 mm, line 0.4 mm, infill 100%.|<img src="docs/img/frame1.jpg" width=100>|1|
+|Frame top part|3D printed: [`stl`](docs/assets/esp32-holder.stl) [`step`](docs/assets/esp32-holder.step)|<img src="docs/img/esp32-holder.jpg" width=100>|1|
+|Washer for IMU board mounting|3D printed: [`stl`](docs/assets/washer-m3.stl) [`step`](docs/assets/washer-m3.step)|<img src="docs/img/washer-m3.jpg" width=100>|2|
 |Controller (recommended)|CC2500 transmitter, like BetaFPV LiteRadio CC2500 (RC receiver/Wi-Fi).<br>Two-sticks gamepad (Wi-Fi only) — see [recommended gamepads](https://docs.qgroundcontrol.com/master/en/qgc-user-guide/setup_view/joystick.html#supported-joysticks).<br>Other⁵|<img src="docs/img/betafpv.jpg" width=100><img src="docs/img/logitech.jpg" width=80>|1|
 |*RC receiver (optional)*|*DF500 or other³*|<img src="docs/img/rx.jpg" width=100>|1|
 |Wires|28 AWG recommended|<img src="docs/img/wire-28awg.jpg" width=100>||
@@ -115,8 +117,6 @@ Motor connection scheme:
 <img src="docs/img/mosfet-connection.png" height=400 alt="MOSFET connection scheme">
 
 You can see a user-contributed [variant of complete circuit diagram](https://miro.com/app/board/uXjVN-dTjoo=/?moveToWidget=3458764612338222067&cot=14) of the drone.
-
-See [assembly guide](docs/assembly.md) for instructions on assembling the drone.
 
 ### Notes
 
@@ -151,9 +151,9 @@ See [assembly guide](docs/assembly.md) for instructions on assembling the drone.
   |-|-|
   |GND|GND|
   |VIN|VCC (or 3.3V depending on the receiver)|
-  |Signal (TX)|GPIO4⁶|
+  |Signal (TX)|GPIO4¹|
 
-*⁶ — UART2 RX pin was [changed](https://docs.espressif.com/projects/arduino-esp32/en/latest/migration_guides/2.x_to_3.0.html#id14) to GPIO4 in Arduino ESP32 core 3.0.*
+*¹ — UART2 RX pin was [changed](https://docs.espressif.com/projects/arduino-esp32/en/latest/migration_guides/2.x_to_3.0.html#id14) to GPIO4 in Arduino ESP32 core 3.0.*
 
 ## Resources
 

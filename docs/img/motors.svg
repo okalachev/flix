@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 355.49 357.47">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 356.79 357.11">
   <defs>
     <style>
       .a, .e {
@@ -52,38 +52,38 @@
   </defs>
   <g>
     <g>
-      <line class="a" x1="77" y1="279.14" x2="277" y2="78.14"/>
-      <line class="a" x1="78" y1="79.14" x2="278" y2="280.14"/>
-      <circle class="b" cx="177.5" cy="178.64" r="41.5"/>
-      <circle class="c" cx="77.57" cy="78.64" r="77.95"/>
-      <circle class="c" cx="277.13" cy="78.42" r="77.95"/>
-      <circle class="c" cx="276.13" cy="279.42" r="77.95"/>
-      <circle class="c" cx="77.13" cy="279.42" r="77.95"/>
+      <line class="a" x1="77.4" y1="278.67" x2="277.4" y2="77.67"/>
+      <line class="a" x1="78.4" y1="78.67" x2="278.4" y2="279.67"/>
+      <circle class="b" cx="177.9" cy="178.17" r="41.5"/>
+      <circle class="c" cx="77.97" cy="78.17" r="77.95"/>
+      <circle class="c" cx="277.52" cy="77.95" r="77.95"/>
     </g>
-    <path class="d" d="M173.89,164.07l-8.44,26.05a4.31,4.31,0,0,0,4.1,5.65h16.9a4.32,4.32,0,0,0,4.11-5.65l-8.45-26.05A4.32,4.32,0,0,0,173.89,164.07Z"/>
+    <path class="d" d="M174.29,163.6l-8.45,26.05A4.32,4.32,0,0,0,170,195.3h16.9a4.32,4.32,0,0,0,4.11-5.65l-8.45-26.05A4.32,4.32,0,0,0,174.29,163.6Z"/>
     <g>
-      <path class="e" d="M307.07,123A52.66,52.66,0,1,0,235,47"/>
-      <polygon class="f" points="228.28 38.98 227.04 59.68 245.59 50.41 228.28 38.98"/>
+      <path class="e" d="M307.47,122.53a52.66,52.66,0,1,0-72.08-76"/>
+      <polygon class="f" points="228.68 38.51 227.44 59.21 245.99 49.94 228.68 38.51"/>
     </g>
     <g>
-      <path class="e" d="M42.57,237.58a52.66,52.66,0,1,0,72.08,76"/>
-      <polygon class="f" points="121.36 321.6 122.6 300.9 104.05 310.17 121.36 321.6"/>
+      <path class="e" d="M48.11,122.22a52.66,52.66,0,1,1,72.08-75.95"/>
+      <polygon class="f" points="109.59 49.63 128.14 58.91 126.9 38.2 109.59 49.63"/>
     </g>
+    <text class="g" transform="translate(64.89 98.77)">3</text>
+    <text class="g" transform="translate(260.92 98.8)">2</text>
+    <text class="h" transform="translate(66.06 129.25)">p<tspan class="i" x="11.05" y="0">r</tspan><tspan x="18.16" y="0">op A</tspan></text>
+    <text class="h" transform="translate(232.55 128.95)">p<tspan class="i" x="11.05" y="0">r</tspan><tspan x="18.16" y="0">op B</tspan></text>
+    <circle class="c" cx="278.83" cy="277.92" r="77.95"/>
     <g>
-      <path class="e" d="M311.89,237.58a52.66,52.66,0,1,1-72.08,76"/>
-      <polygon class="f" points="250.41 310.17 231.86 300.9 233.1 321.6 250.41 310.17"/>
+      <path class="e" d="M249,322a52.66,52.66,0,1,1,72.09-76"/>
+      <polygon class="f" points="310.45 249.38 329 258.66 327.76 237.95 310.45 249.38"/>
     </g>
+    <text class="g" transform="translate(265.76 298.52)">1</text>
+    <text class="h" transform="translate(266.92 329.01)">p<tspan class="i" x="11.05" y="0">r</tspan><tspan x="18.16" y="0">op A</tspan></text>
+    <circle class="c" cx="77.95" cy="277.92" r="77.95"/>
     <g>
-      <path class="e" d="M47.71,122.69a52.66,52.66,0,1,1,72.08-75.95"/>
-      <polygon class="f" points="109.19 50.1 127.74 59.38 126.5 38.67 109.19 50.1"/>
+      <path class="e" d="M107.9,322.49a52.66,52.66,0,1,0-72.08-76"/>
+      <polygon class="f" points="29.11 238.47 27.87 259.18 46.42 249.91 29.11 238.47"/>
     </g>
-    <text class="g" transform="translate(64.5 99.24)">3</text>
-    <text class="g" transform="translate(63.52 297.27)">0</text>
-    <text class="g" transform="translate(263.52 298.27)">1</text>
-    <text class="g" transform="translate(260.52 99.27)">2</text>
-    <text class="h" transform="translate(65.66 129.73)">p<tspan class="i" x="11.05" y="0">r</tspan><tspan x="18.16" y="0">op A</tspan></text>
-    <text class="h" transform="translate(233.66 245.73)">p<tspan class="i" x="11.05" y="0">r</tspan><tspan x="18.16" y="0">op A</tspan></text>
-    <text class="h" transform="translate(232.15 129.42)">p<tspan class="i" x="11.05" y="0">r</tspan><tspan x="18.16" y="0">op B</tspan></text>
-    <text class="h" transform="translate(67.15 245.42)">p<tspan class="i" x="11.05" y="0">r</tspan><tspan x="18.16" y="0">op B</tspan></text>
+    <text class="g" transform="translate(61.35 298.76)">0</text>
+    <text class="h" transform="translate(32.98 328.92)">p<tspan class="i" x="11.05" y="0">r</tspan><tspan x="18.16" y="0">op B</tspan></text>
   </g>
 </svg>

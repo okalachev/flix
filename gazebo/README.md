@@ -4,7 +4,7 @@ The Flix drone simulator is based on Gazebo 11 and runs the firmware code in vir
 
 Gazebo 11 works on **Ubuntu 20.04** and used to work on macOS. However, on the recent macOS versions it seems to be broken, so Ubuntu 20.04 is recommended.
 
-<img src="../docs/img/simulator1.png" width=600 alt="Flix simulator">
+<img src="../docs/img/simulator1.png" width=600 alt="Flix simulator running on macOS">
 
 ## Installation
 

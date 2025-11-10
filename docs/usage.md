@@ -16,6 +16,8 @@ You can build and upload the firmware using either **Arduino IDE** (easier for b
 
 ### Arduino IDE (Windows, Linux, macOS)
 
+<img src="img/arduino-ide.png" width="400" alt="Flix firmware open in Arduino IDE">
+
 1. Install [Arduino IDE](https://www.arduino.cc/en/software) (version 2 is recommended).
 2. *Windows users might need to install [USB to UART bridge driver from Silicon Labs](https://www.silabs.com/developers/usb-to-uart-bridge-vcp-drivers).*
 3. Install ESP32 core, version 3.2.0. See the [official Espressif's instructions](https://docs.espressif.com/projects/arduino-esp32/en/latest/installing.html#installing-using-arduino-ide) on installing ESP32 Core in Arduino IDE.
@@ -73,9 +75,11 @@ MPU6050 imu(Wire);  // For MPU-6050
 
 ### Setup the IMU orientation
 
-The IMU orientation is defined in `rotateIMU` function in the `imu.ino` file. Change it so it converts the IMU axes to the drone's axes correctly. **Drone axes are X forward, Y left, Z up.**
+The IMU orientation is defined in `rotateIMU` function in the `imu.ino` file. Change it so it converts the IMU axes to the drone's axes correctly. **Drone axes are X forward, Y left, Z up**:
 
-See various [IMU axes orientations table](https://github.com/okalachev/flixperiph/?tab=readme-ov-file#imu-axes-orientation) to help you set up the correct orientation.
+<img src="img/drone-axes.svg" width="200">
+
+See various [IMU boards axes orientations table](https://github.com/okalachev/flixperiph/?tab=readme-ov-file#imu-axes-orientation) to help you set up the correct orientation.
 
 ### Connect using QGroundControl
 
@@ -93,44 +97,51 @@ The console is a command line interface (CLI) that allows to interact with the d
 To access the console using serial port:
 
 1. Connect the ESP32 board to the computer using USB cable.
-2. Open Serial Monitor in Arduino IDE (or use `make monitor` command in the command line).
+2. Open Serial Monitor in Arduino IDE (or use `make monitor` in the command line).
 3. In Arduino IDE, make sure the baudrate is set to 115200.
 
-To access the console wirelessly using QGroundControl:
+To access the console using QGroundControl:
 
 1. Connect to the drone using QGroundControl app.
 2. Go to the QGroundControl menu ⇒ *Vehicle Setup* ⇒ *Analyze Tools* ⇒ *MAVLink Console*.
    <img src="img/cli.png" width="400">
 
-Use `help` command to see the list of available commands.
+> [!TIP]
+> Use `help` command to see the list of available commands.
 
 ### Calibrate accelerometer
 
 Before flight you need to calibrate the accelerometer:
 
-1. Access the console using QGroundControl (more convenient) or Serial Monitor.
+1. Access the console using QGroundControl (recommended) or Serial Monitor.
 2. Type `ca` command there and follow the instructions.
 
 ### Check everything works
 
 1. Check the IMU is working: perform `imu` command and check its output:
+
    * The `status` field should be `OK`.
    * The `rate` field should be about 1000 (Hz).
    * The `accel` and `gyro` fields should change as you move the drone.
+   * The `landed` field should be `1` when the drone is still on the ground and `0` when you lift it up.
 
 2. Check the attitude estimation: connect to the drone using QGroundControl, rotate the drone in different orientations and check if the attitude estimation shown in QGroundControl is correct. Attitude indicator in QGroundControl is shown below:
 
    <img src="img/qgc-attitude.png" height="200">
 
-3. Perform motor tests in the console. **Remove the propellers before this!** Use the following commands:
+3. Perform motor tests in the console. Use the following commands **— remove the propellers before running the tests!**
+
    * `mfr` — should rotate front right motor (counter-clockwise).
    * `mfl` — should rotate front left motor (clockwise).
    * `mrl` — should rotate rear left motor (counter-clockwise).
    * `mrr` — should rotate rear right motor (clockwise).
 
+> [!WARNING]
+> Never run the motors when powering the drone from USB, always use the battery for that.
+
 ## Setup remote control
 
-There are several ways to control the drone's flight: using **smartphone** (Wi-Fi), using **standard radio remote control**, or using **USB remote control** (Wi-Fi).
+There are several ways to control the drone's flight: using **smartphone** (Wi-Fi), using **SBUS remote control**, or using **USB remote control** (Wi-Fi).
 
 ### Control with smartphone
 
@@ -146,10 +157,10 @@ There are several ways to control the drone's flight: using **smartphone** (Wi-F
 
 ### Control with remote control
 
-Before flight using remote control, you need to calibrate it:
+Before using remote SBUS-connected remote control, you need to calibrate it:
 
-1. Open Serial Monitor in Arduino IDE (or use `make monitor` command in the command line).
-2. Type `cr` command there and follow the instructions.
+1. Access the console using QGroundControl (recommended) or Serial Monitor.
+2. Type `cr` command and follow the instructions.
 3. Use the remote control to fly the drone!
 
 ### Control with USB remote control
