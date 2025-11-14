@@ -11,20 +11,20 @@ class PID {
 public:
 	float p, i, d;
 	float windup;
-	float maxdt;
+	float dtMax;
 
 	float derivative = 0;
 	float integral = 0;
 
 	LowPassFilter<float> lpf; // low pass filter for derivative term
 
-	PID(float p, float i, float d, float windup = 0, float dAlpha = 1, float maxdt = 0.1) :
-		p(p), i(i), d(d), windup(windup), lpf(dAlpha), maxdt(maxdt) {}
+	PID(float p, float i, float d, float windup = 0, float dAlpha = 1, float dtMax = 0.1) :
+		p(p), i(i), d(d), windup(windup), lpf(dAlpha), dtMax(dtMax) {}
 
 	float update(float error) {
 		float dt = t - prevTime;
 
-		if (dt > 0 && dt < maxdt) {
+		if (dt > 0 && dt < dtMax) {
 			integral += error * dt;
 			derivative = lpf.update((error - prevError) / dt); // compute derivative and apply low-pass filter
 		} else {

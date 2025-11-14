@@ -9,7 +9,6 @@
 #include "lpf.h"
 #include "util.h"
 
-#define ARMED_THRUST 0.1 // thrust to indicate armed state
 #define PITCHRATE_P 0.05
 #define PITCHRATE_I 0.2
 #define PITCHRATE_D 0.001
@@ -135,12 +134,11 @@ void controlTorque() {
 		return;
 	}
 
-	if (thrustTarget < ARMED_THRUST) {
-		// minimal thrust to indicate armed state
-		motors[0] = ARMED_THRUST;
-		motors[1] = ARMED_THRUST;
-		motors[2] = ARMED_THRUST;
-		motors[3] = ARMED_THRUST;
+	if (thrustTarget < 0.1) {
+		motors[0] = 0.1; // idle thrust
+		motors[1] = 0.1;
+		motors[2] = 0.1;
+		motors[3] = 0.1;
 		return;
 	}
 
