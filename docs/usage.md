@@ -226,3 +226,13 @@ If the pilot moves the control sticks, the drone will switch back to *STAB* mode
 You can adjust some of the drone's parameters (include PID coefficients) in QGroundControl. In order to do that, go to the QGroundControl menu ⇒ *Vehicle Setup* ⇒ *Parameters*.
 
 <img src="img/parameters.png" width="400">
+
+## Flight log
+
+After the flight, you can download the flight log for analysis wirelessly. Use the following for that:
+
+```bash
+make log
+```
+
+See more details about log analysis in the [log analysis](log.md) article.
