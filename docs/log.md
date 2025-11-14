@@ -2,11 +2,7 @@
 
 Flix quadcopter uses RAM to store flight log data. The default log capacity is 10 seconds at 100 Hz. This configuration can be adjusted in the `log.ino` file.
 
-To perform log analysis, you need to download the log right after the flight without powering off the drone. Then you can use several tools to analyze the log data.
-
-## Log download
-
-To download the log, connect the ESP32 using USB right after the flight and run the following command:
+To perform log analysis, you need to download the flight log. To to that, ensure you're connected to the drone using Wi-Fi and run the following command:
 
 ```bash
 make log

@@ -210,6 +210,20 @@ void handleMavlink(const void *_msg) {
 		armed = motors[0] > 0 || motors[1] > 0 || motors[2] > 0 || motors[3] > 0;
 	}
 
+	if (msg.msgid == MAVLINK_MSG_ID_LOG_REQUEST_DATA) {
+		mavlink_log_request_data_t m;
+		mavlink_msg_log_request_data_decode(&msg, &m);
+		if (m.target_system && m.target_system != SYSTEM_ID) return;
+
+		// Send all log records
+		for (int i = 0; i < sizeof(logBuffer) / sizeof(logBuffer[0]); i++) {
+			mavlink_message_t msg;
+			mavlink_msg_log_data_pack(SYSTEM_ID, MAV_COMP_ID_AUTOPILOT1, &msg, 0, i,
+				sizeof(logBuffer[0]), (uint8_t *)logBuffer[i]);
+			sendMessage(&msg);
+		}
+	}
+
 	// Handle commands
 	if (msg.msgid == MAVLINK_MSG_ID_COMMAND_LONG) {
 		mavlink_command_long_t m;
