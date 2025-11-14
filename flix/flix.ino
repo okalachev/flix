@@ -7,7 +7,6 @@
 #include "quaternion.h"
 #include "util.h"
 
-#define SERIAL_BAUDRATE 115200
 #define WIFI_ENABLED 1
 
 float t = NAN; // current step time, s
@@ -22,7 +21,7 @@ bool landed; // are we landed and stationary
 float motors[4]; // normalized motors thrust in range [0..1]
 
 void setup() {
-	Serial.begin(SERIAL_BAUDRATE);
+	Serial.begin(115200);
 	print("Initializing flix\n");
 	disableBrownOut();
 	setupParameters();
