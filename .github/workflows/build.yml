@@ -34,6 +34,7 @@ jobs:
         arduino-cli config set board_manager.additional_urls https://github.com/stm32duino/BoardManagerFiles/raw/main/package_stmicroelectronics_index.json
         arduino-cli core install STMicroelectronics:stm32
         arduino-cli board listall STMicroelectronics:stm32
+        arduino-cli lib install "Preferences"
         make BOARD=STMicroelectronics:stm32:GenF4:pnum=BLACKPILL_F411CE
 
   build_macos:
