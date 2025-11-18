@@ -25,13 +25,15 @@ const int MOTOR_FRONT_LEFT = 3;
 
 void setupMotors() {
 	print("Setup Motors\n");
-
-	// configure pins
+#ifdef ESP32
 	ledcAttach(MOTOR_0_PIN, PWM_FREQUENCY, PWM_RESOLUTION);
 	ledcAttach(MOTOR_1_PIN, PWM_FREQUENCY, PWM_RESOLUTION);
 	ledcAttach(MOTOR_2_PIN, PWM_FREQUENCY, PWM_RESOLUTION);
 	ledcAttach(MOTOR_3_PIN, PWM_FREQUENCY, PWM_RESOLUTION);
-
+#else
+	analogWriteResolution(PWM_RESOLUTION);
+	analogWriteFrequency(PWM_FREQUENCY);
+#endif
 	sendMotors();
 	print("Motors initialized\n");
 }
@@ -45,10 +47,10 @@ int getDutyCycle(float value) {
 }
 
 void sendMotors() {
-	ledcWrite(MOTOR_0_PIN, getDutyCycle(motors[0]));
-	ledcWrite(MOTOR_1_PIN, getDutyCycle(motors[1]));
-	ledcWrite(MOTOR_2_PIN, getDutyCycle(motors[2]));
-	ledcWrite(MOTOR_3_PIN, getDutyCycle(motors[3]));
+	analogWrite(MOTOR_0_PIN, getDutyCycle(motors[0]));
+	analogWrite(MOTOR_1_PIN, getDutyCycle(motors[1]));
+	analogWrite(MOTOR_2_PIN, getDutyCycle(motors[2]));
+	analogWrite(MOTOR_3_PIN, getDutyCycle(motors[3]));
 }
 
 bool motorsActive() {
