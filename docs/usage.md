@@ -153,7 +153,7 @@ There are several ways to control the drone's flight: using **smartphone** (Wi-F
 6. Use the virtual joystick to fly the drone!
 
 > [!TIP]
-> Decrease `TILT_MAX` parameter when flying using the smartphone to make the controls less sensitive.
+> Decrease `CNT_TILT_MAX` parameter when flying using the smartphone to make the controls less sensitive.
 
 ### Control with remote control
 

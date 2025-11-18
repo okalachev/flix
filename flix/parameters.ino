@@ -13,42 +13,42 @@ extern float rollChannel, pitchChannel, throttleChannel, yawChannel, armedChanne
 Preferences storage;
 
 struct Parameter {
-	const char *name; // max length is 16
+	const char *name; // max length is 15 (Preferences key limit)
 	float *variable;
 	float value; // cache
 };
 
 Parameter parameters[] = {
 	// control
-	{"ROLLRATE_P", &rollRatePID.p},
-	{"ROLLRATE_I", &rollRatePID.i},
-	{"ROLLRATE_D", &rollRatePID.d},
-	{"ROLLRATE_I_LIM", &rollRatePID.windup},
-	{"PITCHRATE_P", &pitchRatePID.p},
-	{"PITCHRATE_I", &pitchRatePID.i},
-	{"PITCHRATE_D", &pitchRatePID.d},
-	{"PITCHRATE_I_LIM", &pitchRatePID.windup},
-	{"YAWRATE_P", &yawRatePID.p},
-	{"YAWRATE_I", &yawRatePID.i},
-	{"YAWRATE_D", &yawRatePID.d},
-	{"ROLL_P", &rollPID.p},
-	{"ROLL_I", &rollPID.i},
-	{"ROLL_D", &rollPID.d},
-	{"PITCH_P", &pitchPID.p},
-	{"PITCH_I", &pitchPID.i},
-	{"PITCH_D", &pitchPID.d},
-	{"YAW_P", &yawPID.p},
-	{"PITCHRATE_MAX", &maxRate.y},
-	{"ROLLRATE_MAX", &maxRate.x},
-	{"YAWRATE_MAX", &maxRate.z},
-	{"TILT_MAX", &tiltMax},
+	{"CTL_R_RATE_P", &rollRatePID.p},
+	{"CTL_R_RATE_I", &rollRatePID.i},
+	{"CTL_R_RATE_D", &rollRatePID.d},
+	{"CTL_R_RATE_WU", &rollRatePID.windup},
+	{"CTL_P_RATE_P", &pitchRatePID.p},
+	{"CTL_P_RATE_I", &pitchRatePID.i},
+	{"CTL_P_RATE_D", &pitchRatePID.d},
+	{"CTL_P_RATE_WU", &pitchRatePID.windup},
+	{"CTL_Y_RATE_P", &yawRatePID.p},
+	{"CTL_Y_RATE_I", &yawRatePID.i},
+	{"CTL_Y_RATE_D", &yawRatePID.d},
+	{"CTL_R_P", &rollPID.p},
+	{"CTL_R_I", &rollPID.i},
+	{"CTL_R_D", &rollPID.d},
+	{"CTL_P_P", &pitchPID.p},
+	{"CTL_P_I", &pitchPID.i},
+	{"CTL_P_D", &pitchPID.d},
+	{"CTL_Y_P", &yawPID.p},
+	{"CTL_P_RATE_MAX", &maxRate.y},
+	{"CTL_R_RATE_MAX", &maxRate.x},
+	{"CTL_Y_RATE_MAX", &maxRate.z},
+	{"CTL_TILT_MAX", &tiltMax},
 	// imu
-	{"ACC_BIAS_X", &accBias.x},
-	{"ACC_BIAS_Y", &accBias.y},
-	{"ACC_BIAS_Z", &accBias.z},
-	{"ACC_SCALE_X", &accScale.x},
-	{"ACC_SCALE_Y", &accScale.y},
-	{"ACC_SCALE_Z", &accScale.z},
+	{"IMU_ACC_BIAS_X", &accBias.x},
+	{"IMU_ACC_BIAS_Y", &accBias.y},
+	{"IMU_ACC_BIAS_Z", &accBias.z},
+	{"IMU_ACC_SCALE_X", &accScale.x},
+	{"IMU_ACC_SCALE_Y", &accScale.y},
+	{"IMU_ACC_SCALE_Z", &accScale.z},
 	// rc
 	{"RC_ZERO_0", &channelZero[0]},
 	{"RC_ZERO_1", &channelZero[1]},
