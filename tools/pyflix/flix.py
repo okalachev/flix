@@ -17,7 +17,7 @@ from pymavlink.dialects.v20 import common as mavlink
 logger = logging.getLogger('flix')
 if not logger.hasHandlers():
     handler = logging.StreamHandler()
-    handler.setFormatter(logging.Formatter('%(name)s - %(levelname)s - %(message)s'))
+    handler.setFormatter(logging.Formatter('%(name)s: %(message)s'))
     logger.addHandler(handler)
     logger.setLevel(logging.INFO)
 
