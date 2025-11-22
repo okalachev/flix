@@ -35,4 +35,15 @@ int receiveWiFi(uint8_t *buf, int len) {
 	return udp.read(buf, len);
 }
 
+void printWiFiInfo() {
+	print("MAC: %s\n", WiFi.softAPmacAddress().c_str());
+	print("SSID: %s\n", WiFi.softAPSSID().c_str());
+	print("Password: %s\n", WIFI_PASSWORD);
+	print("Clients: %d\n", WiFi.softAPgetStationNum());
+	print("Status: %d\n", WiFi.status());
+	print("IP: %s\n", WiFi.softAPIP().toString().c_str());
+	print("Remote IP: %s\n", udp.remoteIP().toString().c_str());
+	print("MAVLink connected: %d\n", mavlinkConnected);
+}
+
 #endif

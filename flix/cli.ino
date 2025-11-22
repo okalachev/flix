@@ -37,6 +37,7 @@ const char* motd =
 "disarm - disarm the drone\n"
 "stab/acro/auto - set mode\n"
 "rc - show RC data\n"
+"wifi - show Wi-Fi info\n"
 "mot - show motor output\n"
 "log [dump] - print log header [and data]\n"
 "cr - calibrate RC\n"
@@ -131,6 +132,10 @@ void doCommand(String str, bool echo = false) {
 			controlRoll, controlPitch, controlYaw, controlThrottle, controlMode);
 		print("mode: %s\n", getModeName());
 		print("armed: %d\n", armed);
+	} else if (command == "wifi") {
+#if WIFI_ENABLED
+		printWiFiInfo();
+#endif
 	} else if (command == "mot") {
 		print("front-right %g front-left %g rear-right %g rear-left %g\n",
 			motors[MOTOR_FRONT_RIGHT], motors[MOTOR_FRONT_LEFT], motors[MOTOR_REAR_RIGHT], motors[MOTOR_REAR_LEFT]);
