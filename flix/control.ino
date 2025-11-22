@@ -75,6 +75,8 @@ void interpretControls() {
 	if (controlThrottle < 0.05 && controlYaw > 0.95) armed = true; // arm gesture
 	if (controlThrottle < 0.05 && controlYaw < -0.95) armed = false; // disarm gesture
 
+	if (abs(controlYaw) < 0.1) controlYaw = 0; // yaw dead zone
+
 	thrustTarget = controlThrottle;
 
 	if (mode == STAB) {

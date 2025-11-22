@@ -11,7 +11,6 @@
 #define SYSTEM_ID 1
 #define MAVLINK_RATE_SLOW 1
 #define MAVLINK_RATE_FAST 10
-#define MAVLINK_CONTROL_YAW_DEAD_ZONE 0.1f
 
 bool mavlinkConnected = false;
 String mavlinkPrintBuffer;
@@ -105,8 +104,6 @@ void handleMavlink(const void *_msg) {
 		controlYaw = m.r / 1000.0f;
 		controlMode = NAN;
 		controlTime = t;
-
-		if (abs(controlYaw) < MAVLINK_CONTROL_YAW_DEAD_ZONE) controlYaw = 0;
 	}
 
 	if (msg.msgid == MAVLINK_MSG_ID_PARAM_REQUEST_LIST) {
