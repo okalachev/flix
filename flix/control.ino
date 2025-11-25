@@ -34,7 +34,7 @@
 #define TILT_MAX radians(30)
 #define RATES_D_LPF_ALPHA 0.2 // cutoff frequency ~ 40 Hz
 
-const int MANUAL = 0, ACRO = 1, STAB = 2, AUTO = 3; // flight modes
+const int RAW = 0, ACRO = 1, STAB = 2, AUTO = 3; // flight modes
 int mode = STAB;
 bool armed = false;
 
@@ -65,7 +65,6 @@ void control() {
 }
 
 void interpretControls() {
-	// NOTE: put ACRO or MANUAL modes there if you want to use them
 	if (controlMode < 0.25) mode = STAB;
 	if (controlMode < 0.75) mode = STAB;
 	if (controlMode > 0.75) mode = STAB;
@@ -93,10 +92,10 @@ void interpretControls() {
 		ratesTarget.z = -controlYaw * maxRate.z; // positive yaw stick means clockwise rotation in FLU
 	}
 
-	if (mode == MANUAL) { // passthrough mode
+	if (mode == RAW) { // direct torque control
 		attitudeTarget.invalidate(); // skip attitude control
 		ratesTarget.invalidate(); // skip rate control
-		torqueTarget = Vector(controlRoll, controlPitch, -controlYaw) * 0.01;
+		torqueTarget = Vector(controlRoll, controlPitch, -controlYaw) * 0.1;
 	}
 }
 
@@ -157,7 +156,7 @@ void controlTorque() {
 
 const char* getModeName() {
 	switch (mode) {
-		case MANUAL: return "MANUAL";
+		case RAW: return "RAW";
 		case ACRO: return "ACRO";
 		case STAB: return "STAB";
 		case AUTO: return "AUTO";

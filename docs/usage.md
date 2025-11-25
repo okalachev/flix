@@ -211,9 +211,9 @@ The default mode is *STAB*. In this mode, the drone stabilizes its attitude (ori
 
 In this mode, the pilot controls the angular rates. This control method is difficult to fly and mostly used in FPV racing.
 
-#### MANUAL
+#### RAW
 
-Manual mode disables all the stabilization, and the pilot inputs are passed directly to the motors. This mode is intended for testing and demonstration purposes only, and basically the drone **cannot fly in this mode**.
+*RAW* mode disables all the stabilization, and the pilot inputs are mixed directly to the motors. The IMU sensor is not involved. This mode is intended for testing and demonstration purposes only, and basically the drone **cannot fly in this mode**.
 
 #### AUTO
 

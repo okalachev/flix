@@ -40,7 +40,7 @@ class Flix:
 
     _connection_timeout = 3
     _print_buffer: str = ''
-    _modes = ['MANUAL', 'ACRO', 'STAB', 'AUTO']
+    _modes = ['RAW', 'ACRO', 'STAB', 'AUTO']
 
     def __init__(self, system_id: int=1, wait_connection: bool=True):
         if not (0 <= system_id < 256):
