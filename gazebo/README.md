@@ -68,6 +68,9 @@ Just like the real drone, the simulator can be controlled using a USB remote con
 6. Go to the settings and enable *Virtual Joystick*. *Auto-Center Throttle* setting **should be disabled**.
 7. Use the virtual joystick to fly the drone!
 
+> [!TIP]
+> Decrease `CNT_TILT_MAX` parameter when flying using the smartphone to make the controls less sensitive.
+
 ### Control with USB remote control
 
 1. Connect your USB remote control to the machine running the simulator.
