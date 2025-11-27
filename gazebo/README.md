@@ -69,7 +69,7 @@ Just like the real drone, the simulator can be controlled using a USB remote con
 7. Use the virtual joystick to fly the drone!
 
 > [!TIP]
-> Decrease `CNT_TILT_MAX` parameter when flying using the smartphone to make the controls less sensitive.
+> Decrease `CTL_TILT_MAX` parameter when flying using the smartphone to make the controls less sensitive.
 
 ### Control with USB remote control
 
