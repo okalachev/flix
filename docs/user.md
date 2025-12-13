@@ -4,6 +4,55 @@ This page contains user-built drones based on the Flix project. Publish your pro
 
 ---
 
+Author: [goldarte](https://t.me/goldarte).<br>
+
+<img src="img/user/goldarte/1.jpg" height=150> <img src="img/user/goldarte/2.jpg" height=150>
+
+**Flight video:**
+
+<a href="https://drive.google.com/file/d/1nQtFjEcGGLx-l4xkL5ko9ZpOTVU-WDjL/view?usp=sharing"><img height=200 src="img/user/goldarte/video.jpg"></a>
+
+---
+
+## School 548 course
+
+Special quadcopter design and engineering course took place in october-november 2025 in School 548, Moscow. Course included UAV control theory, electronics, and practical drone assembly and setup using the Flix project.
+
+<img height=200 src="img/user/school548/1.jpg"> <img height=200 src="img/user/school548/2.jpg"> <img height=200 src="img/user/school548/3.jpg">
+
+### Selected works
+
+Author: [KiraFlux](https://t.me/@kiraflux_0XC0000005).<br>
+Description: **custom ESPNOW remote control** is implemented, firmware modified to support ESPNOW protocol.<br>
+Telegram posts: https://t.me/opensourcequadcopter/106, https://t.me/opensourcequadcopter/114.<br>
+Modified Flix firmware: https://github.com/KiraFlux/flix/tree/klyax.<br>
+Remote control project: https://github.com/KiraFlux/ESP32-DJC.<br>
+Drone design: https://github.com/KiraFlux/Klyax.<br>
+
+<img src="img/user/school548/kiraflux1.jpg" height=150> <img src="img/user/school548/kiraflux2.jpg" height=150>
+
+**Flight video**:
+
+<img height=200 src="img/user/school548/kiraflux-video.jpg"><a href="https://drive.google.com/file/d/1soHDAeHQWnm97Y4dg4nWevJuMiTdJJXW/view?usp=sharing"></a>
+
+Author: [tolyan4krut](https://t.me/tolyan4krut).<br>
+Description: the first drone based on ESP32-S3-CAM board **with a camera**, implementing Wi-Fi video streaming. Runs HTTP server and HTTP video stream.<br>
+Modified Flix firmware: https://github.com/CatRey/Flix-Camera-Streaming.<br>
+Telegram post: https://t.me/opensourcequadcopter/117.
+
+<img src="img/user/school548/tolyan4krut.jpg" height=150>
+
+**Flight video**:
+
+<a href="https://drive.google.com/file/d/1KuOBsujLsk7q8FoqKD8u7uoq4ptS5onp/view?usp=sharing"><img height=200 src="img/user/school548/tolyan4krut-video.jpg"></a>
+
+Author: [Vlad Tolshinov](https://t.me/Vlad_Tolshinov).<br>
+Description: custom frame with enlarged arm length, that provides very high level of stability, 65 mm props.
+
+<img src="img/user/school548/vlad_tolshinov1.jpg" height=150> <img src="img/user/school548/vlad_tolshinov2.jpg" height=150>
+
+---
+
 ## RoboCamp
 
 Author: RoboCamp participants.<br>

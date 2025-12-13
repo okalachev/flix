@@ -12,7 +12,7 @@ Beginners can [download the source code as a ZIP archive](https://github.com/oka
 
 ## Building the firmware
 
-You can build and upload the firmware using either **Arduino IDE** (easier for beginners) or a **command line**.
+You can build and upload the firmware using either **Arduino IDE** (easier for beginners) or **command line**.
 
 ### Arduino IDE (Windows, Linux, macOS)
 
