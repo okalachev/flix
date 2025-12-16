@@ -20,36 +20,42 @@ Special quadcopter design and engineering course took place in october-november 
 
 <img height=200 src="img/user/school548/1.jpg"> <img height=200 src="img/user/school548/2.jpg"> <img height=200 src="img/user/school548/3.jpg">
 
+STL files and other materials: see [here](https://drive.google.com/drive/folders/1wTUzj087LjKQQl3Lz5CjHCuobxoykhyp?usp=share_link).
+
 ### Selected works
 
 Author: [KiraFlux](https://t.me/@kiraflux_0XC0000005).<br>
 Description: **custom ESPNOW remote control** is implemented, firmware modified to support ESPNOW protocol.<br>
-Telegram posts: https://t.me/opensourcequadcopter/106, https://t.me/opensourcequadcopter/114.<br>
+Telegram posts: [1](https://t.me/opensourcequadcopter/106), [2](https://t.me/opensourcequadcopter/114).<br>
 Modified Flix firmware: https://github.com/KiraFlux/flix/tree/klyax.<br>
 Remote control project: https://github.com/KiraFlux/ESP32-DJC.<br>
 Drone design: https://github.com/KiraFlux/Klyax.<br>
 
 <img src="img/user/school548/kiraflux1.jpg" height=150> <img src="img/user/school548/kiraflux2.jpg" height=150>
 
-**Flight video**:
+**ESPNOW remote control demonstration**:
 
 <img height=200 src="img/user/school548/kiraflux-video.jpg"><a href="https://drive.google.com/file/d/1soHDAeHQWnm97Y4dg4nWevJuMiTdJJXW/view?usp=sharing"></a>
 
 Author: [tolyan4krut](https://t.me/tolyan4krut).<br>
 Description: the first drone based on ESP32-S3-CAM board **with a camera**, implementing Wi-Fi video streaming. Runs HTTP server and HTTP video stream.<br>
 Modified Flix firmware: https://github.com/CatRey/Flix-Camera-Streaming.<br>
-Telegram post: https://t.me/opensourcequadcopter/117.
+[Telegram post](https://t.me/opensourcequadcopter/117).
 
 <img src="img/user/school548/tolyan4krut.jpg" height=150>
 
-**Flight video**:
+**Video streaming and flight demonstration**:
 
 <a href="https://drive.google.com/file/d/1KuOBsujLsk7q8FoqKD8u7uoq4ptS5onp/view?usp=sharing"><img height=200 src="img/user/school548/tolyan4krut-video.jpg"></a>
 
 Author: [Vlad Tolshinov](https://t.me/Vlad_Tolshinov).<br>
-Description: custom frame with enlarged arm length, that provides very high level of stability, 65 mm props.
+Description: custom frame with enlarged arm length, which provides very high flight stability, 65 mm props.
 
 <img src="img/user/school548/vlad_tolshinov1.jpg" height=150> <img src="img/user/school548/vlad_tolshinov2.jpg" height=150>
+
+**Flight video**:
+
+<a href="https://drive.google.com/file/d/1zu00DZxhC7DJ9Z2mYjtxdNQqOOLAyYbp/view?usp=sharing"><img height=200 src="img/user/school548/vlad_tolshinov-video.jpg"></a>
 
 ---
 
@@ -58,7 +64,7 @@ Description: custom frame with enlarged arm length, that provides very high leve
 Author: RoboCamp participants.<br>
 Description: 3D-printed and wooden frames, ESP32 Mini, DC-DC buck-boost converters. BetaFPV LiteRadio 3 to control the drones via Wi-Fi connection.<br>
 Features: altitude hold, obstacle avoidance, autonomous flight elements.<br>
-Some of the designed model files: https://drive.google.com/drive/folders/18YHWGquKeIevzrMH4-OUT-zKXMETTEUu?usp=share_link.
+Some of the designed model files: see [here](https://drive.google.com/drive/folders/18YHWGquKeIevzrMH4-OUT-zKXMETTEUu?usp=share_link).
 
 RoboCamp took place in July 2025, Saint Petersburg, where 9 participants designed and built their own drones using the Flix project, and then modified the firmware to complete specific flight tasks.
 
