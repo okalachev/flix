@@ -49,6 +49,9 @@ Parameter parameters[] = {
 	{"IMU_ACC_SCALE_X", &accScale.x},
 	{"IMU_ACC_SCALE_Y", &accScale.y},
 	{"IMU_ACC_SCALE_Z", &accScale.z},
+	// estimate
+	{"EST_ACC_WEIGHT", &accWeight},
+	{"EST_RATES_LPF_A", &ratesFilter.alpha},
 	// rc
 	{"RC_ZERO_0", &channelZero[0]},
 	{"RC_ZERO_1", &channelZero[1]},
