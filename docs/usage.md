@@ -136,6 +136,10 @@ Before flight you need to calibrate the accelerometer:
    * `mrl` — should rotate rear left motor (counter-clockwise).
    * `mrr` — should rotate rear right motor (clockwise).
 
+   Rotation diagram:
+
+   <img src="img/motors.svg" width=200>
+
 > [!WARNING]
 > Never run the motors when powering the drone from USB, always use the battery for that.
 
