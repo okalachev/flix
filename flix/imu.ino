@@ -44,7 +44,6 @@ void readIMU() {
 	gyro = Quaternion::rotateVector(gyro, rotation.inversed());
 }
 
-
 void calibrateGyroOnce() {
 	static Delay landedDelay(2);
 	if (!landedDelay.update(landed)) return; // calibrate only if definitely stationary
@@ -106,6 +105,14 @@ void calibrateAccelOnce() {
 	// Compute scale and bias
 	accScale = (accMax - accMin) / 2 / ONE_G;
 	accBias = (accMax + accMin) / 2;
+}
+
+void calibrateLevel() {
+	print("Place perfectly level [1 sec]\n");
+	pause(1);
+	Quaternion correction = Quaternion::fromBetweenVectors(Quaternion::rotateVector(Vector(0, 0, 1), attitude), Vector(0, 0, 1));
+	imuRotation = Quaternion::rotate(correction, Quaternion::fromEuler(imuRotation)).toEuler();
+	print("✓ Done: %.3f %.3f %.3f\n", degrees(imuRotation.x), degrees(imuRotation.y), degrees(imuRotation.z));
 }
 
 void printIMUCalibration() {

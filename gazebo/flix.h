@@ -72,6 +72,7 @@ void resetParameters();
 void setLED(bool on) {};
 void calibrateGyro() { print("Skip gyro calibrating\n"); };
 void calibrateAccel() { print("Skip accel calibrating\n"); };
+void calibrateLevel() { print("Skip level calibrating\n"); };
 void printIMUCalibration() { print("cal: N/A\n"); };
 void printIMUInfo() {};
 void printWiFiInfo() {};
