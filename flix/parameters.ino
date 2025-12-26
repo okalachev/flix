@@ -43,6 +43,9 @@ Parameter parameters[] = {
 	{"CTL_Y_RATE_MAX", &maxRate.z},
 	{"CTL_TILT_MAX", &tiltMax},
 	// imu
+	{"IMU_ROT_ROLL", &imuRotation.x},
+	{"IMU_ROT_PITCH", &imuRotation.y},
+	{"IMU_ROT_YAW", &imuRotation.z},
 	{"IMU_ACC_BIAS_X", &accBias.x},
 	{"IMU_ACC_BIAS_Y", &accBias.y},
 	{"IMU_ACC_BIAS_Z", &accBias.z},

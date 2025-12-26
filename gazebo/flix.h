@@ -22,6 +22,7 @@ Vector gyro;
 Vector rates;
 Quaternion attitude;
 bool landed;
+Vector imuRotation;
 
 // declarations
 void step();
