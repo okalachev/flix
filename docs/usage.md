@@ -73,14 +73,6 @@ ICM20948 imu(SPI);  // For ICM-20948
 MPU6050 imu(Wire);  // For MPU-6050
 ```
 
-### Setup the IMU orientation
-
-The IMU orientation is defined in `rotateIMU` function in the `imu.ino` file. Change it so it converts the IMU axes to the drone's axes correctly. **Drone axes are X forward, Y left, Z up**:
-
-<img src="img/drone-axes.svg" width="200">
-
-See various [IMU boards axes orientations table](https://github.com/okalachev/flixperiph/?tab=readme-ov-file#imu-axes-orientation) to help you set up the correct orientation.
-
 ### Connect using QGroundControl
 
 QGroundControl is a ground control station software that can be used to monitor and control the drone.
@@ -88,7 +80,7 @@ QGroundControl is a ground control station software that can be used to monitor 
 1. Install mobile or desktop version of [QGroundControl](https://docs.qgroundcontrol.com/master/en/qgc-user-guide/getting_started/download_and_install.html).
 2. Power up the drone.
 3. Connect your computer or smartphone to the appeared `flix` Wi-Fi network (password: `flixwifi`).
-4. Launch QGroundControl app. It should connect and begin showing the drone's telemetry automatically
+4. Launch QGroundControl app. It should connect and begin showing the drone's telemetry automatically.
 
 ### Access console
 
@@ -104,10 +96,34 @@ To access the console using QGroundControl:
 
 1. Connect to the drone using QGroundControl app.
 2. Go to the QGroundControl menu ⇒ *Vehicle Setup* ⇒ *Analyze Tools* ⇒ *MAVLink Console*.
-   <img src="img/cli.png" width="400">
+
+<img src="img/cli.png" width="400">
 
 > [!TIP]
 > Use `help` command to see the list of available commands.
+
+### Access parameters
+
+The drone is configured using parameters. To access and modify them, go to the QGroundControl menu ⇒ *Vehicle Setup* ⇒ *Parameters*:
+
+<img src="img/parameters.png" width="400">
+
+### Define IMU orientation
+
+Use parameters, to define the IMU board axes orientation relative to the drone's axes: `IMU_ROT_ROLL`, `IMU_ROT_PITCH`, and `IMU_ROT_YAW`.
+
+The drone has *X* axis pointing forward, *Y* axis pointing left, and *Z* axis pointing up, and the supported IMU boards have *X* axis pointing to the pins side and *Z* axis pointing up from the component side:
+
+<img src="img/imu-axes.png" width="200">
+
+Use the following table to set the parameters for common IMU orientations:
+
+|Orientation|Parameters|Orientation|Parameters|
+|:-:|-|-|-|
+|<img src="img/imu-rot-1.png" width="180">|`IMU_ROT_ROLL` = 0<br>`IMU_ROT_PITCH` = 0<br>`IMU_ROT_YAW` = 0    |<img src="img/imu-rot-5.png" width="180">|`IMU_ROT_ROLL` = 3.142<br>`IMU_ROT_PITCH` = 0<br>`IMU_ROT_YAW` = 0|
+|<img src="img/imu-rot-2.png" width="180">|`IMU_ROT_ROLL` = 0<br>`IMU_ROT_PITCH` = 0<br>`IMU_ROT_YAW` = 1.571|<img src="img/imu-rot-6.png" width="180">|`IMU_ROT_ROLL` = 3.142<br>`IMU_ROT_PITCH` = 0<br>`IMU_ROT_YAW` = -1.571|
+|<img src="img/imu-rot-3.png" width="180">|`IMU_ROT_ROLL` = 0<br>`IMU_ROT_PITCH` = 0<br>`IMU_ROT_YAW` = 3.142|<img src="img/imu-rot-7.png" width="180">|`IMU_ROT_ROLL` = 3.142<br>`IMU_ROT_PITCH` = 0<br>`IMU_ROT_YAW` = 3.142|
+|<img src="img/imu-rot-4.png" width="180"><br>☑️ **Default**|<br>`IMU_ROT_ROLL` = 0<br>`IMU_ROT_PITCH` = 0<br>`IMU_ROT_YAW` = -1.571|<img src="img/imu-rot-8.png" width="180">|`IMU_ROT_ROLL` = 3.142<br>`IMU_ROT_PITCH` = 0<br>`IMU_ROT_YAW` = 1.571|
 
 ### Calibrate accelerometer
 
@@ -224,12 +240,6 @@ In this mode, the pilot controls the angular rates. This control method is diffi
 In this mode, the pilot inputs are ignored (except the mode switch, if configured). The drone can be controlled using [pyflix](../tools/pyflix/) Python library, or by modifying the firmware to implement the needed autonomous behavior.
 
 If the pilot moves the control sticks, the drone will switch back to *STAB* mode.
-
-## Adjusting parameters
-
-You can adjust some of the drone's parameters (include PID coefficients) in QGroundControl. In order to do that, go to the QGroundControl menu ⇒ *Vehicle Setup* ⇒ *Parameters*.
-
-<img src="img/parameters.png" width="400">
 
 ## Flight log
 

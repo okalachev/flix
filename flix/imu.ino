@@ -10,6 +10,7 @@
 #include "util.h"
 
 MPU9250 imu(SPI);
+Vector imuRotation(0, 0, -PI / 2); // imu orientation as Euler angles
 
 Vector accBias;
 Vector accScale(1, 1, 1);
@@ -37,16 +38,10 @@ void readIMU() {
 	// apply scale and bias
 	acc = (acc - accBias) / accScale;
 	gyro = gyro - gyroBias;
-	// rotate
-	rotateIMU(acc);
-	rotateIMU(gyro);
-}
-
-void rotateIMU(Vector& data) {
-	// Rotate from LFD to FLU
-	// NOTE: In case of using other IMU orientation, change this line:
-	data = Vector(data.y, data.x, -data.z);
-	// Axes orientation for various boards: https://github.com/okalachev/flixperiph#imu-axes-orientation
+	// rotate to body frame
+	Quaternion rotation = Quaternion::fromEuler(imuRotation);
+	acc = Quaternion::rotateVector(acc, rotation.inversed());
+	gyro = Quaternion::rotateVector(gyro, rotation.inversed());
 }
 
 void calibrateGyroOnce() {
