@@ -16,7 +16,7 @@ Author: [goldarte](https://t.me/goldarte).<br>
 
 ## School 548 course
 
-Special quadcopter design and engineering course took place in october-november 2025 in School 548, Moscow. Course included UAV control theory, electronics, and practical drone assembly and setup using the Flix project.
+Special course on quadcopter design and engineering took place in october-november 2025 in School 548, Moscow. The course included UAV control theory, electronics, drone assembly and setup practice, using the Flix project.
 
 <img height=200 src="img/user/school548/1.jpg"> <img height=200 src="img/user/school548/2.jpg"> <img height=200 src="img/user/school548/3.jpg">
 
@@ -25,7 +25,7 @@ STL files and other materials: see [here](https://drive.google.com/drive/folders
 ### Selected works
 
 Author: [KiraFlux](https://t.me/@kiraflux_0XC0000005).<br>
-Description: **custom ESPNOW remote control** is implemented, firmware modified to support ESPNOW protocol.<br>
+Description: **custom ESPNOW remote control** was implemented, modified firmware to support ESPNOW protocol.<br>
 Telegram posts: [1](https://t.me/opensourcequadcopter/106), [2](https://t.me/opensourcequadcopter/114).<br>
 Modified Flix firmware: https://github.com/KiraFlux/flix/tree/klyax.<br>
 Remote control project: https://github.com/KiraFlux/ESP32-DJC.<br>

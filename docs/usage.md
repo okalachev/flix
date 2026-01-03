@@ -108,6 +108,8 @@ The drone is configured using parameters. To access and modify them, go to the Q
 
 <img src="img/parameters.png" width="400">
 
+You can also work with parameters using `p` command in the console.
+
 ### Define IMU orientation
 
 Use parameters, to define the IMU board axes orientation relative to the drone's axes: `IMU_ROT_ROLL`, `IMU_ROT_PITCH`, and `IMU_ROT_YAW`.
@@ -163,7 +165,7 @@ Before flight you need to calibrate the accelerometer:
 
 There are several ways to control the drone's flight: using **smartphone** (Wi-Fi), using **SBUS remote control**, or using **USB remote control** (Wi-Fi).
 
-### Control with smartphone
+### Control with a smartphone
 
 1. Install [QGroundControl mobile app](https://docs.qgroundcontrol.com/master/en/qgc-user-guide/getting_started/download_and_install.html#android) on your smartphone.
 2. Power the drone using the battery.
@@ -175,7 +177,7 @@ There are several ways to control the drone's flight: using **smartphone** (Wi-F
 > [!TIP]
 > Decrease `CTL_TILT_MAX` parameter when flying using the smartphone to make the controls less sensitive.
 
-### Control with remote control
+### Control with a remote control
 
 Before using remote SBUS-connected remote control, you need to calibrate it:
 
@@ -183,7 +185,7 @@ Before using remote SBUS-connected remote control, you need to calibrate it:
 2. Type `cr` command and follow the instructions.
 3. Use the remote control to fly the drone!
 
-### Control with USB remote control
+### Control with a USB remote control
 
 If your drone doesn't have RC receiver installed, you can use USB remote control and QGroundControl app to fly it.
 

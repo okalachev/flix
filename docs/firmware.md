@@ -38,13 +38,13 @@ Utility files:
 
 ### Control subsystem
 
-Pilot inputs are interpreted in `interpretControls()`, and then converted to the *control command*, which consists of the following:
+Pilot inputs are interpreted in `interpretControls()`, and then converted to the **control command**, which consists of the following:
 
 * `attitudeTarget` *(Quaternion)* — target attitude of the drone.
 * `ratesTarget` *(Vector)* — target angular rates, *rad/s*.
 * `ratesExtra` *(Vector)* — additional (feed-forward) angular rates , used for yaw rate control in STAB mode, *rad/s*.
 * `torqueTarget` *(Vector)* — target torque, range [-1, 1].
-* `thrustTarget` *(float)* — collective thrust target, range [0, 1].
+* `thrustTarget` *(float)* — collective motor thrust target, range [0, 1].
 
 Control command is handled in `controlAttitude()`, `controlRates()`, `controlTorque()` functions. Each function may be skipped if the corresponding control target is set to `NAN`.
 
@@ -61,6 +61,11 @@ print("Test value: %.2f\n", testValue);
 ```
 
 In order to add a console command, modify the `doCommand()` function in `cli.ino` file.
+
+> [!IMPORTANT]
+> Avoid using delays in in-flight commands, it will **crash** the drone! (The design is one-threaded.)
+>
+> For on-the-ground commands, use `pause()` function, instead of `delay()`. This function allows to pause in a way that MAVLink connection will continue working.
 
 ## Building the firmware
 

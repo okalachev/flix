@@ -95,7 +95,7 @@ Full list of events:
 |`armed`|Armed state update|Armed state (*bool*)|
 |`mode`|Flight mode update|Flight mode (*str*)|
 |`landed`|Landed state update|Landed state (*bool*)|
-|`print`|The drone sends text to the console|Text|
+|`print`|The drone prints text to the console|Text|
 |`attitude`|Attitude update|Attitude quaternion (*list*)|
 |`attitude_euler`|Attitude update|Euler angles (*list*)|
 |`rates`|Angular rates update|Angular rates (*list*)|
@@ -112,7 +112,7 @@ Full list of events:
 > [!NOTE]
 > Update events trigger on every new piece of data from the drone, and do not mean the value has changed.
 
-### Common methods
+### Basic methods
 
 Get and set firmware parameters using `get_param` and `set_param` methods:
 
