@@ -8,6 +8,10 @@
 #include "lpf.h"
 #include "util.h"
 
+Vector rates; // estimated angular rates, rad/s
+Quaternion attitude; // estimated attitude
+bool landed;
+
 float accWeight = 0.003;
 LowPassFilter<Vector> ratesFilter(0.2); // cutoff frequency ~ 40 Hz
 

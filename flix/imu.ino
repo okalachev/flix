@@ -12,9 +12,12 @@
 MPU9250 imu(SPI);
 Vector imuRotation(0, 0, -PI / 2); // imu orientation as Euler angles
 
+Vector gyro; // gyroscope output, rad/s
+Vector gyroBias;
+
+Vector acc; // accelerometer output, m/s/s
 Vector accBias;
 Vector accScale(1, 1, 1);
-Vector gyroBias;
 
 void setupIMU() {
 	print("Setup IMU\n");

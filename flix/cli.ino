@@ -11,7 +11,7 @@ extern const int MOTOR_REAR_LEFT, MOTOR_REAR_RIGHT, MOTOR_FRONT_RIGHT, MOTOR_FRO
 extern const int RAW, ACRO, STAB, AUTO;
 extern float t, dt, loopRate;
 extern uint16_t channels[16];
-extern float controlRoll, controlPitch, controlThrottle, controlYaw, controlMode;
+extern float controlTime;
 extern int mode;
 extern bool armed;
 
@@ -132,6 +132,7 @@ void doCommand(String str, bool echo = false) {
 		}
 		print("\nroll: %g pitch: %g yaw: %g throttle: %g mode: %g\n",
 			controlRoll, controlPitch, controlYaw, controlThrottle, controlMode);
+		print("time: %.1f\n", controlTime);
 		print("mode: %s\n", getModeName());
 		print("armed: %d\n", armed);
 	} else if (command == "wifi") {

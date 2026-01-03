@@ -12,17 +12,15 @@
 
 #define WIFI_ENABLED 1
 
-float t = NAN;
-float dt;
-float motors[4];
-float controlRoll, controlPitch, controlYaw, controlThrottle = NAN;
-float controlMode = NAN;
-Vector acc;
-Vector gyro;
-Vector rates;
-Quaternion attitude;
-bool landed;
-Vector imuRotation;
+extern float t, dt;
+extern float controlRoll, controlPitch, controlYaw, controlThrottle, controlMode;
+extern Vector rates;
+extern Quaternion attitude;
+extern bool landed;
+extern float motors[4];
+
+Vector gyro, acc, imuRotation;
+Vector accBias, gyroBias, accScale(1, 1, 1);
 
 // declarations
 void step();
@@ -75,4 +73,3 @@ void calibrateAccel() { print("Skip accel calibrating\n"); };
 void printIMUCalibration() { print("cal: N/A\n"); };
 void printIMUInfo() {};
 void printWiFiInfo() {};
-Vector accBias, gyroBias, accScale(1, 1, 1);

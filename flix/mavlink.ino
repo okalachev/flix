@@ -12,11 +12,10 @@
 #define MAVLINK_RATE_SLOW 1
 #define MAVLINK_RATE_FAST 10
 
+extern float controlTime;
+
 bool mavlinkConnected = false;
 String mavlinkPrintBuffer;
-
-extern float controlTime;
-extern float controlRoll, controlPitch, controlThrottle, controlYaw, controlMode;
 
 void processMavlink() {
 	sendMavlink();

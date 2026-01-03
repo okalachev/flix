@@ -6,12 +6,15 @@
 #include <SBUS.h>
 #include "util.h"
 
-SBUS rc(Serial2); // NOTE: Use RC(Serial2, 16, 17) if you use the old UART2 pins
+SBUS rc(Serial2);
 
 uint16_t channels[16]; // raw rc channels
-float controlTime; // time of the last controls update
 float channelZero[16]; // calibration zero values
 float channelMax[16]; // calibration max values
+
+float controlRoll, controlPitch, controlYaw, controlThrottle; // pilot's inputs, range [-1, 1]
+float controlMode = NAN; //
+float controlTime; // time of the last controls update (0 when no RC)
 
 // Channels mapping (using float to store in parameters):
 float rollChannel = NAN, pitchChannel = NAN, throttleChannel = NAN, yawChannel = NAN, modeChannel = NAN;
@@ -38,11 +41,11 @@ void normalizeRC() {
 		controls[i] = mapf(channels[i], channelZero[i], channelMax[i], 0, 1);
 	}
 	// Update control values
-	controlRoll = rollChannel >= 0 ? controls[(int)rollChannel] : NAN;
-	controlPitch = pitchChannel >= 0 ? controls[(int)pitchChannel] : NAN;
-	controlYaw = yawChannel >= 0 ? controls[(int)yawChannel] : NAN;
-	controlThrottle = throttleChannel >= 0 ? controls[(int)throttleChannel] : NAN;
-	controlMode = modeChannel >= 0 ? controls[(int)modeChannel] : NAN;
+	controlRoll = rollChannel >= 0 ? controls[(int)rollChannel] : 0;
+	controlPitch = pitchChannel >= 0 ? controls[(int)pitchChannel] : 0;
+	controlYaw = yawChannel >= 0 ? controls[(int)yawChannel] : 0;
+	controlThrottle = throttleChannel >= 0 ? controls[(int)throttleChannel] : 0;
+	controlMode = modeChannel >= 0 ? controls[(int)modeChannel] : NAN; // mode switch should not have affect if not set
 }
 
 void calibrateRC() {

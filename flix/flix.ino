@@ -9,16 +9,13 @@
 
 #define WIFI_ENABLED 1
 
-float t = NAN; // current step time, s
-float dt; // time delta from previous step, s
-float controlRoll, controlPitch, controlYaw, controlThrottle; // pilot's inputs, range [-1, 1]
-float controlMode = NAN;
-Vector gyro; // gyroscope data
-Vector acc; // accelerometer data, m/s/s
-Vector rates; // filtered angular rates, rad/s
-Quaternion attitude; // estimated attitude
-bool landed; // are we landed and stationary
-float motors[4]; // normalized motors thrust in range [0..1]
+extern float t, dt;
+extern float controlRoll, controlPitch, controlYaw, controlThrottle, controlMode;
+extern Vector gyro, acc;
+extern Vector rates;
+extern Quaternion attitude;
+extern bool landed;
+extern float motors[4];
 
 void setup() {
 	Serial.begin(115200);

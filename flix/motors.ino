@@ -17,7 +17,8 @@
 #define PWM_MIN 0
 #define PWM_MAX 1000000 / PWM_FREQUENCY
 
-// Motors array indexes:
+float motors[4]; // normalized motor thrusts in range [0..1]
+
 const int MOTOR_REAR_LEFT = 0;
 const int MOTOR_REAR_RIGHT = 1;
 const int MOTOR_FRONT_RIGHT = 2;
