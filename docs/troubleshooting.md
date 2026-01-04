@@ -4,7 +4,7 @@
 
 Do the following:
 
-* **Check ESP32 core is installed**. Check if the version matches the one used in the [tutorial](usage.md#firmware).
+* **Check ESP32 core is installed**. Check if the version matches the one used in the [tutorial](usage.md#building-the-firmware).
 * **Check libraries**. Install all the required libraries from the tutorial. Make sure there are no MPU9250 or other peripherals libraries that may conflict with the ones used in the tutorial.
 * **Check the chosen board**. The correct board to choose in Arduino IDE for ESP32 Mini is *WEMOS D1 MINI ESP32*.
 
@@ -25,7 +25,7 @@ Do the following:
   * The `accel` and `gyro` fields should change as you move the drone.
 * **Calibrate the accelerometer.** if is wasn't done before. Type `ca` command in Serial Monitor and follow the instructions.
 * **Check the attitude estimation**. Connect to the drone using QGroundControl. Rotate the drone in different orientations and check if the attitude estimation shown in QGroundControl is correct.
-* **Check the IMU orientation is set correctly**. If the attitude estimation is rotated, make sure `rotateIMU` function is defined correctly in `imu.ino` file.
+* **Check the IMU orientation is set correctly**. If the attitude estimation is rotated, set the correct IMU orientation as described in the [tutorial](usage.md#define-imu-orientation).
 * **Check the motors type**. Motors with exact 3.7V voltage are needed, not ranged working voltage (3.7V — 6V).
 * **Check the motors**. Perform the following commands using Serial Monitor:
   * `mfr` — should rotate front right motor (counter-clockwise).
