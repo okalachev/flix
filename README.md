@@ -1,6 +1,9 @@
-# Flix
+<!-- markdownlint-disable MD041 -->
 
-**Flix** (*flight + X*) — open source ESP32-based quadcopter made from scratch.
+<p align="center">
+  <img src="docs/img/flix.svg" width=180 alt="Flix logo"><br>
+  <b>Flix</b> (<i>flight + X</i>) — open source ESP32-based quadcopter made from scratch.
+</p>
 
 <table>
   <tr>
