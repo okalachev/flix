@@ -4,6 +4,7 @@
 // Flight control
 
 #include "config.h"
+#include "flix.h"
 #include "vector.h"
 #include "quaternion.h"
 #include "pid.h"
