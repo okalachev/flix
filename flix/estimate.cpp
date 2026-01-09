@@ -10,9 +10,12 @@
 #include "lpf.h"
 #include "util.h"
 
-Vector rates; // filtered angular rates, rad/s
+Vector rates; // estimated angular rates, rad/s
 Quaternion attitude; // estimated attitude
-bool landed; // are we landed and stationary
+bool landed;
+
+float accWeight = 0.003;
+LowPassFilter<Vector> ratesFilter(0.2); // cutoff frequency ~ 40 Hz
 
 void estimate() {
 	applyGyro();
@@ -21,7 +24,6 @@ void estimate() {
 
 void applyGyro() {
 	// filter gyro to get angular rates
-	static LowPassFilter<Vector> ratesFilter(RATES_LFP_ALPHA);
 	rates = ratesFilter.update(gyro);
 
 	// apply rates to attitude
@@ -37,7 +39,7 @@ void applyAcc() {
 
 	// calculate accelerometer correction
 	Vector up = Quaternion::rotateVector(Vector(0, 0, 1), attitude);
-	Vector correction = Vector::rotationVectorBetween(acc, up) * WEIGHT_ACC;
+	Vector correction = Vector::rotationVectorBetween(acc, up) * accWeight;
 
 	// apply correction
 	attitude = Quaternion::rotate(attitude, Quaternion::fromRotationVector(correction));

@@ -6,8 +6,8 @@
 #include "Arduino.h"
 #include "flix.h"
 
-float t = NAN; // current step time, s
-float dt; // time delta from previous step, s
+float t = NAN; // current time, s
+float dt; // time delta with the previous step, s
 float loopRate; // Hz
 
 void step() {

@@ -10,11 +10,14 @@
 #include "util.h"
 
 MPU9250 imu(SPI);
+Vector imuRotation(0, 0, -PI / 2); // imu orientation as Euler angles
 
-Vector gyro, gyroBias;
-Vector acc, accBias, accScale(1, 1, 1);
+Vector gyro; // gyroscope output, rad/s
+Vector gyroBias;
 
-extern float loopRate;
+Vector acc; // accelerometer output, m/s/s
+Vector accBias;
+Vector accScale(1, 1, 1);
 
 void setupIMU() {
 	print("Setup IMU\n");
@@ -38,24 +41,18 @@ void readIMU() {
 	// apply scale and bias
 	acc = (acc - accBias) / accScale;
 	gyro = gyro - gyroBias;
-	// rotate
-	rotateIMU(acc);
-	rotateIMU(gyro);
-}
-
-void rotateIMU(Vector& data) {
-	// Rotate from LFD to FLU
-	// NOTE: In case of using other IMU orientation, change this line:
-	data = Vector(data.y, data.x, -data.z);
-	// Axes orientation for various boards: https://github.com/okalachev/flixperiph#imu-axes-orientation
+	// rotate to body frame
+	Quaternion rotation = Quaternion::fromEuler(imuRotation);
+	acc = Quaternion::rotateVector(acc, rotation.inversed());
+	gyro = Quaternion::rotateVector(gyro, rotation.inversed());
 }
 
 void calibrateGyroOnce() {
 	static Delay landedDelay(2);
 	if (!landedDelay.update(landed)) return; // calibrate only if definitely stationary
 
-	static LowPassFilter<Vector> gyroCalibrationFilter(0.001);
-	gyroBias = gyroCalibrationFilter.update(gyro);
+	static LowPassFilter<Vector> gyroBiasFilter(0.001);
+	gyroBias = gyroBiasFilter.update(gyro);
 }
 
 void calibrateAccel() {

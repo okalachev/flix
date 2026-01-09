@@ -10,13 +10,10 @@
 #include "lpf.h"
 #include "util.h"
 
-extern const int MANUAL = 0, ACRO = 1, STAB = 2, AUTO = 3; // flight modes
-extern const int MOTOR_REAR_LEFT, MOTOR_REAR_RIGHT, MOTOR_FRONT_RIGHT, MOTOR_FRONT_LEFT;
+extern const int RAW = 0, ACRO = 1, STAB = 2, AUTO = 3; // flight modes
 
 int mode = STAB;
 bool armed = false;
-float controlRoll, controlPitch, controlThrottle, controlYaw, controlMode;
-float controlTime;
 
 Quaternion attitudeTarget;
 Vector ratesTarget;
@@ -33,6 +30,9 @@ PID yawPID(YAW_P, 0, 0);
 Vector maxRate(ROLLRATE_MAX, PITCHRATE_MAX, YAWRATE_MAX);
 float tiltMax = TILT_MAX;
 
+extern float controlRoll, controlPitch, controlThrottle, controlYaw, controlMode;
+extern const int MOTOR_REAR_LEFT, MOTOR_REAR_RIGHT, MOTOR_FRONT_RIGHT, MOTOR_FRONT_LEFT;
+
 void control() {
 	interpretControls();
 	failsafe();
@@ -42,7 +42,6 @@ void control() {
 }
 
 void interpretControls() {
-	// NOTE: put ACRO or MANUAL modes there if you want to use them
 	if (controlMode < 0.25) mode = STAB;
 	if (controlMode < 0.75) mode = STAB;
 	if (controlMode > 0.75) mode = STAB;
@@ -51,6 +50,8 @@ void interpretControls() {
 
 	if (controlThrottle < 0.05 && controlYaw > 0.95) armed = true; // arm gesture
 	if (controlThrottle < 0.05 && controlYaw < -0.95) armed = false; // disarm gesture
+
+	if (abs(controlYaw) < 0.1) controlYaw = 0; // yaw dead zone
 
 	thrustTarget = controlThrottle;
 
@@ -68,10 +69,10 @@ void interpretControls() {
 		ratesTarget.z = -controlYaw * maxRate.z; // positive yaw stick means clockwise rotation in FLU
 	}
 
-	if (mode == MANUAL) { // passthrough mode
+	if (mode == RAW) { // direct torque control
 		attitudeTarget.invalidate(); // skip attitude control
 		ratesTarget.invalidate(); // skip rate control
-		torqueTarget = Vector(controlRoll, controlPitch, -controlYaw) * 0.01;
+		torqueTarget = Vector(controlRoll, controlPitch, -controlYaw) * 0.1;
 	}
 }
 
@@ -132,7 +133,7 @@ void controlTorque() {
 
 const char* getModeName() {
 	switch (mode) {
-		case MANUAL: return "MANUAL";
+		case RAW: return "RAW";
 		case ACRO: return "ACRO";
 		case STAB: return "STAB";
 		case AUTO: return "AUTO";

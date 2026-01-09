@@ -27,3 +27,27 @@ Soldered components ([schematics variant](https://miro.com/app/board/uXjVN-dTjoo
 <br>Assembled drone:
 
 <img src="img/assembly/7.jpg" width=600>
+
+## Motor directions
+
+> [!WARNING]
+> The drone above is an early build, and it has **inversed** motor directions scheme. The photos only illustrate the assembly process in general.
+
+Use standard motor directions scheme:
+
+<img src="img/motors.svg" width=200>
+
+Motors connection table:
+
+|Motor|Position|Direction|Prop type|Motor wires|GPIO|
+|-|-|-|-|-|-|
+|Motor 0|Rear left|Counter-clockwise|B|Black & White|GPIO12 (*TDI*)|
+|Motor 1|Rear right|Clockwise|A|Blue & Red|GPIO13 (*TCK*)|
+|Motor 2|Front right|Counter-clockwise|B|Black & White|GPIO14 (*TMS*)|
+|Motor 3|Front left|Clockwise|A|Blue & Red|GPIO15 (*TD0*)|
+
+## Motors tightening
+
+Motors should be installed very tightly — any vibration may lead to bad attitude estimation and unstable flight. If motors are loose, use tiny tape pieces to fix them tightly as shown below:
+
+<img src="img/motor-tape.jpg" width=600>

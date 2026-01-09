@@ -37,7 +37,6 @@ public:
 		z = NAN;
 	}
 
-
 	float norm() const {
 		return sqrt(x * x + y * y + z * z);
 	}

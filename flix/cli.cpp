@@ -10,9 +10,10 @@
 #include "util.h"
 
 extern const int MOTOR_REAR_LEFT, MOTOR_REAR_RIGHT, MOTOR_FRONT_RIGHT, MOTOR_FRONT_LEFT;
-extern const int ACRO, STAB, AUTO;
+extern const int RAW, ACRO, STAB, AUTO;
 extern float t, dt, loopRate;
 extern uint16_t channels[16];
+extern float controlTime;
 extern int mode;
 extern bool armed;
 
@@ -36,10 +37,11 @@ const char* motd =
 "imu - show IMU data\n"
 "arm - arm the drone\n"
 "disarm - disarm the drone\n"
-"stab/acro/auto - set mode\n"
+"raw/stab/acro/auto - set mode\n"
 "rc - show RC data\n"
+"wifi - show Wi-Fi info\n"
 "mot - show motor output\n"
-"log - dump in-RAM log\n"
+"log [dump] - print log header [and data]\n"
 "cr - calibrate RC\n"
 "ca - calibrate accel\n"
 "mfr, mfl, mrr, mrl - test motor (remove props)\n"
@@ -75,9 +77,10 @@ void doCommand(String str, bool echo) {
 	// parse command
 	String command, arg0, arg1;
 	splitString(str, command, arg0, arg1);
+	if (command.isEmpty()) return;
 
 	// echo command
-	if (echo && !command.isEmpty()) {
+	if (echo) {
 		print("> %s\n", str.c_str());
 	}
 
@@ -116,6 +119,8 @@ void doCommand(String str, bool echo) {
 		armed = true;
 	} else if (command == "disarm") {
 		armed = false;
+	} else if (command == "raw") {
+		mode = RAW;
 	} else if (command == "stab") {
 		mode = STAB;
 	} else if (command == "acro") {
@@ -129,13 +134,19 @@ void doCommand(String str, bool echo) {
 		}
 		print("\nroll: %g pitch: %g yaw: %g throttle: %g mode: %g\n",
 			controlRoll, controlPitch, controlYaw, controlThrottle, controlMode);
+		print("time: %.1f\n", controlTime);
 		print("mode: %s\n", getModeName());
 		print("armed: %d\n", armed);
+	} else if (command == "wifi") {
+#if WIFI_ENABLED
+		printWiFiInfo();
+#endif
 	} else if (command == "mot") {
 		print("front-right %g front-left %g rear-right %g rear-left %g\n",
 			motors[MOTOR_FRONT_RIGHT], motors[MOTOR_FRONT_LEFT], motors[MOTOR_REAR_RIGHT], motors[MOTOR_REAR_LEFT]);
 	} else if (command == "log") {
-		dumpLog();
+		printLogHeader();
+		if (arg0 == "dump") printLogData();
 	} else if (command == "cr") {
 		calibrateRC();
 	} else if (command == "ca") {
@@ -171,8 +182,6 @@ void doCommand(String str, bool echo) {
 		attitude = Quaternion();
 	} else if (command == "reboot") {
 		ESP.restart();
-	} else if (command == "") {
-		// do nothing
 	} else {
 		print("Invalid command: %s\n", command.c_str());
 	}

@@ -9,7 +9,19 @@
 #include "flix.h"
 #include "util.h"
 
-float motors[4]; // normalized motors thrust in range [0..1]
+#define MOTOR_0_PIN 12 // rear left
+#define MOTOR_1_PIN 13 // rear right
+#define MOTOR_2_PIN 14 // front right
+#define MOTOR_3_PIN 15 // front left
+
+#define PWM_FREQUENCY 78000
+#define PWM_RESOLUTION 10
+#define PWM_STOP 0
+#define PWM_MIN 0
+#define PWM_MAX 1000000 / PWM_FREQUENCY
+
+float motors[4]; // normalized motor thrusts in range [0..1]
+
 extern const int MOTOR_REAR_LEFT = 0;
 extern const int MOTOR_REAR_RIGHT = 1;
 extern const int MOTOR_FRONT_RIGHT = 2;
@@ -30,9 +42,9 @@ void setupMotors() {
 
 int getDutyCycle(float value) {
 	value = constrain(value, 0, 1);
-	float pwm = mapff(value, 0, 1, PWM_MIN, PWM_MAX);
+	float pwm = mapf(value, 0, 1, PWM_MIN, PWM_MAX);
 	if (value == 0) pwm = PWM_STOP;
-	float duty = mapff(pwm, 0, 1000000 / PWM_FREQUENCY, 0, (1 << PWM_RESOLUTION) - 1);
+	float duty = mapf(pwm, 0, 1000000 / PWM_FREQUENCY, 0, (1 << PWM_RESOLUTION) - 1);
 	return round(duty);
 }
 

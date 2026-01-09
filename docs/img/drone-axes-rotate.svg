@@ -1,0 +1,136 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 813.79 508.65">
+  <defs>
+    <style>
+      .a, .d, .f, .j, .p {
+        fill: none;
+      }
+
+      .a {
+        stroke: #d5d5d5;
+        stroke-width: 31px;
+      }
+
+      .a, .p {
+        stroke-miterlimit: 10;
+      }
+
+      .b {
+        fill: #ff9400;
+      }
+
+      .c {
+        opacity: 0.8;
+      }
+
+      .d {
+        stroke: #d80100;
+      }
+
+      .d, .f, .j {
+        stroke-linejoin: bevel;
+        stroke-width: 13px;
+      }
+
+      .e {
+        fill: #d80100;
+      }
+
+      .f {
+        stroke: #57ed00;
+      }
+
+      .g {
+        fill: #57ed00;
+      }
+
+      .h {
+        fill: #c1c1c1;
+      }
+
+      .i {
+        opacity: 0.12;
+      }
+
+      .j {
+        stroke: #0076ba;
+      }
+
+      .k {
+        fill: #0076ba;
+      }
+
+      .l {
+        font-size: 50px;
+        font-family: Tahoma;
+      }
+
+      .m {
+        letter-spacing: -0.01em;
+      }
+
+      .n {
+        letter-spacing: -0.01em;
+      }
+
+      .o {
+        letter-spacing: 0em;
+      }
+
+      .p {
+        stroke: #000;
+        stroke-width: 10px;
+      }
+    </style>
+  </defs>
+  <g>
+    <g>
+      <line class="a" x1="259.14" y1="432.84" x2="532.46" y2="340.23"/>
+      <line class="a" x1="311.69" y1="313.16" x2="481.62" y2="461.39"/>
+      <ellipse class="b" cx="311.35" cy="312.8" rx="88.68" ry="47.94"/>
+      <ellipse class="b" cx="532.53" cy="340.42" rx="88.68" ry="47.94"/>
+      <ellipse class="b" cx="479.72" cy="460.7" rx="88.68" ry="47.94"/>
+      <ellipse class="b" cx="259.21" cy="433.03" rx="88.68" ry="47.94"/>
+    </g>
+    <g class="c">
+      <g>
+        <line class="d" x1="396.65" y1="386.83" x2="564.66" y2="35.72"/>
+        <polygon class="e" points="582.76 51.95 579.15 5.42 540.66 31.8 582.76 51.95"/>
+      </g>
+    </g>
+    <g class="c">
+      <g>
+        <line class="f" x1="396.77" y1="387.06" x2="69.41" y2="341.09"/>
+        <polygon class="g" points="79.42 318.93 36.15 336.42 72.93 365.15 79.42 318.93"/>
+      </g>
+    </g>
+    <ellipse class="h" cx="396.36" cy="386.61" rx="47.21" ry="25.52"/>
+    <path class="i" d="M398,375.67l-14.42,12.95a4.32,4.32,0,0,0,2.35,7.5l16.81,2.11a4.33,4.33,0,0,0,4.8-5l-2.39-15.06A4.32,4.32,0,0,0,398,375.67Z"/>
+    <g class="c">
+      <g>
+        <line class="j" x1="396.77" y1="385.56" x2="396.77" y2="92.64"/>
+        <polygon class="k" points="420.1 99.47 396.77 59.06 373.43 99.47 420.1 99.47"/>
+      </g>
+    </g>
+    <text class="l" transform="translate(0 292.27)">y/left</text>
+    <text class="l" transform="translate(268.4 81.58)">z/up</text>
+    <text class="l" transform="translate(600.99 43.18)">x/<tspan class="m" x="43.87" y="0">f</tspan><tspan x="59.3" y="0">or</tspan><tspan class="n" x="104.47" y="0">w</tspan><tspan x="141.14" y="0">a</tspan><tspan class="o" x="167.38" y="0">r</tspan><tspan x="185.16" y="0">d</tspan></text>
+    <g class="c">
+      <g>
+        <path class="p" d="M470.35,114a52.71,52.71,0,0,1,103.57-2.31,51.67,51.67,0,0,1-1.33,25.92"/>
+        <polygon points="562.15 128.29 563.93 154.16 585.44 139.69 562.15 128.29"/>
+      </g>
+    </g>
+    <g class="c">
+      <g>
+        <path class="p" d="M344.16,164.77a52.66,52.66,0,1,0,103.78,16.31"/>
+        <polygon points="460.61 184.04 446.18 162.5 434.74 185.76 460.61 184.04"/>
+      </g>
+    </g>
+    <g class="c">
+      <g>
+        <path class="p" d="M138.4,411.11a52.71,52.71,0,0,1,18.43-101.94A51.68,51.68,0,0,1,182,315.65"/>
+        <polygon points="170.73 324.01 196.43 327.44 186.55 303.47 170.73 324.01"/>
+      </g>
+    </g>
+  </g>
+</svg>

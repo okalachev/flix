@@ -5,10 +5,10 @@
 
 #include "flix.h"
 #include "vector.h"
+#include "util.h"
 
 #define LOG_RATE 100
 #define LOG_DURATION 10
-#define LOG_PERIOD 1.0 / LOG_RATE
 #define LOG_SIZE LOG_DURATION * LOG_RATE
 
 Vector attitudeEuler;
@@ -47,9 +47,8 @@ void prepareLogData() {
 void logData() {
 	if (!armed) return;
 	static int logPointer = 0;
-	static float logTime = 0;
-	if (t - logTime < LOG_PERIOD) return;
-	logTime = t;
+	static Rate period(LOG_RATE);
+	if (!period) return;
 
 	prepareLogData();
 
@@ -63,12 +62,13 @@ void logData() {
 	}
 }
 
-void dumpLog() {
-	// Print header
+void printLogHeader() {
 	for (int i = 0; i < logColumns; i++) {
 		print("%s%s", logEntries[i].name, i < logColumns - 1 ? "," : "\n");
 	}
-	// Print data
+}
+
+void printLogData() {
 	for (int i = 0; i < LOG_SIZE; i++) {
 		if (logBuffer[i][0] == 0) continue; // skip empty records
 		for (int j = 0; j < logColumns; j++) {

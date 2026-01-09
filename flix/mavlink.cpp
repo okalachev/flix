@@ -10,17 +10,18 @@
 #if WIFI_ENABLED
 
 #include <MAVLink.h>
+#include "util.h"
 
-#define PERIOD_SLOW 1.0
-#define PERIOD_FAST 0.1
-#define MAVLINK_CONTROL_YAW_DEAD_ZONE 0.1f
+#define SYSTEM_ID 1
+#define MAVLINK_RATE_SLOW 1
+#define MAVLINK_RATE_FAST 10
 
-String mavlinkPrintBuffer;
-
+extern const int AUTO, STAB;
 extern uint16_t channels[16];
 extern float controlTime;
-extern float controlRoll, controlPitch, controlThrottle, controlYaw, controlMode;
-extern const int STAB, AUTO;
+
+bool mavlinkConnected = false;
+String mavlinkPrintBuffer;
 
 void processMavlink() {
 	sendMavlink();
@@ -30,15 +31,12 @@ void processMavlink() {
 void sendMavlink() {
 	sendMavlinkPrint();
 
-	static float lastSlow = 0;
-	static float lastFast = 0;
-
 	mavlink_message_t msg;
 	uint32_t time = t * 1000;
 
-	if (t - lastSlow >= PERIOD_SLOW) {
-		lastSlow = t;
+	static Rate slow(MAVLINK_RATE_SLOW), fast(MAVLINK_RATE_FAST);
 
+	if (slow) {
 		mavlink_msg_heartbeat_pack(SYSTEM_ID, MAV_COMP_ID_AUTOPILOT1, &msg, MAV_TYPE_QUADROTOR, MAV_AUTOPILOT_GENERIC,
 			(armed ? MAV_MODE_FLAG_SAFETY_ARMED : 0) |
 			((mode == STAB) ? MAV_MODE_FLAG_STABILIZE_ENABLED : 0) |
@@ -46,14 +44,14 @@ void sendMavlink() {
 			mode, MAV_STATE_STANDBY);
 		sendMessage(&msg);
 
+		if (!mavlinkConnected) return; // send only heartbeat until connected
+
 		mavlink_msg_extended_sys_state_pack(SYSTEM_ID, MAV_COMP_ID_AUTOPILOT1, &msg,
 			MAV_VTOL_STATE_UNDEFINED, landed ? MAV_LANDED_STATE_ON_GROUND : MAV_LANDED_STATE_IN_AIR);
 		sendMessage(&msg);
 	}
 
-	if (t - lastFast >= PERIOD_FAST) {
-		lastFast = t;
-
+	if (fast && mavlinkConnected) {
 		const float zeroQuat[] = {0, 0, 0, 0};
 		mavlink_msg_attitude_quaternion_pack(SYSTEM_ID, MAV_COMP_ID_AUTOPILOT1, &msg,
 			time, attitude.w, attitude.x, -attitude.y, -attitude.z, rates.x, -rates.y, -rates.z, zeroQuat); // convert to frd
@@ -85,6 +83,7 @@ void sendMessage(const void *msg) {
 void receiveMavlink() {
 	uint8_t buf[MAVLINK_MAX_PACKET_LEN];
 	int len = receiveWiFi(buf, MAVLINK_MAX_PACKET_LEN);
+	if (len) mavlinkConnected = true;
 
 	// New packet, parse it
 	mavlink_message_t msg;
@@ -110,8 +109,6 @@ void handleMavlink(const void *_msg) {
 		controlYaw = m.r / 1000.0f;
 		controlMode = NAN;
 		controlTime = t;
-
-		if (abs(controlYaw) < MAVLINK_CONTROL_YAW_DEAD_ZONE) controlYaw = 0;
 	}
 
 	if (msg.msgid == MAVLINK_MSG_ID_PARAM_REQUEST_LIST) {
@@ -214,6 +211,22 @@ void handleMavlink(const void *_msg) {
 		memcpy(motors, m.controls, sizeof(motors)); // copy motor thrusts
 		armed = motors[0] > 0 || motors[1] > 0 || motors[2] > 0 || motors[3] > 0;
 	}
+
+	/* TODO:
+	if (msg.msgid == MAVLINK_MSG_ID_LOG_REQUEST_DATA) {
+		mavlink_log_request_data_t m;
+		mavlink_msg_log_request_data_decode(&msg, &m);
+		if (m.target_system && m.target_system != SYSTEM_ID) return;
+
+		// Send all log records
+		for (int i = 0; i < sizeof(logBuffer) / sizeof(logBuffer[0]); i++) {
+			mavlink_message_t msg;
+			mavlink_msg_log_data_pack(SYSTEM_ID, MAV_COMP_ID_AUTOPILOT1, &msg, 0, i,
+				sizeof(logBuffer[0]), (uint8_t *)logBuffer[i]);
+			sendMessage(&msg);
+		}
+	}
+	*/
 
 	// Handle commands
 	if (msg.msgid == MAVLINK_MSG_ID_COMMAND_LONG) {

@@ -9,22 +9,19 @@
 #include "vector.h"
 #include "quaternion.h"
 
-// The most used global variables:
-extern float t; // current step time, s
-extern float dt; // time delta from previous step, s
-extern Vector gyro; // gyroscope data
-extern Vector acc; // accelerometer data, m/s²
-extern Vector rates; // filtered angular rates, rad/s
-extern Quaternion attitude; // estimated attitude
-extern float controlRoll, controlPitch, controlYaw, controlThrottle, controlMode; // pilot inputs, range [-1, 1]
-extern float controlTime; // inputs last update time
+extern float t, dt;
+extern float loopRate;
+extern float controlRoll, controlPitch, controlYaw, controlThrottle, controlMode;
+extern Vector gyro, acc;
+extern Vector rates;
+extern Quaternion attitude;
+extern bool landed;
 extern int mode;
 extern bool armed;
-extern Vector ratesTarget, ratesExtra, torqueTarget;
 extern Quaternion attitudeTarget;
+extern Vector ratesTarget, ratesExtra, torqueTarget;
 extern float thrustTarget;
-extern bool landed; // are we landed and stationary
-extern float motors[4]; // normalized motors thrust in range [0..1]
+extern float motors[4];
 
 void print(const char* format, ...);
 void pause(float duration);
@@ -53,7 +50,8 @@ void setLED(bool on);
 void blinkLED();
 void prepareLogData();
 void logData();
-void dumpLog();
+void printLogHeader();
+void printLogData();
 void processMavlink();
 void sendMavlink();
 void sendMessage(const void *msg);

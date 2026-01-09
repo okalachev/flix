@@ -1,130 +1,38 @@
 # Usage: build, setup and flight
 
-To use Flix, you need to build the firmware and upload it to the ESP32 board. For simulation, you need to build and run the simulator.
+To fly Flix quadcopter, you need to build the firmware, upload it to the ESP32 board, and set up the drone for flight.
 
-For the start, clone the repository using git:
+To get the firmware sources, clone the repository using git:
 
 ```bash
-git clone https://github.com/okalachev/flix.git
-cd flix
+git clone https://github.com/okalachev/flix.git && cd flix
 ```
 
-## Simulation
+Beginners can [download the source code as a ZIP archive](https://github.com/okalachev/flix/archive/refs/heads/master.zip).
 
-### Ubuntu
+## Building the firmware
 
-The latest version of Ubuntu supported by Gazebo 11 simulator is 20.04. If you have a newer version, consider using a virtual machine.
-
-1. Install Arduino CLI:
-
-   ```bash
-   curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | BINDIR=~/.local/bin sh
-   ```
-
-2. Install Gazebo 11:
-
-   ```bash
-   sudo sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-stable.list'
-   wget https://packages.osrfoundation.org/gazebo.key -O - | sudo apt-key add -
-   sudo apt-get update
-   sudo apt-get install -y gazebo11 libgazebo11-dev
-   ```
-
-   Set up your Gazebo environment variables:
-
-   ```bash
-   echo "source /usr/share/gazebo/setup.sh" >> ~/.bashrc
-   source ~/.bashrc
-   ```
-
-3. Install SDL2 and other dependencies:
-
-   ```bash
-   sudo apt-get update && sudo apt-get install build-essential libsdl2-dev
-   ```
-
-4. Add your user to the `input` group to enable joystick support (you need to re-login after this command):
-
-   ```bash
-   sudo usermod -a -G input $USER
-   ```
-
-5. Run the simulation:
-
-   ```bash
-   make simulator
-   ```
-
-### macOS
-
-1. Install Homebrew package manager, if you don't have it installed:
-
-   ```bash
-   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-   ```
-
-2. Install Arduino CLI, Gazebo 11 and SDL2:
-
-   ```bash
-   brew tap osrf/simulation
-   brew install arduino-cli
-   brew install gazebo11
-   brew install sdl2
-   ```
-
-   Set up your Gazebo environment variables:
-
-   ```bash
-   echo "source /opt/homebrew/share/gazebo/setup.sh" >> ~/.zshrc
-   source ~/.zshrc
-   ```
-
-3. Run the simulation:
-
-   ```bash
-   make simulator
-   ```
-
-### Setup
-
-#### Control with smartphone
-
-1. Install [QGroundControl mobile app](https://docs.qgroundcontrol.com/master/en/qgc-user-guide/getting_started/download_and_install.html#android) on your smartphone. For **iOS**, use [QGroundControl build from TAJISOFT](https://apps.apple.com/ru/app/qgc-from-tajisoft/id1618653051).
-2. Connect your smartphone to the same Wi-Fi network as the machine running the simulator.
-3. If you're using a virtual machine, make sure that its network is set to the **bridged** mode with Wi-Fi adapter selected.
-4. Run the simulation.
-5. Open QGroundControl app. It should connect and begin showing the virtual drone's telemetry automatically.
-6. Go to the settings and enable *Virtual Joystick*. *Auto-Center Throttle* setting **should be disabled**.
-7. Use the virtual joystick to fly the drone!
-
-#### Control with USB remote control
-
-1. Connect your USB remote control to the machine running the simulator.
-2. Run the simulation.
-3. Calibrate the RC using `cr` command in the command line interface.
-4. Run the simulation again.
-5. Use the USB remote control to fly the drone!
-
-## Firmware
+You can build and upload the firmware using either **Arduino IDE** (easier for beginners) or **command line**.
 
 ### Arduino IDE (Windows, Linux, macOS)
 
+<img src="img/arduino-ide.png" width="400" alt="Flix firmware open in Arduino IDE">
+
 1. Install [Arduino IDE](https://www.arduino.cc/en/software) (version 2 is recommended).
-2. Windows users might need to install [USB to UART bridge driver from Silicon Labs](https://www.silabs.com/developers/usb-to-uart-bridge-vcp-drivers).
+2. *Windows users might need to install [USB to UART bridge driver from Silicon Labs](https://www.silabs.com/developers/usb-to-uart-bridge-vcp-drivers).*
 3. Install ESP32 core, version 3.2.0. See the [official Espressif's instructions](https://docs.espressif.com/projects/arduino-esp32/en/latest/installing.html#installing-using-arduino-ide) on installing ESP32 Core in Arduino IDE.
 4. Install the following libraries using [Library Manager](https://docs.arduino.cc/software/ide-v2/tutorials/ide-v2-installing-a-library):
    * `FlixPeriph`, the latest version.
    * `MAVLink`, version 2.0.16.
-5. Clone the project using git or [download the source code as a ZIP archive](https://codeload.github.com/okalachev/flix/zip/refs/heads/master).
-6. Open the downloaded Arduino sketch `flix/flix.ino` in Arduino IDE.
-7. Connect your ESP32 board to the computer and choose correct board type in Arduino IDE (*WEMOS D1 MINI ESP32* for ESP32 Mini) and the port.
-8. [Build and upload](https://docs.arduino.cc/software/ide-v2/tutorials/getting-started/ide-v2-uploading-a-sketch) the firmware using Arduino IDE.
+5. Open the `flix/flix.ino` sketch from downloaded firmware sources in Arduino IDE.
+6. Connect your ESP32 board to the computer and choose correct board type in Arduino IDE (*WEMOS D1 MINI ESP32* for ESP32 Mini) and the port.
+7. [Build and upload](https://docs.arduino.cc/software/ide-v2/tutorials/getting-started/ide-v2-uploading-a-sketch) the firmware using Arduino IDE.
 
 ### Command line (Windows, Linux, macOS)
 
 1. [Install Arduino CLI](https://arduino.github.io/arduino-cli/installation/).
 
-   On Linux, use:
+   On Linux, install it like this:
 
    ```bash
    curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | BINDIR=~/.local/bin sh
@@ -149,19 +57,115 @@ The latest version of Ubuntu supported by Gazebo 11 simulator is 20.04. If you h
    make upload monitor
    ```
 
-See other available Make commands in the [Makefile](../Makefile).
+See other available Make commands in [Makefile](../Makefile).
 
 > [!TIP]
-> You can test the firmware on a bare ESP32 board without connecting IMU and other peripherals. The Wi-Fi network `flix` should appear and all the basic functionality including CLI and QGroundControl connection should work.
+> You can test the firmware on a bare ESP32 board without connecting IMU and other peripherals. The Wi-Fi network `flix` should appear and all the basic functionality including console and QGroundControl connection should work.
 
-### Setup
+## Before first flight
+
+### Choose the IMU model
+
+In case if using different IMU model than MPU9250, change `imu` variable declaration in the `imu.ino`:
+
+```cpp
+ICM20948 imu(SPI);  // For ICM-20948
+MPU6050 imu(Wire);  // For MPU-6050
+```
+
+### Connect using QGroundControl
+
+QGroundControl is a ground control station software that can be used to monitor and control the drone.
+
+1. Install mobile or desktop version of [QGroundControl](https://docs.qgroundcontrol.com/master/en/qgc-user-guide/getting_started/download_and_install.html).
+2. Power up the drone.
+3. Connect your computer or smartphone to the appeared `flix` Wi-Fi network (password: `flixwifi`).
+4. Launch QGroundControl app. It should connect and begin showing the drone's telemetry automatically.
+
+### Access console
+
+The console is a command line interface (CLI) that allows to interact with the drone, change parameters, and perform various actions. There are two ways of accessing the console: using **serial port** or using **QGroundControl (wirelessly)**.
+
+To access the console using serial port:
+
+1. Connect the ESP32 board to the computer using USB cable.
+2. Open Serial Monitor in Arduino IDE (or use `make monitor` in the command line).
+3. In Arduino IDE, make sure the baudrate is set to 115200.
+
+To access the console using QGroundControl:
+
+1. Connect to the drone using QGroundControl app.
+2. Go to the QGroundControl menu ⇒ *Vehicle Setup* ⇒ *Analyze Tools* ⇒ *MAVLink Console*.
+
+<img src="img/cli.png" width="400">
+
+> [!TIP]
+> Use `help` command to see the list of available commands.
+
+### Access parameters
+
+The drone is configured using parameters. To access and modify them, go to the QGroundControl menu ⇒ *Vehicle Setup* ⇒ *Parameters*:
+
+<img src="img/parameters.png" width="400">
+
+You can also work with parameters using `p` command in the console.
+
+### Define IMU orientation
+
+Use parameters, to define the IMU board axes orientation relative to the drone's axes: `IMU_ROT_ROLL`, `IMU_ROT_PITCH`, and `IMU_ROT_YAW`.
+
+The drone has *X* axis pointing forward, *Y* axis pointing left, and *Z* axis pointing up, and the supported IMU boards have *X* axis pointing to the pins side and *Z* axis pointing up from the component side:
+
+<img src="img/imu-axes.png" width="200">
+
+Use the following table to set the parameters for common IMU orientations:
+
+|Orientation|Parameters|Orientation|Parameters|
+|:-:|-|-|-|
+|<img src="img/imu-rot-1.png" width="180">|`IMU_ROT_ROLL` = 0<br>`IMU_ROT_PITCH` = 0<br>`IMU_ROT_YAW` = 0    |<img src="img/imu-rot-5.png" width="180">|`IMU_ROT_ROLL` = 3.142<br>`IMU_ROT_PITCH` = 0<br>`IMU_ROT_YAW` = 0|
+|<img src="img/imu-rot-2.png" width="180">|`IMU_ROT_ROLL` = 0<br>`IMU_ROT_PITCH` = 0<br>`IMU_ROT_YAW` = 1.571|<img src="img/imu-rot-6.png" width="180">|`IMU_ROT_ROLL` = 3.142<br>`IMU_ROT_PITCH` = 0<br>`IMU_ROT_YAW` = -1.571|
+|<img src="img/imu-rot-3.png" width="180">|`IMU_ROT_ROLL` = 0<br>`IMU_ROT_PITCH` = 0<br>`IMU_ROT_YAW` = 3.142|<img src="img/imu-rot-7.png" width="180">|`IMU_ROT_ROLL` = 3.142<br>`IMU_ROT_PITCH` = 0<br>`IMU_ROT_YAW` = 3.142|
+|<img src="img/imu-rot-4.png" width="180"><br>☑️ **Default**|<br>`IMU_ROT_ROLL` = 0<br>`IMU_ROT_PITCH` = 0<br>`IMU_ROT_YAW` = -1.571|<img src="img/imu-rot-8.png" width="180">|`IMU_ROT_ROLL` = 3.142<br>`IMU_ROT_PITCH` = 0<br>`IMU_ROT_YAW` = 1.571|
+
+### Calibrate accelerometer
 
 Before flight you need to calibrate the accelerometer:
 
-1. Open Serial Monitor in Arduino IDE (or use `make monitor` command in the command line).
+1. Access the console using QGroundControl (recommended) or Serial Monitor.
 2. Type `ca` command there and follow the instructions.
 
-#### Control with smartphone
+### Check everything works
+
+1. Check the IMU is working: perform `imu` command and check its output:
+
+   * The `status` field should be `OK`.
+   * The `rate` field should be about 1000 (Hz).
+   * The `accel` and `gyro` fields should change as you move the drone.
+   * The `landed` field should be `1` when the drone is still on the ground and `0` when you lift it up.
+
+2. Check the attitude estimation: connect to the drone using QGroundControl, rotate the drone in different orientations and check if the attitude estimation shown in QGroundControl is correct. Attitude indicator in QGroundControl is shown below:
+
+   <img src="img/qgc-attitude.png" height="200">
+
+3. Perform motor tests in the console. Use the following commands **— remove the propellers before running the tests!**
+
+   * `mfr` — should rotate front right motor (counter-clockwise).
+   * `mfl` — should rotate front left motor (clockwise).
+   * `mrl` — should rotate rear left motor (counter-clockwise).
+   * `mrr` — should rotate rear right motor (clockwise).
+
+   Rotation diagram:
+
+   <img src="img/motors.svg" width=200>
+
+> [!WARNING]
+> Never run the motors when powering the drone from USB, always use the battery for that.
+
+## Setup remote control
+
+There are several ways to control the drone's flight: using **smartphone** (Wi-Fi), using **SBUS remote control**, or using **USB remote control** (Wi-Fi).
+
+### Control with a smartphone
 
 1. Install [QGroundControl mobile app](https://docs.qgroundcontrol.com/master/en/qgc-user-guide/getting_started/download_and_install.html#android) on your smartphone.
 2. Power the drone using the battery.
@@ -171,17 +175,17 @@ Before flight you need to calibrate the accelerometer:
 6. Use the virtual joystick to fly the drone!
 
 > [!TIP]
-> Decrease `TILT_MAX` parameter when flying using the smartphone to make the controls less sensitive.
+> Decrease `CTL_TILT_MAX` parameter when flying using the smartphone to make the controls less sensitive.
 
-#### Control with remote control
+### Control with a remote control
 
-Before flight using remote control, you need to calibrate it:
+Before using remote SBUS-connected remote control, you need to calibrate it:
 
-1. Open Serial Monitor in Arduino IDE (or use `make monitor` command in the command line).
-2. Type `cr` command there and follow the instructions.
+1. Access the console using QGroundControl (recommended) or Serial Monitor.
+2. Type `cr` command and follow the instructions.
 3. Use the remote control to fly the drone!
 
-#### Control with USB remote control (Wi-Fi)
+### Control with a USB remote control
 
 If your drone doesn't have RC receiver installed, you can use USB remote control and QGroundControl app to fly it.
 
@@ -192,9 +196,6 @@ If your drone doesn't have RC receiver installed, you can use USB remote control
 5. Launch QGroundControl app. It should connect and begin showing the drone's telemetry automatically.
 6. Go the the QGroundControl menu ⇒ *Vehicle Setup* ⇒ *Joystick*. Calibrate you USB remote control there.
 7. Use the USB remote control to fly the drone!
-
-> [!NOTE]
-> If something goes wrong, go to the [Troubleshooting](troubleshooting.md) article.
 
 ## Flight
 
@@ -214,6 +215,9 @@ When finished flying, **disarm** the drone, moving the left stick to the bottom 
 
 <img src="img/disarming.svg" width="150">
 
+> [!NOTE]
+> If something goes wrong, go to the [Troubleshooting](troubleshooting.md) article.
+
 ### Flight modes
 
 Flight mode is changed using mode switch on the remote control or using the command line.
@@ -229,9 +233,9 @@ The default mode is *STAB*. In this mode, the drone stabilizes its attitude (ori
 
 In this mode, the pilot controls the angular rates. This control method is difficult to fly and mostly used in FPV racing.
 
-#### MANUAL
+#### RAW
 
-Manual mode disables all the stabilization, and the pilot inputs are passed directly to the motors. This mode is intended for testing and demonstration purposes only, and basically the drone **cannot fly in this mode**.
+*RAW* mode disables all the stabilization, and the pilot inputs are mixed directly to the motors. The IMU sensor is not involved. This mode is intended for testing and demonstration purposes only, and basically the drone **cannot fly in this mode**.
 
 #### AUTO
 
@@ -239,14 +243,12 @@ In this mode, the pilot inputs are ignored (except the mode switch, if configure
 
 If the pilot moves the control sticks, the drone will switch back to *STAB* mode.
 
-## Adjusting parameters
+## Flight log
 
-You can adjust some of the drone's parameters (include PID coefficients) in QGroundControl app. In order to do that, go to the QGroundControl menu ⇒ *Vehicle Setup* ⇒ *Parameters*.
+After the flight, you can download the flight log for analysis wirelessly. Use the following for that:
 
-<img src="img/parameters.png" width="400">
+```bash
+make log
+```
 
-## CLI access
-
-In addition to accessing the drone's command line interface (CLI) using the serial port, you can also access it with QGroundControl using Wi-Fi connection. To do that, go to the QGroundControl menu ⇒ *Vehicle Setup* ⇒ *Analyze Tools* ⇒ *MAVLink Console*.
-
-<img src="img/cli.png" width="400">
+See more details about log analysis in the [log analysis](log.md) article.

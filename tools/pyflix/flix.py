@@ -17,7 +17,7 @@ from pymavlink.dialects.v20 import common as mavlink
 logger = logging.getLogger('flix')
 if not logger.hasHandlers():
     handler = logging.StreamHandler()
-    handler.setFormatter(logging.Formatter('%(name)s - %(levelname)s - %(message)s'))
+    handler.setFormatter(logging.Formatter('%(name)s: %(message)s'))
     logger.addHandler(handler)
     logger.setLevel(logging.INFO)
 
@@ -40,7 +40,7 @@ class Flix:
 
     _connection_timeout = 3
     _print_buffer: str = ''
-    _modes = ['MANUAL', 'ACRO', 'STAB', 'AUTO']
+    _modes = ['RAW', 'ACRO', 'STAB', 'AUTO']
 
     def __init__(self, system_id: int=1, wait_connection: bool=True):
         if not (0 <= system_id < 256):

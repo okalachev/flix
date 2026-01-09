@@ -32,7 +32,7 @@ simulator: build_simulator
 	gazebo --verbose ${CURDIR}/gazebo/flix.world
 
 log:
-	PORT=$(PORT) tools/grab_log.py
+	tools/log.py
 
 plot:
 	plotjuggler -d $(shell ls -t tools/log/*.csv | head -n1)
