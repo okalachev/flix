@@ -31,8 +31,8 @@ PID yawPID(YAW_P, 0, 0);
 Vector maxRate(ROLLRATE_MAX, PITCHRATE_MAX, YAWRATE_MAX);
 float tiltMax = TILT_MAX;
 
-extern float controlRoll, controlPitch, controlThrottle, controlYaw, controlMode;
 extern const int MOTOR_REAR_LEFT, MOTOR_REAR_RIGHT, MOTOR_FRONT_RIGHT, MOTOR_FRONT_LEFT;
+extern float controlRoll, controlPitch, controlThrottle, controlYaw, controlMode;
 
 void control() {
 	interpretControls();
