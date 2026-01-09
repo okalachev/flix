@@ -18,18 +18,6 @@
 #include "Arduino.h"
 #include "flix.h"
 
-#include "cli.ino"
-#include "control.ino"
-#include "estimate.ino"
-#include "safety.ino"
-#include "log.ino"
-#include "lpf.h"
-#include "mavlink.ino"
-#include "motors.ino"
-#include "parameters.ino"
-#include "rc.ino"
-#include "time.ino"
-
 using ignition::math::Vector3d;
 using namespace gazebo;
 using namespace std;
