@@ -21,15 +21,13 @@
 * Dedicated for education and research.
 * Made from general-purpose components.
 * Simple and clean source code in Arduino (<2k lines firmware).
+* Connectivity using Wi-Fi and MAVLink protocol.
 * Control using USB gamepad, remote control or smartphone.
-* Wi-Fi and MAVLink support.
 * Wireless command line interface and analyzing.
 * Precise simulation with Gazebo.
-* Python library.
+* Python library for scripting and automatic flights.
 * Textbook on flight control theory and practice ([in development](https://quadcopter.dev)).
-* *Position control (using external camera) and autonomous flights¹*.
-
-*¹ — planned.*
+* *Position control (planned)*.
 
 ## It actually flies
 

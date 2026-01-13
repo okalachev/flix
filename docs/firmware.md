@@ -42,7 +42,7 @@ Pilot inputs are interpreted in `interpretControls()`, and then converted to the
 
 * `attitudeTarget` *(Quaternion)* — target attitude of the drone.
 * `ratesTarget` *(Vector)* — target angular rates, *rad/s*.
-* `ratesExtra` *(Vector)* — additional (feed-forward) angular rates , used for yaw rate control in STAB mode, *rad/s*.
+* `ratesExtra` *(Vector)* — additional (feed-forward) angular rates, used for yaw rate control in STAB mode, *rad/s*.
 * `torqueTarget` *(Vector)* — target torque, range [-1, 1].
 * `thrustTarget` *(float)* — collective motor thrust target, range [0, 1].
 
