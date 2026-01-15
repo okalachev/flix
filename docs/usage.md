@@ -143,9 +143,9 @@ Before flight you need to calibrate the accelerometer:
    * The `accel` and `gyro` fields should change as you move the drone.
    * The `landed` field should be `1` when the drone is still on the ground and `0` when you lift it up.
 
-2. Check the attitude estimation: connect to the drone using QGroundControl, rotate the drone in different orientations and check if the attitude estimation shown in QGroundControl is correct. Attitude indicator (in *large vertical* mode) in QGroundControl is shown below:
+2. Check the attitude estimation: connect to the drone using QGroundControl, rotate the drone in different orientations and check if the attitude estimation shown in QGroundControl is correct. Compare your attitude indicator (in the *large vertical* mode) to the video:
 
-   <img src="img/qgc-attitude.png" height="200">
+    <a href="https://youtu.be/yVRN23-GISU"><img width=300 src="https://i3.ytimg.com/vi/yVRN23-GISU/maxresdefault.jpg"></a>
 
 3. Perform motor tests in the console. Use the following commands **— remove the propellers before running the tests!**
 
