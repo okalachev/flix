@@ -140,7 +140,8 @@ void handleMavlink(const void *_msg) {
 
 		char name[MAVLINK_MSG_PARAM_SET_FIELD_PARAM_ID_LEN + 1];
 		strlcpy(name, m.param_id, sizeof(name)); // param_id might be not null-terminated
-		setParameter(name, m.param_value);
+		bool success = setParameter(name, m.param_value);
+		if (!success) return;
 		// send ack
 		mavlink_message_t msg;
 		mavlink_msg_param_value_pack(SYSTEM_ID, MAV_COMP_ID_AUTOPILOT1, &msg,
