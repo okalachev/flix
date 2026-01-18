@@ -7,7 +7,6 @@
 #include "quaternion.h"
 #include "util.h"
 
-#define WIFI_ENABLED 1
 
 extern float t, dt;
 extern float controlRoll, controlPitch, controlYaw, controlThrottle, controlMode;
@@ -25,9 +24,7 @@ void setup() {
 	setupLED();
 	setupMotors();
 	setLED(true);
-#if WIFI_ENABLED
 	setupWiFi();
-#endif
 	setupIMU();
 	setupRC();
 	setLED(false);
@@ -42,9 +39,7 @@ void loop() {
 	control();
 	sendMotors();
 	handleInput();
-#if WIFI_ENABLED
 	processMavlink();
-#endif
 	logData();
 	syncParameters();
 }

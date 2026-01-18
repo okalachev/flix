@@ -3,8 +3,6 @@
 
 // MAVLink communication
 
-#if WIFI_ENABLED
-
 #include <MAVLink.h>
 #include "util.h"
 
@@ -274,5 +272,3 @@ void sendMavlinkPrint() {
 	}
 	mavlinkPrintBuffer.clear();
 }
-
-#endif

@@ -9,6 +9,7 @@
 extern float channelZero[16];
 extern float channelMax[16];
 extern float rollChannel, pitchChannel, throttleChannel, yawChannel, armedChannel, modeChannel;
+extern int wifiMode, udpLocalPort, udpRemotePort;
 
 Preferences storage;
 
@@ -82,6 +83,10 @@ Parameter parameters[] = {
 	{"RC_THROTTLE", &throttleChannel},
 	{"RC_YAW", &yawChannel},
 	{"RC_MODE", &modeChannel},
+	// wifi
+	{"WIFI_MODE", &wifiMode},
+	{"WIFI_LOC_PORT", &udpLocalPort},
+	{"WIFI_REM_PORT", &udpRemotePort},
 };
 
 void setupParameters() {

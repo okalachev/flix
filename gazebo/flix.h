@@ -10,8 +10,6 @@
 #include "Arduino.h"
 #include "wifi.h"
 
-#define WIFI_ENABLED 1
-
 extern float t, dt;
 extern float controlRoll, controlPitch, controlYaw, controlThrottle, controlMode;
 extern Vector rates;
@@ -73,3 +71,4 @@ void calibrateAccel() { print("Skip accel calibrating\n"); };
 void printIMUCalibration() { print("cal: N/A\n"); };
 void printIMUInfo() {};
 void printWiFiInfo() {};
+void configWiFi(bool, const char*, const char*) { print("Skip WiFi config\n"); };

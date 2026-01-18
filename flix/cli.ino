@@ -38,6 +38,8 @@ const char* motd =
 "raw/stab/acro/auto - set mode\n"
 "rc - show RC data\n"
 "wifi - show Wi-Fi info\n"
+"ap <ssid> <password> - setup Wi-Fi access point\n"
+"sta <ssid> <password> - setup Wi-Fi client mode\n"
 "mot - show motor output\n"
 "log [dump] - print log header [and data]\n"
 "cr - calibrate RC\n"
@@ -54,9 +56,7 @@ void print(const char* format, ...) {
 	vsnprintf(buf, sizeof(buf), format, args);
 	va_end(args);
 	Serial.print(buf);
-#if WIFI_ENABLED
 	mavlinkPrint(buf);
-#endif
 }
 
 void pause(float duration) {
@@ -64,9 +64,7 @@ void pause(float duration) {
 	while (t - start < duration) {
 		step();
 		handleInput();
-#if WIFI_ENABLED
 		processMavlink();
-#endif
 		delay(50);
 	}
 }
@@ -136,9 +134,11 @@ void doCommand(String str, bool echo = false) {
 		print("mode: %s\n", getModeName());
 		print("armed: %d\n", armed);
 	} else if (command == "wifi") {
-#if WIFI_ENABLED
 		printWiFiInfo();
-#endif
+	} else if (command == "ap") {
+		configWiFi(true, arg0.c_str(), arg1.c_str());
+	} else if (command == "sta") {
+		configWiFi(false, arg0.c_str(), arg1.c_str());
 	} else if (command == "mot") {
 		print("front-right %g front-left %g rear-right %g rear-left %g\n",
 			motors[MOTOR_FRONT_RIGHT], motors[MOTOR_FRONT_LEFT], motors[MOTOR_REAR_RIGHT], motors[MOTOR_REAR_LEFT]);
