@@ -87,6 +87,10 @@ Parameter parameters[] = {
 	{"WIFI_MODE", &wifiMode},
 	{"WIFI_LOC_PORT", &udpLocalPort},
 	{"WIFI_REM_PORT", &udpRemotePort},
+	// mavlink
+	{"MAV_SYS_ID", &mavlinkSysId},
+	{"MAV_RATE_SLOW", &telemetrySlow.rate},
+	{"MAV_RATE_FAST", &telemetryFast.rate},
 };
 
 void setupParameters() {
