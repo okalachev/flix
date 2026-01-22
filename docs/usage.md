@@ -243,9 +243,43 @@ In this mode, the pilot inputs are ignored (except the mode switch, if configure
 
 If the pilot moves the control sticks, the drone will switch back to *STAB* mode.
 
+## Wi-Fi configuration
+
+You can configure the Wi-Fi using parameters and console commands.
+
+The Wi-Fi mode is chosen using `WIFI_MODE` parameter in QGroundControl or in the console:
+
+* `0` — Wi-Fi is disabled.
+* `1` — Access Point mode (*AP*) — the drone creates a Wi-Fi network.
+* `2` — Client mode (*STA*) — the drone connects to an existing Wi-Fi network.
+* `3` — *ESP-NOW (not implemented yet)*.
+
+> [!WARNING]
+> Tests showed that Client mode may cause **additional delays** in remote control (due to retranslations), so it's generally not recommended.
+
+The SSID and password are configured using the `ap` and `sta` console commands:
+
+```
+ap <ssid> <password>
+sta <ssid> <password>
+```
+
+Example of configuring the Access Point mode:
+
+```
+ap my-flix-ssid mypassword123
+p WIFI_MODE 1
+```
+
+Disabling Wi-Fi:
+
+```
+p WIFI_MODE 0
+```
+
 ## Flight log
 
-After the flight, you can download the flight log for analysis wirelessly. Use the following for that:
+After the flight, you can download the flight log for analysis wirelessly. Use the following command on your computer for that:
 
 ```bash
 make log
