@@ -43,6 +43,7 @@ records = [record for record in records if record[0] != 0]
 
 print(f'Received records: {len(records)}')
 
+os.makedirs(f'{DIR}/log', exist_ok=True)
 log = open(f'{DIR}/log/{datetime.datetime.now().isoformat()}.csv', 'wb')
 log.write(header.encode() + b'\n')
 for record in records:
