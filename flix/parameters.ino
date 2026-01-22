@@ -121,7 +121,7 @@ float getParameter(int index) {
 
 float getParameter(const char *name) {
 	for (auto &parameter : parameters) {
-		if (strcmp(parameter.name, name) == 0) {
+		if (strcasecmp(parameter.name, name) == 0) {
 			return parameter.getValue();
 		}
 	}
@@ -130,7 +130,7 @@ float getParameter(const char *name) {
 
 bool setParameter(const char *name, const float value) {
 	for (auto &parameter : parameters) {
-		if (strcmp(parameter.name, name) == 0) {
+		if (strcasecmp(parameter.name, name) == 0) {
 			if (parameter.integer && !isfinite(value)) return false; // can't set integer to NaN or Inf
 			parameter.setValue(value);
 			return true;

@@ -108,7 +108,7 @@ The drone is configured using parameters. To access and modify them, go to the Q
 
 <img src="img/parameters.png" width="400">
 
-You can also work with parameters using `p` command in the console.
+You can also work with parameters using `p` command in the console. Parameter names are case-insensitive.
 
 ### Define IMU orientation
 
