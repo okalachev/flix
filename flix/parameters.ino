@@ -14,8 +14,13 @@ Preferences storage;
 
 struct Parameter {
 	const char *name; // max length is 15 (Preferences key limit)
-	float *variable;
-	float value; // cache
+	bool integer;
+	union { float *f; int *i; }; // pointer to variable
+	float cache; // what's stored in flash
+	Parameter(const char *name, float *variable) : name(name), integer(false), f(variable) {};
+	Parameter(const char *name, int *variable) : name(name), integer(true), i(variable) {};
+	float getValue() const { return integer ? *i : *f; };
+	void setValue(const float value) { if (integer) *i = value; else *f = value; };
 };
 
 Parameter parameters[] = {
@@ -84,10 +89,10 @@ void setupParameters() {
 	// Read parameters from storage
 	for (auto &parameter : parameters) {
 		if (!storage.isKey(parameter.name)) {
-			storage.putFloat(parameter.name, *parameter.variable);
+			storage.putFloat(parameter.name, parameter.getValue()); // store default value
 		}
-		*parameter.variable = storage.getFloat(parameter.name, *parameter.variable);
-		parameter.value = *parameter.variable;
+		parameter.setValue(storage.getFloat(parameter.name, 0));
+		parameter.cache = parameter.getValue();
 	}
 }
 
@@ -102,13 +107,13 @@ const char *getParameterName(int index) {
 
 float getParameter(int index) {
 	if (index < 0 || index >= parametersCount()) return NAN;
-	return *parameters[index].variable;
+	return parameters[index].getValue();
 }
 
 float getParameter(const char *name) {
 	for (auto &parameter : parameters) {
 		if (strcmp(parameter.name, name) == 0) {
-			return *parameter.variable;
+			return parameter.getValue();
 		}
 	}
 	return NAN;
@@ -117,7 +122,8 @@ float getParameter(const char *name) {
 bool setParameter(const char *name, const float value) {
 	for (auto &parameter : parameters) {
 		if (strcmp(parameter.name, name) == 0) {
-			*parameter.variable = value;
+			if (parameter.integer && !isfinite(value)) return false; // can't set integer to NaN or Inf
+			parameter.setValue(value);
 			return true;
 		}
 	}
@@ -130,16 +136,18 @@ void syncParameters() {
 	if (motorsActive()) return; // don't use flash while flying, it may cause a delay
 
 	for (auto &parameter : parameters) {
-		if (parameter.value == *parameter.variable) continue;
-		if (isnan(parameter.value) && isnan(*parameter.variable)) continue; // handle NAN != NAN
-		storage.putFloat(parameter.name, *parameter.variable);
-		parameter.value = *parameter.variable;
+		if (parameter.getValue() == parameter.cache) continue; // no change
+		if (isnan(parameter.getValue()) && isnan(parameter.cache)) continue; // both are NaN
+		if (isinf(parameter.getValue()) && isinf(parameter.cache)) continue; // both are Inf
+
+		storage.putFloat(parameter.name, parameter.getValue());
+		parameter.cache = parameter.getValue(); // update cache
 	}
 }
 
 void printParameters() {
 	for (auto &parameter : parameters) {
-		print("%s = %g\n", parameter.name, *parameter.variable);
+		print("%s = %g\n", parameter.name, parameter.getValue());
 	}
 }
 
