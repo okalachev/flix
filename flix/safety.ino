@@ -3,11 +3,11 @@
 
 // Fail-safe functions
 
-#define RC_LOSS_TIMEOUT 1
-#define DESCEND_TIME 10
-
 extern float controlTime;
 extern float controlRoll, controlPitch, controlThrottle, controlYaw;
+
+float rcLossTimeout = 1;
+float descendTime = 10;
 
 void failsafe() {
 	rcLossFailsafe();
@@ -16,9 +16,8 @@ void failsafe() {
 
 // RC loss failsafe
 void rcLossFailsafe() {
-	if (controlTime == 0) return; // no RC at all
 	if (!armed) return;
-	if (t - controlTime > RC_LOSS_TIMEOUT) {
+	if (t - controlTime > rcLossTimeout) {
 		descend();
 	}
 }
@@ -27,7 +26,7 @@ void rcLossFailsafe() {
 void descend() {
 	mode = AUTO;
 	attitudeTarget = Quaternion();
-	thrustTarget -= dt / DESCEND_TIME;
+	thrustTarget -= dt / descendTime;
 	if (thrustTarget < 0) {
 		thrustTarget = 0;
 		armed = false;

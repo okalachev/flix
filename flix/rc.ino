@@ -14,7 +14,7 @@ float channelMax[16]; // calibration max values
 
 float controlRoll, controlPitch, controlYaw, controlThrottle; // pilot's inputs, range [-1, 1]
 float controlMode = NAN;
-float controlTime; // time of the last controls update (0 when no RC)
+float controlTime = NAN; // time of the last controls update
 
 // Channels mapping (nan means not assigned):
 float rollChannel = NAN, pitchChannel = NAN, throttleChannel = NAN, yawChannel = NAN, modeChannel = NAN;

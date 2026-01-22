@@ -10,6 +10,7 @@ extern float channelZero[16];
 extern float channelMax[16];
 extern float rollChannel, pitchChannel, throttleChannel, yawChannel, armedChannel, modeChannel;
 extern int wifiMode, udpLocalPort, udpRemotePort;
+extern float rcLossTimeout, descendTime;
 
 Preferences storage;
 
@@ -91,6 +92,9 @@ Parameter parameters[] = {
 	{"MAV_SYS_ID", &mavlinkSysId},
 	{"MAV_RATE_SLOW", &telemetrySlow.rate},
 	{"MAV_RATE_FAST", &telemetryFast.rate},
+	// safety
+	{"SF_RC_LOSS_TIME", &rcLossTimeout},
+	{"SF_DESCEND_TIME", &descendTime},
 };
 
 void setupParameters() {
