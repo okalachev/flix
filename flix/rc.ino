@@ -6,7 +6,11 @@
 #include <SBUS.h>
 #include "util.h"
 
+#ifdef ESP32C3
+SBUS rc(Serial1);
+#else
 SBUS rc(Serial2);
+#endif
 
 uint16_t channels[16]; // raw rc channels
 float channelZero[16]; // calibration zero values
