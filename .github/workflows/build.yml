@@ -25,6 +25,8 @@ jobs:
         path: flix/build
     - name: Build firmware for ESP32-S3
       run: make BOARD=esp32:esp32:esp32s3
+    - name: Build firmware for ESP32-C3
+      run: make BOARD=esp32:esp32:esp32c3
     - name: Check c_cpp_properties.json
       run: tools/check_c_cpp_properties.py
 
