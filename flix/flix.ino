@@ -7,7 +7,6 @@
 #include "quaternion.h"
 #include "util.h"
 
-
 extern float t, dt;
 extern float controlRoll, controlPitch, controlYaw, controlThrottle, controlMode;
 extern Vector gyro, acc;
