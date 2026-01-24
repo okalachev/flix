@@ -142,7 +142,7 @@ void handleMavlink(const void *_msg) {
 		// send ack
 		mavlink_message_t msg;
 		mavlink_msg_param_value_pack(mavlinkSysId, MAV_COMP_ID_AUTOPILOT1, &msg,
-			m.param_id, m.param_value, MAV_PARAM_TYPE_REAL32, parametersCount(), 0); // index is unknown
+			m.param_id, getParameter(name), MAV_PARAM_TYPE_REAL32, parametersCount(), 0); // index is unknown
 		sendMessage(&msg);
 	}
 
