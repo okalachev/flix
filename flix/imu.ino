@@ -19,6 +19,8 @@ Vector acc; // accelerometer output, m/s/s
 Vector accBias;
 Vector accScale(1, 1, 1);
 
+LowPassFilter<Vector> gyroBiasFilter(0.001);
+
 void setupIMU() {
 	print("Setup IMU\n");
 	imu.begin();
@@ -50,8 +52,6 @@ void readIMU() {
 void calibrateGyroOnce() {
 	static Delay landedDelay(2);
 	if (!landedDelay.update(landed)) return; // calibrate only if definitely stationary
-
-	static LowPassFilter<Vector> gyroBiasFilter(0.001);
 	gyroBias = gyroBiasFilter.update(gyro);
 }
 

@@ -6,6 +6,7 @@
 #include "pid.h"
 #include "vector.h"
 #include "util.h"
+#include "lpf.h"
 
 extern const int MOTOR_REAR_LEFT, MOTOR_REAR_RIGHT, MOTOR_FRONT_RIGHT, MOTOR_FRONT_LEFT;
 extern const int RAW, ACRO, STAB, AUTO;
@@ -14,6 +15,7 @@ extern uint16_t channels[16];
 extern float controlTime;
 extern int mode;
 extern bool armed;
+extern LowPassFilter<Vector> gyroBiasFilter;
 
 const char* motd =
 "\nWelcome to\n"
@@ -178,6 +180,7 @@ void doCommand(String str, bool echo = false) {
 #endif
 	} else if (command == "reset") {
 		attitude = Quaternion();
+		gyroBiasFilter.reset();
 	} else if (command == "reboot") {
 		ESP.restart();
 	} else {

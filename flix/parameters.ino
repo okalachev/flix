@@ -59,6 +59,7 @@ Parameter parameters[] = {
 	{"IMU_ACC_SCALE_X", &accScale.x},
 	{"IMU_ACC_SCALE_Y", &accScale.y},
 	{"IMU_ACC_SCALE_Z", &accScale.z},
+	{"IMU_GYRO_BIAS_A", &gyroBiasFilter.alpha},
 	// estimate
 	{"EST_ACC_WEIGHT", &accWeight},
 	{"EST_RATES_LPF_A", &ratesFilter.alpha},
