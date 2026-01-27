@@ -94,7 +94,7 @@ void doCommand(String str, bool echo = false) {
 	} else if (command == "p") {
 		bool success = setParameter(arg0.c_str(), arg1.toFloat());
 		if (success) {
-			print("%s = %g\n", arg0.c_str(), arg1.toFloat());
+			print("%s = %g\n", arg0.c_str(), getParameter(arg0.c_str()));
 		} else {
 			print("Parameter not found: %s\n", arg0.c_str());
 		}
