@@ -120,6 +120,11 @@ void setupParameters() {
 	}
 }
 
+void afterParameterChange(String name, const float value) {
+	if (name == "MOT_PWM_FREQ" || name == "MOT_PWM_RES") setupMotors();
+	if (name == "MOT_PIN_FL" || name == "MOT_PIN_FR" || name == "MOT_PIN_RL" || name == "MOT_PIN_RR") setupMotors();
+}
+
 int parametersCount() {
 	return sizeof(parameters) / sizeof(parameters[0]);
 }
@@ -148,6 +153,7 @@ bool setParameter(const char *name, const float value) {
 		if (strcasecmp(parameter.name, name) == 0) {
 			if (parameter.integer && !isfinite(value)) return false; // can't set integer to NaN or Inf
 			parameter.setValue(value);
+			afterParameterChange(name, value);
 			return true;
 		}
 	}

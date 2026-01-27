@@ -165,6 +165,7 @@ void delay(uint32_t ms) {
 
 bool ledcAttach(uint8_t pin, uint32_t freq, uint8_t resolution) { return true; }
 bool ledcWrite(uint8_t pin, uint32_t duty) { return true; }
+uint32_t ledcChangeFrequency(uint8_t pin, uint32_t freq, uint8_t resolution) { return freq; }
 
 unsigned long __micros;
 unsigned long __resetTime = 0;
