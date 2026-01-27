@@ -49,6 +49,9 @@ Parameter parameters[] = {
 	{"CTL_R_RATE_MAX", &maxRate.x},
 	{"CTL_Y_RATE_MAX", &maxRate.z},
 	{"CTL_TILT_MAX", &tiltMax},
+	{"CTL_FLT_MODE_0", &flightModes[0]},
+	{"CTL_FLT_MODE_1", &flightModes[1]},
+	{"CTL_FLT_MODE_2", &flightModes[2]},
 	// imu
 	{"IMU_ROT_ROLL", &imuRotation.x},
 	{"IMU_ROT_PITCH", &imuRotation.y},
