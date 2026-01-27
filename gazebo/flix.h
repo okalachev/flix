@@ -9,6 +9,7 @@
 #include "quaternion.h"
 #include "Arduino.h"
 #include "wifi.h"
+#include "lpf.h"
 
 extern float t, dt;
 extern float controlRoll, controlPitch, controlYaw, controlThrottle, controlMode;
@@ -19,6 +20,7 @@ extern float motors[4];
 
 Vector gyro, acc, imuRotation;
 Vector accBias, gyroBias, accScale(1, 1, 1);
+LowPassFilter<Vector> gyroBiasFilter(0);
 
 // declarations
 void step();
