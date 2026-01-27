@@ -1,23 +1,18 @@
 // Copyright (c) 2023 Oleg Kalachev <okalachev@gmail.com>
 // Repository: https://github.com/okalachev/flix
 
-// Motors output control using MOSFETs
-// In case of using ESCs, change PWM_STOP, PWM_MIN and PWM_MAX to appropriate values in μs, decrease PWM_FREQUENCY (to 400)
+// PWM control for motors
 
 #include "util.h"
 
-#define MOTOR_0_PIN 12 // rear left
-#define MOTOR_1_PIN 13 // rear right
-#define MOTOR_2_PIN 14 // front right
-#define MOTOR_3_PIN 15 // front left
-
-#define PWM_FREQUENCY 78000
-#define PWM_RESOLUTION 10
-#define PWM_STOP 0
-#define PWM_MIN 0
-#define PWM_MAX 1000000 / PWM_FREQUENCY
-
 float motors[4]; // normalized motor thrusts in range [0..1]
+
+int motorPins[4] = {12, 13, 14, 15}; // default pin numbers
+int pwmFrequency = 78000;
+int pwmResolution = 10;
+int pwmStop = 0;
+int pwmMin = 0;
+int pwmMax = -1; // -1 means duty cycle mode
 
 const int MOTOR_REAR_LEFT = 0;
 const int MOTOR_REAR_RIGHT = 1;
@@ -26,30 +21,30 @@ const int MOTOR_FRONT_LEFT = 3;
 
 void setupMotors() {
 	print("Setup Motors\n");
-
 	// configure pins
-	ledcAttach(MOTOR_0_PIN, PWM_FREQUENCY, PWM_RESOLUTION);
-	ledcAttach(MOTOR_1_PIN, PWM_FREQUENCY, PWM_RESOLUTION);
-	ledcAttach(MOTOR_2_PIN, PWM_FREQUENCY, PWM_RESOLUTION);
-	ledcAttach(MOTOR_3_PIN, PWM_FREQUENCY, PWM_RESOLUTION);
-
+	for (int i = 0; i < 4; i++) {
+		ledcAttach(motorPins[i], pwmFrequency, pwmResolution);
+	}
 	sendMotors();
 	print("Motors initialized\n");
 }
 
-int getDutyCycle(float value) {
-	value = constrain(value, 0, 1);
-	float pwm = mapf(value, 0, 1, PWM_MIN, PWM_MAX);
-	if (value == 0) pwm = PWM_STOP;
-	float duty = mapf(pwm, 0, 1000000 / PWM_FREQUENCY, 0, (1 << PWM_RESOLUTION) - 1);
-	return round(duty);
+void sendMotors() {
+	for (int i = 0; i < 4; i++) {
+		ledcWrite(motorPins[i], getDutyCycle(motors[i]));
+	}
 }
 
-void sendMotors() {
-	ledcWrite(MOTOR_0_PIN, getDutyCycle(motors[0]));
-	ledcWrite(MOTOR_1_PIN, getDutyCycle(motors[1]));
-	ledcWrite(MOTOR_2_PIN, getDutyCycle(motors[2]));
-	ledcWrite(MOTOR_3_PIN, getDutyCycle(motors[3]));
+int getDutyCycle(float value) {
+	value = constrain(value, 0, 1);
+	if (pwmMax >= 0) { // pwm mode
+		float pwm = mapf(value, 0, 1, pwmMin, pwmMax);
+		if (value == 0) pwm = pwmStop;
+		float duty = mapf(pwm, 0, 1000000 / pwmFrequency, 0, (1 << pwmResolution) - 1);
+		return round(duty);
+	} else { // duty cycle mode
+		return round(value * ((1 << pwmResolution) - 1));
+	}
 }
 
 bool motorsActive() {

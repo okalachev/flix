@@ -32,6 +32,7 @@ void controlRates();
 void controlTorque();
 const char* getModeName();
 void sendMotors();
+int getDutyCycle(float value);
 bool motorsActive();
 void testMotor(int n);
 void print(const char* format, ...);

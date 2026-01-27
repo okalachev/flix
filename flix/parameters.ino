@@ -63,6 +63,16 @@ Parameter parameters[] = {
 	// estimate
 	{"EST_ACC_WEIGHT", &accWeight},
 	{"EST_RATES_LPF_A", &ratesFilter.alpha},
+	// motors
+	{"MOT_PIN_FL", &motorPins[MOTOR_FRONT_LEFT]},
+	{"MOT_PIN_FR", &motorPins[MOTOR_FRONT_RIGHT]},
+	{"MOT_PIN_RL", &motorPins[MOTOR_REAR_LEFT]},
+	{"MOT_PIN_RR", &motorPins[MOTOR_REAR_RIGHT]},
+	{"MOT_PWM_FREQ", &pwmFrequency},
+	{"MOT_PWM_RES", &pwmResolution},
+	{"MOT_PWM_STOP", &pwmStop},
+	{"MOT_PWM_MIN", &pwmMin},
+	{"MOT_PWM_MAX", &pwmMax},
 	// rc
 	{"RC_ZERO_0", &channelZero[0]},
 	{"RC_ZERO_1", &channelZero[1]},

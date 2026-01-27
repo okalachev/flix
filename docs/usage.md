@@ -134,6 +134,20 @@ Before flight you need to calibrate the accelerometer:
 1. Access the console using QGroundControl (recommended) or Serial Monitor.
 2. Type `ca` command there and follow the instructions.
 
+### Setup motors
+
+If using non-default motor pins, set the pin numbers using the parameters: `MOTOR_PIN_FL`, `MOTOR_PIN_FR`, `MOTOR_PIN_RL`, `MOTOR_PIN_RR` (front-left, front-right, rear-left, rear-right respectively).
+
+If using brushless motors and ESCs:
+
+1. Set the appropriate PWM using the parameters: `MOT_PWM_STOP`, `MOT_PWM_MIN`, and `MOT_PWM_MAX` (1000, 1000, and 2000 is typical).
+2. Decrease the PWM frequency using the `MOT_PWM_FREQ` parameter (400 is typical).
+
+Reboot the drone to apply the changes.
+
+> [!CAUTION]
+> **Remove the props when configuring the motors!** If improperly configured, you may not be able to stop them.
+
 ### Check everything works
 
 1. Check the IMU is working: perform `imu` command and check its output:
