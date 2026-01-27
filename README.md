@@ -138,10 +138,10 @@ You can see a user-contributed [variant of complete circuit diagram](https://mir
 
   |Motor|Position|Direction|Prop type|Motor wires|GPIO|
   |-|-|-|-|-|-|
-  |Motor 0|Rear left|Counter-clockwise|B|Black & White|GPIO12 (*TDI*)|
-  |Motor 1|Rear right|Clockwise|A|Blue & Red|GPIO13 (*TCK*)|
-  |Motor 2|Front right|Counter-clockwise|B|Black & White|GPIO14 (*TMS*)|
-  |Motor 3|Front left|Clockwise|A|Blue & Red|GPIO15 (*TD0*)|
+  |Motor 0|Rear left|Counter-clockwise|B|Black & White|GPIO12 *(TDI)*|
+  |Motor 1|Rear right|Clockwise|A|Blue & Red|GPIO13 *(TCK)*|
+  |Motor 2|Front right|Counter-clockwise|B|Black & White|GPIO14 *(TMS)*|
+  |Motor 3|Front left|Clockwise|A|Blue & Red|GPIO15 *(TD0)*|
 
   Clockwise motors have blue & red wires and correspond to propeller type A (marked on the propeller).
   Counter-clockwise motors have black & white wires correspond to propeller type B.

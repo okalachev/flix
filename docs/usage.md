@@ -250,8 +250,8 @@ You can configure the Wi-Fi using parameters and console commands.
 The Wi-Fi mode is chosen using `WIFI_MODE` parameter in QGroundControl or in the console:
 
 * `0` — Wi-Fi is disabled.
-* `1` — Access Point mode (*AP*) — the drone creates a Wi-Fi network.
-* `2` — Client mode (*STA*) — the drone connects to an existing Wi-Fi network.
+* `1` — Access Point mode *(AP)* — the drone creates a Wi-Fi network.
+* `2` — Client mode *(STA)* — the drone connects to an existing Wi-Fi network.
 * `3` — *ESP-NOW (not implemented yet)*.
 
 > [!WARNING]

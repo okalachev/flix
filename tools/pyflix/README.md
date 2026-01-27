@@ -92,17 +92,17 @@ Full list of events:
 |-----|-----------|----------------|
 |`connected`|Connected to the drone||
 |`disconnected`|Connection is lost||
-|`armed`|Armed state update|Armed state (*bool*)|
-|`mode`|Flight mode update|Flight mode (*str*)|
-|`landed`|Landed state update|Landed state (*bool*)|
+|`armed`|Armed state update|Armed state *(bool)*|
+|`mode`|Flight mode update|Flight mode *(str)*|
+|`landed`|Landed state update|Landed state *(bool)*|
 |`print`|The drone prints text to the console|Text|
-|`attitude`|Attitude update|Attitude quaternion (*list*)|
-|`attitude_euler`|Attitude update|Euler angles (*list*)|
-|`rates`|Angular rates update|Angular rates (*list*)|
-|`channels`|Raw RC channels update|Raw RC channels (*list*)|
-|`motors`|Motor outputs update|Motor outputs (*list*)|
-|`acc`|Accelerometer update|Accelerometer output (*list*)|
-|`gyro`|Gyroscope update|Gyroscope output (*list*)|
+|`attitude`|Attitude update|Attitude quaternion *(list)*|
+|`attitude_euler`|Attitude update|Euler angles *(list)*|
+|`rates`|Angular rates update|Angular rates *(list)*|
+|`channels`|Raw RC channels update|Raw RC channels *(list)*|
+|`motors`|Motor outputs update|Motor outputs *(list)*|
+|`acc`|Accelerometer update|Accelerometer output *(list)*|
+|`gyro`|Gyroscope update|Gyroscope output *(list)*|
 |`mavlink`|Received MAVLink message|Message object|
 |`mavlink.<message_name>`|Received specific MAVLink message|Message object|
 |`mavlink.<message_id>`|Received specific MAVLink message|Message object|
@@ -277,7 +277,3 @@ logger = logging.getLogger('flix')
 logger.setLevel(logging.DEBUG)  # be more verbose
 logger.setLevel(logging.WARNING)  # be less verbose
 ```
-
-## Stability
-
-The library is in development stage. The API is not stable.

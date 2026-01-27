@@ -13,10 +13,10 @@ Do the following:
 Do the following:
 
 * **Check the battery voltage**. Use a multimeter to measure the battery voltage. It should be in range of 3.7-4.2 V.
-* **Check if there are some startup errors**. Connect the ESP32 to the computer and check the Serial Monitor output. Use the Reset button to make sure you see the whole ESP32 output.
+* **Check if there are some startup errors**. Connect the ESP32 to the computer and check the Serial Monitor output. Use the Reset button to make sure you see the whole ESP32 startup output.
 * **Check the baudrate is correct**. If you see garbage characters in the Serial Monitor, make sure the baudrate is set to 115200.
 * **Make sure correct IMU model is chosen**. If using ICM-20948/MPU-6050 board, change `MPU9250` to `ICM20948`/`MPU6050` in the `imu.ino` file.
-* **Check if the console is working**. Perform `help` command in Serial Monitor. You should see the list of available commands. You can also access the console using QGroundControl (*Vehicle Setup* ⇒ *Analyze Tools* ⇒ *MAVLink Console*).
+* **Check if the console is working**. Perform `help` command in Serial Monitor. You should see the list of available commands. You can also access the console using QGroundControl *(Vehicle Setup* ⇒ *Analyze Tools* ⇒ *MAVLink Console)*.
 * **Configure QGroundControl correctly before connecting to the drone** if you use it to control the drone. Go to the settings and enable *Virtual Joystick*. *Auto-Center Throttle* setting **should be disabled**.
 * **If QGroundControl doesn't connect**, you might need to disable the firewall and/or VPN on your computer.
 * **Check the IMU is working**. Perform `imu` command and check its output:
