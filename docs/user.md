@@ -4,6 +4,17 @@ This page contains user-built drones based on the Flix project. Publish your pro
 
 ---
 
+Author: **Arkadiy "Arky" Matsekh**, Foucault Dynamics, Gold Coast, Australia.<br>
+The drone was built for the University of Queensland industry-led Master's capstone project.
+
+**Flight video:**
+
+<a href="https://drive.google.com/file/d/1NNYSVXBY-w0JjCo07D8-PgnVq3ca9plj/view?usp=sharing"><img height=300 src="img/user/arkymatsekh/video.jpg"></a>
+
+<img src="img/user/arkymatsekh/1.jpg" height=150> <img src="img/user/arkymatsekh/2.jpg" height=150> <img src="img/user/arkymatsekh/3.jpg" height=150>
+
+---
+
 Author: [goldarte](https://t.me/goldarte).<br>
 
 <img src="img/user/goldarte/1.jpg" height=150> <img src="img/user/goldarte/2.jpg" height=150>
