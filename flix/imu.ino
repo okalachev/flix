@@ -110,6 +110,14 @@ void calibrateAccelOnce() {
 	accBias = (accMax + accMin) / 2;
 }
 
+void calibrateLevel() {
+	print("Place perfectly level [1 sec]\n");
+	pause(1);
+	Quaternion correction = Quaternion::fromBetweenVectors(Quaternion::rotateVector(Vector(0, 0, 1), attitude), Vector(0, 0, 1));
+	imuRotation = Quaternion::rotate(correction, Quaternion::fromEuler(imuRotation)).toEuler();
+	print("✓ Done: %.3f %.3f %.3f\n", degrees(imuRotation.x), degrees(imuRotation.y), degrees(imuRotation.z));
+}
+
 void printIMUCalibration() {
 	print("gyro bias: %f %f %f\n", gyroBias.x, gyroBias.y, gyroBias.z);
 	print("accel bias: %f %f %f\n", accBias.x, accBias.y, accBias.z);
