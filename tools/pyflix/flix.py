@@ -138,7 +138,7 @@ class Flix:
         while True:
             try:
                 msg: Optional[mavlink.MAVLink_message] = self.connection.recv_match(blocking=True)
-                if msg is None:
+                if msg is None or msg.get_srcSystem() != self.system_id:
                     continue
                 self._connected()
                 msg_dict = msg.to_dict()
