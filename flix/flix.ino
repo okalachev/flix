@@ -21,8 +21,8 @@ void setup() {
 	disableBrownOut();
 	setupParameters();
 	setupLED();
-	setupMotors();
 	setLED(true);
+	setupMotors();
 	setupWiFi();
 	setupIMU();
 	setupRC();

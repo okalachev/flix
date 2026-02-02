@@ -15,9 +15,9 @@ extern float rcLossTimeout, descendTime;
 Preferences storage;
 
 struct Parameter {
-	const char *name; // max length is 15 (Preferences key limit)
+	const char *name; // max length is 15
 	bool integer;
-	union { float *f; int *i; }; // pointer to variable
+	union { float *f; int *i; }; // pointer to the variable
 	float cache; // what's stored in flash
 	Parameter(const char *name, float *variable) : name(name), integer(false), f(variable) {};
 	Parameter(const char *name, int *variable) : name(name), integer(true), i(variable) {};
@@ -112,6 +112,7 @@ Parameter parameters[] = {
 };
 
 void setupParameters() {
+	print("Setup parameters\n");
 	storage.begin("flix", false);
 	// Read parameters from storage
 	for (auto &parameter : parameters) {

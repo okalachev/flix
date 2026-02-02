@@ -8,11 +8,12 @@
 
 extern float controlTime;
 
-bool mavlinkConnected = false;
-String mavlinkPrintBuffer;
 int mavlinkSysId = 1;
 Rate telemetryFast(10);
 Rate telemetrySlow(2);
+
+bool mavlinkConnected = false;
+String mavlinkPrintBuffer;
 
 void processMavlink() {
 	sendMavlink();
@@ -41,9 +42,9 @@ void sendMavlink() {
 	}
 
 	if (telemetryFast && mavlinkConnected) {
-		const float zeroQuat[] = {0, 0, 0, 0};
+		const float offset[] = {0, 0, 0, 0};
 		mavlink_msg_attitude_quaternion_pack(mavlinkSysId, MAV_COMP_ID_AUTOPILOT1, &msg,
-			time, attitude.w, attitude.x, -attitude.y, -attitude.z, rates.x, -rates.y, -rates.z, zeroQuat); // convert to frd
+			time, attitude.w, attitude.x, -attitude.y, -attitude.z, rates.x, -rates.y, -rates.z, offset); // convert to frd
 		sendMessage(&msg);
 
 		mavlink_msg_rc_channels_raw_pack(mavlinkSysId, MAV_COMP_ID_AUTOPILOT1, &msg, controlTime * 1000, 0,
