@@ -43,7 +43,7 @@ void doCommand(String str, bool echo);
 void handleInput();
 void normalizeRC();
 void calibrateRC();
-void calibrateRCChannel(float *channel, uint16_t zero[16], uint16_t max[16], const char *str);
+void calibrateRCChannel(int *channel, uint16_t zero[16], uint16_t max[16], const char *str);
 void printRCCalibration();
 void printLogHeader();
 void printLogData();

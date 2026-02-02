@@ -6,9 +6,9 @@
 #include <Preferences.h>
 #include "util.h"
 
-extern float channelZero[16];
-extern float channelMax[16];
-extern float rollChannel, pitchChannel, throttleChannel, yawChannel, armedChannel, modeChannel;
+extern int channelZero[16];
+extern int channelMax[16];
+extern int rollChannel, pitchChannel, throttleChannel, yawChannel, armedChannel, modeChannel;
 extern int wifiMode, udpLocalPort, udpRemotePort;
 extern float rcLossTimeout, descendTime;
 

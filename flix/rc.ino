@@ -9,15 +9,14 @@
 SBUS rc(Serial2);
 
 uint16_t channels[16]; // raw rc channels
-float channelZero[16]; // calibration zero values
-float channelMax[16]; // calibration max values
+int channelZero[16]; // calibration zero values
+int channelMax[16]; // calibration max values
 
 float controlRoll, controlPitch, controlYaw, controlThrottle; // pilot's inputs, range [-1, 1]
 float controlMode = NAN;
 float controlTime = NAN; // time of the last controls update
 
-// Channels mapping (nan means not assigned):
-float rollChannel = NAN, pitchChannel = NAN, throttleChannel = NAN, yawChannel = NAN, modeChannel = NAN;
+int rollChannel = -1, pitchChannel = -1, throttleChannel = -1, yawChannel = -1, modeChannel = -1; // channel mapping
 
 void setupRC() {
 	print("Setup RC\n");
@@ -41,11 +40,11 @@ void normalizeRC() {
 		controls[i] = mapf(channels[i], channelZero[i], channelMax[i], 0, 1);
 	}
 	// Update control values
-	controlRoll = rollChannel >= 0 ? controls[(int)rollChannel] : 0;
-	controlPitch = pitchChannel >= 0 ? controls[(int)pitchChannel] : 0;
-	controlYaw = yawChannel >= 0 ? controls[(int)yawChannel] : 0;
-	controlThrottle = throttleChannel >= 0 ? controls[(int)throttleChannel] : 0;
-	controlMode = modeChannel >= 0 ? controls[(int)modeChannel] : NAN; // mode switch should not have affect if not set
+	controlRoll = rollChannel < 0 ? 0 : controls[rollChannel];
+	controlPitch = pitchChannel < 0 ? 0 : controls[pitchChannel];
+	controlYaw = yawChannel < 0 ? 0 : controls[yawChannel];
+	controlThrottle = throttleChannel < 0 ? 0 : controls[throttleChannel];
+	controlMode = modeChannel < 0 ? NAN : controls[modeChannel]; // mode control is ineffective if not mapped
 }
 
 void calibrateRC() {
@@ -64,7 +63,7 @@ void calibrateRC() {
 	printRCCalibration();
 }
 
-void calibrateRCChannel(float *channel, uint16_t in[16], uint16_t out[16], const char *str) {
+void calibrateRCChannel(int *channel, uint16_t in[16], uint16_t out[16], const char *str) {
 	print("%s", str);
 	pause(3);
 	for (int i = 0; i < 30; i++) readRC(); // try update 30 times max
@@ -85,15 +84,15 @@ void calibrateRCChannel(float *channel, uint16_t in[16], uint16_t out[16], const
 		channelZero[ch] = in[ch];
 		channelMax[ch] = out[ch];
 	} else {
-		*channel = NAN;
+		*channel = -1;
 	}
 }
 
 void printRCCalibration() {
 	print("Control   Ch     Zero   Max\n");
-	print("Roll      %-7g%-7g%-7g\n", rollChannel, rollChannel >= 0 ? channelZero[(int)rollChannel] : NAN, rollChannel >= 0 ? channelMax[(int)rollChannel] : NAN);
-	print("Pitch     %-7g%-7g%-7g\n", pitchChannel, pitchChannel >= 0 ? channelZero[(int)pitchChannel] : NAN, pitchChannel >= 0 ? channelMax[(int)pitchChannel] : NAN);
-	print("Yaw       %-7g%-7g%-7g\n", yawChannel, yawChannel >= 0 ? channelZero[(int)yawChannel] : NAN, yawChannel >= 0 ? channelMax[(int)yawChannel] : NAN);
-	print("Throttle  %-7g%-7g%-7g\n", throttleChannel, throttleChannel >= 0 ? channelZero[(int)throttleChannel] : NAN, throttleChannel >= 0 ? channelMax[(int)throttleChannel] : NAN);
-	print("Mode      %-7g%-7g%-7g\n", modeChannel, modeChannel >= 0 ? channelZero[(int)modeChannel] : NAN, modeChannel >= 0 ? channelMax[(int)modeChannel] : NAN);
+	print("Roll      %-7d%-7d%-7d\n", rollChannel, rollChannel < 0 ? 0 : channelZero[rollChannel], rollChannel < 0 ? 0 : channelMax[rollChannel]);
+	print("Pitch     %-7d%-7d%-7d\n", pitchChannel, pitchChannel < 0 ? 0 : channelZero[pitchChannel], pitchChannel < 0 ? 0 : channelMax[pitchChannel]);
+	print("Yaw       %-7d%-7d%-7d\n", yawChannel, yawChannel < 0 ? 0 : channelZero[yawChannel], yawChannel < 0 ? 0 : channelMax[yawChannel]);
+	print("Throttle  %-7d%-7d%-7d\n", throttleChannel, throttleChannel < 0 ? 0 : channelZero[throttleChannel], throttleChannel < 0 ? 0 : channelMax[throttleChannel]);
+	print("Mode      %-7d%-7d%-7d\n", modeChannel, modeChannel < 0 ? 0 : channelZero[modeChannel], modeChannel < 0 ? 0 : channelMax[modeChannel]);
 }
