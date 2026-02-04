@@ -148,27 +148,29 @@ Reboot the drone to apply the changes.
 > [!CAUTION]
 > **Remove the props when configuring the motors!** If improperly configured, you may not be able to stop them.
 
-### Check everything works
+### Important: check everything works
 
-1. Check the IMU is working: perform `imu` command and check its output:
+1. Check the IMU is working: perform `imu` command in the console and check the output:
 
    * The `status` field should be `OK`.
    * The `rate` field should be about 1000 (Hz).
    * The `accel` and `gyro` fields should change as you move the drone.
+   * The `accel bias` and `accel scale` fields should contain calibration parameters (not zeros and ones).
+   * The `gyro bias` field should contain estimated gyro bias (not zeros).
    * The `landed` field should be `1` when the drone is still on the ground and `0` when you lift it up.
 
 2. Check the attitude estimation: connect to the drone using QGroundControl, rotate the drone in different orientations and check if the attitude estimation shown in QGroundControl is correct. Compare your attitude indicator (in the *large vertical* mode) to the video:
 
     <a href="https://youtu.be/yVRN23-GISU"><img width=300 src="https://i3.ytimg.com/vi/yVRN23-GISU/maxresdefault.jpg"></a>
 
-3. Perform motor tests in the console. Use the following commands **— remove the propellers before running the tests!**
+3. Perform motor tests. Use the following commands **— remove the propellers before running the tests!**
 
-   * `mfr` — should rotate front right motor (counter-clockwise).
-   * `mfl` — should rotate front left motor (clockwise).
-   * `mrl` — should rotate rear left motor (counter-clockwise).
-   * `mrr` — should rotate rear right motor (clockwise).
+   * `mfr` — rotate front right motor (counter-clockwise).
+   * `mfl` — rotate front left motor (clockwise).
+   * `mrl` — rotate rear left motor (counter-clockwise).
+   * `mrr` — rotate rear right motor (clockwise).
 
-   Rotation diagram:
+   Make sure rotation directions and propeller types match the following diagram:
 
    <img src="img/motors.svg" width=200>
 
@@ -234,11 +236,11 @@ When finished flying, **disarm** the drone, moving the left stick to the bottom 
 
 ### Flight modes
 
-Flight mode is changed using mode switch on the remote control or using the command line.
+Flight mode is changed using mode switch on the remote control (if configured) or using the console commands. The main flight mode is *STAB*.
 
 #### STAB
 
-The default mode is *STAB*. In this mode, the drone stabilizes its attitude (orientation). The left stick controls throttle and yaw rate, the right stick controls pitch and roll angles.
+In this mode, the drone stabilizes its attitude (orientation). The left stick controls throttle and yaw rate, the right stick controls pitch and roll angles.
 
 > [!IMPORTANT]
 > The drone doesn't stabilize its position, so slight drift is possible. The pilot should compensate it manually.
@@ -253,7 +255,7 @@ In this mode, the pilot controls the angular rates. This control method is diffi
 
 #### AUTO
 
-In this mode, the pilot inputs are ignored (except the mode switch, if configured). The drone can be controlled using [pyflix](../tools/pyflix/) Python library, or by modifying the firmware to implement the needed autonomous behavior.
+In this mode, the pilot inputs are ignored (except the mode switch). The drone can be controlled using [pyflix](../tools/pyflix/) Python library, or by modifying the firmware to implement the needed behavior.
 
 If the pilot moves the control sticks, the drone will switch back to *STAB* mode.
 
