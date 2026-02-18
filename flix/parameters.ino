@@ -113,7 +113,7 @@ Parameter parameters[] = {
 
 void setupParameters() {
 	print("Setup parameters\n");
-	storage.begin("flix", false);
+	storage.begin("flix");
 	// Read parameters from storage
 	for (auto &parameter : parameters) {
 		if (!storage.isKey(parameter.name)) {
@@ -165,8 +165,7 @@ void syncParameters() {
 
 	for (auto &parameter : parameters) {
 		if (parameter.getValue() == parameter.cache) continue; // no change
-		if (isnan(parameter.getValue()) && isnan(parameter.cache)) continue; // both are NaN
-		if (isinf(parameter.getValue()) && isinf(parameter.cache)) continue; // both are Inf
+		if (isnan(parameter.getValue()) && isnan(parameter.cache)) continue; // both are NAN
 
 		storage.putFloat(parameter.name, parameter.getValue());
 		parameter.cache = parameter.getValue(); // update cache
