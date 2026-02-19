@@ -19,8 +19,9 @@ struct Parameter {
 	bool integer;
 	union { float *f; int *i; }; // pointer to the variable
 	float cache; // what's stored in flash
-	Parameter(const char *name, float *variable) : name(name), integer(false), f(variable) {};
-	Parameter(const char *name, int *variable) : name(name), integer(true), i(variable) {};
+	void (*callback)(); // called after parameter change
+	Parameter(const char *name, float *variable, void (*callback)() = nullptr) : name(name), integer(false), f(variable), callback(callback) {};
+	Parameter(const char *name, int *variable, void (*callback)() = nullptr) : name(name), integer(true), i(variable), callback(callback) {};
 	float getValue() const { return integer ? *i : *f; };
 	void setValue(const float value) { if (integer) *i = value; else *f = value; };
 };
@@ -67,12 +68,12 @@ Parameter parameters[] = {
 	{"EST_ACC_WEIGHT", &accWeight},
 	{"EST_RATES_LPF_A", &ratesFilter.alpha},
 	// motors
-	{"MOT_PIN_FL", &motorPins[MOTOR_FRONT_LEFT]},
-	{"MOT_PIN_FR", &motorPins[MOTOR_FRONT_RIGHT]},
-	{"MOT_PIN_RL", &motorPins[MOTOR_REAR_LEFT]},
-	{"MOT_PIN_RR", &motorPins[MOTOR_REAR_RIGHT]},
-	{"MOT_PWM_FREQ", &pwmFrequency},
-	{"MOT_PWM_RES", &pwmResolution},
+	{"MOT_PIN_FL", &motorPins[MOTOR_FRONT_LEFT], setupMotors},
+	{"MOT_PIN_FR", &motorPins[MOTOR_FRONT_RIGHT], setupMotors},
+	{"MOT_PIN_RL", &motorPins[MOTOR_REAR_LEFT], setupMotors},
+	{"MOT_PIN_RR", &motorPins[MOTOR_REAR_RIGHT], setupMotors},
+	{"MOT_PWM_FREQ", &pwmFrequency, setupMotors},
+	{"MOT_PWM_RES", &pwmResolution, setupMotors},
 	{"MOT_PWM_STOP", &pwmStop},
 	{"MOT_PWM_MIN", &pwmMin},
 	{"MOT_PWM_MAX", &pwmMax},
@@ -152,6 +153,7 @@ bool setParameter(const char *name, const float value) {
 		if (strcasecmp(parameter.name, name) == 0) {
 			if (parameter.integer && !isfinite(value)) return false; // can't set integer to NaN or Inf
 			parameter.setValue(value);
+			if (parameter.callback) parameter.callback();
 			return true;
 		}
 	}

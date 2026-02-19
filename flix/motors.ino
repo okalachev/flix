@@ -24,6 +24,7 @@ void setupMotors() {
 	// configure pins
 	for (int i = 0; i < 4; i++) {
 		ledcAttach(motorPins[i], pwmFrequency, pwmResolution);
+		pwmFrequency = ledcChangeFrequency(motorPins[i], pwmFrequency, pwmResolution); // when reconfiguring
 	}
 	sendMotors();
 	print("Motors initialized\n");
