@@ -4,6 +4,22 @@ This page contains user-built drones based on the Flix project. Publish your pro
 
 ---
 
+Author: [FanBy0ru](https://https://github.com/FanBy0ru).<br>
+Description: custom 3D-printed frame.<br>
+Frame STLs and flight validation: https://cults3d.com/en/3d-model/gadget/armature-pour-flix-drone.
+
+<img src="img/user/fanby0ru/1.jpg" height=200> <img src="img/user/fanby0ru/2.jpg" height=200>
+
+---
+
+Author: Ivan44 Phalko.<br>
+Description: custom PCB, cusom test bench.<br>
+[Flight validation](https://drive.google.com/file/d/17DNDJ1gPmCmDRAwjedCbJ9RXAyqMqqcX/view?usp=sharing).
+
+<img src="img/user/phalko/1.jpg" height=200> <img src="img/user/phalko/2.jpg" height=200> <img src="img/user/phalko/3.jpg" height=200>
+
+---
+
 Author: **Arkadiy "Arky" Matsekh**, Foucault Dynamics, Gold Coast, Australia.<br>
 The drone was built for the University of Queensland industry-led Master's capstone project.
 
