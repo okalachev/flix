@@ -7,6 +7,7 @@
 #include "util.h"
 
 SBUS rc(Serial2);
+int rcRxPin = -1; // -1 means disabled
 
 uint16_t channels[16]; // raw rc channels
 int channelZero[16]; // calibration zero values
@@ -19,11 +20,13 @@ float controlTime = NAN; // time of the last controls update
 int rollChannel = -1, pitchChannel = -1, throttleChannel = -1, yawChannel = -1, modeChannel = -1; // channel mapping
 
 void setupRC() {
+	if (rcRxPin < 0) return;
 	print("Setup RC\n");
-	rc.begin();
+	rc.begin(rcRxPin);
 }
 
 bool readRC() {
+	if (rcRxPin < 0) return false;
 	if (rc.read()) {
 		SBUSData data = rc.data();
 		for (int i = 0; i < 16; i++) channels[i] = data.ch[i]; // copy channels data
@@ -48,6 +51,10 @@ void normalizeRC() {
 }
 
 void calibrateRC() {
+	if (rcRxPin < 0) {
+		print("RC_RX_PIN = %d, set the RC pin!\n", rcRxPin);
+		return;
+	}
 	uint16_t zero[16];
 	uint16_t center[16];
 	uint16_t max[16];

@@ -35,5 +35,7 @@ Do the following:
 * **Check the propeller directions are correct**. Make sure your propeller types (A or B) are installed as on the picture:
   <img src="img/user/peter_ukhov-2/1.jpg" width="200">
 * **Check the remote control**. Using `rc` command, check the control values reflect your sticks movement. All the controls should change between -1 and 1, and throttle between 0 and 1.
-* If using SBUS receiver, **calibrate the RC**. Type `cr` command in Serial Monitor and follow the instructions.
+* **If using SBUS receiver**:
+  * **Define the used GPIO pin** in `RC_RX_PIN` parameter.
+  * **Calibrate the RC** using `cr` command in the console.
 * **Check the IMU output using QGroundControl**. Connect to the drone using QGroundControl on your computer. Go to the *Analyze* tab, *MAVLINK Inspector*. Plot the data from the `SCALED_IMU` message. The gyroscope and accelerometer data should change according to the drone movement.

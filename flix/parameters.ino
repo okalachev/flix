@@ -9,6 +9,7 @@
 extern int channelZero[16];
 extern int channelMax[16];
 extern int rollChannel, pitchChannel, throttleChannel, yawChannel, armedChannel, modeChannel;
+extern int rcRxPin;
 extern int wifiMode, udpLocalPort, udpRemotePort;
 extern float rcLossTimeout, descendTime;
 
@@ -78,6 +79,7 @@ Parameter parameters[] = {
 	{"MOT_PWM_MIN", &pwmMin},
 	{"MOT_PWM_MAX", &pwmMax},
 	// rc
+	{"RC_RX_PIN", &rcRxPin},
 	{"RC_ZERO_0", &channelZero[0]},
 	{"RC_ZERO_1", &channelZero[1]},
 	{"RC_ZERO_2", &channelZero[2]},

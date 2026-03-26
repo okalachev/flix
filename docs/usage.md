@@ -193,11 +193,13 @@ There are several ways to control the drone's flight: using **smartphone** (Wi-F
 
 ### Control with a remote control
 
-Before using remote SBUS-connected remote control, you need to calibrate it:
+Before using SBUS-connected remote control you need to enable SBUS and calibrate it:
 
-1. Access the console using QGroundControl (recommended) or Serial Monitor.
-2. Type `cr` command and follow the instructions.
-3. Use the remote control to fly the drone!
+1. Connect to the drone using QGroundControl.
+2. In parameters, set the `RC_RX_PIN` parameter to the GPIO pin number where the SBUS signal is connected, for example: 4. Negative value disables SBUS.
+3. Reboot the drone to apply changes.
+4. Open the console, type `cr` command and follow the instructions to calibrate the remote control.
+5. Use the remote control to fly the drone!
 
 ### Control with a USB remote control
 
