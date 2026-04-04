@@ -6,10 +6,18 @@
 
 #include "util.h"
 
+#ifdef ESP32C3
+// ESP32-C3 Super Mini: GPIO 12-15 not available, use 4-7
+#define MOTOR_0_PIN 4 // rear left
+#define MOTOR_1_PIN 5 // rear right
+#define MOTOR_2_PIN 6 // front right
+#define MOTOR_3_PIN 7 // front left
+#else
 #define MOTOR_0_PIN 12 // rear left
 #define MOTOR_1_PIN 13 // rear right
 #define MOTOR_2_PIN 14 // front right
 #define MOTOR_3_PIN 15 // front left
+#endif
 
 #define PWM_FREQUENCY 78000
 #define PWM_RESOLUTION 10
