@@ -6,8 +6,19 @@
 #include "vector.h"
 #include "quaternion.h"
 #include "pid.h"
+#include "fuzzy.h"
 #include "lpf.h"
 #include "util.h"
+
+// Set to 1 to replace PID with Fuzzy-PID gain scheduler (experimental)
+// Set to 0 to use plain PID (default, flight-tested)
+#define USE_FUZZY_PID 0
+
+#if USE_FUZZY_PID
+#define Controller FuzzyGainScheduler
+#else
+#define Controller PID
+#endif
 
 #define PITCHRATE_P 0.05
 #define PITCHRATE_I 0.2
@@ -44,12 +55,12 @@ Vector ratesExtra; // feedforward rates
 Vector torqueTarget;
 float thrustTarget;
 
-PID rollRatePID(ROLLRATE_P, ROLLRATE_I, ROLLRATE_D, ROLLRATE_I_LIM, RATES_D_LPF_ALPHA);
-PID pitchRatePID(PITCHRATE_P, PITCHRATE_I, PITCHRATE_D, PITCHRATE_I_LIM, RATES_D_LPF_ALPHA);
-PID yawRatePID(YAWRATE_P, YAWRATE_I, YAWRATE_D);
-PID rollPID(ROLL_P, ROLL_I, ROLL_D);
-PID pitchPID(PITCH_P, PITCH_I, PITCH_D);
-PID yawPID(YAW_P, 0, 0);
+Controller rollRatePID(ROLLRATE_P, ROLLRATE_I, ROLLRATE_D, ROLLRATE_I_LIM, RATES_D_LPF_ALPHA);
+Controller pitchRatePID(PITCHRATE_P, PITCHRATE_I, PITCHRATE_D, PITCHRATE_I_LIM, RATES_D_LPF_ALPHA);
+Controller yawRatePID(YAWRATE_P, YAWRATE_I, YAWRATE_D);
+Controller rollPID(ROLL_P, ROLL_I, ROLL_D);
+Controller pitchPID(PITCH_P, PITCH_I, PITCH_D);
+Controller yawPID(YAW_P, 0, 0);
 Vector maxRate(ROLLRATE_MAX, PITCHRATE_MAX, YAWRATE_MAX);
 float tiltMax = TILT_MAX;
 
