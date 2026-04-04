@@ -7,11 +7,12 @@
 #include "util.h"
 
 #ifdef ESP32C3
-// ESP32-C3 Super Mini: GPIO 12-15 not available, use 4-7
-#define MOTOR_0_PIN 4 // rear left
-#define MOTOR_1_PIN 5 // rear right
-#define MOTOR_2_PIN 6 // front right
-#define MOTOR_3_PIN 7 // front left
+// ESP32-C3 Super Mini: GPIO 12-15 not available
+// Avoid SPI pins (SCK=4, MISO=5, MOSI=6, SS=7), LED (8), boot (0,9), UART (20,21)
+#define MOTOR_0_PIN 1  // rear left
+#define MOTOR_1_PIN 2  // rear right
+#define MOTOR_2_PIN 3  // front right
+#define MOTOR_3_PIN 10 // front left
 #else
 #define MOTOR_0_PIN 12 // rear left
 #define MOTOR_1_PIN 13 // rear right
