@@ -23,11 +23,11 @@ print('> imu')
 print(flix.cli('imu'))
 
 print('=== Get parameter...')
-pitch_p = flix.get_param('PITCH_P')
-print('PITCH_P = ', pitch_p)
+pitch_p = flix.get_param('CTL_P_P')
+print('CTL_P_P = ', pitch_p)
 
 print('=== Set parameter...')
-flix.set_param('PITCH_P', pitch_p)
+flix.set_param('CTL_P_P', pitch_p)
 
 print('=== Wait for gyro update...')
 print('Gyro: ', flix.wait('gyro'))

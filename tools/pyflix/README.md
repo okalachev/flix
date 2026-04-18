@@ -117,8 +117,8 @@ Full list of events:
 Get and set firmware parameters using `get_param` and `set_param` methods:
 
 ```python
-pitch_p = flix.get_param('PITCH_P')  # get parameter value
-flix.set_param('PITCH_P', 5)         # set parameter value
+pitch_p = flix.get_param('CTL_P_P')  # get parameter value
+flix.set_param('CTL_P_P', 5)         # set parameter value
 ```
 
 Execute console commands using `cli` method. This method returns the command response:
