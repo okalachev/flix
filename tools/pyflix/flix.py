@@ -26,6 +26,7 @@ class Flix:
     mode: str = ''
     armed: bool = False
     landed: bool = False
+    voltage: float = 0
     attitude: List[float]
     attitude_euler: List[float]  # roll, pitch, yaw
     rates: List[float]
@@ -68,7 +69,7 @@ class Flix:
         self._heartbeat_thread.start()
         if wait_connection:
             self.wait('mavlink.HEARTBEAT')
-            time.sleep(0.2) # give some time to receive initial state
+            time.sleep(0.6) # give some time to receive initial state
 
     def _init_state(self):
         self.attitude = [1, 0, 0, 0]
@@ -189,6 +190,10 @@ class Flix:
             self.gyro = self._mavlink_to_flu([msg.xgyro / 1000, msg.ygyro / 1000, msg.zgyro / 1000])
             self._trigger('acc', self.acc)
             self._trigger('gyro', self.gyro)
+
+        if isinstance(msg, mavlink.MAVLink_battery_status_message):
+            self.voltage = msg.voltages[0] / 1000
+            self._trigger('voltage', self.voltage)
 
         if isinstance(msg, mavlink.MAVLink_serial_control_message):
             # new chunk of data

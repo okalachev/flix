@@ -37,6 +37,7 @@ print(flix.connected)       # True if connected to the drone
 print(flix.mode)            # current flight mode (str)
 print(flix.armed)           # True if the drone is armed
 print(flix.landed)          # True if the drone is landed
+print(flix.voltage)         # battery voltage
 print(flix.attitude)        # attitude quaternion [w, x, y, z]
 print(flix.attitude_euler)  # attitude as Euler angles [roll, pitch, yaw]
 print(flix.rates)           # angular rates [roll_rate, pitch_rate, yaw_rate]
@@ -95,6 +96,7 @@ Full list of events:
 |`armed`|Armed state update|Armed state *(bool)*|
 |`mode`|Flight mode update|Flight mode *(str)*|
 |`landed`|Landed state update|Landed state *(bool)*|
+|`voltage`|Battery voltage update|Voltage *(float)*|
 |`print`|The drone prints text to the console|Text|
 |`attitude`|Attitude update|Attitude quaternion *(list)*|
 |`attitude_euler`|Attitude update|Euler angles *(list)*|

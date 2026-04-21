@@ -27,6 +27,7 @@
 #include "mavlink.ino"
 #include "motors.ino"
 #include "parameters.ino"
+#include "power.ino"
 #include "rc.ino"
 #include "time.ino"
 

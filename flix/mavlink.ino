@@ -7,6 +7,7 @@
 #include "util.h"
 
 extern float controlTime;
+extern float voltage;
 
 int mavlinkSysId = 1;
 Rate telemetryFast(10);
@@ -38,6 +39,13 @@ void sendMavlink() {
 
 		mavlink_msg_extended_sys_state_pack(mavlinkSysId, MAV_COMP_ID_AUTOPILOT1, &msg,
 			MAV_VTOL_STATE_UNDEFINED, landed ? MAV_LANDED_STATE_ON_GROUND : MAV_LANDED_STATE_IN_AIR);
+		sendMessage(&msg);
+
+		uint16_t voltages[] = {voltage * 1000, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX};
+		uint16_t voltagesExt[] = {0, 0, 0, 0};
+		float remaining = constrain(mapf(voltage, 3.4, 4.2, 0, 1), 0, 1);
+		mavlink_msg_battery_status_pack(mavlinkSysId, MAV_COMP_ID_AUTOPILOT1, &msg, 0, MAV_BATTERY_FUNCTION_ALL,
+			MAV_BATTERY_TYPE_LIPO, INT16_MAX, voltages, -1, -1, -1, remaining * 100, 0, MAV_BATTERY_CHARGE_STATE_OK, voltagesExt, 0, 0);
 		sendMessage(&msg);
 	}
 

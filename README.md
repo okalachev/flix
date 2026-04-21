@@ -156,6 +156,8 @@ You can see a user-contributed [variant of complete circuit diagram](https://mir
 
 *¹ — UART2 RX pin was [changed](https://docs.espressif.com/projects/arduino-esp32/en/latest/migration_guides/2.x_to_3.0.html#id14) to GPIO4 in Arduino ESP32 core 3.0.*
 
+* Optionally connect the battery voltage divider for voltage monitoring to any ADC1 pin (e. g. *GPIO32* on ESP32, *GPIO3* on ESP32S3).
+
 ## Resources
 
 * Telegram channel on developing the drone and the flight controller (in Russian): https://t.me/opensourcequadcopter.

@@ -12,6 +12,9 @@ extern int rollChannel, pitchChannel, throttleChannel, yawChannel, armedChannel,
 extern int rcRxPin;
 extern int wifiMode, udpLocalPort, udpRemotePort;
 extern float rcLossTimeout, descendTime;
+extern int voltagePin;
+extern float voltageScale;
+extern LowPassFilter<float> voltageFilter;
 
 Preferences storage;
 
@@ -109,6 +112,10 @@ Parameter parameters[] = {
 	{"MAV_SYS_ID", &mavlinkSysId},
 	{"MAV_RATE_SLOW", &telemetrySlow.rate},
 	{"MAV_RATE_FAST", &telemetryFast.rate},
+	// power
+	{"PWR_VOLT_PIN", &voltagePin},
+	{"PWR_VOLT_SCALE", &voltageScale},
+	{"PWR_VOLT_LPF_A", &voltageFilter.alpha},
 	// safety
 	{"SF_RC_LOSS_TIME", &rcLossTimeout},
 	{"SF_DESCEND_TIME", &descendTime},
