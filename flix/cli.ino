@@ -16,6 +16,7 @@ extern float controlTime;
 extern int mode;
 extern bool armed;
 extern LowPassFilter<Vector> gyroBiasFilter;
+extern float voltage;
 
 const char* motd =
 "\nWelcome to\n"
@@ -39,6 +40,7 @@ const char* motd =
 "disarm - disarm the drone\n"
 "raw/stab/acro/auto - set mode\n"
 "rc - show RC data\n"
+"pw - show power info\n"
 "wifi - show Wi-Fi info\n"
 "ap <ssid> <password> - setup Wi-Fi access point\n"
 "sta <ssid> <password> - setup Wi-Fi client mode\n"
@@ -135,6 +137,8 @@ void doCommand(String str, bool echo = false) {
 		print("time: %.1f\n", controlTime);
 		print("mode: %s\n", getModeName());
 		print("armed: %d\n", armed);
+	} else if (command == "pw") {
+		print("Voltage: %.1f V\n", voltage);
 	} else if (command == "wifi") {
 		printWiFiInfo();
 	} else if (command == "ap") {

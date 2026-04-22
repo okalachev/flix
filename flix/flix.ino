@@ -39,6 +39,7 @@ void loop() {
 	sendMotors();
 	handleInput();
 	processMavlink();
+	readVoltage();
 	logData();
 	syncParameters();
 }

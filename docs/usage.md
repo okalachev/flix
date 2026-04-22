@@ -146,6 +146,15 @@ If using brushless motors and ESCs:
 > [!CAUTION]
 > **Remove the props when configuring the motors!** If improperly configured, you may not be able to stop them.
 
+### Battery voltage monitoring
+
+ESP32 ADC can measure only up to 3.3 V, so you need to use a voltage divider to monitor the battery voltage. To enable voltage measurement, set the following parameters:
+
+1. `PWR_VOLT_PIN` — GPIO pin number where the voltage divider is connected (*-1* to disable).
+2. `PWR_VOLT_SCALE` — voltage divider coefficient (*2* for two equal resistors).
+
+After this setup, you should see the battery voltage in QGroundControl top panel or using `pw` command in the console.
+
 ### Important: check everything works
 
 1. Check the IMU is working: perform `imu` command in the console and check the output:
