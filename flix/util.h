@@ -6,8 +6,6 @@
 #pragma once
 
 #include <math.h>
-#include <soc/soc.h>
-#include <soc/rtc_cntl_reg.h>
 
 const float ONE_G = 9.80665;
 extern float t;
@@ -33,11 +31,6 @@ float wrapAngle(float angle) {
 		angle += 2 * PI;
 	}
 	return angle;
-}
-
-// Disable reset on low voltage
-void disableBrownOut() {
-	REG_CLR_BIT(RTC_CNTL_BROWN_OUT_REG, RTC_CNTL_BROWN_OUT_ENA);
 }
 
 // Trim and split string by spaces

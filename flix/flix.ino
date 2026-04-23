@@ -18,8 +18,8 @@ extern float motors[4];
 void setup() {
 	Serial.begin(115200);
 	print("Initializing flix\n");
-	disableBrownOut();
 	setupParameters();
+	setupPower();
 	setupLED();
 	setLED(true);
 	setupMotors();
