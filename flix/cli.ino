@@ -178,7 +178,7 @@ void doCommand(String str, bool echo = false) {
 			String core = systemState[i].xCoreID == tskNO_AFFINITY ? "*" : String(systemState[i].xCoreID);
 			int cpuPercentage = systemState[i].ulRunTimeCounter / (totalRunTime / 100);
 			print("%-5d%-20s%-7d%-6d%-6s%d\n",systemState[i].xTaskNumber, systemState[i].pcTaskName,
-				systemState[i].usStackHighWaterMark, systemState[i].uxCurrentPriority, core, cpuPercentage);
+				systemState[i].usStackHighWaterMark, systemState[i].uxCurrentPriority, core.c_str(), cpuPercentage);
 		}
 		delete[] systemState;
 #endif
