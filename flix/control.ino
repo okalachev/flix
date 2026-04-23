@@ -67,7 +67,7 @@ void control() {
 
 void interpretControls() {
 	if (controlMode < 0.25) mode = flightModes[0];
-	else if (controlMode < 0.75) mode = flightModes[1];
+	else if (controlMode <= 0.75) mode = flightModes[1];
 	else if (controlMode > 0.75) mode = flightModes[2];
 
 	if (mode == AUTO) return; // pilot is not effective in AUTO mode
