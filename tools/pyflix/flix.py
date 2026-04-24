@@ -186,7 +186,8 @@ class Flix:
             self._trigger('motors', self.motors)
 
         if isinstance(msg, mavlink.MAVLink_scaled_imu_message):
-            self.acc = self._mavlink_to_flu([msg.xacc / 1000, msg.yacc / 1000, msg.zacc / 1000])
+            ONE_G = 9.80665
+            self.acc = self._mavlink_to_flu([msg.xacc * ONE_G / 1000, msg.yacc * ONE_G / 1000, msg.zacc * ONE_G / 1000])
             self.gyro = self._mavlink_to_flu([msg.xgyro / 1000, msg.ygyro / 1000, msg.zgyro / 1000])
             self._trigger('acc', self.acc)
             self._trigger('gyro', self.gyro)
