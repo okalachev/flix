@@ -30,7 +30,7 @@ flix = Flix()  # create a Flix object and wait for connection
 
 ### Telemetry
 
-Basic telemetry is available through object properties. The property names generally match the corresponding variables in the firmware itself:
+Basic telemetry is available through object properties. The property names generally match the corresponding variables in the firmware code:
 
 ```python
 print(flix.connected)       # True if connected to the drone

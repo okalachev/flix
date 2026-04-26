@@ -77,7 +77,7 @@ Additional articles:
 |Motor|8520 3.7V brushed motor.<br>Motor with exact 3.7V voltage is needed, not ranged working voltage (3.7V — 6V).<br>Make sure the motor shaft diameter and propeller hole diameter match!|<img src="docs/img/motor.jpeg" width=100>|4|
 |Propeller|55 mm (alternatively 65 mm)|<img src="docs/img/prop.jpg" width=100>|4|
 |MOSFET (transistor)|100N03A or [analog](https://t.me/opensourcequadcopter/33)|<img src="docs/img/100n03a.jpg" width=100>|4|
-|Pull-down resistor|10 kΩ|<img src="docs/img/resistor10k.jpg" width=100>|4|
+|Pull-down resistor<br>Voltage measurement resistor|10 kΩ|<img src="docs/img/resistor10k.jpg" width=100>|6|
 |3.7V Li-Po battery|LW 952540 (or any compatible by the size)|<img src="docs/img/battery.jpg" width=100>|1|
 |Battery connector cable|MX2.0 2P female|<img src="docs/img/mx.png" width=100>|1|
 |Li-Po Battery charger|Any|<img src="docs/img/charger.jpg" width=100>|1|
@@ -154,9 +154,11 @@ You can see a user-contributed [variant of complete circuit diagram](https://mir
   |VIN|VCC (or 3.3V depending on the receiver)|
   |Signal (TX)|GPIO4¹|
 
-*¹ — UART2 RX pin was [changed](https://docs.espressif.com/projects/arduino-esp32/en/latest/migration_guides/2.x_to_3.0.html#id14) to GPIO4 in Arduino ESP32 core 3.0.*
+  *¹ — UART2 RX pin was [changed](https://docs.espressif.com/projects/arduino-esp32/en/latest/migration_guides/2.x_to_3.0.html#id14) to GPIO4 in Arduino ESP32 core 3.0.*
 
 * Optionally connect the battery voltage divider for voltage monitoring to any ADC1 pin (e. g. *GPIO32* on ESP32, *GPIO3* on ESP32S3).
+
+  ESP32 and ESP32S3 [can measure](https://docs.espressif.com/projects/arduino-esp32/en/latest/api/adc.html#analogsetattenuation) up to 3.1 V and ESP32S3/ESP32C3 can measure up to 2.5 V, so choose the voltage divider resistors accordingly.
 
 ## Resources
 
