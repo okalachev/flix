@@ -25,6 +25,7 @@ void setupWiFi() {
 	} else if (wifiMode == W_STA) {
 		WiFi.begin(storage.getString("WIFI_STA_SSID", "").c_str(), storage.getString("WIFI_STA_PASS", "").c_str());
 	}
+	WiFi.setSleep(false); // disable power save
 	udp.begin(udpLocalPort);
 }
 
