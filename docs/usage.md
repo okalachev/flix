@@ -245,7 +245,7 @@ When finished flying, **disarm** the drone, moving the left stick to the bottom 
 
 ### Flight modes
 
-Flight mode is changed using mode switch on the remote control (if configured) or using the console commands. The main flight mode is *STAB*.
+Flight mode is changed using mode switch on the remote control (if configured) or using the console commands. The main flight mode is *STAB*. In order to change modes using SBUS remote control, set the parameters: `CTL_FLT_MODE_0`, `CTL_FLT_MODE_1`, and `CTL_FLT_MODE_2` to required mode numbers (0 for *RAW*, 1 for *ACRO*, 2 for *STAB*, 3 for *AUTO*).
 
 #### STAB
 
