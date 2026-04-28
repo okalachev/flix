@@ -105,10 +105,23 @@ public:
 	}
 
 	static Vector rotationVectorBetween(const Vector& a, const Vector& b) {
+		float an = a.norm();
+		float bn = b.norm();
+		if (an < 1e-6 || bn < 1e-6) {
+			return Vector(0, 0, 0);
+		}
 		Vector direction = cross(a, b);
-		if (direction.zero()) {
-			// vectors are opposite, return any perpendicular vector
-			return cross(a, Vector(1, 0, 0));
+		if (direction.norm() < 1e-6) { // vectors are parallel
+			if (dot(a, b) > 0) { // same direction
+				return Vector(0, 0, 0);
+			}
+			// opposite direction
+			Vector perp = cross(a, Vector(1, 0, 0));
+			if (perp.norm() < 1e-6) {
+				perp = cross(a, Vector(0, 1, 0));
+			}
+			perp.normalize();
+			return perp * PI;
 		}
 		direction.normalize();
 		float angle = angleBetween(a, b);
