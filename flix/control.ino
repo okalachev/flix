@@ -149,10 +149,23 @@ void controlTorque() {
 	motors[MOTOR_REAR_LEFT] = thrustTarget + torqueTarget.x + torqueTarget.y - torqueTarget.z;
 	motors[MOTOR_REAR_RIGHT] = thrustTarget - torqueTarget.x + torqueTarget.y + torqueTarget.z;
 
+	desaturate(motors[MOTOR_FRONT_LEFT], motors[MOTOR_FRONT_RIGHT], motors[MOTOR_REAR_LEFT], motors[MOTOR_REAR_RIGHT]);
+
 	motors[0] = constrain(motors[0], 0, 1);
 	motors[1] = constrain(motors[1], 0, 1);
 	motors[2] = constrain(motors[2], 0, 1);
 	motors[3] = constrain(motors[3], 0, 1);
+}
+
+void desaturate(float& a, float& b, float& c, float& d) {
+	float maxThrust = max(max(a, b), max(c, d));
+	if (maxThrust > 1) {
+		float diff = maxThrust - 1;
+		a -= diff;
+		b -= diff;
+		c -= diff;
+		d -= diff;
+	}
 }
 
 const char* getModeName() {

@@ -21,6 +21,8 @@
 #define degrees(rad) ((rad)*RAD_TO_DEG)
 
 #define constrain(amt,low,high) ((amt)<(low)?(low):((amt)>(high)?(high):(amt)))
+template<typename T> T max(T a, T b) { return a > b ? a : b; }
+template<typename T> T min(T a, T b) { return a < b ? a : b; }
 
 long map(long x, long in_min, long in_max, long out_min, long out_max) {
 	const long run = in_max - in_min;
