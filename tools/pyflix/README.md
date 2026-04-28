@@ -24,7 +24,7 @@ pip install pyflix
 The API is accessed through the `Flix` class:
 
 ```python
-from flix import Flix
+from pyflix import Flix
 flix = Flix()  # create a Flix object and wait for connection
 ```
 
