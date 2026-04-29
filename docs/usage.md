@@ -266,7 +266,7 @@ In this mode, the pilot controls the angular rates. This control method is diffi
 
 In this mode, the pilot inputs are ignored (except the mode switch). The drone can be controlled using [pyflix](../tools/pyflix/) Python library, or by modifying the firmware to implement the needed behavior.
 
-If the pilot moves the control sticks, the drone will switch back to *STAB* mode.
+If the pilot moves the control sticks and mode switch is not configured, the drone will switch back to *STAB* mode.
 
 ## Wi-Fi configuration
 

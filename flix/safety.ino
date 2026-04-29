@@ -37,8 +37,8 @@ void descend() {
 void autoFailsafe() {
 	static float roll, pitch, yaw, throttle;
 	if (roll != controlRoll || pitch != controlPitch || yaw != controlYaw || abs(throttle - controlThrottle) > 0.05) {
-		// controls changed
-		if (mode == AUTO) mode = STAB; // regain control by the pilot
+		// controls changed and mode switch is not configured
+		if (mode == AUTO && invalid(controlMode)) mode = STAB; // regain control by the pilot
 	}
 	roll = controlRoll;
 	pitch = controlPitch;
