@@ -112,7 +112,7 @@ You can also work with parameters using `p` command in the console. Parameter na
 
 ### Define IMU orientation
 
-Use parameters, to define the IMU board axes orientation relative to the drone's axes: `IMU_ROT_ROLL`, `IMU_ROT_PITCH`, and `IMU_ROT_YAW`.
+The IMU orientation (relative to the drone's axes) is defined using the parameters: `IMU_ROT_ROLL`, `IMU_ROT_PITCH`, and `IMU_ROT_YAW`.
 
 The drone has *X* axis pointing forward, *Y* axis pointing left, and *Z* axis pointing up, and the supported IMU boards have *X* axis pointing to the pins side and *Z* axis pointing up from the component side:
 
@@ -137,6 +137,8 @@ Before flight you need to calibrate the accelerometer:
 ### Setup motors
 
 If using non-default motor pins, set the pin numbers using the parameters: `MOTOR_PIN_FL`, `MOTOR_PIN_FR`, `MOTOR_PIN_RL`, `MOTOR_PIN_RR` (front-left, front-right, rear-left, rear-right respectively).
+
+Certain ESP32 models (such as ESP32-S3) support a lower maximum PWM frequency; on these boards the parameter `MOT_PWM_FREQ` should be set to 40000 Hz.
 
 If using brushless motors and ESCs:
 
