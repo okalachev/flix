@@ -73,6 +73,7 @@ Parameter parameters[] = {
 	{"IMU_GYRO_BIAS_A", &gyroBiasFilter.alpha},
 	// estimate
 	{"EST_ACC_WEIGHT", &accWeight},
+	{"EST_LVL_WEIGHT", &levelWeight},
 	{"EST_RATES_LPF_A", &ratesFilter.alpha},
 	// motors
 	{"MOT_PIN_FL", &motorPins[MOTOR_FRONT_LEFT], setupMotors},

@@ -27,6 +27,7 @@ void step();
 void computeLoopRate();
 void applyGyro();
 void applyAcc();
+void applyLevel();
 void control();
 void interpretControls();
 void controlAttitude();
