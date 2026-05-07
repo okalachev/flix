@@ -168,6 +168,7 @@ void doCommand(String str, bool echo = false) {
 		print("Chip: %s\n", ESP.getChipModel());
 		print("Temperature: %.1f °C\n", temperatureRead());
 		print("Free heap: %d\n", ESP.getFreeHeap());
+		print("Firmware: " __DATE__ " " __TIME__ "\n");
 		// Print tasks table
 		print("Num  Task                Stack  Prio  Core  CPU%%\n");
 		int taskCount = uxTaskGetNumberOfTasks();
