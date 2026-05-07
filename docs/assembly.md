@@ -28,6 +28,8 @@ Soldered components ([schematics variant](https://miro.com/app/board/uXjVN-dTjoo
 
 <img src="img/assembly/7.jpg" width=600>
 
+See an alternative assembly process photos here: https://drive.google.com/drive/folders/1FG5BH9RCzdf1XmJcC70PymiRMXcz6Fx7?usp=sharing.
+
 ## Motor directions
 
 > [!WARNING]

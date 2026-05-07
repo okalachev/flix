@@ -53,7 +53,7 @@ The simulator is implemented using Gazebo and runs the original Arduino code:
 
 <img src="docs/img/simulator1.png" width=500 alt="Flix simulator">
 
-## Documentation
+## Documentation articles
 
 1. [Assembly instructions](docs/assembly.md).
 2. [Usage: build, setup and flight](docs/usage.md).
@@ -75,10 +75,10 @@ Additional articles:
 |IMU (and barometer¹) board|GY‑91, MPU-9265 (or other MPU‑9250/MPU‑6500 board)<br>ICM20948V2 (ICM‑20948)³<br>GY-521 (MPU-6050)³⁻¹|<img src="docs/img/gy-91.jpg" width=90 align=center><br><img src="docs/img/icm-20948.jpg" width=100><br><img src="docs/img/gy-521.jpg" width=100>|1|
 |Boost converter (optional, for more stable power supply)|5V output|<img src="docs/img/buck-boost.jpg" width=100>|1|
 |Motor|8520 3.7V brushed motor.<br>Motor with exact 3.7V voltage is needed, not ranged working voltage (3.7V — 6V).<br>Make sure the motor shaft diameter and propeller hole diameter match!|<img src="docs/img/motor.jpeg" width=100>|4|
-|Propeller|55 mm (alternatively 65 mm)|<img src="docs/img/prop.jpg" width=100>|4|
+|Propeller|55 mm or 65 mm|<img src="docs/img/prop.jpg" width=100>|4|
 |MOSFET (transistor)|100N03A or [analog](https://t.me/opensourcequadcopter/33)|<img src="docs/img/100n03a.jpg" width=100>|4|
 |Pull-down resistor<br>Voltage measurement resistor|10 kΩ|<img src="docs/img/resistor10k.jpg" width=100>|6|
-|3.7V Li-Po battery|LW 952540 (or any compatible by the size)|<img src="docs/img/battery.jpg" width=100>|1|
+|3.7V Li-Po battery|LW 952540 (or any compatible by the size).<br>Make sure the battery has enough discharge rate — 25C or more!|<img src="docs/img/battery.jpg" width=100>|1|
 |Battery connector cable|MX2.0 2P female|<img src="docs/img/mx.png" width=100>|1|
 |Li-Po Battery charger|Any|<img src="docs/img/charger.jpg" width=100>|1|
 |Screws for IMU board mounting|M3x5|<img src="docs/img/screw-m3.jpg" width=100>|2|
