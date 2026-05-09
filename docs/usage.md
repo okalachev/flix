@@ -170,7 +170,7 @@ After this setup, you should see the battery voltage in QGroundControl top panel
 
 2. Check the attitude estimation: connect to the drone using QGroundControl, rotate the drone in different orientations and check if the attitude estimation shown in QGroundControl is correct. Compare your attitude indicator (in the *large vertical* mode) to the video:
 
-    <a href="https://youtu.be/yVRN23-GISU"><img width=300 src="https://i3.ytimg.com/vi/yVRN23-GISU/maxresdefault.jpg"></a>
+   <a href="https://youtu.be/yVRN23-GISU"><img width=300 src="https://i3.ytimg.com/vi/yVRN23-GISU/maxresdefault.jpg"></a>
 
 3. Perform motor tests. Use the following commands **— remove the propellers before running the tests!**
 
