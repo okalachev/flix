@@ -6,7 +6,12 @@
 #include <SBUS.h>
 #include "util.h"
 
+#ifdef CONFIG_IDF_TARGET_ESP32C3
+SBUS rc(Serial1);
+#else
 SBUS rc(Serial2);
+#endif
+
 int rcRxPin = -1; // -1 means disabled
 
 uint16_t channels[16]; // raw rc channels
