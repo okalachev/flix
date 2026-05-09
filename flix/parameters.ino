@@ -110,8 +110,8 @@ Parameter parameters[] = {
 	{"RC_MODE", &modeChannel},
 	// wifi
 	{"WIFI_MODE", &wifiMode},
-	{"WIFI_LOC_PORT", &udpLocalPort},
-	{"WIFI_REM_PORT", &udpRemotePort},
+	{"WIFI_PORT_LOC", &udpLocalPort},
+	{"WIFI_PORT_REM", &udpRemotePort},
 	// mavlink
 	{"MAV_SYS_ID", &mavlinkSysId},
 	{"MAV_RATE_SLOW", &telemetrySlow.rate},
