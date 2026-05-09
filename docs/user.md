@@ -4,6 +4,14 @@ This page contains user-built drones based on the Flix project. Publish your pro
 
 ---
 
+Author: [Ina Tix](https://t.me/ina_tix).<br>
+Description: XR2981 based DC-DC converter, ELRS MINI 2.4GHz RX SX1280 receiver (SBUS interface), Radiomaster TX12 remote control.<br>
+[Flight validation](https://drive.google.com/file/d/1yqkKNuz4R_yxGqUNQxVpixJbXqEEcUSj/view?usp=share_link).
+
+<img src="img/user/ina_tix/1.jpg" height=200> <img src="img/user/ina_tix/2.jpg" height=200> <img src="img/user/ina_tix/3.jpg" height=200>
+
+---
+
 Author: [FanBy0ru](https://https://github.com/FanBy0ru).<br>
 Description: custom 3D-printed frame.<br>
 Frame STLs and flight validation: https://cults3d.com/en/3d-model/gadget/armature-pour-flix-drone.
