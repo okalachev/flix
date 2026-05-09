@@ -12,20 +12,25 @@ Do the following:
 
 Do the following:
 
-* **Check the battery voltage**. Use a multimeter to measure the battery voltage. It should be in range of 3.7-4.2 V.
+* **Check the battery voltage**. Use a multimeter to measure the battery voltage. The fully charged battery should have about 4.2V.
+* **Check the battery you use has enough discharge current**. The battery should be able to provide 15A of current. So the C-rating for a 1000 mAh battery should be at least 15C (higher is better).
 * **Check if there are some startup errors**. Connect the ESP32 to the computer and check the Serial Monitor output. Use the Reset button or `reboot` command to see the whole startup output.
 * **Check the baudrate is correct**. If you see garbage characters in the Serial Monitor, make sure the baudrate is set to 115200.
-* **Make sure correct IMU model is chosen**. If using ICM-20948/MPU-6050 board, change `MPU9250` to `ICM20948`/`MPU6050` in the `imu.ino` file.
 * **Check if the console is working**. Perform `help` command in Serial Monitor. You should see the list of available commands. You can also access the console using QGroundControl *(Vehicle Setup* ⇒ *Analyze Tools* ⇒ *MAVLink Console)*.
 * **Configure QGroundControl correctly before connecting to the drone** if you use it to control the drone. Go to the settings and enable *Virtual Joystick*. *Auto-Center Throttle* setting **should be disabled**.
 * **If QGroundControl doesn't connect**, you might need to disable the firewall and/or VPN on your computer.
+* **Make sure correct IMU model is chosen**. If using ICM-20948/MPU-6050 board, change `MPU9250` to `ICM20948`/`MPU6050` in the `imu.ino` file.
 * **Check the IMU is working**. Perform `imu` command and check its output:
   * The `status` field should be `OK`.
   * The `rate` field should be about 1000 (Hz).
   * The `accel` and `gyro` fields should change as you move the drone.
-* **Calibrate the accelerometer.** if is wasn't done before. Type `ca` command in Serial Monitor and follow the instructions.
-* **Check the attitude estimation**. Connect to the drone using QGroundControl. Rotate the drone in different orientations and check if the attitude estimation shown in QGroundControl is correct.
 * **Check the IMU orientation is set correctly**. If the attitude estimation is rotated, set the correct IMU orientation as described in the [tutorial](usage.md#define-imu-orientation).
+* **Calibrate the accelerometer.** if is wasn't done before. Type `ca` command in Serial Monitor and follow the instructions.
+* **Check the attitude estimation**. Connect to the drone using QGroundControl. Rotate the drone in different orientations and check if the attitude estimation is shown exactly as on the video below:
+
+  <a href="https://youtu.be/yVRN23-GISU"><img width=200 src="https://i3.ytimg.com/vi/yVRN23-GISU/maxresdefault.jpg"></a>
+
+* **Check the IMU output**. Connect to the drone using QGroundControl on your computer. Go to the *Analyze* tab, *MAVLINK Inspector*. Plot the data from the `SCALED_IMU` message. The gyroscope and accelerometer data should change according to the drone movement.
 * **Check the motors type**. Motors with exact 3.7V voltage are needed, not ranged working voltage (3.7V — 6V).
 * **Check the motors**. Perform the following commands using Serial Monitor:
   * `mfr` — should rotate front right motor (counter-clockwise).
@@ -33,9 +38,10 @@ Do the following:
   * `mrl` — should rotate rear left motor (counter-clockwise).
   * `mrr` — should rotate rear right motor (clockwise).
 * **Check the propeller directions are correct**. Make sure your propeller types (A or B) are installed as on the picture:
+
   <img src="img/user/peter_ukhov-2/1.jpg" width="200">
-* **Check the remote control**. Using `rc` command, check the control values reflect your sticks movement. All the controls should change between -1 and 1, and throttle between 0 and 1.
-* **If using SBUS receiver**:
+
+* **If using an SBUS receiver**:
   * **Define the used GPIO pin** in `RC_RX_PIN` parameter.
   * **Calibrate the RC** using `cr` command in the console.
-* **Check the IMU output using QGroundControl**. Connect to the drone using QGroundControl on your computer. Go to the *Analyze* tab, *MAVLINK Inspector*. Plot the data from the `SCALED_IMU` message. The gyroscope and accelerometer data should change according to the drone movement.
+  * **Check the controls** using `rc` command. All the controls should change between -1 and 1, and the throttle between 0 and 1.
