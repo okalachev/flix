@@ -151,7 +151,7 @@ public:
 	void setRxInvert(bool invert) {};
 };
 
-HardwareSerial Serial, Serial2;
+HardwareSerial Serial, Serial1, Serial2;
 
 class EspClass {
 public:
