@@ -24,6 +24,8 @@ void setupWiFi() {
 		WiFi.softAP(storage.getString("WIFI_AP_SSID", "flix").c_str(), storage.getString("WIFI_AP_PASS", "flixwifi").c_str());
 	} else if (wifiMode == W_STA) {
 		WiFi.begin(storage.getString("WIFI_STA_SSID", "").c_str(), storage.getString("WIFI_STA_PASS", "").c_str());
+	} else {
+		return;
 	}
 	WiFi.setSleep(false); // disable power save
 	udp.begin(udpLocalPort);
@@ -37,6 +39,7 @@ void sendWiFi(const uint8_t *buf, int len) {
 }
 
 int receiveWiFi(uint8_t *buf, int len) {
+	if (WiFi.softAPgetStationNum() == 0 && !WiFi.isConnected()) return 0;
 	udp.parsePacket();
 	if (udp.remoteIP()) udpRemoteIP = udp.remoteIP();
 	return udp.read(buf, len);
@@ -57,10 +60,12 @@ void printWiFiInfo() {
 		print("SSID: %s\n", WiFi.SSID().c_str());
 		print("Password: ***\n");
 		print("IP: %s\n", WiFi.localIP().toString().c_str());
+		print("RSSI: %d dBm\n", WiFi.RSSI());
 	} else {
 		print("Mode: Disabled\n");
 		return;
 	}
+	print("Channel: %d\n", WiFi.channel());
 	print("Remote IP: %s\n", udpRemoteIP.toString().c_str());
 	print("MAVLink connected: %d\n", mavlinkConnected);
 }
