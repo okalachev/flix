@@ -192,6 +192,18 @@ There are several ways to control the drone's flight: using **smartphone** (Wi-F
 
 ### Control with a smartphone
 
+#### Using Mavlink Joystick app (Android)
+
+<img src="https://github.com/goldarte/mavlink-joystick/blob/master/app_screen.png?raw=true" width="400">
+
+1. Download and install [Mavlink Joystick app](https://github.com/goldarte/mavlink-joystick/releases/latest).
+2. Power the drone using the battery.
+3. Connect your smartphone to the appeared `flix` Wi-Fi network (password: `flixwifi`).
+4. Open Mavlink Joystick app. It should connect and begin showing the drone's telemetry automatically.
+5. Use the virtual joystick to fly the drone!
+
+#### Using QGroundControl app
+
 1. Install [QGroundControl mobile app](https://docs.qgroundcontrol.com/master/en/qgc-user-guide/getting_started/download_and_install.html#android) on your smartphone.
 2. Power the drone using the battery.
 3. Connect your smartphone to the appeared `flix` Wi-Fi network (password: `flixwifi`).
