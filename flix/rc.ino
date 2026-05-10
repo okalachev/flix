@@ -6,7 +6,7 @@
 #include <SBUS.h>
 #include "util.h"
 
-SBUS rc(Serial2);
+SBUS rc(Serial1);
 int rcRxPin = -1; // -1 means disabled
 
 uint16_t channels[16]; // raw rc channels

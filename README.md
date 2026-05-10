@@ -71,7 +71,7 @@ Additional articles:
 
 |Type|Part|Image|Quantity|
 |-|-|:-:|:-:|
-|Microcontroller board|ESP32 Mini|<img src="docs/img/esp32.jpg" width=100>|1|
+|Microcontroller board|ESP32 Mini.<br>ESP32-S3/ESP32-C3 boards are also supported.|<img src="docs/img/esp32.jpg" width=100>|1|
 |IMU (and barometer¹) board|GY‑91, MPU-9265 (or other MPU‑9250/MPU‑6500 board)<br>ICM20948V2 (ICM‑20948)<br>GY-521 (MPU-6050)|<img src="docs/img/gy-91.jpg" width=90 align=center><br><img src="docs/img/icm-20948.jpg" width=100><br><img src="docs/img/gy-521.jpg" width=100>|1|
 |Boost converter (optional, for more stable power supply)|5V output|<img src="docs/img/buck-boost.jpg" width=100>|1|
 |Motor|8520 3.7V brushed motor.<br>Motor with exact 3.7V voltage is needed, not ranged working voltage (3.7V — 6V).<br>Make sure the motor shaft diameter and propeller hole diameter match!|<img src="docs/img/motor.jpeg" width=100>|4|
