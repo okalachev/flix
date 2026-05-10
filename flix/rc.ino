@@ -55,18 +55,18 @@ void calibrateRC() {
 		print("RC_RX_PIN = %d, set the RC pin!\n", rcRxPin);
 		return;
 	}
-	uint16_t zero[16];
-	uint16_t center[16];
-	uint16_t max[16];
+	uint16_t zero[16]; // for zero positions
+	uint16_t center[16]; // for center positions
+	uint16_t _[16]; // for unused data
 	print("1/8 Calibrating RC: put all switches to default positions [3 sec]\n");
 	pause(3);
-	calibrateRCChannel(NULL, zero, zero, "2/8 Move sticks [3 sec]\n...     ...\n...     .o.\n.o.     ...\n");
-	calibrateRCChannel(NULL, center, center, "3/8 Move sticks [3 sec]\n...     ...\n.o.     .o.\n...     ...\n");
-	calibrateRCChannel(&throttleChannel, zero, max, "4/8 Move sticks [3 sec]\n.o.     ...\n...     .o.\n...     ...\n");
-	calibrateRCChannel(&yawChannel, center, max, "5/8 Move sticks [3 sec]\n...     ...\n..o     .o.\n...     ...\n");
-	calibrateRCChannel(&pitchChannel, zero, max, "6/8 Move sticks [3 sec]\n...     .o.\n...     ...\n.o.     ...\n");
-	calibrateRCChannel(&rollChannel, zero, max, "7/8 Move sticks [3 sec]\n...     ...\n...     ..o\n.o.     ...\n");
-	calibrateRCChannel(&modeChannel, zero, max, "8/8 Put mode switch to max [3 sec]\n");
+	calibrateRCChannel(NULL, _, zero, "2/8 Move sticks [3 sec]\n...     ...\n...     .o.\n.o.     ...\n");
+	calibrateRCChannel(&throttleChannel, zero, _, "3/8 Move sticks [3 sec]\n.o.     ...\n...     .o.\n...     ...\n");
+	calibrateRCChannel(NULL, _, center, "4/8 Move sticks [3 sec]\n...     ...\n.o.     .o.\n...     ...\n");
+	calibrateRCChannel(&yawChannel, center, _, "5/8 Move sticks [3 sec]\n...     ...\n..o     .o.\n...     ...\n");
+	calibrateRCChannel(&pitchChannel, zero, _, "6/8 Move sticks [3 sec]\n...     .o.\n...     ...\n.o.     ...\n");
+	calibrateRCChannel(&rollChannel, zero, _, "7/8 Move sticks [3 sec]\n...     ...\n...     ..o\n.o.     ...\n");
+	calibrateRCChannel(&modeChannel, zero, _, "8/8 Put mode switch to max [3 sec]\n");
 	printRCCalibration();
 }
 
