@@ -86,7 +86,7 @@ Parameter parameters[] = {
 	{"MOT_PWM_MIN", &pwmMin},
 	{"MOT_PWM_MAX", &pwmMax},
 	// rc
-	{"RC_RX_PIN", &rcRxPin},
+	{"RC_RX_PIN", &rcRxPin, setupRC},
 	{"RC_ZERO_0", &channelZero[0]},
 	{"RC_ZERO_1", &channelZero[1]},
 	{"RC_ZERO_2", &channelZero[2]},

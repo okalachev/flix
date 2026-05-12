@@ -220,7 +220,7 @@ Before using SBUS-connected remote control you need to enable SBUS and calibrate
 
 1. Connect to the drone using QGroundControl.
 2. In parameters, set the `RC_RX_PIN` parameter to the GPIO pin number where the SBUS signal is connected, for example: 4. Negative value disables SBUS.
-3. Reboot the drone to apply changes.
+3. Check if the receiver is working using `rc` command in the console.
 4. Open the console, type `cr` command and follow the instructions to calibrate the remote control.
 5. Use the remote control to fly the drone!
 
