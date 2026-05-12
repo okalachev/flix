@@ -67,6 +67,35 @@ In order to add a console command, modify the `doCommand()` function in `cli.ino
 >
 > For on-the-ground commands, use `pause()` function, instead of `delay()`. This function allows to pause in a way that MAVLink connection will continue working.
 
+### Parameter subsystem
+
+Parameters subsystem (`parameters.ino`) uses standard [Preferences.h](https://docs.espressif.com/projects/arduino-esp32/en/latest/tutorials/preferences.html) ESP32 library to store parameters in non-volatile memory. Each parameter is a regular global variable, which is registered in the `parameters` array.
+
+To add a new parameter:
+
+1. Define a global variable for the parameter, two types are supported: `float` and `int`.
+2. Add an entry to the `parameters` array, with the parameter name, a pointer to the variable, and optionally a callback function to call when the parameter is changed.
+3. Everything else will be handled automatically.
+
+See examples of adding new parameters in commits: [c434107](https://github.com/okalachev/flix/commit/c434107), [a687303](https://github.com/okalachev/flix/commit/a687303).
+
+## Adding a subsystem
+
+To add a new subsystem:
+
+1. Create a new `*.ino` file for your subsystem.
+2. Define setup and loop functions for the subsystem, for example `setupMySubsystem()` and `loopMySubsystem()`.
+3. Use `Rate` class if you need to limit the loop frequency, for example:
+
+    ```cpp
+    Rate mySubsystemRate(100); // 100 Hz
+
+    void loopMySubsystem() {
+    	if (!mySubsystemRate) return;
+    	// Do something...
+    }
+4. Add setup and loop calls in to `setup()` and `loop()` functions in `flix.ino`.
+
 ## Building the firmware
 
 See build instructions in [usage.md](usage.md).
