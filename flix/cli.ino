@@ -19,13 +19,14 @@ extern LowPassFilter<Vector> gyroBiasFilter;
 extern float voltage;
 
 const char* motd =
-"\nWelcome to\n"
 " _______  __       __  ___   ___\n"
 "|   ____||  |     |  | \\  \\ /  /\n"
 "|  |__   |  |     |  |  \\  V  /\n"
 "|   __|  |  |     |  |   >   <\n"
 "|  |     |  `----.|  |  /  .  \\\n"
 "|__|     |_______||__| /__/ \\__\\\n\n"
+"(C) Oleg Kalachev\n"
+"https://github.com/okalachev/flix\n\n"
 "Commands:\n\n"
 "help - show help\n"
 "p - show all parameters\n"
