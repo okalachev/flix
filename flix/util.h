@@ -36,11 +36,14 @@ float wrapAngle(float angle) {
 // Trim and split string by spaces
 void splitString(String& str, String& token0, String& token1, String& token2) {
 	str.trim();
+	if (str.isEmpty()) return;
 	char chars[str.length() + 1];
 	str.toCharArray(chars, str.length() + 1);
 	token0 = strtok(chars, " ");
-	token1 = strtok(NULL, " "); // String(NULL) creates empty string
+	token1 = strtok(NULL, " ");
 	token2 = strtok(NULL, "");
+	if (token1.c_str() == NULL) token1 = "";
+	if (token2.c_str() == NULL) token2 = "";
 }
 
 // Rate limiter
