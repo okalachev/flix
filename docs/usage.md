@@ -138,7 +138,7 @@ Before flight you need to calibrate the accelerometer:
 
 If using non-default motor pins, set the pin numbers using the parameters: `MOTOR_PIN_FL`, `MOTOR_PIN_FR`, `MOTOR_PIN_RL`, `MOTOR_PIN_RR` (front-left, front-right, rear-left, rear-right respectively).
 
-Certain ESP32 models (such as ESP32-S3) support a lower maximum PWM frequency; on these boards the parameter `MOT_PWM_FREQ` should be set to 38000 Hz.
+Certain ESP32 models (such as ESP32-S3 and ESP32-C3) support a lower maximum PWM frequency; on these boards the parameter `MOT_PWM_FREQ` should be set to 38000 Hz.
 
 If using brushless motors and ESCs:
 
@@ -216,7 +216,7 @@ There are several ways to control the drone's flight: using **smartphone** (Wi-F
 
 ### Control with a remote control
 
-Before using SBUS-connected remote control you need to enable SBUS and calibrate it:
+If using SBUS-connected remote control you need to enable SBUS and calibrate it:
 
 1. Connect to the drone using QGroundControl.
 2. In parameters, set the `RC_RX_PIN` parameter to the GPIO pin number where the SBUS signal is connected, for example: 4. Negative value disables SBUS.
