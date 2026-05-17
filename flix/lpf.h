@@ -14,6 +14,10 @@ public:
 	LowPassFilter(float alpha): alpha(alpha) {};
 
 	T update(const T input) {
+		if (!init) {
+			init = true;
+			return output = input;
+		}
 		return output += alpha * (input - output);
 	}
 
@@ -22,6 +26,9 @@ public:
 	}
 
 	void reset() {
-		output = T(); // set to zero
+		init = false;
 	}
+
+private:
+	bool init = false;
 };
