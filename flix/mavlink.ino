@@ -46,7 +46,7 @@ void sendMavlink() {
 		float remaining = constrain(mapf(voltage, 3.4, 4.2, 0, 1), 0, 1);
 		mavlink_msg_battery_status_pack(mavlinkSysId, MAV_COMP_ID_AUTOPILOT1, &msg, 0, MAV_BATTERY_FUNCTION_ALL,
 			MAV_BATTERY_TYPE_LIPO, INT16_MAX, voltages, -1, -1, -1, remaining * 100, 0, MAV_BATTERY_CHARGE_STATE_OK, voltagesExt, 0, 0);
-		sendMessage(&msg);
+		if (valid(voltage)) sendMessage(&msg);
 	}
 
 	if (telemetryFast && mavlinkConnected) {

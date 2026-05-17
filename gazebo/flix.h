@@ -58,6 +58,7 @@ void handleMavlink(const void *_msg);
 void mavlinkPrint(const char* str);
 void sendMavlinkPrint();
 inline Quaternion fluToFrd(const Quaternion &q);
+void setupPower();
 void failsafe();
 void rcLossFailsafe();
 void descend();

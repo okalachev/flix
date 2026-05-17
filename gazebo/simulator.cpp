@@ -73,6 +73,8 @@ public:
 		gyro = Vector(imu->AngularVelocity().X(), imu->AngularVelocity().Y(), imu->AngularVelocity().Z());
 		acc = this->accFilter.update(Vector(imu->LinearAcceleration().X(), imu->LinearAcceleration().Y(), imu->LinearAcceleration().Z()));
 
+		voltage = 4.2f; // dummy voltage value
+
 		readRC();
 		estimate();
 
