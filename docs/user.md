@@ -12,6 +12,14 @@ Description: XR2981 based DC-DC converter, ELRS MINI 2.4GHz RX SX1280 receiver (
 
 ---
 
+Author: Oleg Kalachev.<br>
+Description: the first attempt on making an official PCB based Flix drone (Flix2 board). The IMU is not working on this version, so an external MPU-6050 board was used, therefore considered as **Flix version 1.5**.<br>
+[Flight video](https://drive.google.com/file/d/1R7tuUsFmPY0CGcOCFfMFaCp9kR49K3bl/view?usp=sharing).
+
+<img src="img/flix1.5.jpg" width=300>
+
+---
+
 Author: [FanBy0ru](https://https://github.com/FanBy0ru).<br>
 Description: custom 3D-printed frame.<br>
 Frame STLs and flight validation: https://cults3d.com/en/3d-model/gadget/armature-pour-flix-drone.
