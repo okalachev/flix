@@ -8,14 +8,14 @@
 #include "lpf.h"
 #include "util.h"
 
-float voltage;
+float voltage = NAN;
 LowPassFilter<float> voltageFilter(0.2);
 int voltagePin = -1;
 float voltageScale = 2;
 
 void setupPower() {
-	// Disable reset on low voltage
-	REG_CLR_BIT(RTC_CNTL_BROWN_OUT_REG, RTC_CNTL_BROWN_OUT_ENA);
+	REG_CLR_BIT(RTC_CNTL_BROWN_OUT_REG, RTC_CNTL_BROWN_OUT_ENA); // disable reset on low voltage
+	if (digitalPinToAnalogChannel(voltagePin) == -1) voltagePin = -1; // test ADC pin
 }
 
 void readVoltage() {

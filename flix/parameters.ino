@@ -117,7 +117,7 @@ Parameter parameters[] = {
 	{"MAV_RATE_SLOW", &telemetrySlow.rate},
 	{"MAV_RATE_FAST", &telemetryFast.rate},
 	// power
-	{"PWR_VOLT_PIN", &voltagePin},
+	{"PWR_VOLT_PIN", &voltagePin, setupPower},
 	{"PWR_VOLT_SCALE", &voltageScale},
 	{"PWR_VOLT_LPF_A", &voltageFilter.alpha},
 	// safety

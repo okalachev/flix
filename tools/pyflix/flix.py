@@ -5,6 +5,7 @@
 
 import os
 import time
+import math
 from queue import Queue, Empty
 from typing import Optional, Callable, List, Dict, Any, Union, Sequence
 import logging
@@ -26,7 +27,7 @@ class Flix:
     mode: str = ''
     armed: bool = False
     landed: bool = False
-    voltage: float = 0
+    voltage: float = math.nan
     attitude: List[float]
     attitude_euler: List[float]  # roll, pitch, yaw
     rates: List[float]

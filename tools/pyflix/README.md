@@ -37,7 +37,7 @@ print(flix.connected)       # True if connected to the drone
 print(flix.mode)            # current flight mode (str)
 print(flix.armed)           # True if the drone is armed
 print(flix.landed)          # True if the drone is landed
-print(flix.voltage)         # battery voltage
+print(flix.voltage)         # battery voltage (NaN - unknown, ~0 - USB powered)
 print(flix.attitude)        # attitude quaternion [w, x, y, z]
 print(flix.attitude_euler)  # attitude as Euler angles [roll, pitch, yaw]
 print(flix.rates)           # angular rates [roll_rate, pitch_rate, yaw_rate]
