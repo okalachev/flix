@@ -10,7 +10,7 @@ extern int channelZero[16];
 extern int channelMax[16];
 extern int rollChannel, pitchChannel, throttleChannel, yawChannel, armedChannel, modeChannel;
 extern int rcRxPin;
-extern int wifiMode, udpLocalPort, udpRemotePort;
+extern int wifiMode, wifiLongRange, udpLocalPort, udpRemotePort, espnowChannel;
 extern float rcLossTimeout, descendTime;
 extern int voltagePin;
 extern float voltageScale;
@@ -112,6 +112,9 @@ Parameter parameters[] = {
 	{"WIFI_MODE", &wifiMode},
 	{"WIFI_PORT_LOC", &udpLocalPort},
 	{"WIFI_PORT_REM", &udpRemotePort},
+	{"WIFI_LONG_RANGE", &wifiLongRange},
+	// espnow
+	{"ESPNOW_CHANNEL", &espnowChannel},
 	// mavlink
 	{"MAV_SYS_ID", &mavlinkSysId},
 	{"MAV_RATE_SLOW", &telemetrySlow.rate},
