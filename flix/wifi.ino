@@ -39,12 +39,10 @@ void setupWiFi() {
 	} else if (wifiMode == W_ESPNOW) {
 		WiFi.mode(WIFI_AP);
 		WiFi.setChannel(espnowChannel);
-		espnow.setChannel(espnowChannel);
 		espnow.addr(MacAddress(storage.getString("ESPNOW_PEER_MAC", "FF:FF:FF:FF:FF:FF").c_str()));
 		String key = storage.getString("ESPNOW_PEER_KEY", "");
 		espnow.setKey(key.isEmpty() ? nullptr : (const uint8_t *)key.c_str());
 		espnow.begin();
-		espnowBroadcast.setChannel(espnowChannel);
 		espnowBroadcast.begin();
 	}
 
