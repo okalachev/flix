@@ -9,19 +9,22 @@
 #include <MacAddress.h>
 #include <ESP32_NOW_Serial.h>
 #include "Preferences.h"
+#include "util.h"
 
 extern Preferences storage; // use the main preferences storage
 
 const int W_DISABLED = 0, W_AP = 1, W_STA = 2, W_ESPNOW = 3;
 int wifiMode = W_AP;
+
 int wifiLongRange = 0;
 int udpLocalPort = 14550;
 int udpRemotePort = 14550;
-int espnowChannel = 6;
 IPAddress udpRemoteIP = "255.255.255.255";
-
 WiFiUDP udp;
-ESP_NOW_Serial_Class espnow(NULL, 0, WIFI_IF_AP);
+
+ESPNOWSerial espnow(NULL, 0, WIFI_IF_AP);
+ESPNOWSerial espnowBroadcast(ESP_NOW.BROADCAST_ADDR, 0, WIFI_IF_AP);
+int espnowChannel = 6;
 
 void setupWiFi() {
 	print("Setup Wi-Fi\n");
@@ -37,8 +40,12 @@ void setupWiFi() {
 		WiFi.mode(WIFI_AP);
 		WiFi.setChannel(espnowChannel);
 		espnow.setChannel(espnowChannel);
-		espnow.addr(MacAddress(storage.getString("ESPNOW_PEER_MAC", "").c_str()));
+		espnow.addr(MacAddress(storage.getString("ESPNOW_PEER_MAC", "FF:FF:FF:FF:FF:FF").c_str()));
+		String key = storage.getString("ESPNOW_PEER_KEY", "");
+		espnow.setKey(key.isEmpty() ? nullptr : (const uint8_t *)key.c_str());
 		espnow.begin();
+		espnowBroadcast.setChannel(espnowChannel);
+		espnowBroadcast.begin();
 	}
 
 	WiFi.setSleep(false); // disable power save
@@ -47,6 +54,8 @@ void setupWiFi() {
 void sendWiFi(const uint8_t *buf, int len) {
 	if (espnow) {
 		espnow.write(buf, len);
+		static Rate discovery(2);
+		if (discovery) espnowBroadcast.write((const uint8_t *)"flix", 4); // broadcast message to help finding this device
 		return;
 	}
 
@@ -76,6 +85,7 @@ void printWiFiInfo() {
 		print("Max packet size: %d\n", ESP_NOW.getMaxDataLen());
 		print("MAC: %s\n", WiFi.softAPmacAddress().c_str());
 		print("Peer MAC: %s\n", MacAddress(espnow.addr()).toString().c_str());
+		print("Encrypted: %d\n", espnow.isEncrypted());
 		print("Channel: %d\n", espnow.getChannel());
 	} else if (WiFi.getMode() == WIFI_MODE_AP) {
 		print("Mode: Access Point (AP)\n");
@@ -103,14 +113,19 @@ void printWiFiInfo() {
 }
 
 void configWiFi(int mode, const char *first, const char *second) {
-	if (mode == W_AP) {
+	MacAddress mac;
+	if (mode == W_AP && strlen(first) > 0 && strlen(second) >= 8) {
 		storage.putString("WIFI_AP_SSID", first);
 		storage.putString("WIFI_AP_PASS", second);
-	} else if (mode == W_STA) {
+	} else if (mode == W_STA && strlen(first) > 0 && strlen(second) >= 8) {
 		storage.putString("WIFI_STA_SSID", first);
 		storage.putString("WIFI_STA_PASS", second);
-	} else if (mode == W_ESPNOW) {
+	} else if (mode == W_ESPNOW && mac.fromString(first)) {
 		storage.putString("ESPNOW_PEER_MAC", first);
+		storage.putString("ESPNOW_PEER_KEY", strlen(second) == ESP_NOW_KEY_LEN ? second : "");
+	} else {
+		print("Invalid configuration\n");
+		return;
 	}
 	print("✓ Reboot to apply new settings\n");
 }

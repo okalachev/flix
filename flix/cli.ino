@@ -46,7 +46,7 @@ const char* motd =
 "wifi - show Wi-Fi info\n"
 "ap <ssid> <password> - setup Wi-Fi access point\n"
 "sta <ssid> <password> - setup Wi-Fi client mode\n"
-"espnow <mac> - setup ESP-NOW peer\n"
+"espnow <mac> [<key>] - setup ESP-NOW peer\n"
 "mot - show motor output\n"
 "log [dump] - print log header [and data]\n"
 "cr - calibrate RC\n"
