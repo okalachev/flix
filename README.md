@@ -21,8 +21,8 @@
 * Dedicated for education and research.
 * Made from general-purpose components.
 * Simple and clean source code in Arduino (<2k lines firmware).
-* Connectivity using Wi-Fi and MAVLink protocol.
-* Control using USB gamepad, remote control or smartphone.
+* Communication using MAVLink protocol over Wi-Fi or ESP-NOW.
+* Control with USB gamepad, remote control or smartphone.
 * Wireless command line interface and analyzing.
 * Precise simulation with Gazebo.
 * Python library for scripting and automatic flights.

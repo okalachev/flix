@@ -6,6 +6,7 @@
 #pragma once
 
 #include <math.h>
+#include <ESP32_NOW_Serial.h>
 
 const float ONE_G = 9.80665;
 extern float t;
@@ -45,6 +46,16 @@ void splitString(String& str, String& token0, String& token1, String& token2) {
 	if (token1.c_str() == NULL) token1 = "";
 	if (token2.c_str() == NULL) token2 = "";
 }
+
+// Simplified ESP-NOW Serial without tx buffering and resends
+class ESPNOWSerial : public ESP_NOW_Serial_Class {
+public:
+	using ESP_NOW_Serial_Class::ESP_NOW_Serial_Class;
+	void onSent(bool success) override {} // disable resends
+	size_t write(const uint8_t *data, size_t len) override {
+		return ESP_NOW_Peer::send(data, len); // pure send without buffering
+	}
+};
 
 // Rate limiter
 class Rate {

@@ -18,6 +18,10 @@ dependencies .dependencies:
 	arduino-cli lib install "MAVLink"@2.0.25
 	touch .dependencies
 
+upload_proxy: .dependencies
+	arduino-cli compile --fqbn $(BOARD) tools/espnow-proxy
+	arduino-cli upload --fqbn $(BOARD) -p "$(PORT)" tools/espnow-proxy
+
 gazebo/build cmake: gazebo/CMakeLists.txt
 	mkdir -p gazebo/build
 	cd gazebo/build && cmake ..

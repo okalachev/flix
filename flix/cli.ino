@@ -10,6 +10,7 @@
 
 extern const int MOTOR_REAR_LEFT, MOTOR_REAR_RIGHT, MOTOR_FRONT_RIGHT, MOTOR_FRONT_LEFT;
 extern const int RAW, ACRO, STAB, AUTO;
+extern const int W_AP, W_STA, W_ESPNOW;
 extern float t, dt, loopRate;
 extern uint16_t channels[16];
 extern float controlTime;
@@ -45,6 +46,7 @@ const char* motd =
 "wifi - show Wi-Fi info\n"
 "ap <ssid> <password> - setup Wi-Fi access point\n"
 "sta <ssid> <password> - setup Wi-Fi client mode\n"
+"espnow <mac> [<key>] - setup ESP-NOW peer\n"
 "mot - show motor output\n"
 "log [dump] - print log header [and data]\n"
 "cr - calibrate RC\n"
@@ -143,9 +145,11 @@ void doCommand(String str, bool echo = false) {
 	} else if (command == "wifi") {
 		printWiFiInfo();
 	} else if (command == "ap") {
-		configWiFi(true, arg0.c_str(), arg1.c_str());
+		configWiFi(W_AP, arg0.c_str(), arg1.c_str());
 	} else if (command == "sta") {
-		configWiFi(false, arg0.c_str(), arg1.c_str());
+		configWiFi(W_STA, arg0.c_str(), arg1.c_str());
+	} else if (command == "espnow") {
+		configWiFi(W_ESPNOW, arg0.c_str(), arg1.c_str());
 	} else if (command == "mot") {
 		print("front-right %g front-left %g rear-right %g rear-left %g\n",
 			motors[MOTOR_FRONT_RIGHT], motors[MOTOR_FRONT_LEFT], motors[MOTOR_REAR_RIGHT], motors[MOTOR_REAR_LEFT]);
