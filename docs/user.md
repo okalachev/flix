@@ -4,6 +4,49 @@ This page contains user-built drones based on the Flix project. Publish your pro
 
 ---
 
+Author: [Ina Tix](https://t.me/ina_tix).<br>
+Description: XR2981 based DC-DC converter, ELRS MINI 2.4GHz RX SX1280 receiver (SBUS interface), Radiomaster TX12 remote control.<br>
+[Flight validation](https://drive.google.com/file/d/1yqkKNuz4R_yxGqUNQxVpixJbXqEEcUSj/view?usp=share_link).
+
+<img src="img/user/ina_tix/1.jpg" height=200> <img src="img/user/ina_tix/2.jpg" height=200> <img src="img/user/ina_tix/3.jpg" height=200>
+
+---
+
+Author: Oleg Kalachev.<br>
+Description: the first attempt on making an official PCB based Flix drone (Flix2 board). The IMU is not working on this version, so an external MPU-6050 board was used, therefore considered as **Flix version 1.5**.<br>
+[Flight video](https://drive.google.com/file/d/1R7tuUsFmPY0CGcOCFfMFaCp9kR49K3bl/view?usp=sharing).
+
+<img src="img/flix1.5.jpg" width=300>
+
+---
+
+Author: [FanBy0ru](https://https://github.com/FanBy0ru).<br>
+Description: custom 3D-printed frame.<br>
+Frame STLs and flight validation: https://cults3d.com/en/3d-model/gadget/armature-pour-flix-drone.
+
+<img src="img/user/fanby0ru/1.jpg" height=200> <img src="img/user/fanby0ru/2.jpg" height=200>
+
+---
+
+Author: Ivan44 Phalko.<br>
+Description: custom PCB, cusom test bench.<br>
+[Flight validation](https://drive.google.com/file/d/17DNDJ1gPmCmDRAwjedCbJ9RXAyqMqqcX/view?usp=sharing).
+
+<img src="img/user/phalko/1.jpg" height=200> <img src="img/user/phalko/2.jpg" height=200> <img src="img/user/phalko/3.jpg" height=200>
+
+---
+
+Author: **Arkadiy "Arky" Matsekh**, Foucault Dynamics, Gold Coast, Australia.<br>
+The drone was built for the University of Queensland industry-led Master's capstone project.
+
+**Flight video:**
+
+<a href="https://drive.google.com/file/d/1NNYSVXBY-w0JjCo07D8-PgnVq3ca9plj/view?usp=sharing"><img height=300 src="img/user/arkymatsekh/video.jpg"></a>
+
+<img src="img/user/arkymatsekh/1.jpg" height=150> <img src="img/user/arkymatsekh/2.jpg" height=150> <img src="img/user/arkymatsekh/3.jpg" height=150>
+
+---
+
 Author: [goldarte](https://t.me/goldarte).<br>
 
 <img src="img/user/goldarte/1.jpg" height=150> <img src="img/user/goldarte/2.jpg" height=150>

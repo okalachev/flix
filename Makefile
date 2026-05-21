@@ -1,6 +1,5 @@
 BOARD = esp32:esp32:d1_mini32
-PORT := $(wildcard /dev/serial/by-id/usb-Silicon_Labs_CP21* /dev/serial/by-id/usb-1a86_USB_Single_Serial_* /dev/cu.usbserial-*)
-PORT := $(strip $(PORT))
+PORT := $(strip $(wildcard /dev/serial/by-id/usb-Silicon_Labs_CP21* /dev/serial/by-id/usb-1a86_USB_Single_Serial_* /dev/cu.usbserial-* /dev/cu.usbmodem*))
 
 build: .dependencies
 	arduino-cli compile --fqbn $(BOARD) flix
@@ -13,11 +12,15 @@ monitor:
 
 dependencies .dependencies:
 	arduino-cli core update-index --config-file arduino-cli.yaml
-	arduino-cli core install esp32:esp32@3.2.0 --config-file arduino-cli.yaml
+	arduino-cli core install esp32:esp32@3.3.6 --config-file arduino-cli.yaml
 	arduino-cli lib update-index
 	arduino-cli lib install "FlixPeriph"
-	arduino-cli lib install "MAVLink"@2.0.16
+	arduino-cli lib install "MAVLink"@2.0.25
 	touch .dependencies
+
+upload_proxy: .dependencies
+	arduino-cli compile --fqbn $(BOARD) tools/espnow-proxy
+	arduino-cli upload --fqbn $(BOARD) -p "$(PORT)" tools/espnow-proxy
 
 gazebo/build cmake: gazebo/CMakeLists.txt
 	mkdir -p gazebo/build

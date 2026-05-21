@@ -28,6 +28,8 @@ Soldered components ([schematics variant](https://miro.com/app/board/uXjVN-dTjoo
 
 <img src="img/assembly/7.jpg" width=600>
 
+See an alternative assembly process photos here: https://drive.google.com/drive/folders/1FG5BH9RCzdf1XmJcC70PymiRMXcz6Fx7?usp=sharing.
+
 ## Motor directions
 
 > [!WARNING]
@@ -41,10 +43,10 @@ Motors connection table:
 
 |Motor|Position|Direction|Prop type|Motor wires|GPIO|
 |-|-|-|-|-|-|
-|Motor 0|Rear left|Counter-clockwise|B|Black & White|GPIO12 (*TDI*)|
-|Motor 1|Rear right|Clockwise|A|Blue & Red|GPIO13 (*TCK*)|
-|Motor 2|Front right|Counter-clockwise|B|Black & White|GPIO14 (*TMS*)|
-|Motor 3|Front left|Clockwise|A|Blue & Red|GPIO15 (*TD0*)|
+|Motor 0|Rear left|Counter-clockwise|B|Black & White|GPIO12 *(TDI)*|
+|Motor 1|Rear right|Clockwise|A|Blue & Red|GPIO13 *(TCK)*|
+|Motor 2|Front right|Counter-clockwise|B|Black & White|GPIO14 *(TMS)*|
+|Motor 3|Front left|Clockwise|A|Blue & Red|GPIO15 *(TD0)*|
 
 ## Motors tightening
 

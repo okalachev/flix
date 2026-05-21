@@ -24,19 +24,20 @@ pip install pyflix
 The API is accessed through the `Flix` class:
 
 ```python
-from flix import Flix
+from pyflix import Flix
 flix = Flix()  # create a Flix object and wait for connection
 ```
 
 ### Telemetry
 
-Basic telemetry is available through object properties. The property names generally match the corresponding variables in the firmware itself:
+Basic telemetry is available through object properties. The property names generally match the corresponding variables in the firmware code:
 
 ```python
 print(flix.connected)       # True if connected to the drone
 print(flix.mode)            # current flight mode (str)
 print(flix.armed)           # True if the drone is armed
 print(flix.landed)          # True if the drone is landed
+print(flix.voltage)         # battery voltage (NaN - unknown, ~0 - USB powered)
 print(flix.attitude)        # attitude quaternion [w, x, y, z]
 print(flix.attitude_euler)  # attitude as Euler angles [roll, pitch, yaw]
 print(flix.rates)           # angular rates [roll_rate, pitch_rate, yaw_rate]
@@ -92,17 +93,18 @@ Full list of events:
 |-----|-----------|----------------|
 |`connected`|Connected to the drone||
 |`disconnected`|Connection is lost||
-|`armed`|Armed state update|Armed state (*bool*)|
-|`mode`|Flight mode update|Flight mode (*str*)|
-|`landed`|Landed state update|Landed state (*bool*)|
+|`armed`|Armed state update|Armed state *(bool)*|
+|`mode`|Flight mode update|Flight mode *(str)*|
+|`landed`|Landed state update|Landed state *(bool)*|
+|`voltage`|Battery voltage update|Voltage *(float)*|
 |`print`|The drone prints text to the console|Text|
-|`attitude`|Attitude update|Attitude quaternion (*list*)|
-|`attitude_euler`|Attitude update|Euler angles (*list*)|
-|`rates`|Angular rates update|Angular rates (*list*)|
-|`channels`|Raw RC channels update|Raw RC channels (*list*)|
-|`motors`|Motor outputs update|Motor outputs (*list*)|
-|`acc`|Accelerometer update|Accelerometer output (*list*)|
-|`gyro`|Gyroscope update|Gyroscope output (*list*)|
+|`attitude`|Attitude update|Attitude quaternion *(list)*|
+|`attitude_euler`|Attitude update|Euler angles *(list)*|
+|`rates`|Angular rates update|Angular rates *(list)*|
+|`channels`|Raw RC channels update|Raw RC channels *(list)*|
+|`motors`|Motor outputs update|Motor outputs *(list)*|
+|`acc`|Accelerometer update|Accelerometer output *(list)*|
+|`gyro`|Gyroscope update|Gyroscope output *(list)*|
 |`mavlink`|Received MAVLink message|Message object|
 |`mavlink.<message_name>`|Received specific MAVLink message|Message object|
 |`mavlink.<message_id>`|Received specific MAVLink message|Message object|
@@ -117,8 +119,8 @@ Full list of events:
 Get and set firmware parameters using `get_param` and `set_param` methods:
 
 ```python
-pitch_p = flix.get_param('PITCH_P')  # get parameter value
-flix.set_param('PITCH_P', 5)         # set parameter value
+pitch_p = flix.get_param('CTL_P_P')  # get parameter value
+flix.set_param('CTL_P_P', 5)         # set parameter value
 ```
 
 Execute console commands using `cli` method. This method returns the command response:
@@ -277,7 +279,3 @@ logger = logging.getLogger('flix')
 logger.setLevel(logging.DEBUG)  # be more verbose
 logger.setLevel(logging.WARNING)  # be less verbose
 ```
-
-## Stability
-
-The library is in development stage. The API is not stable.

@@ -8,23 +8,28 @@
 #include "pid.h"
 #include "vector.h"
 #include "util.h"
+#include "lpf.h"
 
 extern const int MOTOR_REAR_LEFT, MOTOR_REAR_RIGHT, MOTOR_FRONT_RIGHT, MOTOR_FRONT_LEFT;
 extern const int RAW, ACRO, STAB, AUTO;
+extern const int W_AP, W_STA, W_ESPNOW;
 extern float t, dt, loopRate;
 extern uint16_t channels[16];
 extern float controlTime;
 extern int mode;
 extern bool armed;
+extern LowPassFilter<Vector> gyroBiasFilter;
+extern float voltage;
 
 const char* motd =
-"\nWelcome to\n"
 " _______  __       __  ___   ___\n"
 "|   ____||  |     |  | \\  \\ /  /\n"
 "|  |__   |  |     |  |  \\  V  /\n"
 "|   __|  |  |     |  |   >   <\n"
 "|  |     |  `----.|  |  /  .  \\\n"
 "|__|     |_______||__| /__/ \\__\\\n\n"
+"(C) Oleg Kalachev\n"
+"https://github.com/okalachev/flix\n\n"
 "Commands:\n\n"
 "help - show help\n"
 "p - show all parameters\n"
@@ -39,7 +44,11 @@ const char* motd =
 "disarm - disarm the drone\n"
 "raw/stab/acro/auto - set mode\n"
 "rc - show RC data\n"
+"pw - show power info\n"
 "wifi - show Wi-Fi info\n"
+"ap <ssid> <password> - setup Wi-Fi access point\n"
+"sta <ssid> <password> - setup Wi-Fi client mode\n"
+"espnow <mac> [<key>] - setup ESP-NOW peer\n"
 "mot - show motor output\n"
 "log [dump] - print log header [and data]\n"
 "cr - calibrate RC\n"
@@ -56,9 +65,7 @@ void print(const char* format, ...) {
 	vsnprintf(buf, sizeof(buf), format, args);
 	va_end(args);
 	Serial.print(buf);
-#if WIFI_ENABLED
 	mavlinkPrint(buf);
-#endif
 }
 
 void pause(float duration) {
@@ -66,9 +73,7 @@ void pause(float duration) {
 	while (t - start < duration) {
 		step();
 		handleInput();
-#if WIFI_ENABLED
 		processMavlink();
-#endif
 		delay(50);
 	}
 }
@@ -96,7 +101,7 @@ void doCommand(String str, bool echo) {
 	} else if (command == "p") {
 		bool success = setParameter(arg0.c_str(), arg1.toFloat());
 		if (success) {
-			print("%s = %g\n", arg0.c_str(), arg1.toFloat());
+			print("%s = %g\n", arg0.c_str(), getParameter(arg0.c_str()));
 		} else {
 			print("Parameter not found: %s\n", arg0.c_str());
 		}
@@ -137,10 +142,16 @@ void doCommand(String str, bool echo) {
 		print("time: %.1f\n", controlTime);
 		print("mode: %s\n", getModeName());
 		print("armed: %d\n", armed);
+	} else if (command == "pw") {
+		print("Voltage: %.1f V\n", voltage);
 	} else if (command == "wifi") {
-#if WIFI_ENABLED
 		printWiFiInfo();
-#endif
+	} else if (command == "ap") {
+		configWiFi(W_AP, arg0.c_str(), arg1.c_str());
+	} else if (command == "sta") {
+		configWiFi(W_STA, arg0.c_str(), arg1.c_str());
+	} else if (command == "espnow") {
+		configWiFi(W_ESPNOW, arg0.c_str(), arg1.c_str());
 	} else if (command == "mot") {
 		print("front-right %g front-left %g rear-right %g rear-left %g\n",
 			motors[MOTOR_FRONT_RIGHT], motors[MOTOR_FRONT_LEFT], motors[MOTOR_REAR_RIGHT], motors[MOTOR_REAR_LEFT]);
@@ -164,6 +175,7 @@ void doCommand(String str, bool echo) {
 		print("Chip: %s\n", ESP.getChipModel());
 		print("Temperature: %.1f °C\n", temperatureRead());
 		print("Free heap: %d\n", ESP.getFreeHeap());
+		print("Firmware: " __DATE__ " " __TIME__ "\n");
 		// Print tasks table
 		print("Num  Task                Stack  Prio  Core  CPU%%\n");
 		int taskCount = uxTaskGetNumberOfTasks();
@@ -174,12 +186,13 @@ void doCommand(String str, bool echo) {
 			String core = systemState[i].xCoreID == tskNO_AFFINITY ? "*" : String(systemState[i].xCoreID);
 			int cpuPercentage = systemState[i].ulRunTimeCounter / (totalRunTime / 100);
 			print("%-5d%-20s%-7d%-6d%-6s%d\n",systemState[i].xTaskNumber, systemState[i].pcTaskName,
-				systemState[i].usStackHighWaterMark, systemState[i].uxCurrentPriority, core, cpuPercentage);
+				systemState[i].usStackHighWaterMark, systemState[i].uxCurrentPriority, core.c_str(), cpuPercentage);
 		}
 		delete[] systemState;
 #endif
 	} else if (command == "reset") {
 		attitude = Quaternion();
+		gyroBiasFilter.reset();
 	} else if (command == "reboot") {
 		ESP.restart();
 	} else {

@@ -1,7 +1,7 @@
 // Copyright (c) 2023 Oleg Kalachev <okalachev@gmail.com>
 // Repository: https://github.com/okalachev/flix
 
-// Attitude estimation from gyro and accelerometer
+// Attitude estimation using gyro and accelerometer
 
 #include "config.h"
 #include "flix.h"
@@ -15,11 +15,13 @@ Quaternion attitude; // estimated attitude
 bool landed;
 
 float accWeight = 0.003;
+float levelWeight = 0.0002;
 LowPassFilter<Vector> ratesFilter(0.2); // cutoff frequency ~ 40 Hz
 
 void estimate() {
 	applyGyro();
 	applyAcc();
+	applyLevel();
 }
 
 void applyGyro() {
@@ -42,5 +44,14 @@ void applyAcc() {
 	Vector correction = Vector::rotationVectorBetween(acc, up) * accWeight;
 
 	// apply correction
+	attitude = Quaternion::rotate(attitude, Quaternion::fromRotationVector(correction));
+}
+
+void applyLevel() {
+	if (landed) return;
+
+	// assume the pilot keeps the drone more or less level in flight
+	Vector up = Quaternion::rotateVector(Vector(0, 0, 1), attitude);
+	Vector correction = Vector::rotationVectorBetween(Vector(0, 0, 1), up) * levelWeight;
 	attitude = Quaternion::rotate(attitude, Quaternion::fromRotationVector(correction));
 }

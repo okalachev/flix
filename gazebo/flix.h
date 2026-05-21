@@ -9,8 +9,7 @@
 #include "quaternion.h"
 #include "Arduino.h"
 #include "wifi.h"
-
-#define WIFI_ENABLED 1
+#include "lpf.h"
 
 extern float t, dt;
 extern float controlRoll, controlPitch, controlYaw, controlThrottle, controlMode;
@@ -21,28 +20,33 @@ extern float motors[4];
 
 Vector gyro, acc, imuRotation;
 Vector accBias, gyroBias, accScale(1, 1, 1);
+LowPassFilter<Vector> gyroBiasFilter(0);
 
 // declarations
 void step();
 void computeLoopRate();
 void applyGyro();
 void applyAcc();
+void applyLevel();
 void control();
 void interpretControls();
 void controlAttitude();
 void controlRates();
 void controlTorque();
+void desaturate(float& a, float& b, float& c, float& d);
 const char* getModeName();
 void sendMotors();
+int getDutyCycle(float value);
 bool motorsActive();
 void testMotor(int n);
 void print(const char* format, ...);
 void pause(float duration);
 void doCommand(String str, bool echo);
 void handleInput();
+void setupRC();
 void normalizeRC();
 void calibrateRC();
-void calibrateRCChannel(float *channel, uint16_t zero[16], uint16_t max[16], const char *str);
+void calibrateRCChannel(int*, uint16_t[16], uint16_t[16], const char*);
 void printRCCalibration();
 void printLogHeader();
 void printLogData();
@@ -54,6 +58,7 @@ void handleMavlink(const void *_msg);
 void mavlinkPrint(const char* str);
 void sendMavlinkPrint();
 inline Quaternion fluToFrd(const Quaternion &q);
+void setupPower();
 void failsafe();
 void rcLossFailsafe();
 void descend();
@@ -73,3 +78,4 @@ void calibrateAccel() { print("Skip accel calibrating\n"); };
 void printIMUCalibration() { print("cal: N/A\n"); };
 void printIMUInfo() {};
 void printWiFiInfo() {};
+void configWiFi(bool, const char*, const char*) { print("Skip WiFi config\n"); };

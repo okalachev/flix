@@ -4,21 +4,18 @@
 // MAVLink communication
 
 #include <Arduino.h>
-#include "config.h"
-#include "flix.h"
-
-#if WIFI_ENABLED
-
 #include <MAVLink.h>
+#include "config.h"
 #include "util.h"
 
-#define SYSTEM_ID 1
-#define MAVLINK_RATE_SLOW 1
-#define MAVLINK_RATE_FAST 10
-
-extern const int AUTO, STAB;
-extern uint16_t channels[16];
+extern const int RAW, ACRO, STAB, AUTO;
 extern float controlTime;
+extern float voltage;
+extern uint16_t channels[16];
+
+int mavlinkSysId = 1;
+Rate telemetryFast(10);
+Rate telemetrySlow(2);
 
 bool mavlinkConnected = false;
 String mavlinkPrintBuffer;
@@ -34,10 +31,8 @@ void sendMavlink() {
 	mavlink_message_t msg;
 	uint32_t time = t * 1000;
 
-	static Rate slow(MAVLINK_RATE_SLOW), fast(MAVLINK_RATE_FAST);
-
-	if (slow) {
-		mavlink_msg_heartbeat_pack(SYSTEM_ID, MAV_COMP_ID_AUTOPILOT1, &msg, MAV_TYPE_QUADROTOR, MAV_AUTOPILOT_GENERIC,
+	if (telemetrySlow) {
+		mavlink_msg_heartbeat_pack(mavlinkSysId, MAV_COMP_ID_AUTOPILOT1, &msg, MAV_TYPE_QUADROTOR, MAV_AUTOPILOT_GENERIC,
 			(armed ? MAV_MODE_FLAG_SAFETY_ARMED : 0) |
 			((mode == STAB) ? MAV_MODE_FLAG_STABILIZE_ENABLED : 0) |
 			((mode == AUTO) ? MAV_MODE_FLAG_AUTO_ENABLED : MAV_MODE_FLAG_MANUAL_INPUT_ENABLED),
@@ -46,28 +41,35 @@ void sendMavlink() {
 
 		if (!mavlinkConnected) return; // send only heartbeat until connected
 
-		mavlink_msg_extended_sys_state_pack(SYSTEM_ID, MAV_COMP_ID_AUTOPILOT1, &msg,
+		mavlink_msg_extended_sys_state_pack(mavlinkSysId, MAV_COMP_ID_AUTOPILOT1, &msg,
 			MAV_VTOL_STATE_UNDEFINED, landed ? MAV_LANDED_STATE_ON_GROUND : MAV_LANDED_STATE_IN_AIR);
 		sendMessage(&msg);
+
+		uint16_t voltages[] = {voltage * 1000, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX};
+		uint16_t voltagesExt[] = {0, 0, 0, 0};
+		float remaining = constrain(mapf(voltage, 3.4, 4.2, 0, 1), 0, 1);
+		mavlink_msg_battery_status_pack(mavlinkSysId, MAV_COMP_ID_AUTOPILOT1, &msg, 0, MAV_BATTERY_FUNCTION_ALL,
+			MAV_BATTERY_TYPE_LIPO, INT16_MAX, voltages, -1, -1, -1, remaining * 100, 0, MAV_BATTERY_CHARGE_STATE_OK, voltagesExt, 0, 0);
+		if (valid(voltage)) sendMessage(&msg);
 	}
 
-	if (fast && mavlinkConnected) {
-		const float zeroQuat[] = {0, 0, 0, 0};
-		mavlink_msg_attitude_quaternion_pack(SYSTEM_ID, MAV_COMP_ID_AUTOPILOT1, &msg,
-			time, attitude.w, attitude.x, -attitude.y, -attitude.z, rates.x, -rates.y, -rates.z, zeroQuat); // convert to frd
+	if (telemetryFast && mavlinkConnected) {
+		const float offset[] = {0, 0, 0, 0};
+		mavlink_msg_attitude_quaternion_pack(mavlinkSysId, MAV_COMP_ID_AUTOPILOT1, &msg,
+			time, attitude.w, attitude.x, -attitude.y, -attitude.z, rates.x, -rates.y, -rates.z, offset); // convert to frd
 		sendMessage(&msg);
 
-		mavlink_msg_rc_channels_raw_pack(SYSTEM_ID, MAV_COMP_ID_AUTOPILOT1, &msg, controlTime * 1000, 0,
+		mavlink_msg_rc_channels_raw_pack(mavlinkSysId, MAV_COMP_ID_AUTOPILOT1, &msg, controlTime * 1000, 0,
 			channels[0], channels[1], channels[2], channels[3], channels[4], channels[5], channels[6], channels[7], UINT8_MAX);
 		if (channels[0] != 0) sendMessage(&msg); // 0 means no RC input
 
 		float controls[8];
 		memcpy(controls, motors, sizeof(motors));
-		mavlink_msg_actuator_control_target_pack(SYSTEM_ID, MAV_COMP_ID_AUTOPILOT1, &msg, time, 0, controls);
+		mavlink_msg_actuator_control_target_pack(mavlinkSysId, MAV_COMP_ID_AUTOPILOT1, &msg, time, 0, controls);
 		sendMessage(&msg);
 
-		mavlink_msg_scaled_imu_pack(SYSTEM_ID, MAV_COMP_ID_AUTOPILOT1, &msg, time,
-			acc.x * 1000, -acc.y * 1000, -acc.z * 1000, // convert to frd
+		mavlink_msg_scaled_imu_pack(mavlinkSysId, MAV_COMP_ID_AUTOPILOT1, &msg, time,
+			acc.x / ONE_G * 1000, -acc.y / ONE_G * 1000, -acc.z / ONE_G * 1000, // convert to frd
 			gyro.x * 1000, -gyro.y * 1000, -gyro.z * 1000,
 			0, 0, 0, 0);
 		sendMessage(&msg);
@@ -101,7 +103,7 @@ void handleMavlink(const void *_msg) {
 	if (msg.msgid == MAVLINK_MSG_ID_MANUAL_CONTROL) {
 		mavlink_manual_control_t m;
 		mavlink_msg_manual_control_decode(&msg, &m);
-		if (m.target && m.target != SYSTEM_ID) return; // 0 is broadcast
+		if (m.target && m.target != mavlinkSysId) return; // 0 is broadcast
 
 		controlThrottle = m.z / 1000.0f;
 		controlPitch = m.x / 1000.0f;
@@ -114,11 +116,11 @@ void handleMavlink(const void *_msg) {
 	if (msg.msgid == MAVLINK_MSG_ID_PARAM_REQUEST_LIST) {
 		mavlink_param_request_list_t m;
 		mavlink_msg_param_request_list_decode(&msg, &m);
-		if (m.target_system && m.target_system != SYSTEM_ID) return;
+		if (m.target_system && m.target_system != mavlinkSysId) return;
 
 		mavlink_message_t msg;
 		for (int i = 0; i < parametersCount(); i++) {
-			mavlink_msg_param_value_pack(SYSTEM_ID, MAV_COMP_ID_AUTOPILOT1, &msg,
+			mavlink_msg_param_value_pack(mavlinkSysId, MAV_COMP_ID_AUTOPILOT1, &msg,
 				getParameterName(i), getParameter(i), MAV_PARAM_TYPE_REAL32, parametersCount(), i);
 			sendMessage(&msg);
 		}
@@ -127,7 +129,7 @@ void handleMavlink(const void *_msg) {
 	if (msg.msgid == MAVLINK_MSG_ID_PARAM_REQUEST_READ) {
 		mavlink_param_request_read_t m;
 		mavlink_msg_param_request_read_decode(&msg, &m);
-		if (m.target_system && m.target_system != SYSTEM_ID) return;
+		if (m.target_system && m.target_system != mavlinkSysId) return;
 
 		char name[MAVLINK_MSG_PARAM_REQUEST_READ_FIELD_PARAM_ID_LEN + 1];
 		strlcpy(name, m.param_id, sizeof(name)); // param_id might be not null-terminated
@@ -136,7 +138,7 @@ void handleMavlink(const void *_msg) {
 			memcpy(name, getParameterName(m.param_index), 16);
 		}
 		mavlink_message_t msg;
-		mavlink_msg_param_value_pack(SYSTEM_ID, MAV_COMP_ID_AUTOPILOT1, &msg,
+		mavlink_msg_param_value_pack(mavlinkSysId, MAV_COMP_ID_AUTOPILOT1, &msg,
 			name, value, MAV_PARAM_TYPE_REAL32, parametersCount(), m.param_index);
 		sendMessage(&msg);
 	}
@@ -144,32 +146,33 @@ void handleMavlink(const void *_msg) {
 	if (msg.msgid == MAVLINK_MSG_ID_PARAM_SET) {
 		mavlink_param_set_t m;
 		mavlink_msg_param_set_decode(&msg, &m);
-		if (m.target_system && m.target_system != SYSTEM_ID) return;
+		if (m.target_system && m.target_system != mavlinkSysId) return;
 
 		char name[MAVLINK_MSG_PARAM_SET_FIELD_PARAM_ID_LEN + 1];
 		strlcpy(name, m.param_id, sizeof(name)); // param_id might be not null-terminated
-		setParameter(name, m.param_value);
+		bool success = setParameter(name, m.param_value);
+		if (!success) return;
 		// send ack
 		mavlink_message_t msg;
-		mavlink_msg_param_value_pack(SYSTEM_ID, MAV_COMP_ID_AUTOPILOT1, &msg,
-			m.param_id, m.param_value, MAV_PARAM_TYPE_REAL32, parametersCount(), 0); // index is unknown
+		mavlink_msg_param_value_pack(mavlinkSysId, MAV_COMP_ID_AUTOPILOT1, &msg,
+			m.param_id, getParameter(name), MAV_PARAM_TYPE_REAL32, parametersCount(), 0); // index is unknown
 		sendMessage(&msg);
 	}
 
 	if (msg.msgid == MAVLINK_MSG_ID_MISSION_REQUEST_LIST) { // handle to make qgc happy
 		mavlink_mission_request_list_t m;
 		mavlink_msg_mission_request_list_decode(&msg, &m);
-		if (m.target_system && m.target_system != SYSTEM_ID) return;
+		if (m.target_system && m.target_system != mavlinkSysId) return;
 
 		mavlink_message_t msg;
-		mavlink_msg_mission_count_pack(SYSTEM_ID, MAV_COMP_ID_AUTOPILOT1, &msg, 0, 0, 0, MAV_MISSION_TYPE_MISSION, 0);
+		mavlink_msg_mission_count_pack(mavlinkSysId, MAV_COMP_ID_AUTOPILOT1, &msg, 0, 0, 0, MAV_MISSION_TYPE_MISSION, 0);
 		sendMessage(&msg);
 	}
 
 	if (msg.msgid == MAVLINK_MSG_ID_SERIAL_CONTROL) {
 		mavlink_serial_control_t m;
 		mavlink_msg_serial_control_decode(&msg, &m);
-		if (m.target_system && m.target_system != SYSTEM_ID) return;
+		if (m.target_system && m.target_system != mavlinkSysId) return;
 
 		char data[MAVLINK_MSG_SERIAL_CONTROL_FIELD_DATA_LEN + 1];
 		strlcpy(data, (const char *)m.data, m.count); // data might be not null-terminated
@@ -181,7 +184,7 @@ void handleMavlink(const void *_msg) {
 
 		mavlink_set_attitude_target_t m;
 		mavlink_msg_set_attitude_target_decode(&msg, &m);
-		if (m.target_system && m.target_system != SYSTEM_ID) return;
+		if (m.target_system && m.target_system != mavlinkSysId) return;
 
 		// copy attitude, rates and thrust targets
 		ratesTarget.x = m.body_roll_rate;
@@ -203,7 +206,7 @@ void handleMavlink(const void *_msg) {
 
 		mavlink_set_actuator_control_target_t m;
 		mavlink_msg_set_actuator_control_target_decode(&msg, &m);
-		if (m.target_system && m.target_system != SYSTEM_ID) return;
+		if (m.target_system && m.target_system != mavlinkSysId) return;
 
 		attitudeTarget.invalidate();
 		ratesTarget.invalidate();
@@ -216,12 +219,12 @@ void handleMavlink(const void *_msg) {
 	if (msg.msgid == MAVLINK_MSG_ID_LOG_REQUEST_DATA) {
 		mavlink_log_request_data_t m;
 		mavlink_msg_log_request_data_decode(&msg, &m);
-		if (m.target_system && m.target_system != SYSTEM_ID) return;
+		if (m.target_system && m.target_system != mavlinkSysId) return;
 
 		// Send all log records
 		for (int i = 0; i < sizeof(logBuffer) / sizeof(logBuffer[0]); i++) {
 			mavlink_message_t msg;
-			mavlink_msg_log_data_pack(SYSTEM_ID, MAV_COMP_ID_AUTOPILOT1, &msg, 0, i,
+			mavlink_msg_log_data_pack(mavlinkSysId, MAV_COMP_ID_AUTOPILOT1, &msg, 0, i,
 				sizeof(logBuffer[0]), (uint8_t *)logBuffer[i]);
 			sendMessage(&msg);
 		}
@@ -232,13 +235,13 @@ void handleMavlink(const void *_msg) {
 	if (msg.msgid == MAVLINK_MSG_ID_COMMAND_LONG) {
 		mavlink_command_long_t m;
 		mavlink_msg_command_long_decode(&msg, &m);
-		if (m.target_system && m.target_system != SYSTEM_ID) return;
+		if (m.target_system && m.target_system != mavlinkSysId) return;
 		mavlink_message_t response;
 		bool accepted = false;
 
 		if (m.command == MAV_CMD_REQUEST_MESSAGE && m.param1 == MAVLINK_MSG_ID_AUTOPILOT_VERSION) {
 			accepted = true;
-			mavlink_msg_autopilot_version_pack(SYSTEM_ID, MAV_COMP_ID_AUTOPILOT1, &response,
+			mavlink_msg_autopilot_version_pack(mavlinkSysId, MAV_COMP_ID_AUTOPILOT1, &response,
 				MAV_PROTOCOL_CAPABILITY_PARAM_FLOAT | MAV_PROTOCOL_CAPABILITY_MAVLINK2, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0);
 			sendMessage(&response);
 		}
@@ -257,7 +260,7 @@ void handleMavlink(const void *_msg) {
 
 		// send command ack
 		mavlink_message_t ack;
-		mavlink_msg_command_ack_pack(SYSTEM_ID, MAV_COMP_ID_AUTOPILOT1, &ack, m.command, accepted ? MAV_RESULT_ACCEPTED : MAV_RESULT_UNSUPPORTED, UINT8_MAX, 0, msg.sysid, msg.compid);
+		mavlink_msg_command_ack_pack(mavlinkSysId, MAV_COMP_ID_AUTOPILOT1, &ack, m.command, accepted ? MAV_RESULT_ACCEPTED : MAV_RESULT_UNSUPPORTED, UINT8_MAX, 0, msg.sysid, msg.compid);
 		sendMessage(&ack);
 	}
 }
@@ -274,7 +277,7 @@ void sendMavlinkPrint() {
 		char data[MAVLINK_MSG_SERIAL_CONTROL_FIELD_DATA_LEN + 1];
 		strlcpy(data, str + i, sizeof(data));
 		mavlink_message_t msg;
-		mavlink_msg_serial_control_pack(SYSTEM_ID, MAV_COMP_ID_AUTOPILOT1, &msg,
+		mavlink_msg_serial_control_pack(mavlinkSysId, MAV_COMP_ID_AUTOPILOT1, &msg,
 			SERIAL_CONTROL_DEV_SHELL,
 			i + MAVLINK_MSG_SERIAL_CONTROL_FIELD_DATA_LEN < strlen(str) ? SERIAL_CONTROL_FLAG_MULTI : 0, // more chunks to go
 			0, 0, strlen(data), (uint8_t *)data, 0, 0);
@@ -282,5 +285,3 @@ void sendMavlinkPrint() {
 	}
 	mavlinkPrintBuffer.clear();
 }
-
-#endif

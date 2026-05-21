@@ -9,24 +9,40 @@
 #include "lpf.h"
 #include "util.h"
 
-extern float channelZero[16];
-extern float channelMax[16];
+extern float channelZero[16], channelMax[16];
 extern float rollChannel, pitchChannel, throttleChannel, yawChannel, armedChannel, modeChannel;
 extern float tiltMax;
+extern int flightModes[3];
 extern PID rollPID, pitchPID, yawPID;
 extern PID rollRatePID, pitchRatePID, yawRatePID;
 extern Vector maxRate;
 extern Vector imuRotation;
 extern Vector accBias, accScale;
-extern float accWeight;
-extern LowPassFilter<Vector> ratesFilter;
+extern float accWeight, levelWeight;
+extern LowPassFilter<Vector> gyroBiasFilter, ratesFilter, voltageFilter;
+extern int rcRxPin, voltagePin;
+extern int motorPins[4];
+extern int pwmFrequency, pwmResolution, pwmStop, pwmMin, pwmMax;
+extern int wifiMode, wifiLongRange, udpLocalPort, udpRemotePort, espnowChannel;
+extern int mavlinkSysId;
+extern Rate telemetrySlow, telemetryFast;
+extern float rcLossTimeout, descendTime;
+extern int voltagePin;
+extern float voltageScale;
+extern const int MOTOR_REAR_LEFT, MOTOR_REAR_RIGHT, MOTOR_FRONT_RIGHT, MOTOR_FRONT_LEFT;
 
 Preferences storage;
 
 struct Parameter {
-	const char *name; // max length is 15 (Preferences key limit)
-	float *variable;
-	float value; // cache
+	const char *name; // max length is 15
+	bool integer;
+	union { float *f; int *i; }; // pointer to the variable
+	float cache; // what's stored in flash
+	void (*callback)(); // called after parameter change
+	Parameter(const char *name, float *variable, void (*callback)() = nullptr) : name(name), integer(false), f(variable), callback(callback) {};
+	Parameter(const char *name, int *variable, void (*callback)() = nullptr) : name(name), integer(true), i(variable), callback(callback) {};
+	float getValue() const { return integer ? *i : *f; };
+	void setValue(const float value) { if (integer) *i = value; else *f = value; };
 };
 
 Parameter parameters[] = {
@@ -35,13 +51,16 @@ Parameter parameters[] = {
 	{"CTL_R_RATE_I", &rollRatePID.i},
 	{"CTL_R_RATE_D", &rollRatePID.d},
 	{"CTL_R_RATE_WU", &rollRatePID.windup},
+	{"CTL_R_RATE_D_A", &rollRatePID.lpf.alpha},
 	{"CTL_P_RATE_P", &pitchRatePID.p},
 	{"CTL_P_RATE_I", &pitchRatePID.i},
 	{"CTL_P_RATE_D", &pitchRatePID.d},
 	{"CTL_P_RATE_WU", &pitchRatePID.windup},
+	{"CTL_P_RATE_D_A", &pitchRatePID.lpf.alpha},
 	{"CTL_Y_RATE_P", &yawRatePID.p},
 	{"CTL_Y_RATE_I", &yawRatePID.i},
 	{"CTL_Y_RATE_D", &yawRatePID.d},
+	{"CTL_Y_RATE_D_A", &yawRatePID.lpf.alpha},
 	{"CTL_R_P", &rollPID.p},
 	{"CTL_R_I", &rollPID.i},
 	{"CTL_R_D", &rollPID.d},
@@ -53,6 +72,9 @@ Parameter parameters[] = {
 	{"CTL_R_RATE_MAX", &maxRate.x},
 	{"CTL_Y_RATE_MAX", &maxRate.z},
 	{"CTL_TILT_MAX", &tiltMax},
+	{"CTL_FLT_MODE_0", &flightModes[0]},
+	{"CTL_FLT_MODE_1", &flightModes[1]},
+	{"CTL_FLT_MODE_2", &flightModes[2]},
 	// imu
 	{"IMU_ROT_ROLL", &imuRotation.x},
 	{"IMU_ROT_PITCH", &imuRotation.y},
@@ -63,10 +85,23 @@ Parameter parameters[] = {
 	{"IMU_ACC_SCALE_X", &accScale.x},
 	{"IMU_ACC_SCALE_Y", &accScale.y},
 	{"IMU_ACC_SCALE_Z", &accScale.z},
+	{"IMU_GYRO_BIAS_A", &gyroBiasFilter.alpha},
 	// estimate
 	{"EST_ACC_WEIGHT", &accWeight},
+	{"EST_LVL_WEIGHT", &levelWeight},
 	{"EST_RATES_LPF_A", &ratesFilter.alpha},
+	// motors
+	{"MOT_PIN_FL", &motorPins[MOTOR_FRONT_LEFT], setupMotors},
+	{"MOT_PIN_FR", &motorPins[MOTOR_FRONT_RIGHT], setupMotors},
+	{"MOT_PIN_RL", &motorPins[MOTOR_REAR_LEFT], setupMotors},
+	{"MOT_PIN_RR", &motorPins[MOTOR_REAR_RIGHT], setupMotors},
+	{"MOT_PWM_FREQ", &pwmFrequency, setupMotors},
+	{"MOT_PWM_RES", &pwmResolution, setupMotors},
+	{"MOT_PWM_STOP", &pwmStop},
+	{"MOT_PWM_MIN", &pwmMin},
+	{"MOT_PWM_MAX", &pwmMax},
 	// rc
+	{"RC_RX_PIN", &rcRxPin, setupRC},
 	{"RC_ZERO_0", &channelZero[0]},
 	{"RC_ZERO_1", &channelZero[1]},
 	{"RC_ZERO_2", &channelZero[2]},
@@ -88,17 +123,36 @@ Parameter parameters[] = {
 	{"RC_THROTTLE", &throttleChannel},
 	{"RC_YAW", &yawChannel},
 	{"RC_MODE", &modeChannel},
+	// wifi
+	{"WIFI_MODE", &wifiMode},
+	{"WIFI_PORT_LOC", &udpLocalPort},
+	{"WIFI_PORT_REM", &udpRemotePort},
+	{"WIFI_LONG_RANGE", &wifiLongRange},
+	// espnow
+	{"ESPNOW_CHANNEL", &espnowChannel},
+	// mavlink
+	{"MAV_SYS_ID", &mavlinkSysId},
+	{"MAV_RATE_SLOW", &telemetrySlow.rate},
+	{"MAV_RATE_FAST", &telemetryFast.rate},
+	// power
+	{"PWR_VOLT_PIN", &voltagePin, setupPower},
+	{"PWR_VOLT_SCALE", &voltageScale},
+	{"PWR_VOLT_LPF_A", &voltageFilter.alpha},
+	// safety
+	{"SF_RC_LOSS_TIME", &rcLossTimeout},
+	{"SF_DESCEND_TIME", &descendTime},
 };
 
 void setupParameters() {
-	storage.begin("flix", false);
+	print("Setup parameters\n");
+	storage.begin("flix");
 	// Read parameters from storage
 	for (auto &parameter : parameters) {
 		if (!storage.isKey(parameter.name)) {
-			storage.putFloat(parameter.name, *parameter.variable);
+			storage.putFloat(parameter.name, parameter.getValue()); // store default value
 		}
-		*parameter.variable = storage.getFloat(parameter.name, *parameter.variable);
-		parameter.value = *parameter.variable;
+		parameter.setValue(storage.getFloat(parameter.name, 0));
+		parameter.cache = parameter.getValue();
 	}
 }
 
@@ -113,13 +167,13 @@ const char *getParameterName(int index) {
 
 float getParameter(int index) {
 	if (index < 0 || index >= parametersCount()) return NAN;
-	return *parameters[index].variable;
+	return parameters[index].getValue();
 }
 
 float getParameter(const char *name) {
 	for (auto &parameter : parameters) {
-		if (strcmp(parameter.name, name) == 0) {
-			return *parameter.variable;
+		if (strcasecmp(parameter.name, name) == 0) {
+			return parameter.getValue();
 		}
 	}
 	return NAN;
@@ -127,8 +181,10 @@ float getParameter(const char *name) {
 
 bool setParameter(const char *name, const float value) {
 	for (auto &parameter : parameters) {
-		if (strcmp(parameter.name, name) == 0) {
-			*parameter.variable = value;
+		if (strcasecmp(parameter.name, name) == 0) {
+			if (parameter.integer && !isfinite(value)) return false; // can't set integer to NaN or Inf
+			parameter.setValue(value);
+			if (parameter.callback) parameter.callback();
 			return true;
 		}
 	}
@@ -141,16 +197,17 @@ void syncParameters() {
 	if (motorsActive()) return; // don't use flash while flying, it may cause a delay
 
 	for (auto &parameter : parameters) {
-		if (parameter.value == *parameter.variable) continue;
-		if (isnan(parameter.value) && isnan(*parameter.variable)) continue; // handle NAN != NAN
-		storage.putFloat(parameter.name, *parameter.variable);
-		parameter.value = *parameter.variable;
+		if (parameter.getValue() == parameter.cache) continue; // no change
+		if (isnan(parameter.getValue()) && isnan(parameter.cache)) continue; // both are NAN
+
+		storage.putFloat(parameter.name, parameter.getValue());
+		parameter.cache = parameter.getValue(); // update cache
 	}
 }
 
 void printParameters() {
 	for (auto &parameter : parameters) {
-		print("%s = %g\n", parameter.name, *parameter.variable);
+		print("%s = %g\n", parameter.name, parameter.getValue());
 	}
 }
 

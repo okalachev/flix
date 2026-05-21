@@ -6,21 +6,20 @@
 				"${workspaceFolder}/flix",
 				"${workspaceFolder}/gazebo",
 				"${workspaceFolder}/tools/**",
-				"~/.arduino15/packages/esp32/hardware/esp32/3.2.0/cores/esp32",
-				"~/.arduino15/packages/esp32/hardware/esp32/3.2.0/libraries/**",
-				"~/.arduino15/packages/esp32/hardware/esp32/3.2.0/variants/d1_mini32",
-				"~/.arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.4-2f7dcd86-v1/esp32/**",
-				"~/.arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.4-2f7dcd86-v1/esp32/dio_qspi/include",
+				"~/.arduino15/packages/esp32/hardware/esp32/3.3.6/cores/esp32",
+				"~/.arduino15/packages/esp32/hardware/esp32/3.3.6/libraries/**",
+				"~/.arduino15/packages/esp32/hardware/esp32/3.3.6/variants/d1_mini32",
+				"~/.arduino15/packages/esp32/tools/esp32-libs/3.3.6/include/**",
 				"~/Arduino/libraries/**",
 				"/usr/include/gazebo-11/",
 				"/usr/include/ignition/math6/"
 			],
 			"forcedInclude": [
 				"${workspaceFolder}/.vscode/intellisense.h",
-				"~/.arduino15/packages/esp32/hardware/esp32/3.2.0/cores/esp32/Arduino.h",
-				"~/.arduino15/packages/esp32/hardware/esp32/3.2.0/variants/d1_mini32/pins_arduino.h"
+				"~/.arduino15/packages/esp32/hardware/esp32/3.3.6/cores/esp32/Arduino.h",
+				"~/.arduino15/packages/esp32/hardware/esp32/3.3.6/variants/d1_mini32/pins_arduino.h"
 			],
-			"compilerPath": "~/.arduino15/packages/esp32/tools/esp-x32/2411/bin/xtensa-esp32-elf-g++",
+			"compilerPath": "~/.arduino15/packages/esp32/tools/esp-x32/2511/bin/xtensa-esp32-elf-g++",
 			"cStandard": "c11",
 			"cppStandard": "c++17",
 			"defines": [
@@ -40,21 +39,20 @@
 			"name": "Mac",
 			"includePath": [
 				"${workspaceFolder}/flix",
-				"~/Library/Arduino15/packages/esp32/hardware/esp32/3.2.0/cores/esp32",
-				"~/Library/Arduino15/packages/esp32/hardware/esp32/3.2.0/libraries/**",
-				"~/Library/Arduino15/packages/esp32/hardware/esp32/3.2.0/variants/d1_mini32",
-				"~/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.4-2f7dcd86-v1/esp32/include/**",
-				"~/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.4-2f7dcd86-v1/esp32/dio_qspi/include",
+				"~/Library/Arduino15/packages/esp32/hardware/esp32/3.3.6/cores/esp32",
+				"~/Library/Arduino15/packages/esp32/hardware/esp32/3.3.6/libraries/**",
+				"~/Library/Arduino15/packages/esp32/hardware/esp32/3.3.6/variants/d1_mini32",
+				"~/Library/Arduino15/packages/esp32/tools/esp32-libs/3.3.6/include/**",
 				"~/Documents/Arduino/libraries/**",
 				"/opt/homebrew/include/gazebo-11/",
 				"/opt/homebrew/include/ignition/math6/"
 			],
 			"forcedInclude": [
 				"${workspaceFolder}/.vscode/intellisense.h",
-				"~/Library/Arduino15/packages/esp32/hardware/esp32/3.2.0/cores/esp32/Arduino.h",
-				"~/Library/Arduino15/packages/esp32/hardware/esp32/3.2.0/variants/d1_mini32/pins_arduino.h"
+				"~/Library/Arduino15/packages/esp32/hardware/esp32/3.3.6/cores/esp32/Arduino.h",
+				"~/Library/Arduino15/packages/esp32/hardware/esp32/3.3.6/variants/d1_mini32/pins_arduino.h"
 			],
-			"compilerPath": "~/Library/Arduino15/packages/esp32/tools/esp-x32/2411/bin/xtensa-esp32-elf-g++",
+			"compilerPath": "~/Library/Arduino15/packages/esp32/tools/esp-x32/2511/bin/xtensa-esp32-elf-g++",
 			"cStandard": "c11",
 			"cppStandard": "c++17",
 			"defines": [
@@ -77,19 +75,18 @@
 				"${workspaceFolder}/flix",
 				"${workspaceFolder}/gazebo",
 				"${workspaceFolder}/tools/**",
-				"~/AppData/Local/Arduino15/packages/esp32/hardware/esp32/3.2.0/cores/esp32",
-				"~/AppData/Local/Arduino15/packages/esp32/hardware/esp32/3.2.0/libraries/**",
-				"~/AppData/Local/Arduino15/packages/esp32/hardware/esp32/3.2.0/variants/d1_mini32",
-				"~/AppData/Local/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.4-2f7dcd86-v1/esp32/**",
-				"~/AppData/Local/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.4-2f7dcd86-v1/esp32/dio_qspi/include",
+				"~/AppData/Local/Arduino15/packages/esp32/hardware/esp32/3.3.6/cores/esp32",
+				"~/AppData/Local/Arduino15/packages/esp32/hardware/esp32/3.3.6/libraries/**",
+				"~/AppData/Local/Arduino15/packages/esp32/hardware/esp32/3.3.6/variants/d1_mini32",
+				"~/AppData/Local/Arduino15/packages/esp32/tools/esp32-libs/3.3.6/include/**",
 				"~/Documents/Arduino/libraries/**"
 			],
 			"forcedInclude": [
 				"${workspaceFolder}/.vscode/intellisense.h",
-				"~/AppData/Local/Arduino15/packages/esp32/hardware/esp32/3.2.0/cores/esp32/Arduino.h",
-				"~/AppData/Local/Arduino15/packages/esp32/hardware/esp32/3.2.0/variants/d1_mini32/pins_arduino.h"
+				"~/AppData/Local/Arduino15/packages/esp32/hardware/esp32/3.3.6/cores/esp32/Arduino.h",
+				"~/AppData/Local/Arduino15/packages/esp32/hardware/esp32/3.3.6/variants/d1_mini32/pins_arduino.h"
 			],
-			"compilerPath": "~/AppData/Local/Arduino15/packages/esp32/tools/esp-x32/2411/bin/xtensa-esp32-elf-g++.exe",
+			"compilerPath": "~/AppData/Local/Arduino15/packages/esp32/tools/esp-x32/2511/bin/xtensa-esp32-elf-g++.exe",
 			"cStandard": "c11",
 			"cppStandard": "c++17",
 			"defines": [

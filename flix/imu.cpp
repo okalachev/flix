@@ -10,7 +10,7 @@
 #include "util.h"
 
 MPU9250 imu(SPI);
-Vector imuRotation(0, 0, -PI / 2); // imu orientation as Euler angles
+Vector imuRotation(0, 0, PI / 2); // imu orientation as Euler angles
 
 Vector gyro; // gyroscope output, rad/s
 Vector gyroBias;
@@ -18,6 +18,8 @@ Vector gyroBias;
 Vector acc; // accelerometer output, m/s/s
 Vector accBias;
 Vector accScale(1, 1, 1);
+
+LowPassFilter<Vector> gyroBiasFilter(0.001);
 
 void setupIMU() {
 	print("Setup IMU\n");
@@ -50,8 +52,6 @@ void readIMU() {
 void calibrateGyroOnce() {
 	static Delay landedDelay(2);
 	if (!landedDelay.update(landed)) return; // calibrate only if definitely stationary
-
-	static LowPassFilter<Vector> gyroBiasFilter(0.001);
 	gyroBias = gyroBiasFilter.update(gyro);
 }
 
@@ -121,7 +121,7 @@ void printIMUInfo() {
 	print("model: %s\n", imu.getModel());
 	print("who am I: 0x%02X\n", imu.whoAmI());
 	print("rate: %.0f\n", loopRate);
-	print("gyro: %f %f %f\n", rates.x, rates.y, rates.z);
+	print("gyro: %f %f %f\n", gyro.x, gyro.y, gyro.z);
 	print("acc: %f %f %f\n", acc.x, acc.y, acc.z);
 	imu.waitForData();
 	Vector rawGyro, rawAcc;

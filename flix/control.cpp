@@ -30,6 +30,7 @@ PID pitchPID(PITCH_P, PITCH_I, PITCH_D);
 PID yawPID(YAW_P, 0, 0);
 Vector maxRate(ROLLRATE_MAX, PITCHRATE_MAX, YAWRATE_MAX);
 float tiltMax = TILT_MAX;
+int flightModes[] = {STAB, STAB, STAB}; // map for rc mode switch
 
 extern const int MOTOR_REAR_LEFT, MOTOR_REAR_RIGHT, MOTOR_FRONT_RIGHT, MOTOR_FRONT_LEFT;
 extern float controlRoll, controlPitch, controlThrottle, controlYaw, controlMode;
@@ -43,9 +44,9 @@ void control() {
 }
 
 void interpretControls() {
-	if (controlMode < 0.25) mode = STAB;
-	if (controlMode < 0.75) mode = STAB;
-	if (controlMode > 0.75) mode = STAB;
+	if (controlMode < 0.25) mode = flightModes[0];
+	else if (controlMode <= 0.75) mode = flightModes[1];
+	else if (controlMode > 0.75) mode = flightModes[2];
 
 	if (mode == AUTO) return; // pilot is not effective in AUTO mode
 
@@ -126,10 +127,23 @@ void controlTorque() {
 	motors[MOTOR_REAR_LEFT] = thrustTarget + torqueTarget.x + torqueTarget.y - torqueTarget.z;
 	motors[MOTOR_REAR_RIGHT] = thrustTarget - torqueTarget.x + torqueTarget.y + torqueTarget.z;
 
+	desaturate(motors[MOTOR_FRONT_LEFT], motors[MOTOR_FRONT_RIGHT], motors[MOTOR_REAR_LEFT], motors[MOTOR_REAR_RIGHT]);
+
 	motors[0] = constrain(motors[0], 0, 1);
 	motors[1] = constrain(motors[1], 0, 1);
 	motors[2] = constrain(motors[2], 0, 1);
 	motors[3] = constrain(motors[3], 0, 1);
+}
+
+void desaturate(float& a, float& b, float& c, float& d) {
+	float maxThrust = max(max(a, b), max(c, d));
+	if (maxThrust > 1) {
+		float diff = maxThrust - 1;
+		a -= diff;
+		b -= diff;
+		c -= diff;
+		d -= diff;
+	}
 }
 
 const char* getModeName() {

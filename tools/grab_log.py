@@ -13,7 +13,7 @@ lines = []
 
 print('Downloading log...')
 count = 0
-dev.write('log\n'.encode())
+dev.write('log dump\n'.encode())
 while True:
     line = dev.readline()
     if not line:

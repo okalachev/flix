@@ -13,7 +13,7 @@ class SBUS {
 public:
 	SBUS(HardwareSerial& bus, const bool inv = true) {};
 	SBUS(HardwareSerial& bus, const int8_t rxpin, const int8_t txpin, const bool inv = true) {};
-	void begin() {};
+	void begin(int rxpin = -1, int txpin = -1, bool inv = true, bool fast = false) {};
 	bool read() { return joystickInit(); };
 	SBUSData data() {
 		SBUSData data;

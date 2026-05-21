@@ -5,6 +5,7 @@
 
 import os
 import time
+import math
 from queue import Queue, Empty
 from typing import Optional, Callable, List, Dict, Any, Union, Sequence
 import logging
@@ -26,6 +27,7 @@ class Flix:
     mode: str = ''
     armed: bool = False
     landed: bool = False
+    voltage: float = math.nan
     attitude: List[float]
     attitude_euler: List[float]  # roll, pitch, yaw
     rates: List[float]
@@ -68,7 +70,7 @@ class Flix:
         self._heartbeat_thread.start()
         if wait_connection:
             self.wait('mavlink.HEARTBEAT')
-            time.sleep(0.2) # give some time to receive initial state
+            time.sleep(0.6) # give some time to receive initial state
 
     def _init_state(self):
         self.attitude = [1, 0, 0, 0]
@@ -138,7 +140,7 @@ class Flix:
         while True:
             try:
                 msg: Optional[mavlink.MAVLink_message] = self.connection.recv_match(blocking=True)
-                if msg is None:
+                if msg is None or msg.get_srcSystem() != self.system_id:
                     continue
                 self._connected()
                 msg_dict = msg.to_dict()
@@ -185,10 +187,15 @@ class Flix:
             self._trigger('motors', self.motors)
 
         if isinstance(msg, mavlink.MAVLink_scaled_imu_message):
-            self.acc = self._mavlink_to_flu([msg.xacc / 1000, msg.yacc / 1000, msg.zacc / 1000])
+            ONE_G = 9.80665
+            self.acc = self._mavlink_to_flu([msg.xacc * ONE_G / 1000, msg.yacc * ONE_G / 1000, msg.zacc * ONE_G / 1000])
             self.gyro = self._mavlink_to_flu([msg.xgyro / 1000, msg.ygyro / 1000, msg.zgyro / 1000])
             self._trigger('acc', self.acc)
             self._trigger('gyro', self.gyro)
+
+        if isinstance(msg, mavlink.MAVLink_battery_status_message):
+            self.voltage = msg.voltages[0] / 1000
+            self._trigger('voltage', self.voltage)
 
         if isinstance(msg, mavlink.MAVLink_serial_control_message):
             # new chunk of data

@@ -11,9 +11,10 @@
 #include <sys/poll.h>
 #include <gazebo/gazebo.hh>
 
-#define WIFI_UDP_PORT 14580
-#define WIFI_UDP_REMOTE_PORT 14550
-#define WIFI_UDP_REMOTE_ADDR "255.255.255.255"
+int wifiMode = 1; // mock
+int udpLocalPort = 14580;
+int udpRemotePort = 14550;
+const char *udpRemoteIP = "255.255.255.255";
 
 int wifiSocket;
 
@@ -22,22 +23,22 @@ void setupWiFi() {
 	sockaddr_in addr; // local address
 	addr.sin_family = AF_INET;
 	addr.sin_addr.s_addr = INADDR_ANY;
-	addr.sin_port = htons(WIFI_UDP_PORT);
+	addr.sin_port = htons(udpLocalPort);
 	if (bind(wifiSocket, (sockaddr *)&addr, sizeof(addr))) {
-		gzerr << "Failed to bind WiFi UDP socket on port " << WIFI_UDP_PORT << std::endl;
+		gzerr << "Failed to bind WiFi UDP socket on port " << udpLocalPort << std::endl;
 		return;
 	}
 	int broadcast = 1;
 	setsockopt(wifiSocket, SOL_SOCKET, SO_BROADCAST, &broadcast, sizeof(broadcast)); // enable broadcast
-	gzmsg << "WiFi UDP socket initialized on port " << WIFI_UDP_PORT << " (remote port " << WIFI_UDP_REMOTE_PORT << ")" << std::endl;
+	gzmsg << "WiFi UDP socket initialized on port " << udpLocalPort << " (remote port " << udpRemotePort << ")" << std::endl;
 }
 
 void sendWiFi(const uint8_t *buf, int len) {
 	if (wifiSocket == 0) setupWiFi();
 	sockaddr_in addr; // remote address
 	addr.sin_family = AF_INET;
-	addr.sin_addr.s_addr = inet_addr(WIFI_UDP_REMOTE_ADDR);
-	addr.sin_port = htons(WIFI_UDP_REMOTE_PORT);
+	addr.sin_addr.s_addr = inet_addr(udpRemoteIP);
+	addr.sin_port = htons(udpRemotePort);
 	sendto(wifiSocket, buf, len, 0, (sockaddr *)&addr, sizeof(addr));
 }
 

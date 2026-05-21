@@ -20,10 +20,10 @@ You can build and upload the firmware using either **Arduino IDE** (easier for b
 
 1. Install [Arduino IDE](https://www.arduino.cc/en/software) (version 2 is recommended).
 2. *Windows users might need to install [USB to UART bridge driver from Silicon Labs](https://www.silabs.com/developers/usb-to-uart-bridge-vcp-drivers).*
-3. Install ESP32 core, version 3.2.0. See the [official Espressif's instructions](https://docs.espressif.com/projects/arduino-esp32/en/latest/installing.html#installing-using-arduino-ide) on installing ESP32 Core in Arduino IDE.
+3. Install ESP32 core, version 3.3.6. See the [official Espressif's instructions](https://docs.espressif.com/projects/arduino-esp32/en/latest/installing.html#installing-using-arduino-ide) on installing ESP32 Core in Arduino IDE.
 4. Install the following libraries using [Library Manager](https://docs.arduino.cc/software/ide-v2/tutorials/ide-v2-installing-a-library):
    * `FlixPeriph`, the latest version.
-   * `MAVLink`, version 2.0.16.
+   * `MAVLink`, version 2.0.25.
 5. Open the `flix/flix.ino` sketch from downloaded firmware sources in Arduino IDE.
 6. Connect your ESP32 board to the computer and choose correct board type in Arduino IDE (*WEMOS D1 MINI ESP32* for ESP32 Mini) and the port.
 7. [Build and upload](https://docs.arduino.cc/software/ide-v2/tutorials/getting-started/ide-v2-uploading-a-sketch) the firmware using Arduino IDE.
@@ -108,13 +108,13 @@ The drone is configured using parameters. To access and modify them, go to the Q
 
 <img src="img/parameters.png" width="400">
 
-You can also work with parameters using `p` command in the console.
+You can also work with parameters using `p` command in the console. Parameter names are case-insensitive.
 
 ### Define IMU orientation
 
-Use parameters, to define the IMU board axes orientation relative to the drone's axes: `IMU_ROT_ROLL`, `IMU_ROT_PITCH`, and `IMU_ROT_YAW`.
+The IMU orientation (relative to the drone's axes) is defined using the parameters: `IMU_ROT_ROLL`, `IMU_ROT_PITCH`, and `IMU_ROT_YAW`.
 
-The drone has *X* axis pointing forward, *Y* axis pointing left, and *Z* axis pointing up, and the supported IMU boards have *X* axis pointing to the pins side and *Z* axis pointing up from the component side:
+The drone has *X* axis pointing forward, *Y* axis pointing left, and *Z* axis pointing up, and the supported IMU boards have *X* axis pointing to the mounting holes side and *Z* axis pointing up from the component side:
 
 <img src="img/imu-axes.png" width="200">
 
@@ -122,10 +122,10 @@ Use the following table to set the parameters for common IMU orientations:
 
 |Orientation|Parameters|Orientation|Parameters|
 |:-:|-|-|-|
-|<img src="img/imu-rot-1.png" width="180">|`IMU_ROT_ROLL` = 0<br>`IMU_ROT_PITCH` = 0<br>`IMU_ROT_YAW` = 0    |<img src="img/imu-rot-5.png" width="180">|`IMU_ROT_ROLL` = 3.142<br>`IMU_ROT_PITCH` = 0<br>`IMU_ROT_YAW` = 0|
-|<img src="img/imu-rot-2.png" width="180">|`IMU_ROT_ROLL` = 0<br>`IMU_ROT_PITCH` = 0<br>`IMU_ROT_YAW` = 1.571|<img src="img/imu-rot-6.png" width="180">|`IMU_ROT_ROLL` = 3.142<br>`IMU_ROT_PITCH` = 0<br>`IMU_ROT_YAW` = -1.571|
-|<img src="img/imu-rot-3.png" width="180">|`IMU_ROT_ROLL` = 0<br>`IMU_ROT_PITCH` = 0<br>`IMU_ROT_YAW` = 3.142|<img src="img/imu-rot-7.png" width="180">|`IMU_ROT_ROLL` = 3.142<br>`IMU_ROT_PITCH` = 0<br>`IMU_ROT_YAW` = 3.142|
-|<img src="img/imu-rot-4.png" width="180"><br>☑️ **Default**|<br>`IMU_ROT_ROLL` = 0<br>`IMU_ROT_PITCH` = 0<br>`IMU_ROT_YAW` = -1.571|<img src="img/imu-rot-8.png" width="180">|`IMU_ROT_ROLL` = 3.142<br>`IMU_ROT_PITCH` = 0<br>`IMU_ROT_YAW` = 1.571|
+|<img src="img/imu-rot-3.png" width="180">|`IMU_ROT_ROLL` = 0<br>`IMU_ROT_PITCH` = 0<br>`IMU_ROT_YAW` = 0    |<img src="img/imu-rot-7.png" width="180">|`IMU_ROT_ROLL` = 3.142<br>`IMU_ROT_PITCH` = 0<br>`IMU_ROT_YAW` = 0|
+|<img src="img/imu-rot-2.png" width="180">|`IMU_ROT_ROLL` = 0<br>`IMU_ROT_PITCH` = 0<br>`IMU_ROT_YAW` = -1.571|<img src="img/imu-rot-6.png" width="180">|`IMU_ROT_ROLL` = 3.142<br>`IMU_ROT_PITCH` = 0<br>`IMU_ROT_YAW` = -1.571|
+|<img src="img/imu-rot-1.png" width="180">|`IMU_ROT_ROLL` = 0<br>`IMU_ROT_PITCH` = 0<br>`IMU_ROT_YAW` = 3.142|<img src="img/imu-rot-5.png" width="180">|`IMU_ROT_ROLL` = 3.142<br>`IMU_ROT_PITCH` = 0<br>`IMU_ROT_YAW` = 3.142|
+|<img src="img/imu-rot-4.png" width="180"><br>☑️ **Default**|<br>`IMU_ROT_ROLL` = 0<br>`IMU_ROT_PITCH` = 0<br>`IMU_ROT_YAW` = 1.571|<img src="img/imu-rot-8.png" width="180">|`IMU_ROT_ROLL` = 3.142<br>`IMU_ROT_PITCH` = 0<br>`IMU_ROT_YAW` = 1.571|
 
 ### Calibrate accelerometer
 
@@ -134,27 +134,52 @@ Before flight you need to calibrate the accelerometer:
 1. Access the console using QGroundControl (recommended) or Serial Monitor.
 2. Type `ca` command there and follow the instructions.
 
-### Check everything works
+### Setup motors
 
-1. Check the IMU is working: perform `imu` command and check its output:
+If using non-default motor pins, set the pin numbers using the parameters: `MOTOR_PIN_FL`, `MOTOR_PIN_FR`, `MOTOR_PIN_RL`, `MOTOR_PIN_RR` (front-left, front-right, rear-left, rear-right respectively).
+
+Certain ESP32 models (such as ESP32-S3 and ESP32-C3) support a lower maximum PWM frequency; on these boards the parameter `MOT_PWM_FREQ` should be set to 38000 Hz.
+
+If using brushless motors and ESCs:
+
+1. Set the appropriate PWM using the parameters: `MOT_PWM_STOP`, `MOT_PWM_MIN`, and `MOT_PWM_MAX` (1000, 1000, and 2000 is typical).
+2. Decrease the PWM frequency using the `MOT_PWM_FREQ` parameter (400 is typical).
+
+> [!CAUTION]
+> **Remove the props when configuring the motors!** If improperly configured, you may not be able to stop them.
+
+### Battery voltage monitoring
+
+ESP32 ADC can measure only up to 3.3 V, so you need to use a voltage divider to monitor the battery voltage. To enable voltage measurement, set the following parameters:
+
+1. `PWR_VOLT_PIN` — GPIO pin number where the voltage divider is connected (*-1* to disable).
+2. `PWR_VOLT_SCALE` — voltage divider coefficient (*2* for two equal resistors).
+
+After this setup, you should see the battery voltage in QGroundControl top panel or using `pw` command in the console.
+
+### Important: check everything works
+
+1. Check the IMU is working: perform `imu` command in the console and check the output:
 
    * The `status` field should be `OK`.
    * The `rate` field should be about 1000 (Hz).
    * The `accel` and `gyro` fields should change as you move the drone.
+   * The `accel bias` and `accel scale` fields should contain calibration parameters (not zeros and ones).
+   * The `gyro bias` field should contain estimated gyro bias (not zeros).
    * The `landed` field should be `1` when the drone is still on the ground and `0` when you lift it up.
 
-2. Check the attitude estimation: connect to the drone using QGroundControl, rotate the drone in different orientations and check if the attitude estimation shown in QGroundControl is correct. Attitude indicator in QGroundControl is shown below:
+2. Check the attitude estimation: connect to the drone using QGroundControl, rotate the drone in different orientations and check if the attitude estimation shown in QGroundControl is correct. Compare your attitude indicator (in the *large vertical* mode) to the video:
 
-   <img src="img/qgc-attitude.png" height="200">
+   <a href="https://youtu.be/yVRN23-GISU"><img width=300 src="https://i3.ytimg.com/vi/yVRN23-GISU/maxresdefault.jpg"></a>
 
-3. Perform motor tests in the console. Use the following commands **— remove the propellers before running the tests!**
+3. Perform motor tests. Use the following commands **— remove the propellers before running the tests!**
 
-   * `mfr` — should rotate front right motor (counter-clockwise).
-   * `mfl` — should rotate front left motor (clockwise).
-   * `mrl` — should rotate rear left motor (counter-clockwise).
-   * `mrr` — should rotate rear right motor (clockwise).
+   * `mfr` — rotate front right motor (counter-clockwise).
+   * `mfl` — rotate front left motor (clockwise).
+   * `mrl` — rotate rear left motor (counter-clockwise).
+   * `mrr` — rotate rear right motor (clockwise).
 
-   Rotation diagram:
+   Make sure rotation directions and propeller types match the following diagram:
 
    <img src="img/motors.svg" width=200>
 
@@ -166,6 +191,18 @@ Before flight you need to calibrate the accelerometer:
 There are several ways to control the drone's flight: using **smartphone** (Wi-Fi), using **SBUS remote control**, or using **USB remote control** (Wi-Fi).
 
 ### Control with a smartphone
+
+#### Using Mavlink Joystick app (Android)
+
+<img src="https://github.com/goldarte/mavlink-joystick/blob/master/app_screen.png?raw=true" width="400">
+
+1. Download and install [Mavlink Joystick app](https://github.com/goldarte/mavlink-joystick/releases/latest).
+2. Power the drone using the battery.
+3. Connect your smartphone to the appeared `flix` Wi-Fi network (password: `flixwifi`).
+4. Open Mavlink Joystick app. It should connect and begin showing the drone's telemetry automatically.
+5. Use the virtual joystick to fly the drone!
+
+#### Using QGroundControl app
 
 1. Install [QGroundControl mobile app](https://docs.qgroundcontrol.com/master/en/qgc-user-guide/getting_started/download_and_install.html#android) on your smartphone.
 2. Power the drone using the battery.
@@ -179,11 +216,13 @@ There are several ways to control the drone's flight: using **smartphone** (Wi-F
 
 ### Control with a remote control
 
-Before using remote SBUS-connected remote control, you need to calibrate it:
+If using SBUS-connected remote control you need to enable SBUS and calibrate it:
 
-1. Access the console using QGroundControl (recommended) or Serial Monitor.
-2. Type `cr` command and follow the instructions.
-3. Use the remote control to fly the drone!
+1. Connect to the drone using QGroundControl.
+2. In parameters, set the `RC_RX_PIN` parameter to the GPIO pin number where the SBUS signal is connected, for example: 4. Negative value disables SBUS.
+3. Check if the receiver is working using `rc` command in the console.
+4. Open the console, type `cr` command and follow the instructions to calibrate the remote control.
+5. Use the remote control to fly the drone!
 
 ### Control with a USB remote control
 
@@ -220,11 +259,11 @@ When finished flying, **disarm** the drone, moving the left stick to the bottom 
 
 ### Flight modes
 
-Flight mode is changed using mode switch on the remote control or using the command line.
+Flight mode is changed using mode switch on the remote control (if configured) or using the console commands. The main flight mode is *STAB*. In order to change modes using SBUS remote control, set the parameters: `CTL_FLT_MODE_0`, `CTL_FLT_MODE_1`, and `CTL_FLT_MODE_2` to required mode numbers (0 for *RAW*, 1 for *ACRO*, 2 for *STAB*, 3 for *AUTO*).
 
 #### STAB
 
-The default mode is *STAB*. In this mode, the drone stabilizes its attitude (orientation). The left stick controls throttle and yaw rate, the right stick controls pitch and roll angles.
+In this mode, the drone stabilizes its attitude (orientation). The left stick controls throttle and yaw rate, the right stick controls pitch and roll angles.
 
 > [!IMPORTANT]
 > The drone doesn't stabilize its position, so slight drift is possible. The pilot should compensate it manually.
@@ -239,13 +278,75 @@ In this mode, the pilot controls the angular rates. This control method is diffi
 
 #### AUTO
 
-In this mode, the pilot inputs are ignored (except the mode switch, if configured). The drone can be controlled using [pyflix](../tools/pyflix/) Python library, or by modifying the firmware to implement the needed autonomous behavior.
+In this mode, the pilot inputs are ignored (except the mode switch). The drone can be controlled using [pyflix](../tools/pyflix/) Python library, or by modifying the firmware to implement the needed behavior.
 
-If the pilot moves the control sticks, the drone will switch back to *STAB* mode.
+If the pilot moves the control sticks and mode switch is not configured, the drone will switch back to *STAB* mode.
+
+## Wi-Fi configuration
+
+You can configure the Wi-Fi using parameters and console commands.
+
+The Wi-Fi mode is chosen using `WIFI_MODE` parameter in QGroundControl or in the console:
+
+* `0` — Wi-Fi is disabled.
+* `1` — Access Point mode *(AP)* — the drone creates a Wi-Fi network.
+* `2` — Client mode *(STA)* — the drone connects to an existing Wi-Fi network (may cause additional delays, so generally not recommended).
+* `3` — ESP-NOW mode — the drone uses ESP-NOW protocol for communication.
+
+The SSID and password are configured using the `ap` and `sta` console commands:
+
+```
+ap <ssid> <password>
+sta <ssid> <password>
+```
+
+Example of configuring the Access Point mode:
+
+```
+ap my-flix-ssid mypassword123
+p WIFI_MODE 1
+```
+
+Disabling Wi-Fi:
+
+```
+p WIFI_MODE 0
+```
+
+### Using ESP-NOW
+
+[ESP-NOW](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/network/esp_now.html) is a low level wireless communication protocol. It can provide lower latency, better reliability, and longer range than Wi-Fi. However, it requires a second ESP32 board to be used as a proxy for the computer.
+
+<img src="img/espnow-connection.jpg" width="600">
+
+To setup ESP-NOW communication:
+
+1. Flash the second ESP32 board with ESP-NOW proxy sketch: [`tools/espnow-proxy/espnow-proxy.ino`](../tools/espnow-proxy/espnow-proxy.ino). Use Arduino IDE or command line: `make upload_proxy`.
+
+2. Open Serial Monitor or use `make monitor` command. The ESP32 will print its MAC address and generated encryption key, for example:
+
+   ```
+   espnow 7a:c8:e3:eb:bf:e9 &PiuSysxP9+$L&5E
+   ```
+
+   Run this line as a console command on each drone you want to bind to this proxy board.
+
+3. Set the `WIFI_MODE` parameter to `3` on the drone:
+
+   ```
+   p WIFI_MODE 3
+   ```
+
+4. Go to the QGroundControl menu ⇒ *Application Settings* ⇒ *Comm Links*, add new link with the following settings:
+   * Name: ESP32.
+   * Type: Serial.
+   * Serial Port: choose the port of the proxy ESP32 board, e. g. `/dev/cu.usbserial-0001`.
+   * Baud Rate: 115200.
+5. Click *Save*. QGroundControl should connect to the drone using ESP-NOW and begin showing the telemetry.
 
 ## Flight log
 
-After the flight, you can download the flight log for analysis wirelessly. Use the following for that:
+After the flight, you can download the flight log for analysis wirelessly. Use the following command on your computer for that:
 
 ```bash
 make log

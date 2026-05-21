@@ -12,14 +12,12 @@
 void setup() {
 	Serial.begin(115200);
 	print("Initializing flix\n");
-	disableBrownOut();
 	setupParameters();
+	setupPower();
 	setupLED();
-	setupMotors();
 	setLED(true);
-#if WIFI_ENABLED
+	setupMotors();
 	setupWiFi();
-#endif
 	setupIMU();
 	setupRC();
 	setLED(false);
@@ -34,9 +32,8 @@ void loop() {
 	control();
 	sendMotors();
 	handleInput();
-#if WIFI_ENABLED
 	processMavlink();
-#endif
+	readVoltage();
 	logData();
 	syncParameters();
 }
