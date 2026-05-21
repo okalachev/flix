@@ -18,7 +18,7 @@ Rate telemetryFast(10);
 Rate telemetrySlow(2);
 
 bool mavlinkConnected = false;
-String mavlinkPrintBuffer;
+static String mavlinkPrintBuffer;
 
 void processMavlink() {
 	sendMavlink();

@@ -22,11 +22,11 @@ int wifiMode = W_AP;
 int wifiLongRange = 0;
 int udpLocalPort = 14550;
 int udpRemotePort = 14550;
-IPAddress udpRemoteIP = "255.255.255.255";
-WiFiUDP udp;
+static IPAddress udpRemoteIP = "255.255.255.255";
+static WiFiUDP udp;
 
-ESPNOWSerial espnow(NULL, 0, WIFI_IF_AP);
-ESPNOWSerial espnowBroadcast(ESP_NOW.BROADCAST_ADDR, 0, WIFI_IF_AP);
+static ESPNOWSerial espnow(NULL, 0, WIFI_IF_AP);
+static ESPNOWSerial espnowBroadcast(ESP_NOW.BROADCAST_ADDR, 0, WIFI_IF_AP);
 int espnowChannel = 6;
 
 void setupWiFi() {

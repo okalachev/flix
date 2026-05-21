@@ -45,7 +45,7 @@ struct Parameter {
 	void setValue(const float value) { if (integer) *i = value; else *f = value; };
 };
 
-Parameter parameters[] = {
+static Parameter parameters[] = {
 	// control
 	{"CTL_R_RATE_P", &rollRatePID.p},
 	{"CTL_R_RATE_I", &rollRatePID.i},
