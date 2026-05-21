@@ -290,11 +290,8 @@ The Wi-Fi mode is chosen using `WIFI_MODE` parameter in QGroundControl or in the
 
 * `0` — Wi-Fi is disabled.
 * `1` — Access Point mode *(AP)* — the drone creates a Wi-Fi network.
-* `2` — Client mode *(STA)* — the drone connects to an existing Wi-Fi network.
-* `3` — *ESP-NOW (not implemented yet)*.
-
-> [!WARNING]
-> Tests showed that Client mode may cause **additional delays** in remote control (due to retranslations), so it's generally not recommended.
+* `2` — Client mode *(STA)* — the drone connects to an existing Wi-Fi network (may cause additional delays, so generally not recommended).
+* `3` — ESP-NOW mode — the drone uses ESP-NOW protocol for communication.
 
 The SSID and password are configured using the `ap` and `sta` console commands:
 
@@ -315,6 +312,37 @@ Disabling Wi-Fi:
 ```
 p WIFI_MODE 0
 ```
+
+### Using ESP-NOW
+
+[ESP-NOW](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/network/esp_now.html) is a low level wireless communication protocol. It can provide lower latency, better reliability, and longer range than Wi-Fi. However, it requires a second ESP32 board to be used as a proxy for the computer.
+
+<img src="img/espnow-connection.jpg" width="600">
+
+To setup ESP-NOW communication:
+
+1. Flash the second ESP32 board with ESP-NOW proxy sketch: [`tools/espnow-proxy/espnow-proxy.ino`](../tools/espnow-proxy/espnow-proxy.ino). Use Arduino IDE or command line: `make upload_proxy`.
+
+2. Open Serial Monitor or use `make monitor` command. The ESP32 will print its MAC address and generated encryption key, for example:
+
+   ```
+   espnow 7a:c8:e3:eb:bf:e9 &PiuSysxP9+$L&5E
+   ```
+
+   Run this line as a console command on each drone you want to bind to this proxy board.
+
+3. Set the `WIFI_MODE` parameter to `3` on the drone:
+
+   ```
+   p WIFI_MODE 3
+   ```
+
+4. Go to the QGroundControl menu ⇒ *Application Settings* ⇒ *Comm Links*, add new link with the following settings:
+   * Name: ESP32.
+   * Type: Serial.
+   * Serial Port: choose the port of the proxy ESP32 board, e. g. `/dev/cu.usbserial-0001`.
+   * Baud Rate: 115200.
+5. Click *Save*. QGroundControl should connect to the drone using ESP-NOW and begin showing the telemetry.
 
 ## Flight log
 

@@ -3,13 +3,13 @@
 
 // Proxy for ESP-NOW connection
 
+#include <vector>
 #include <WiFi.h>
 #include <ESP32_NOW_Serial.h>
 #include <MacAddress.h>
 #include <MAVLink.h>
 #include <Preferences.h>
 #include "../../flix/util.h"
-#include <vector>
 
 const int CHANNEL = 6;
 char key[ESP_NOW_KEY_LEN + 1] = {0}; // with trailing null
@@ -61,7 +61,7 @@ void generateRandomKey() {
 void loop() {
 	uint8_t buf[5000];
 
-	// Send from serial to ESP-NOW
+	// Send from Serial to ESP-NOW
 	while (Serial.available() > 0) {
 		int b = Serial.read();
 		if (b < 0) {
@@ -78,7 +78,7 @@ void loop() {
 		}
 	}
 
-	// Send from ESP-NOW to serial
+	// Send from ESP-NOW to Serial
 	for (ESPNOWSerial *link : peers) {
 		int len = link->read(buf, sizeof(buf));
 		if (len > 0) {
