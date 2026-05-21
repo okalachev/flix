@@ -1,3 +1,3 @@
 # ESPNOW-proxy
 
-Proxy sketch for using ESP-NOW MAVLink connection with Flix drone.
+Proxy sketch for using ESP-NOW connection with Flix drone.
