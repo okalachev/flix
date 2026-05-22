@@ -6,13 +6,11 @@
 #include <Preferences.h>
 #include "util.h"
 
-extern int channelZero[16];
-extern int channelMax[16];
+extern int channelZero[16], channelMax[16];
 extern int rollChannel, pitchChannel, throttleChannel, yawChannel, armedChannel, modeChannel;
-extern int rcRxPin;
+extern int rcRxPin, voltagePin;
 extern int wifiMode, wifiLongRange, udpLocalPort, udpRemotePort, espnowChannel;
 extern float rcLossTimeout, descendTime;
-extern int voltagePin;
 extern float voltageScale;
 extern LowPassFilter<float> voltageFilter;
 

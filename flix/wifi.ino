@@ -8,7 +8,7 @@
 #include <WiFiUdp.h>
 #include <MacAddress.h>
 #include <ESP32_NOW_Serial.h>
-#include "Preferences.h"
+#include <Preferences.h>
 #include "util.h"
 
 extern Preferences storage; // use the main preferences storage
@@ -33,10 +33,14 @@ void setupWiFi() {
 	if (wifiMode == W_AP) {
 		WiFi.softAP(storage.getString("WIFI_AP_SSID", "flix").c_str(), storage.getString("WIFI_AP_PASS", "flixwifi").c_str());
 		udp.begin(udpLocalPort);
-	} else if (wifiMode == W_STA) {
+	}
+
+	if (wifiMode == W_STA) {
 		WiFi.begin(storage.getString("WIFI_STA_SSID", "").c_str(), storage.getString("WIFI_STA_PASS", "").c_str());
 		udp.begin(udpLocalPort);
-	} else if (wifiMode == W_ESPNOW) {
+	}
+
+	if (wifiMode == W_ESPNOW) {
 		WiFi.mode(WIFI_AP);
 		WiFi.setChannel(espnowChannel);
 		espnow.addr(MacAddress(storage.getString("ESPNOW_PEER_MAC", "FF:FF:FF:FF:FF:FF").c_str()));

@@ -329,7 +329,7 @@ To setup ESP-NOW communication:
    espnow 7a:c8:e3:eb:bf:e9 &PiuSysxP9+$L&5E
    ```
 
-   Run this line as a console command on each drone you want to bind to this proxy board.
+   Run this line as a console command on each drone you want to bind to this proxy board. [The maximum number](https://github.com/espressif/esp-idf/blob/e95cab4be8fd293e3f3323181e7a2280874da6f7/components/esp_wifi/include/esp_now.h#L32-L33) of simultaneously connected drones is 20 (unencrypted) io 6 (encrypted).
 
 3. Set the `WIFI_MODE` parameter to `3` on the drone:
 
