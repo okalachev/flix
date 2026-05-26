@@ -47,6 +47,14 @@ See the [user builds gallery](docs/user.md):
 
 <a href="docs/user.md"><img src="docs/img/user/user.jpg" width=500></a>
 
+### PCB
+
+The official PCB *(Flix2)* is in development now. Follow the [project's channel](https://t.me/opensourcequadcopter) to track the progress.
+
+Outdoor flights demo video of the current prototype:
+
+<a href="https://youtu.be/KXlNmvUTi4g"><img width=300 src="https://i3.ytimg.com/vi/KXlNmvUTi4g/maxresdefault.jpg"></a>
+
 ## Simulation
 
 The simulator is implemented using Gazebo and runs the original Arduino code:
