@@ -80,7 +80,7 @@ jobs:
       env:
         GAZEBO_MODEL_PATH: ${{ github.workspace }}/gazebo/models
         GAZEBO_PLUGIN_PATH: ${{ github.workspace }}/gazebo/build
-      run: timeout --preserve-status 30 gzserver --verbose gazebo/flix.world || [ $? -eq 143 ]
+      run: timeout --preserve-status 120 gzserver --verbose gazebo/flix.world || [ $? -eq 143 ]
     - uses: actions/upload-artifact@v4
       with:
         name: gazebo-plugin-binary
