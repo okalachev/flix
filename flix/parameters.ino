@@ -188,8 +188,9 @@ void syncParameters() {
 	}
 }
 
-void printParameters() {
+void printParameters(const char *filter) {
 	for (auto &parameter : parameters) {
+		if (strncasecmp(parameter.name, filter, strlen(filter))) continue;
 		print("%s = %g\n", parameter.name, parameter.getValue());
 	}
 }

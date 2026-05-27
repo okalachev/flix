@@ -31,7 +31,7 @@ const char* motd =
 "Commands:\n\n"
 "help - show help\n"
 "p - show all parameters\n"
-"p <name> - show parameter\n"
+"p <str> - show parameters starting with str\n"
 "p <name> <value> - set parameter\n"
 "preset - reset parameters\n"
 "time - show time info\n"
@@ -92,10 +92,8 @@ void doCommand(String str, bool echo = false) {
 	// execute command
 	if (command == "help" || command == "motd") {
 		print("%s\n", motd);
-	} else if (command == "p" && arg0 == "") {
-		printParameters();
-	} else if (command == "p" && arg0 != "" && arg1 == "") {
-		print("%s = %g\n", arg0.c_str(), getParameter(arg0.c_str()));
+	} else if (command == "p" && arg1 == "") {
+		printParameters(arg0.c_str());
 	} else if (command == "p") {
 		bool success = setParameter(arg0.c_str(), arg1.toFloat());
 		if (success) {

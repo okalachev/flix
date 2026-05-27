@@ -68,7 +68,7 @@ const char *getParameterName(int index);
 float getParameter(int index);
 float getParameter(const char *name);
 bool setParameter(const char *name, const float value);
-void printParameters();
+void printParameters(const char *filter);
 void resetParameters();
 
 // mocks
