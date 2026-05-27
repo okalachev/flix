@@ -41,7 +41,7 @@ void sendMavlink() {
 			MAV_VTOL_STATE_UNDEFINED, landed ? MAV_LANDED_STATE_ON_GROUND : MAV_LANDED_STATE_IN_AIR);
 		sendMessage(&msg);
 
-		uint16_t voltages[] = {voltage * 1000, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX};
+		uint16_t voltages[] = {(uint16_t)(voltage * 1000), UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX};
 		uint16_t voltagesExt[] = {0, 0, 0, 0};
 		float remaining = constrain(mapf(voltage, 3.4, 4.2, 0, 1), 0, 1);
 		mavlink_msg_battery_status_pack(mavlinkSysId, MAV_COMP_ID_AUTOPILOT1, &msg, 0, MAV_BATTERY_FUNCTION_ALL,
