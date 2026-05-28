@@ -18,7 +18,7 @@ const int MOTOR_REAR_LEFT = 0, MOTOR_REAR_RIGHT = 1, MOTOR_FRONT_RIGHT = 2, MOTO
 
 void setupMotors() {
 	print("Setup Motors\n");
-	// configure pins
+	// Configure pins
 	for (int i = 0; i < 4; i++) {
 		ledcAttach(motorPins[i], pwmFrequency, pwmResolution);
 		pwmFrequency = ledcChangeFrequency(motorPins[i], pwmFrequency, pwmResolution); // when reconfiguring
@@ -35,6 +35,7 @@ void sendMotors() {
 
 int getDutyCycle(float value) {
 	value = constrain(value, 0, 1);
+
 	if (pwmMax >= 0) { // pwm mode
 		float pwm = mapf(value, 0, 1, pwmMin, pwmMax);
 		if (value == 0) pwm = pwmStop;

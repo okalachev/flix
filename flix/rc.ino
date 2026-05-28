@@ -55,6 +55,7 @@ void calibrateRC() {
 		print("RC_RX_PIN = %d, set the RC pin!\n", rcRxPin);
 		return;
 	}
+
 	uint16_t zero[16]; // for zero positions
 	uint16_t center[16]; // for center positions
 	uint16_t _[16]; // for unused data

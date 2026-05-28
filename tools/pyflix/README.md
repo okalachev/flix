@@ -28,7 +28,7 @@ from pyflix import Flix
 flix = Flix()  # create a Flix object and wait for connection
 ```
 
-If using ESP-NOW connection, specify the proxy's device name in `FLIX_DEVICE` environment variable or pass it to the constructor: `Flix(device='/dev/cu.usbserial-0001')`.
+If using ESP-NOW connection, specify the proxy device name in `FLIX_DEVICE` environment variable or pass it to the constructor: `Flix(device='/dev/cu.usbserial-0001')`.
 
 ### Telemetry
 

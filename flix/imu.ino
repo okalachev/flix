@@ -40,10 +40,12 @@ void readIMU() {
 	imu.getGyro(gyro.x, gyro.y, gyro.z);
 	imu.getAccel(acc.x, acc.y, acc.z);
 	calibrateGyroOnce();
-	// apply scale and bias
+
+	// Apply scale and bias
 	acc = (acc - accBias) / accScale;
 	gyro = gyro - gyroBias;
-	// rotate to body frame
+
+	// Rotate to body frame
 	Quaternion rotation = Quaternion::fromEuler(imuRotation);
 	acc = Quaternion::rotateVector(acc, rotation.inversed());
 	gyro = Quaternion::rotateVector(gyro, rotation.inversed());
@@ -52,6 +54,7 @@ void readIMU() {
 void calibrateGyroOnce() {
 	static Delay landedDelay(2);
 	if (!landedDelay.update(landed)) return; // calibrate only if definitely stationary
+
 	gyroBias = gyroBiasFilter.update(gyro);
 }
 
@@ -105,6 +108,7 @@ void calibrateAccelOnce() {
 	if (acc.x < accMin.x) accMin.x = acc.x;
 	if (acc.y < accMin.y) accMin.y = acc.y;
 	if (acc.z < accMin.z) accMin.z = acc.z;
+
 	// Compute scale and bias
 	accScale = (accMax - accMin) / 2 / ONE_G;
 	accBias = (accMax + accMin) / 2;
