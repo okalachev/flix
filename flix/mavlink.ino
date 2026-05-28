@@ -81,13 +81,13 @@ void sendMessage(const void *msg) {
 void receiveMavlink() {
 	uint8_t buf[MAVLINK_MAX_PACKET_LEN];
 	int len = receiveWiFi(buf, MAVLINK_MAX_PACKET_LEN);
-	if (len) mavlinkConnected = true;
 
 	// New packet, parse it
 	mavlink_message_t msg;
 	mavlink_status_t status;
 	for (int i = 0; i < len; i++) {
 		if (mavlink_parse_char(MAVLINK_COMM_0, buf[i], &msg, &status)) {
+			mavlinkConnected = true;
 			handleMavlink(&msg);
 		}
 	}
