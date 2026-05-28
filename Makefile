@@ -1,4 +1,4 @@
-BOARD = esp32:esp32:d1_mini32
+BOARD = esp32:esp32:d1_mini32:DebugLevel=error
 PORT := $(strip $(wildcard /dev/serial/by-id/usb-Silicon_Labs_CP21* /dev/serial/by-id/usb-1a86_USB_Single_Serial_* /dev/cu.usbserial-* /dev/cu.usbmodem*))
 
 build: .dependencies

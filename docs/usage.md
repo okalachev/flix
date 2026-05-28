@@ -26,7 +26,8 @@ You can build and upload the firmware using either **Arduino IDE** (easier for b
    * `MAVLink`, version 2.0.25.
 5. Open the `flix/flix.ino` sketch from downloaded firmware sources in Arduino IDE.
 6. Connect your ESP32 board to the computer and choose correct board type in Arduino IDE (*WEMOS D1 MINI ESP32* for ESP32 Mini) and the port.
-7. [Build and upload](https://docs.arduino.cc/software/ide-v2/tutorials/getting-started/ide-v2-uploading-a-sketch) the firmware using Arduino IDE.
+7. Set *Tools* ⇒ *Core Debug Level* to *Error* to see the errors in the serial console. Set *Tools* ⇒ *USB CDC on Boot* to *Enabled* for ESP32-S3/ESP32-C3 boards.
+8. [Build and upload](https://docs.arduino.cc/software/ide-v2/tutorials/getting-started/ide-v2-uploading-a-sketch) the firmware using Arduino IDE.
 
 ### Command line (Windows, Linux, macOS)
 
@@ -55,6 +56,12 @@ You can build and upload the firmware using either **Arduino IDE** (easier for b
 
    ```bash
    make upload monitor
+   ```
+
+   For ESP32-S3/ESP32-C3 boards, set the appropriate [FQBN](https://arduino.github.io/arduino-cli/1.5/FAQ/#whats-the-fqbn-string) using `BOARD` parameter:
+
+   ```bash
+   make BOARD=esp32:esp32:esp32s3:DebugLevel=error,FlashSize=4M,CDCOnBoot=cdc upload
    ```
 
 See other available Make commands in [Makefile](../Makefile).
