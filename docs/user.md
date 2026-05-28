@@ -65,6 +65,17 @@ Author: [goldarte](https://t.me/goldarte).<br>
 
 ---
 
+Author: [malagis](https://oshwhub.com/malagis).<br>
+
+A Chinese custom PCB version of Flix with a big community of users, lots of materials and modifications.
+
+Main project's page: https://oshwhub.com/malagis/esp32-mini-plane.<br>
+Video about the project: https://www.bilibili.com/video/BV14vyqBFEJn/.
+
+<img src="img/user/malagis/1.jpg" height=200> <img src="img/user/malagis/2.jpg" height=200> <img src="img/user/malagis/3.jpg" height=200>
+
+---
+
 ## School 548 course
 
 Special course on quadcopter design and engineering took place in october-november 2025 in School 548, Moscow. The course included UAV control theory, electronics, drone assembly and setup practice, using the Flix project.
