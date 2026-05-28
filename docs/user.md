@@ -4,6 +4,14 @@ This page contains user-built drones based on the Flix project. Publish your pro
 
 ---
 
+Author: [Awab Anas](http://t.me/AW_VENOM).<br>
+Description: ESP32 D1 Mini, MPU-6050, 8520 3.7V brushed motors, 55 mm propellers, battery li-po 1200 mAh, controlling via [Mavlink Joystick app](https://github.com/goldarte/mavlink-joystick/releases/latest).<br>
+[Flight validation](https://drive.google.com/file/d/12z0jfctZDBA6b5UKCG0Uje5rAxj6DhF-/view?usp=sharing).
+
+<img src="img/user/aw_venom/1.jpg" height=200>
+
+---
+
 Author: [Ina Tix](https://t.me/ina_tix).<br>
 Description: XR2981 based DC-DC converter, ELRS MINI 2.4GHz RX SX1280 receiver (SBUS interface), Radiomaster TX12 remote control.<br>
 [Flight validation](https://drive.google.com/file/d/1yqkKNuz4R_yxGqUNQxVpixJbXqEEcUSj/view?usp=share_link).
