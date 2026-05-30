@@ -57,7 +57,7 @@ const char* motd =
 "reboot - reboot the drone\n";
 
 void print(const char* format, ...) {
-	char buf[1000];
+	char buf[3000];
 	va_list args;
 	va_start(args, format);
 	vsnprintf(buf, sizeof(buf), format, args);
@@ -173,7 +173,7 @@ void doCommand(String str, bool echo = false) {
 		print("Free heap: %d\n", ESP.getFreeHeap());
 		print("Firmware: " __DATE__ " " __TIME__ "\n");
 		// Print tasks table
-		print("Num  Task                Stack  Prio  Core  CPU%%\n");
+		print("Num  Task                MinSt  Prio  Core  CPU%%\n");
 		int taskCount = uxTaskGetNumberOfTasks();
 		TaskStatus_t *systemState = new TaskStatus_t[taskCount];
 		uint32_t totalRunTime;
