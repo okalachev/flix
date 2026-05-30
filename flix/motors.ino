@@ -20,6 +20,7 @@ void setupMotors() {
 	print("Setup Motors\n");
 	// Configure pins
 	for (int i = 0; i < 4; i++) {
+		if (motorPins[i] < 0) continue; // skip unassigned motors
 		ledcAttach(motorPins[i], pwmFrequency, pwmResolution);
 		pwmFrequency = ledcChangeFrequency(motorPins[i], pwmFrequency, pwmResolution); // when reconfiguring
 	}
@@ -29,6 +30,7 @@ void setupMotors() {
 
 void sendMotors() {
 	for (int i = 0; i < 4; i++) {
+		if (motorPins[i] < 0) continue; // skip unassigned motors
 		ledcWrite(motorPins[i], getDutyCycle(motors[i]));
 	}
 }
