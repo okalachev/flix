@@ -35,13 +35,14 @@ const char* motd =
 "p <name> <value> - set parameter\n"
 "preset - reset parameters\n"
 "time - show time info\n"
-"ps - show pitch/roll/yaw\n"
-"psq - show attitude quaternion\n"
 "imu - show IMU data\n"
+"ca - calibrate accel\n"
+"st - show state estimation\n"
 "arm - arm the drone\n"
 "disarm - disarm the drone\n"
 "raw/stab/acro/auto - set mode\n"
 "rc - show RC data\n"
+"cr - calibrate RC\n"
 "pw - show power info\n"
 "wifi - show Wi-Fi info\n"
 "ap <ssid> <password> - setup Wi-Fi access point\n"
@@ -49,8 +50,6 @@ const char* motd =
 "espnow <mac> [<key>] - setup ESP-NOW peer\n"
 "mot - show motor output\n"
 "log [dump] - print log header [and data]\n"
-"cr - calibrate RC\n"
-"ca - calibrate accel\n"
 "mfr, mfl, mrr, mrl - test motor (remove props)\n"
 "sys - show system info\n"
 "reset - reset drone's state\n"
@@ -107,14 +106,14 @@ void doCommand(String str, bool echo = false) {
 		print("Time: %f\n", t);
 		print("Loop rate: %.0f\n", loopRate);
 		print("dt: %f\n", dt);
-	} else if (command == "ps") {
-		Vector a = attitude.toEuler();
-		print("roll: %f pitch: %f yaw: %f\n", degrees(a.x), degrees(a.y), degrees(a.z));
-	} else if (command == "psq") {
-		print("qw: %f qx: %f qy: %f qz: %f\n", attitude.w, attitude.x, attitude.y, attitude.z);
 	} else if (command == "imu") {
 		printIMUInfo();
 		printIMUCalibration();
+		print("landed: %d\n", landed);
+	} else if (command == "st") {
+		print("rates: %g %g %g\n", rates.x, rates.y, rates.z);
+		print("attitude: %g %g %g %g\n", attitude.w, attitude.x, attitude.y, attitude.z);
+		print("roll: %g° pitch: %g° yaw: %g°\n", degrees(attitude.getRoll()), degrees(attitude.getPitch()), degrees(attitude.getYaw()));
 		print("landed: %d\n", landed);
 	} else if (command == "arm") {
 		armed = true;
@@ -207,7 +206,7 @@ void handleInput() {
 
 	while (Serial.available()) {
 		char c = Serial.read();
-		if (c == '\n') {
+		if (c == '\n' || c == '\r') {
 			doCommand(input);
 			input.clear();
 		} else {
