@@ -7,6 +7,9 @@ build: .dependencies
 upload: build
 	arduino-cli upload --fqbn $(BOARD) -p "$(PORT)" flix
 
+erase:
+	arduino-cli burn-bootloader --fqbn $(BOARD) -p "$(PORT)" -P esptool
+
 monitor:
 	arduino-cli monitor -p "$(PORT)" -c baudrate=115200
 
