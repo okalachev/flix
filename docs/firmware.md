@@ -79,6 +79,9 @@ To add a new parameter:
 
 See examples of adding new parameters in commits: [c434107](https://github.com/okalachev/flix/commit/c434107), [a687303](https://github.com/okalachev/flix/commit/a687303).
 
+> [!NOTE]
+> Since all the parameters are internally stored and passed as floats, the safe range for `int` parameters is -16777216 to 16777215.
+
 ## Adding a subsystem
 
 To add a new subsystem:

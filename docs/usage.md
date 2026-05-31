@@ -58,7 +58,7 @@ You can build and upload the firmware using either **Arduino IDE** (easier for b
    make upload monitor
    ```
 
-   For ESP32-S3/ESP32-C3 boards, set the appropriate [FQBN](https://arduino.github.io/arduino-cli/1.5/FAQ/#whats-the-fqbn-string) using `BOARD` parameter:
+   For ESP32-S3/ESP32-C3 boards, set the appropriate [FQBN](https://docs.arduino.cc/arduino-cli/FAQ/#whats-the-fqbn-string) using `BOARD` parameter:
 
    ```bash
    make BOARD=esp32:esp32:esp32s3:DebugLevel=error,FlashSize=4M,CDCOnBoot=cdc upload
