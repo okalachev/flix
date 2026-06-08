@@ -47,6 +47,7 @@ void applyAcc() {
 
 void applyLevel() {
 	if (landed) return;
+	if (thrustTarget < 0.1) return; // skip at idle thrust
 
 	// assume the pilot keeps the drone more or less level in flight
 	Vector up = Quaternion::rotateVector(Vector(0, 0, 1), attitude);
