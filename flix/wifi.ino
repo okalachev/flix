@@ -132,3 +132,20 @@ void configWiFi(int mode, const char *first, const char *second) {
 	}
 	print("✓ Reboot to apply new settings\n");
 }
+
+void setWiFiMode(const String& mode) {
+	if (mode == "ap") {
+		wifiMode = W_AP;
+	} else if (mode == "sta") {
+		wifiMode = W_STA;
+	} else if (mode == "espnow") {
+		wifiMode = W_ESPNOW;
+	} else if (mode == "off") {
+		wifiMode = W_DISABLED;
+	} else {
+		print("Invalid Wi-Fi mode\n");
+		return;
+	}
+	static const char *modes[] = {"Disabled", "Access Point (AP)", "Client (STA)", "ESP-NOW"};
+	print("✓ Wi-Fi mode set to %s, reboot to apply\n", modes[wifiMode]);
+}

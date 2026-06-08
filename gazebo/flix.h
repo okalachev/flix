@@ -79,3 +79,4 @@ void printIMUCalibration() { print("cal: N/A\n"); };
 void printIMUInfo() {};
 void printWiFiInfo() {};
 void configWiFi(bool, const char*, const char*) { print("Skip WiFi config\n"); };
+void setWiFiMode(const String& mode) { print("Skip WiFi mode set\n"); };

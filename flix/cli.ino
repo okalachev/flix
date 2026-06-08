@@ -45,9 +45,10 @@ const char* motd =
 "cr - calibrate RC\n"
 "pw - show power info\n"
 "wifi - show Wi-Fi info\n"
-"ap <ssid> <password> - setup Wi-Fi access point\n"
-"sta <ssid> <password> - setup Wi-Fi client mode\n"
-"espnow <mac> [<key>] - setup ESP-NOW peer\n"
+"wifi ap/sta/espnow/off - set Wi-Fi mode\n"
+"ap <ssid> <password> - configure Wi-Fi access point\n"
+"sta <ssid> <password> - configure Wi-Fi client mode\n"
+"espnow <mac> [<key>] - configure ESP-NOW peer\n"
 "mot - show motor output\n"
 "log [dump] - print log header [and data]\n"
 "mfr, mfl, mrr, mrl - test motor (remove props)\n"
@@ -139,8 +140,10 @@ void doCommand(String str, bool echo = false) {
 		print("armed: %d\n", armed);
 	} else if (command == "pw") {
 		print("Voltage: %.1f V\n", voltage);
-	} else if (command == "wifi") {
+	} else if (command == "wifi" && arg0 == "") {
 		printWiFiInfo();
+	} else if (command == "wifi") {
+		setWiFiMode(arg0);
 	} else if (command == "ap") {
 		configWiFi(W_AP, arg0.c_str(), arg1.c_str());
 	} else if (command == "sta") {
