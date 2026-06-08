@@ -172,7 +172,8 @@ void doCommand(String str, bool echo = false) {
 #ifdef ESP32
 		print("Chip: %s\n", ESP.getChipModel());
 		print("Temperature: %.1f °C\n", temperatureRead());
-		print("Free heap: %d\n", ESP.getFreeHeap());
+		print("Total RAM: %d KB\n", ESP.getHeapSize() / 1024);
+		print("Free heap: %d KB\n", ESP.getFreeHeap() / 1024);
 		print("Firmware: " __DATE__ " " __TIME__ "\n");
 		// Print tasks table
 		print("Num  Task                MinSt  Prio  Core  CPU%%\n");
