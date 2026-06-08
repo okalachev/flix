@@ -32,8 +32,7 @@ void applyGyro() {
 
 void applyAcc() {
 	// test should we apply accelerometer gravity correction
-	float accNorm = acc.norm();
-	landed = !motorsActive() && abs(accNorm - ONE_G) < ONE_G * 0.1f;
+	landed = !motorsActive() && abs(acc.norm() - ONE_G) < ONE_G * 0.1f;
 
 	if (!landed) return;
 

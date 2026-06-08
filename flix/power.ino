@@ -20,6 +20,7 @@ void setupPower() {
 
 void readVoltage() {
 	if (voltagePin < 0) return;
+
 	static Rate rate(10);
 	if (!rate) return;
 

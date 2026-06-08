@@ -125,6 +125,7 @@ void printIMUInfo() {
 	print("model: %s\n", imu.getModel());
 	print("who am I: 0x%02X\n", imu.whoAmI());
 	print("rate: %.0f\n", loopRate);
+	print("temperature: %.1f °C\n", imu.getTemp());
 	print("gyro: %f %f %f\n", gyro.x, gyro.y, gyro.z);
 	print("acc: %f %f %f\n", acc.x, acc.y, acc.z);
 	imu.waitForData();

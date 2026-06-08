@@ -89,6 +89,9 @@ QGroundControl is a ground control station software that can be used to monitor 
 3. Connect your computer or smartphone to the appeared `flix` Wi-Fi network (password: `flixwifi`).
 4. Launch QGroundControl app. It should connect and begin showing the drone's telemetry automatically.
 
+> [!TIP]
+> If QGroundControl doesn't connect, try to disable the firewall and/or VPN on your computer, as they may block the connection.
+
 ### Access console
 
 The console is a command line interface (CLI) that allows to interact with the drone, change parameters, and perform various actions. There are two ways of accessing the console: using **serial port** or using **QGroundControl (wirelessly)**.
