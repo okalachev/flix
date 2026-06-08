@@ -116,7 +116,10 @@ Parameter parameters[] = {
 	// mavlink
 	{"MAV_SYS_ID", &mavlinkSysId},
 	{"MAV_RATE_SLOW", &telemetrySlow.rate},
-	{"MAV_RATE_FAST", &telemetryFast.rate},
+	{"MAV_RATE_ATT", &telemetryAttitude.rate},
+	{"MAV_RATE_RC", &telemetryRC.rate},
+	{"MAV_RATE_MOT", &telemetryMotors.rate},
+	{"MAV_RATE_IMU", &telemetryIMU.rate},
 	// power
 	{"PWR_VOLT_PIN", &voltagePin, setupPower},
 	{"PWR_VOLT_SCALE", &voltageScale},

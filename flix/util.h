@@ -65,6 +65,9 @@ public:
 	Rate(float rate) : rate(rate) {}
 
 	operator bool() {
+		if (t == last) {
+			return true; // the same step
+		}
 		if (t - last >= 1 / rate) {
 			last = t;
 			return true;

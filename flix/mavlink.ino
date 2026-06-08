@@ -10,8 +10,12 @@ extern float controlTime;
 extern float voltage;
 
 int mavlinkSysId = 1;
-Rate telemetryFast(10);
+
 Rate telemetrySlow(2);
+Rate telemetryAttitude(20);
+Rate telemetryRC(10);
+Rate telemetryMotors(10);
+Rate telemetryIMU(15);
 
 bool mavlinkConnected = false;
 String mavlinkPrintBuffer;
@@ -34,36 +38,46 @@ void sendMavlink() {
 			((mode == AUTO) ? MAV_MODE_FLAG_AUTO_ENABLED : MAV_MODE_FLAG_MANUAL_INPUT_ENABLED),
 			mode, MAV_STATE_STANDBY);
 		sendMessage(&msg);
+	}
 
-		if (!mavlinkConnected) return; // send only heartbeat until connected
+	if (!mavlinkConnected) return; // send only heartbeat until connected
 
+	if (telemetrySlow) {
 		mavlink_msg_extended_sys_state_pack(mavlinkSysId, MAV_COMP_ID_AUTOPILOT1, &msg,
 			MAV_VTOL_STATE_UNDEFINED, landed ? MAV_LANDED_STATE_ON_GROUND : MAV_LANDED_STATE_IN_AIR);
 		sendMessage(&msg);
+	}
 
+	if (telemetrySlow && valid(voltage)) {
 		uint16_t voltages[] = {(uint16_t)(voltage * 1000), UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX};
 		uint16_t voltagesExt[] = {0, 0, 0, 0};
 		float remaining = constrain(mapf(voltage, 3.4, 4.2, 0, 1), 0, 1);
 		mavlink_msg_battery_status_pack(mavlinkSysId, MAV_COMP_ID_AUTOPILOT1, &msg, 0, MAV_BATTERY_FUNCTION_ALL,
 			MAV_BATTERY_TYPE_LIPO, INT16_MAX, voltages, -1, -1, -1, remaining * 100, 0, MAV_BATTERY_CHARGE_STATE_OK, voltagesExt, 0, 0);
-		if (valid(voltage)) sendMessage(&msg);
+		sendMessage(&msg);
 	}
 
-	if (telemetryFast && mavlinkConnected) {
+	if (telemetryAttitude) {
 		const float offset[] = {0, 0, 0, 0};
 		mavlink_msg_attitude_quaternion_pack(mavlinkSysId, MAV_COMP_ID_AUTOPILOT1, &msg,
 			time, attitude.w, attitude.x, -attitude.y, -attitude.z, rates.x, -rates.y, -rates.z, offset); // convert to frd
 		sendMessage(&msg);
+	}
 
+	if (telemetryRC && channels[0]) { // 0 means no RC input
 		mavlink_msg_rc_channels_raw_pack(mavlinkSysId, MAV_COMP_ID_AUTOPILOT1, &msg, controlTime * 1000, 0,
 			channels[0], channels[1], channels[2], channels[3], channels[4], channels[5], channels[6], channels[7], UINT8_MAX);
-		if (channels[0] != 0) sendMessage(&msg); // 0 means no RC input
+		sendMessage(&msg);
+	}
 
+	if (telemetryMotors) {
 		float controls[8];
 		memcpy(controls, motors, sizeof(motors));
 		mavlink_msg_actuator_control_target_pack(mavlinkSysId, MAV_COMP_ID_AUTOPILOT1, &msg, time, 0, controls);
 		sendMessage(&msg);
+	}
 
+	if (telemetryIMU) {
 		mavlink_msg_scaled_imu_pack(mavlinkSysId, MAV_COMP_ID_AUTOPILOT1, &msg, time,
 			acc.x / ONE_G * 1000, -acc.y / ONE_G * 1000, -acc.z / ONE_G * 1000, // convert to frd
 			gyro.x * 1000, -gyro.y * 1000, -gyro.z * 1000,
