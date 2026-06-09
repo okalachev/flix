@@ -47,13 +47,14 @@ void splitString(String& str, String& token0, String& token1, String& token2) {
 	if (token2.c_str() == NULL) token2 = "";
 }
 
-// Simplified ESP-NOW Serial without tx buffering and resends
+// Simplified ESP-NOW Serial without resends
 class ESPNOWSerial : public ESP_NOW_Serial_Class {
 public:
+	int lost = 0;
 	using ESP_NOW_Serial_Class::ESP_NOW_Serial_Class;
-	void onSent(bool success) override {} // disable resends
-	size_t write(const uint8_t *data, size_t len) override {
-		return ESP_NOW_Peer::send(data, len); // pure send without buffering
+	void onSent(bool success) override {
+		if (!success) lost++;
+		ESP_NOW_Serial_Class::onSent(true); // always report success to avoid resends
 	}
 };
 
