@@ -4,7 +4,8 @@ build/
 tools/log/
 tools/dist/
 *.egg-info/
-.dependencies
+.core
+.libs
 .vscode/*
 !.vscode/settings.json
 !.vscode/c_cpp_properties.json
