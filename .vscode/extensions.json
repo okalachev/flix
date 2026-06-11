@@ -1,6 +1,7 @@
 {
 	// See https://go.microsoft.com/fwlink/?LinkId=827846 to learn about workspace recommendations.
 	"recommendations": [
+		"dangmai.workspace-default-settings",
 		"ms-vscode.cpptools",
 		"ms-vscode.cmake-tools",
 		"ms-python.python"
