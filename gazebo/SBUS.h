@@ -15,12 +15,11 @@ public:
 	SBUS(HardwareSerial& bus, const int8_t rxpin, const int8_t txpin, const bool inv = true) {};
 	void begin(int rxpin = -1, int txpin = -1, bool inv = true, bool fast = false) {};
 	bool read() { return joystickInit(); };
-	SBUSData data() {
-		SBUSData data;
-		joystickGet(data.ch);
+	void getChannels(uint16_t (&channels)[16]) const {
+		int16_t ch[16];
+		joystickGet(ch);
 		for (int i = 0; i < 16; i++) {
-			data.ch[i] = map(data.ch[i], -32768, 32767, 1000, 2000); // convert to pulse width style
+			channels[i] = map(ch[i], -32768, 32767, 1000, 2000); // convert to pulse width style
 		}
-		return data;
 	};
 };

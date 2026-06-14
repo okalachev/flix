@@ -27,14 +27,12 @@ void setupRC() {
 
 bool readRC() {
 	if (rcRxPin < 0) return false;
-	if (rc.read()) {
-		SBUSData data = rc.data();
-		for (int i = 0; i < 16; i++) channels[i] = data.ch[i]; // copy channels data
-		normalizeRC();
-		controlTime = t;
-		return true;
-	}
-	return false;
+	if (!rc.read()) return false;
+
+	rc.getChannels(channels);
+	normalizeRC();
+	controlTime = t;
+	return true;
 }
 
 void normalizeRC() {
