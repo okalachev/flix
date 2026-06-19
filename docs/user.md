@@ -4,6 +4,28 @@ This page contains user-built drones based on the Flix project. Publish your pro
 
 ---
 
+Author: [Неруш Михаил](https://t.me/NerushMV).<br>
+Description: custom frame made of 4 mm plywood, 8520 brushed motors, 75 mm propellers, MPU-6500. FlySky FS-i6X with ESP32-based adapter for ESP-NOW communication (using PPM output).
+
+<img src="img/user/nerush/1.jpg" height=200> <img src="img/user/nerush/2.jpg" height=200>
+
+[Flight video](https://drive.google.com/file/d/1jRXeGx34lJpUfw0GKLQeIzkWZvooQJSE/view?usp=sharing).
+
+---
+
+Author: [Konstantinos Paraskevas](https://github.com/Frapais).<br>
+Description: drone with a custom single-boarded airframe, extending the [Sprig-C3 module](https://github.com/Frapais/Sprig-C3).
+ESP32-C3 microcontroller, ICM-20948 IMU, on-board fuel-gauge, status LED indicator.<br>
+Repository with all the code and PCB sources: https://github.com/Frapais/Sprig-Drone.
+
+<img src="img/user/kostas/1.jpg" height=150> <img src="img/user/kostas/2.jpg" height=150>
+
+Detailed video about making the drone:
+
+<a href="https://youtu.be/82Q-uBq6s48"><img width=400 src="https://i3.ytimg.com/vi/82Q-uBq6s48/maxresdefault.jpg"></a>
+
+---
+
 Author: [Awab Anas](http://t.me/AW_VENOM).<br>
 Description: ESP32 D1 Mini, MPU-6050, 8520 3.7V brushed motors, 55 mm propellers, battery li-po 1200 mAh, controlling via [Mavlink Joystick app](https://github.com/goldarte/mavlink-joystick/releases/latest).<br>
 [Flight validation](https://drive.google.com/file/d/12z0jfctZDBA6b5UKCG0Uje5rAxj6DhF-/view?usp=sharing).
