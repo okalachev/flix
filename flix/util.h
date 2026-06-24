@@ -23,6 +23,12 @@ bool valid(float x) {
 	return isfinite(x);
 }
 
+bool floatEquals(float a, float b, float epsilon = 0) {
+	if (isnan(a) && isnan(b)) return true;
+	if (a == b) return true;
+	return fabsf(a - b) <= epsilon;
+}
+
 // Wrap angle to [-PI, PI)
 float wrapAngle(float angle) {
 	angle = fmodf(angle, 2 * PI);

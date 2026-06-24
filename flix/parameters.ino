@@ -20,6 +20,7 @@ struct Parameter {
 	const char *name; // max length is 15
 	bool integer;
 	union { float *f; int *i; }; // pointer to the variable
+	float inital; // default value
 	float cache; // what's stored in flash
 	void (*callback)(); // called after parameter change
 	Parameter(const char *name, float *variable, void (*callback)() = nullptr) : name(name), integer(false), f(variable), callback(callback) {};
@@ -137,6 +138,7 @@ void setupParameters() {
 		if (!storage.isKey(parameter.name)) {
 			storage.putFloat(parameter.name, parameter.getValue()); // store default value
 		}
+		parameter.inital = parameter.getValue();
 		parameter.setValue(storage.getFloat(parameter.name, 0));
 		parameter.cache = parameter.getValue();
 	}
@@ -183,8 +185,7 @@ void syncParameters() {
 	if (motorsActive()) return; // don't use flash while flying, it may cause a delay
 
 	for (auto &parameter : parameters) {
-		if (parameter.getValue() == parameter.cache) continue; // no change
-		if (isnan(parameter.getValue()) && isnan(parameter.cache)) continue; // both are NAN
+		if (floatEquals(parameter.getValue(), parameter.cache)) continue; // no change
 
 		storage.putFloat(parameter.name, parameter.getValue());
 		parameter.cache = parameter.getValue(); // update cache
@@ -192,9 +193,15 @@ void syncParameters() {
 }
 
 void printParameters(const char *filter) {
+	print("Name             Value          [Default]\n");
 	for (auto &parameter : parameters) {
 		if (strncasecmp(parameter.name, filter, strlen(filter))) continue;
-		print("%s = %g\n", parameter.name, parameter.getValue());
+
+		if (floatEquals(parameter.getValue(), parameter.inital)) { // parameter changed
+			print("%-15s  %-13g\n", parameter.name, parameter.getValue());
+		} else {
+			print("%-15s  %-13g  [%g]\n", parameter.name, parameter.getValue(), parameter.inital);
+		}
 	}
 }
 
