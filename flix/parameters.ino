@@ -135,11 +135,10 @@ void setupParameters() {
 	storage.begin("flix");
 	// Read parameters from storage
 	for (auto &parameter : parameters) {
-		if (!storage.isKey(parameter.name)) {
-			storage.putFloat(parameter.name, parameter.getValue()); // store default value
-		}
 		parameter.inital = parameter.getValue();
-		parameter.setValue(storage.getFloat(parameter.name, 0));
+		if (storage.isKey(parameter.name)) {
+			parameter.setValue(storage.getFloat(parameter.name));
+		}
 		parameter.cache = parameter.getValue();
 	}
 }
