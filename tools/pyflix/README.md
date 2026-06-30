@@ -222,6 +222,13 @@ The following scripts demonstrate how to use the library:
 * [`log.py`](../log.py) — download flight logs from the drone.
 * [`example.py`](../example.py) — a simple example, prints telemetry data and waits for events.
 
+> [!TIP]
+> Set `FLIX_DEVICE` environment variable to use these tools with ESP-NOW connection, for example:
+>
+> ```bash
+> FLIX_DEVICE=/dev/cu.usbserial-0001 tools/cli.py
+> ```
+
 ## Advanced usage
 
 ### MAVLink

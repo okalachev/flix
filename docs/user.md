@@ -5,7 +5,8 @@ This page contains user-built drones based on the Flix project. Publish your pro
 ---
 
 Author: [Неруш Михаил](https://t.me/NerushMV).<br>
-Description: custom frame made of 4 mm plywood, 8520 brushed motors, 75 mm propellers, MPU-6500. FlySky FS-i6X with ESP32-based adapter for ESP-NOW communication (using PPM output).
+Description: custom frame made of 4 mm plywood, 8520 brushed motors, 75 mm propellers, MPU-6500. FlySky FS-i6X with ESP32-based adapter for ESP-NOW communication (using PPM output).<br>
+Sources and materials: [link](https://drive.google.com/drive/folders/1uWiDcuorLrtVs_IIR7Y13omij-7Q1nx8).
 
 <img src="img/user/nerush/1.jpg" height=200> <img src="img/user/nerush/2.jpg" height=200>
 

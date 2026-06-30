@@ -17,7 +17,7 @@ extern float motors[4];
 
 void setup() {
 	Serial.begin(115200);
-	print("Initializing flix\n");
+	print("Initializing Flix\n");
 	setupParameters();
 	setupPower();
 	setupLED();
