@@ -55,6 +55,7 @@ public:
 		initNode();
 		Serial.begin(0);
 		setupParameters();
+		setupLog();
 		gzmsg << "Flix plugin loaded" << endl;
 	}
 

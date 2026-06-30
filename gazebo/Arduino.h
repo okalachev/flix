@@ -156,6 +156,7 @@ HardwareSerial Serial, Serial1, Serial2;
 class EspClass {
 public:
 	void restart() { Serial.println("Ignore reboot in simulation"); }
+	uint32_t getFreeHeap() { return 300 * 1024; } // assume 300 KB free heap
 } ESP;
 
 unsigned long __delayTime = 0;

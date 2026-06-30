@@ -26,6 +26,7 @@ void setup() {
 	setupWiFi();
 	setupIMU();
 	setupRC();
+	setupLog();
 	setLED(false);
 	print("Initializing complete\n");
 }
@@ -40,6 +41,6 @@ void loop() {
 	handleInput();
 	processMavlink();
 	readVoltage();
-	logData();
+	loopLog();
 	syncParameters();
 }

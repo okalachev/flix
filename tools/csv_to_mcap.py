@@ -9,6 +9,7 @@ Usage:
 import csv
 import json
 import docopt
+import math
 from mcap.writer import Writer
 
 args = docopt.docopt(__doc__)
@@ -39,7 +40,15 @@ channel_id = writer.register_channel(
 )
 
 for row in csv_reader:
-    data = {key: float(value) for key, value in zip(header, row)}
+    if row[0] == '': continue
+    data = {}
+    for key, value in zip(header, row):
+        if value == '' or math.isnan(float(value)):
+            data[key] = None
+        else:
+            data[key] = float(value)
+
+    data = {key: float(value) if value != '' else None for key, value in zip(header, row)}
     timestamp = round(float(row[0]) * 1e9)
     writer.add_message(channel_id=channel_id, log_time=timestamp, data=json.dumps(data).encode(), publish_time=timestamp,)
 

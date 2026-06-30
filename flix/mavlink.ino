@@ -16,6 +16,7 @@ Rate telemetryAttitude(20);
 Rate telemetryRC(10);
 Rate telemetryMotors(10);
 Rate telemetryIMU(15);
+Rate telemetryTopic(10);
 
 bool mavlinkConnected = false;
 String mavlinkPrintBuffer;
@@ -84,12 +85,38 @@ void sendMavlink() {
 			0, 0, 0, 0);
 		sendMessage(&msg);
 	}
+
+	if (telemetryTopic && logExposed != nullptr) {
+		mavlink_msg_named_value_float_pack(mavlinkSysId, MAV_COMP_ID_AUTOPILOT1, &msg,
+			time, logExposed->name, logExposed->value.get());
+		sendMessage(&msg);
+	}
 }
 
 void sendMessage(const void *msg) {
 	uint8_t buf[MAVLINK_MAX_PACKET_LEN];
 	int len = mavlink_msg_to_send_buffer(buf, (mavlink_message_t *)msg);
 	sendWiFi(buf, len);
+}
+
+static uint8_t mavlinkBatch[ESP_NOW_MAX_DATA_LEN_V2];
+static int mavlinkBatchSize = 0;
+
+void batchMessage(const void *msg) {
+	uint8_t buf[MAVLINK_MAX_PACKET_LEN];
+	int len = mavlink_msg_to_send_buffer(buf, (mavlink_message_t *)msg);
+
+	if (mavlinkBatchSize + len > sizeof(mavlinkBatch)) {
+		sendWiFi(mavlinkBatch, mavlinkBatchSize);
+		mavlinkBatchSize = 0;
+	}
+	memcpy(mavlinkBatch + mavlinkBatchSize, buf, len);
+	mavlinkBatchSize += len;
+}
+
+void flushBatchMessages() {
+	sendWiFi(mavlinkBatch, mavlinkBatchSize);
+	mavlinkBatchSize = 0;
 }
 
 void receiveMavlink() {
@@ -225,18 +252,29 @@ void handleMavlink(const void *_msg) {
 		armed = motors[0] > 0 || motors[1] > 0 || motors[2] > 0 || motors[3] > 0;
 	}
 
+	if (msg.msgid == MAVLINK_MSG_ID_LOG_REQUEST_LIST) {
+		const uint32_t qgcEpoch = 1262304000; // qgc accepts only timestamps after 2010-01-01
+		mavlink_message_t response;
+		mavlink_msg_log_entry_pack(mavlinkSysId, MAV_COMP_ID_AUTOPILOT1, &response,
+			0, 1, 0, qgcEpoch + t * 60, logLength); // put fake unique date to make qgc happy with saving logs
+		sendMessage(&response);
+	}
+
 	if (msg.msgid == MAVLINK_MSG_ID_LOG_REQUEST_DATA) {
 		mavlink_log_request_data_t m;
 		mavlink_msg_log_request_data_decode(&msg, &m);
 		if (m.target_system && m.target_system != mavlinkSysId) return;
 
-		// Send all log records
-		for (int i = 0; i < sizeof(logBuffer) / sizeof(logBuffer[0]); i++) {
-			mavlink_message_t msg;
-			mavlink_msg_log_data_pack(mavlinkSysId, MAV_COMP_ID_AUTOPILOT1, &msg, 0, i,
-				sizeof(logBuffer[0]), (uint8_t *)logBuffer[i]);
-			sendMessage(&msg);
+		for (int i = 0; i < m.count; i += MAVLINK_MSG_LOG_DATA_FIELD_DATA_LEN) {
+			int chunkSize = min(MAVLINK_MSG_LOG_DATA_FIELD_DATA_LEN, (int)(m.count - i));
+			mavlink_message_t response;
+			uint8_t data[MAVLINK_MSG_LOG_DATA_FIELD_DATA_LEN];
+			readLog(data, m.ofs + i, chunkSize);
+			mavlink_msg_log_data_pack(mavlinkSysId, MAV_COMP_ID_AUTOPILOT1, &response,
+				m.id, m.ofs + i, chunkSize, data);
+			batchMessage(&response);
 		}
+		flushBatchMessages();
 	}
 
 	// Handle commands
