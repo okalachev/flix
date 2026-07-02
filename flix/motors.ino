@@ -51,9 +51,9 @@ bool motorsActive() {
 	return motors[0] != 0 || motors[1] != 0 || motors[2] != 0 || motors[3] != 0;
 }
 
-void testMotor(int n) {
+void testMotor(int n, float thrust) {
 	print("Testing motor %d\n", n);
-	motors[n] = 0.2;
+	motors[n] = thrust;
 	delay(50); // ESP32 may need to wait until the end of the current cycle to change duty https://github.com/espressif/arduino-esp32/issues/5306
 	sendMotors();
 	pause(3);
