@@ -161,6 +161,8 @@ void resetLog() {
 			value.lastValue = NAN;
 		}
 	}
+	logCursor = 0;
+	logLength = 0;
 }
 
 void writeLog(const void *data, size_t size) {

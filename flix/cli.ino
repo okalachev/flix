@@ -54,6 +54,7 @@ const char* motd =
 "mfr, mfl, mrr, mrl - test motor (remove props)\n"
 "log - show log info\n"
 "log header - show log header\n"
+"log reset - reset log\n"
 "log <name> <rate> - setup log topic rate\n"
 "l <str> - show log values starting with str\n"
 "l expose <name> - expose log value to telemetry\n"
@@ -164,6 +165,8 @@ void doCommand(String str, bool echo = false) {
 		configLogThrottle(arg0.c_str(), arg1.toFloat());
 	} else if (command == "log" && arg0 == "header") {
 		printLogHeader();
+	} else if (command == "log" && arg0 == "reset") {
+		resetLog();
 	} else if (command == "l" && arg0 == "expose" && arg1 != "") {
 		exposeLogValue(arg1.c_str());
 	} else if (command == "l") {
