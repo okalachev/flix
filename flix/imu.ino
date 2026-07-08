@@ -6,7 +6,7 @@
 #include <SPI.h>
 #include <FlixPeriph.h>
 #include "vector.h"
-#include "lpf.h"
+#include "filter.h"
 #include "util.h"
 
 MPU9250 imu(SPI);

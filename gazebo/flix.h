@@ -9,7 +9,7 @@
 #include "quaternion.h"
 #include "Arduino.h"
 #include "wifi.h"
-#include "lpf.h"
+#include "filter.h"
 
 extern float t, dt;
 extern float controlRoll, controlPitch, controlYaw, controlThrottle, controlMode;

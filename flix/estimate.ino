@@ -5,7 +5,7 @@
 
 #include "quaternion.h"
 #include "vector.h"
-#include "lpf.h"
+#include "filter.h"
 #include "util.h"
 
 Vector rates; // estimated angular rates, rad/s
@@ -15,6 +15,12 @@ bool landed;
 float accWeight = 0.003;
 float levelWeight = 0.0002;
 LowPassFilter<Vector> ratesFilter(0.2); // cutoff frequency ~ 40 Hz
+NotchFilter<Vector> ratesNotch(382, 40);
+
+void setupEstimate() {
+	print("Setup estimation\n");
+	ratesNotch.reset();
+}
 
 void estimate() {
 	applyGyro();
@@ -25,6 +31,7 @@ void estimate() {
 void applyGyro() {
 	// filter gyro to get angular rates
 	rates = ratesFilter.update(gyro);
+	rates = ratesNotch.update(rates);
 
 	// apply rates to attitude
 	attitude = Quaternion::rotate(attitude, Quaternion::fromRotationVector(rates * dt));

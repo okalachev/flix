@@ -26,6 +26,7 @@ void setup() {
 	setupWiFi();
 	setupIMU();
 	setupRC();
+	setupEstimate();
 	setupLog();
 	setLED(false);
 	print("Initializing complete\n");

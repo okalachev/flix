@@ -6,7 +6,7 @@
 #include "vector.h"
 #include "quaternion.h"
 #include "pid.h"
-#include "lpf.h"
+#include "filter.h"
 #include "util.h"
 
 #define PITCHRATE_P 0.05

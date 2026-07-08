@@ -74,6 +74,8 @@ Parameter parameters[] = {
 	{"EST_ACC_WEIGHT", &accWeight},
 	{"EST_LVL_WEIGHT", &levelWeight},
 	{"EST_RATES_LPF_A", &ratesFilter.alpha},
+	{"EST_RATES_NF_F", &ratesNotch.frequency, setupEstimate},
+	{"EST_RATES_NF_BW", &ratesNotch.bandwidth, setupEstimate},
 	// motors
 	{"MOT_PIN_FL", &motorPins[MOTOR_FRONT_LEFT], setupMotors},
 	{"MOT_PIN_FR", &motorPins[MOTOR_FRONT_RIGHT], setupMotors},

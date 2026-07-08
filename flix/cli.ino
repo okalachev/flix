@@ -6,7 +6,7 @@
 #include "pid.h"
 #include "vector.h"
 #include "util.h"
-#include "lpf.h"
+#include "filter.h"
 
 extern const int MOTOR_REAR_LEFT, MOTOR_REAR_RIGHT, MOTOR_FRONT_RIGHT, MOTOR_FRONT_LEFT;
 extern const int RAW, ACRO, STAB, AUTO;
