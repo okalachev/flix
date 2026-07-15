@@ -198,7 +198,7 @@ After this setup, you should see the battery voltage in QGroundControl top panel
 
 ## Setup remote control
 
-There are several ways to control the drone's flight: using **smartphone** (Wi-Fi), using **SBUS remote control**, or using **USB remote control** (Wi-Fi).
+There are several ways to control the drone's flight: using **smartphone** (Wi-Fi), using **SBUS remote control**, or using **USB remote control** (Wi-Fi/ESP-NOW).
 
 ### Control with a smartphone
 
@@ -243,7 +243,7 @@ If your drone doesn't have RC receiver installed, you can use USB remote control
 3. Power up the drone.
 4. Connect your computer to the appeared `flix` Wi-Fi network (password: `flixwifi`).
 5. Launch QGroundControl app. It should connect and begin showing the drone's telemetry automatically.
-6. Go the the QGroundControl menu ⇒ *Vehicle Setup* ⇒ *Joystick*. Calibrate you USB remote control there.
+6. Go to the QGroundControl menu ⇒ *Vehicle Setup* ⇒ *Joystick*. Calibrate your USB remote control there.
 7. Use the USB remote control to fly the drone!
 
 ## Flight
@@ -339,7 +339,7 @@ To setup ESP-NOW communication:
    espnow 7a:c8:e3:eb:bf:e9 &PiuSysxP9+$L&5E
    ```
 
-   Run this line as a console command on each drone you want to bind to this proxy board. [The maximum number](https://github.com/espressif/esp-idf/blob/e95cab4be8fd293e3f3323181e7a2280874da6f7/components/esp_wifi/include/esp_now.h#L32-L33) of simultaneously connected drones is 20 (unencrypted) io 6 (encrypted).
+   Run this line as a console command on each drone you want to bind to this proxy board. [The maximum number](https://github.com/espressif/esp-idf/blob/e95cab4be8fd293e3f3323181e7a2280874da6f7/components/esp_wifi/include/esp_now.h#L32-L33) of simultaneously connected drones is 20 (unencrypted) or 6 (encrypted).
 
 3. Set the `WIFI_MODE` parameter to `3` on the drone:
 
@@ -356,7 +356,7 @@ To setup ESP-NOW communication:
 
 ## Flight log
 
-After the flight, you can download the flight log for analysis wirelessly. Use the following command on your computer for that:
+After the flight, you can download the flight log wirelessly for analysis. Use the following command on your computer for that:
 
 ```bash
 make log
