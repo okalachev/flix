@@ -56,6 +56,7 @@ public:
 		Serial.begin(0);
 		setupParameters();
 		setupLog();
+		rcRxPin = 1; // set rc pin to enable rc reading
 		gzmsg << "Flix plugin loaded" << endl;
 	}
 
