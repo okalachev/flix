@@ -20,6 +20,10 @@
 #define radians(deg) ((deg)*DEG_TO_RAD)
 #define degrees(rad) ((rad)*RAD_TO_DEG)
 
+#define MALLOC_CAP_SPIRAM (1<<10)
+#define MALLOC_CAP_8BIT (1<<2)
+#define ESP_NOW_MAX_DATA_LEN_V2 1470
+
 #define constrain(amt,low,high) ((amt)<(low)?(low):((amt)>(high)?(high):(amt)))
 template<typename T> T max(T a, T b) { return a > b ? a : b; }
 template<typename T> T min(T a, T b) { return a < b ? a : b; }
@@ -157,6 +161,7 @@ class EspClass {
 public:
 	void restart() { Serial.println("Ignore reboot in simulation"); }
 	uint32_t getFreeHeap() { return 300 * 1024; } // assume 300 KB free heap
+	uint32_t getFreePsram() { return 8 * 1024 * 1024; } // assume 8 MB free PSRAM
 } ESP;
 
 unsigned long __delayTime = 0;
@@ -166,11 +171,16 @@ void delay(uint32_t ms) {
 	__delayTime += ms * 1000;
 }
 
+void *heap_caps_calloc(size_t n, size_t size, uint32_t caps) {
+	return calloc(n, size);
+}
+
 bool ledcAttach(uint8_t pin, uint32_t freq, uint8_t resolution) { return true; }
 bool ledcWrite(uint8_t pin, uint32_t duty) { return true; }
 uint32_t ledcChangeFrequency(uint8_t pin, uint32_t freq, uint8_t resolution) { return freq; }
 int8_t digitalPinToAnalogChannel(uint8_t pin) { return -1; }
 uint32_t analogReadMilliVolts(uint8_t pin) { return 0; }
+float temperatureRead() { return 0; }
 
 unsigned long __micros;
 unsigned long __resetTime = 0;

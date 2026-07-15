@@ -89,3 +89,8 @@ void printIMUInfo() {};
 void printWiFiInfo() {};
 void configWiFi(bool, const char*, const char*) { print("Skip WiFi config\n"); };
 void setWiFiMode(const String& mode) { print("Skip WiFi mode set\n"); };
+
+class IMU {
+public:
+	float getTemp() { return 0; }
+} imu;

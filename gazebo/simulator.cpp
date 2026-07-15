@@ -88,7 +88,7 @@ public:
 
 		applyMotorForces();
 		publishTopics();
-		logData();
+		loopLog();
 		syncParameters();
 	}
 
