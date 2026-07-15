@@ -223,18 +223,24 @@ void handleMavlink(const void *_msg) {
 		mavlink_msg_set_attitude_target_decode(&msg, &m);
 		if (m.target_system && m.target_system != mavlinkSysId) return;
 
-		// copy attitude, rates and thrust targets
-		ratesTarget.x = m.body_roll_rate;
-		ratesTarget.y = -m.body_pitch_rate; // convert to flu
-		ratesTarget.z = -m.body_yaw_rate;
-		attitudeTarget.w = m.q[0];
-		attitudeTarget.x = m.q[1];
-		attitudeTarget.y = -m.q[2];
-		attitudeTarget.z = -m.q[3];
-		thrustTarget = m.thrust;
-		ratesExtra = Vector(0, 0, 0);
+		if (!(m.type_mask & ATTITUDE_TARGET_TYPEMASK_ATTITUDE_IGNORE)) {
+			// Attitude control
+			attitudeTarget.w = m.q[0];
+			attitudeTarget.x = m.q[1];
+			attitudeTarget.y = -m.q[2];
+			attitudeTarget.z = -m.q[3];
+			ratesExtra.x = m.type_mask & ATTITUDE_TARGET_TYPEMASK_BODY_ROLL_RATE_IGNORE ? 0 : m.body_roll_rate;
+			ratesExtra.y = m.type_mask & ATTITUDE_TARGET_TYPEMASK_BODY_PITCH_RATE_IGNORE ? 0 : -m.body_pitch_rate; // convert to flu
+			ratesExtra.z = m.type_mask & ATTITUDE_TARGET_TYPEMASK_BODY_YAW_RATE_IGNORE ? 0 : -m.body_yaw_rate;
+		} else {
+			// Rates control
+			attitudeTarget.invalidate();
+			ratesTarget.x = m.type_mask & ATTITUDE_TARGET_TYPEMASK_BODY_ROLL_RATE_IGNORE ? ratesTarget.x : m.body_roll_rate;
+			ratesTarget.y = m.type_mask & ATTITUDE_TARGET_TYPEMASK_BODY_PITCH_RATE_IGNORE ? ratesTarget.y : -m.body_pitch_rate;
+			ratesTarget.z = m.type_mask & ATTITUDE_TARGET_TYPEMASK_BODY_YAW_RATE_IGNORE ? ratesTarget.z : -m.body_yaw_rate;
+		}
 
-		if (m.type_mask & ATTITUDE_TARGET_TYPEMASK_ATTITUDE_IGNORE) attitudeTarget.invalidate();
+		thrustTarget = valid(m.thrust) ? m.thrust : thrustTarget;
 		armed = m.thrust > 0;
 	}
 
