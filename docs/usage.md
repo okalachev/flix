@@ -61,7 +61,7 @@ You can build and upload the firmware using either **Arduino IDE** (easier for b
    For ESP32-S3/ESP32-C3 boards, set the appropriate [FQBN](https://docs.arduino.cc/arduino-cli/FAQ/#whats-the-fqbn-string) using `BOARD` parameter:
 
    ```bash
-   make BOARD=esp32:esp32:esp32s3:DebugLevel=error,FlashSize=4M,CDCOnBoot=cdc upload
+   make BOARD=esp32:esp32:esp32s3:FlashSize=4M,CDCOnBoot=cdc upload
    ```
 
 See other available Make commands in [Makefile](../Makefile).
