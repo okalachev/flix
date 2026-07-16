@@ -11,15 +11,20 @@
 #include <Preferences.h>
 #include "../../flix/util.h"
 
+const bool DISABLE_SWARM = true;
 const int CHANNEL = 6;
 char key[ESP_NOW_KEY_LEN + 1] = {0}; // with trailing null
 
 Preferences storage;
 
 std::vector<ESPNOWSerial *> peers;
+bool stop = false;
 
 void onNewPeer(const esp_now_recv_info_t *info, const uint8_t *data, int len, void *arg) {
 	if (len != 4 || memcmp(data, "flix", 4) != 0) return; // check if discovery message
+
+	if (stop) return;
+	if (DISABLE_SWARM) stop = true;
 
 	Serial.printf("New peer: " MACSTR "\n", MAC2STR(info->src_addr));
 	ESPNOWSerial *link = new ESPNOWSerial(info->src_addr, CHANNEL, WIFI_IF_AP);
