@@ -105,7 +105,7 @@ To access the console using serial port:
 To access the console using QGroundControl:
 
 1. Connect to the drone using QGroundControl app.
-2. Go to the QGroundControl menu ⇒ *Vehicle Setup* ⇒ *Analyze Tools* ⇒ *MAVLink Console*.
+2. Go to the QGroundControl menu ⇒ *Analyze Tools* ⇒ *MAVLink Console*.
 
 <img src="img/cli.png" width="400">
 
