@@ -84,7 +84,7 @@ Additional articles:
 |*Boost converter (optional, for more stable power supply)*|*5V output*|<img src="docs/img/buck-boost.jpg" width=100>|1|
 |Motor|8520 3.7V brushed motor.<br>Motor with exact 3.7V voltage is needed, not ranged working voltage (3.7V — 6V).<br>Make sure the motor shaft diameter and propeller hole diameter match!|<img src="docs/img/motor.jpeg" width=100>|4|
 |Propeller|55 mm or 65 mm|<img src="docs/img/prop.jpg" width=100>|4|
-|MOSFET (transistor)|100N03A or [analog](https://t.me/opensourcequadcopter/33)|<img src="docs/img/100n03a.jpg" width=100>|4|
+|MOSFET (transistor)|UMW 100N03A or [analog](https://t.me/opensourcequadcopter/33).<br>Warning: don't use KIA 100N03A or other manufacturers, they might not work!|<img src="docs/img/100n03a.jpg" width=100>|4|
 |Pull-down resistor<br>Voltage measurement resistor|10 kΩ|<img src="docs/img/resistor10k.jpg" width=100>|6|
 |3.7V Li-Po battery|LW 952540 (or any compatible by the size).<br>Make sure the battery has enough discharge rate — 25C or more!|<img src="docs/img/battery.jpg" width=100>|1|
 |Battery connector cable|MX2.0 2P female|<img src="docs/img/mx.png" width=100>|1|
