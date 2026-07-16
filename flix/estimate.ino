@@ -15,7 +15,7 @@ bool landed;
 float accWeight = 0.003;
 float levelWeight = 0.0002;
 LowPassFilter<Vector> ratesFilter(0.2); // cutoff frequency ~ 40 Hz
-NotchFilter<Vector> ratesNotch(382, 40);
+NotchFilter<Vector> ratesNotch(382, 0);
 
 void setupEstimate() {
 	print("Setup estimation\n");
