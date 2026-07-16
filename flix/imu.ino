@@ -4,12 +4,16 @@
 // Work with the IMU sensor
 
 #include <SPI.h>
+#include <Wire.h>
 #include <FlixPeriph.h>
 #include "vector.h"
 #include "filter.h"
 #include "util.h"
 
-MPU9250 imu(SPI);
+IMU imu;
+int imuModel = 1, imuBus = 0;
+int imuSckPin = SCK, imuMisoPin = MISO, imuMosiPin = MOSI, imuCsPin = -1, imuIntPin = -1;
+int imuSdaPin = SDA, imuSclPin = SCL;
 Vector imuRotation(0, 0, PI / 2); // imu orientation as Euler angles
 
 Vector gyro; // gyroscope output, rad/s
@@ -23,7 +27,15 @@ LowPassFilter<Vector> gyroBiasFilter(0.001);
 
 void setupIMU() {
 	print("Setup IMU\n");
-	imu.begin();
+	if (imuBus == 0 && imuCsPin > 0) {
+		// SPI connection
+		SPI.begin(imuSckPin, imuMisoPin, imuMosiPin);
+		imu.begin((IMU::Model)imuModel, SPI, imuCsPin, imuIntPin);
+	} else if (imuBus == 1) {
+		// I2C connection
+		Wire.setPins(imuSdaPin, imuSclPin);
+		imu.begin((IMU::Model)imuModel, Wire, imuIntPin);
+	}
 	configureIMU();
 }
 
@@ -125,6 +137,7 @@ void printIMUInfo() {
 	print("model: %s\n", imu.getModel());
 	print("who am I: 0x%02X\n", imu.whoAmI());
 	print("rate: %.0f\n", loopRate);
+	print("interrupt mode: %s\n", imuIntPin != -1 ? "pin" : "timer");
 	print("temperature: %.1f °C\n", imu.getTemp());
 	print("gyro: %f %f %f\n", gyro.x, gyro.y, gyro.z);
 	print("acc: %f %f %f\n", acc.x, acc.y, acc.z);

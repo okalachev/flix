@@ -21,6 +21,10 @@ extern float motors[4];
 Vector gyro, acc, imuRotation;
 Vector accBias, gyroBias, accScale(1, 1, 1);
 LowPassFilter<Vector> gyroBiasFilter(0);
+int imuModel = 1, imuBus = 0;
+int imuSckPin = 0, imuMisoPin = 0, imuMosiPin = 0, imuCsPin = -1, imuIntPin = -1;
+int imuSdaPin = 0, imuSclPin = 0;
+int rgbPin = -1, rgbNum = 1;
 
 // declarations
 void step();
