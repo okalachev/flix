@@ -77,7 +77,24 @@ In case if using different IMU model than MPU9250, change `imu` variable declara
 
 ```cpp
 ICM20948 imu(SPI);  // For ICM-20948
+// or
 MPU6050 imu(Wire);  // For MPU-6050
+```
+
+If using non-default SPI pins, pass SCK, MISO, and MOSI pin numbers to `SPI.begin` call and SS pin to `imu` constructor like that:
+
+```cpp
+ICM20948(SPI, <SS>);
+// ...
+SPI.begin(<SCK>, <MISO>, <MOSI>);
+imu.begin();
+```
+
+If using non-default I2C pins, pass SDA and SCL pin numbers to `Wire.setPins` call like that:
+
+```cpp
+Wire.begin(<SDA>, <SCL>);
+imu.begin();
 ```
 
 ### Connect using QGroundControl
