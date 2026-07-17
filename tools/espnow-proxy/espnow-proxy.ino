@@ -12,7 +12,7 @@
 #include "../../flix/util.h"
 
 const bool DISABLE_SWARM = true;
-const int CHANNEL = 6;
+const int CHANNEL = -1; // -1 means auto search
 char key[ESP_NOW_KEY_LEN + 1] = {0}; // with trailing null
 
 Preferences storage;
@@ -27,7 +27,7 @@ void onNewPeer(const esp_now_recv_info_t *info, const uint8_t *data, int len, vo
 	if (DISABLE_SWARM) stop = true;
 
 	Serial.printf("New peer: " MACSTR "\n", MAC2STR(info->src_addr));
-	ESPNOWSerial *link = new ESPNOWSerial(info->src_addr, CHANNEL, WIFI_IF_STA);
+	ESPNOWSerial *link = new ESPNOWSerial(info->src_addr, WiFi.channel(), WIFI_IF_STA);
 	link->begin();
 	link->setKey((const uint8_t *)key);
 	peers.push_back(link);
@@ -37,7 +37,6 @@ void setup() {
 	Serial.begin(115200);
 	WiFi.mode(WIFI_STA);
 	WiFi.setSleep(false);
-	WiFi.setChannel(CHANNEL);
 
 	ESP_NOW.onNewPeer(onNewPeer, NULL);
 	ESP_NOW.begin();
@@ -49,8 +48,14 @@ void setup() {
 	}
 	strcpy(key, storage.getString("key").c_str());
 
+	const int channels[] = {6, 1, 11, 2, 3, 4, 5, 6, 1, 11, 8, 9, 10, 11, 12, 13}; // 6, 1 and 11 are most common
+	int channelIndex = 0;
+
 	// Discover the first peer
 	while (peers.empty()) {
+		Serial.printf("Searching channel %d\n", channels[channelIndex]);
+		WiFi.setChannel(CHANNEL < 0 ? channels[channelIndex] : CHANNEL);
+		channelIndex = (channelIndex + 1) % (sizeof(channels) / sizeof(channels[0]));
 		Serial.printf("Run on Flix: espnow %s %s\n", WiFi.softAPmacAddress().c_str(), key);
 		delay(500);
 	}
