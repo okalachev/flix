@@ -369,7 +369,7 @@ To setup ESP-NOW communication:
    * Type: Serial.
    * Serial Port: choose the port of the proxy ESP32 board, e. g. `/dev/cu.usbserial-0001`.
    * Baud Rate: 115200.
-5. Click *Save*. QGroundControl should connect to the drone using ESP-NOW and begin showing the telemetry.
+5. Click *Save*, click *Connect*. QGroundControl should connect to the drone using ESP-NOW and begin showing the telemetry.
 
 ## Flight log
 
