@@ -51,7 +51,7 @@ void setup() {
 
 	// Discover the first peer
 	while (peers.empty()) {
-		Serial.printf("espnow %s %s\n", WiFi.softAPmacAddress().c_str(), key);
+		Serial.printf("Run on Flix: espnow %s %s\n", WiFi.softAPmacAddress().c_str(), key);
 		delay(500);
 	}
 }
