@@ -350,7 +350,7 @@ To setup ESP-NOW communication:
 
 1. Flash the second ESP32 board with ESP-NOW proxy sketch: [`tools/espnow-proxy/espnow-proxy.ino`](../tools/espnow-proxy/espnow-proxy.ino). Use Arduino IDE or command line: `make upload_proxy`.
 
-2. Open Serial Monitor or use `make monitor` command. The ESP32 will print its MAC address and generated encryption key, for example:
+2. Open Serial Monitor in Arduino IDE or use `make monitor` command. The ESP32 will print its MAC address and generated encryption key, for example:
 
    ```
    espnow 7a:c8:e3:eb:bf:e9 &PiuSysxP9+$L&5E
