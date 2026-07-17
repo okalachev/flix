@@ -27,7 +27,7 @@ void onNewPeer(const esp_now_recv_info_t *info, const uint8_t *data, int len, vo
 	if (DISABLE_SWARM) stop = true;
 
 	Serial.printf("New peer: " MACSTR "\n", MAC2STR(info->src_addr));
-	ESPNOWSerial *link = new ESPNOWSerial(info->src_addr, CHANNEL, WIFI_IF_AP);
+	ESPNOWSerial *link = new ESPNOWSerial(info->src_addr, CHANNEL, WIFI_IF_STA);
 	link->begin();
 	link->setKey((const uint8_t *)key);
 	peers.push_back(link);
@@ -35,7 +35,7 @@ void onNewPeer(const esp_now_recv_info_t *info, const uint8_t *data, int len, vo
 
 void setup() {
 	Serial.begin(115200);
-	WiFi.mode(WIFI_AP);
+	WiFi.mode(WIFI_STA);
 	WiFi.setSleep(false);
 	WiFi.setChannel(CHANNEL);
 
