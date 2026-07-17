@@ -371,6 +371,9 @@ To setup ESP-NOW communication:
    * Baud Rate: 115200.
 5. Click *Save*, click *Connect*. QGroundControl should connect to the drone using ESP-NOW and begin showing the telemetry.
 
+> [!TIP]
+> Make sure Arduino IDE is not running when using ESP-NOW proxy board, as it may block it.
+
 ## Flight log
 
 After the flight, you can download the flight log wirelessly for analysis. Use the following command on your computer for that:
