@@ -24,7 +24,6 @@ void onNewPeer(const esp_now_recv_info_t *info, const uint8_t *data, int len, vo
 	if (len != 4 || memcmp(data, "flix", 4) != 0) return; // check if discovery message
 
 	if (stop) return;
-	if (DISABLE_SWARM) stop = true;
 
 	Serial.printf("New peer: " MACSTR "\n", MAC2STR(info->src_addr));
 	ESPNOWSerial *link = new ESPNOWSerial(info->src_addr, WiFi.channel(), WIFI_IF_STA);
@@ -47,18 +46,6 @@ void setup() {
 		storage.putString("key", key);
 	}
 	strcpy(key, storage.getString("key").c_str());
-
-	const int channels[] = {6, 1, 11, 2, 3, 4, 5, 6, 1, 11, 8, 9, 10, 11, 12, 13}; // 6, 1 and 11 are most common
-	int channelIndex = 0;
-
-	// Discover the first peer
-	while (peers.empty()) {
-		Serial.printf("Searching channel %d\n", channels[channelIndex]);
-		WiFi.setChannel(CHANNEL < 0 ? channels[channelIndex] : CHANNEL);
-		channelIndex = (channelIndex + 1) % (sizeof(channels) / sizeof(channels[0]));
-		Serial.printf("Run on Flix: espnow %s %s\n", WiFi.STA.macAddress().c_str(), key);
-		delay(500);
-	}
 }
 
 void generateRandomKey() {
@@ -70,6 +57,20 @@ void generateRandomKey() {
 
 void loop() {
 	uint8_t buf[5000];
+
+	static int channelIndex = 0;
+	static const int channels[] = {6, 11, 1, 2, 6, 11, 3, 4, 5, 6, 1, 11, 8, 6, 9, 10, 11, 6, 1, 12, 13}; // 6, 1 and 11 are most common
+
+	static unsigned long last = 0;
+	if (!stop && millis() - last > 500) {
+		// Change search channel
+		last = millis();
+		channelIndex = (channelIndex + 1) % (sizeof(channels) / sizeof(channels[0]));
+		int channel = CHANNEL < 0 ? channels[channelIndex] : CHANNEL;
+		Serial.printf("Run on Flix: espnow %s %s\n", WiFi.STA.macAddress().c_str(), key);
+		Serial.printf("Searching channel %d\n", channel);
+		WiFi.setChannel(channel);
+	}
 
 	// Send from Serial to ESP-NOW
 	while (Serial.available() > 0) {
@@ -91,6 +92,15 @@ void loop() {
 	// Send from ESP-NOW to Serial
 	for (ESPNOWSerial *link : peers) {
 		int len = link->read(buf, sizeof(buf));
+		if (!stop) {
+			for (int i = 0; i < len; i++) {
+				if (buf[i] == MAVLINK_STX) {
+					// Got MAVLink message, stop discovery
+					Serial.printf("Received MAVLink from " MACSTR "\n", MAC2STR(link->addr()));
+					if (DISABLE_SWARM) stop = true;
+				}
+			}
+		}
 		if (len > 0) {
 			Serial.write(buf, len);
 		}
