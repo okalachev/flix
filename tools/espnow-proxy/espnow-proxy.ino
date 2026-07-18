@@ -56,7 +56,7 @@ void setup() {
 		Serial.printf("Searching channel %d\n", channels[channelIndex]);
 		WiFi.setChannel(CHANNEL < 0 ? channels[channelIndex] : CHANNEL);
 		channelIndex = (channelIndex + 1) % (sizeof(channels) / sizeof(channels[0]));
-		Serial.printf("Run on Flix: espnow %s %s\n", WiFi.softAPmacAddress().c_str(), key);
+		Serial.printf("Run on Flix: espnow %s %s\n", WiFi.STA.macAddress().c_str(), key);
 		delay(500);
 	}
 }
