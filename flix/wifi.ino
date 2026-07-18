@@ -89,7 +89,7 @@ void printWiFiInfo() {
 		print("MAC: %s\n", WiFi.softAPmacAddress().c_str());
 		print("Peer MAC: %s\n", MacAddress(espnow.addr()).toString().c_str());
 		print("Encrypted: %d\n", espnow.isEncrypted());
-		print("Channel: %d\n", espnow.getChannel());
+		print("Channel: %d\n", WiFi.channel());
 		print("Lost packets: %d\n", espnow.lost);
 	} else if (WiFi.getMode() == WIFI_MODE_AP) {
 		print("Mode: Access Point (AP)\n");
