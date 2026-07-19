@@ -44,8 +44,9 @@ simulator: build_simulator
 
 docker:
 	xhost +local:docker
-	GPU_DOCKER_ARG="--gpus all"; if ! nvidia-smi > /dev/null 2>&1; then GPU_DOCKER_ARG=""; fi; \
+	GPU_DOCKER_ARG="--gpus all"; if ! command -v nvidia-smi > /dev/null 2>&1 || ! nvidia-smi > /dev/null 2>&1; then GPU_DOCKER_ARG=""; fi; \
 	docker run -it --rm \
+		--device=/dev/dri \
 		-e DISPLAY=$$DISPLAY \
 		-v /tmp/.X11-unix:/tmp/.X11-unix \
 		-v arduino_cache:/home/ubuntu/.config/arduino \
