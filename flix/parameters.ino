@@ -6,13 +6,11 @@
 #include <Preferences.h>
 #include "util.h"
 
-extern int channelZero[16];
-extern int channelMax[16];
+extern int channelZero[16], channelMax[16];
 extern int rollChannel, pitchChannel, throttleChannel, yawChannel, armedChannel, modeChannel;
-extern int rcRxPin;
-extern int wifiMode, udpLocalPort, udpRemotePort;
+extern int rcRxPin, voltagePin;
+extern int wifiMode, wifiLongRange, udpLocalPort, udpRemotePort, espnowChannel;
 extern float rcLossTimeout, descendTime;
-extern int voltagePin;
 extern float voltageScale;
 extern LowPassFilter<float> voltageFilter;
 
@@ -22,6 +20,7 @@ struct Parameter {
 	const char *name; // max length is 15
 	bool integer;
 	union { float *f; int *i; }; // pointer to the variable
+	float inital; // default value
 	float cache; // what's stored in flash
 	void (*callback)(); // called after parameter change
 	Parameter(const char *name, float *variable, void (*callback)() = nullptr) : name(name), integer(false), f(variable), callback(callback) {};
@@ -86,7 +85,7 @@ Parameter parameters[] = {
 	{"MOT_PWM_MIN", &pwmMin},
 	{"MOT_PWM_MAX", &pwmMax},
 	// rc
-	{"RC_RX_PIN", &rcRxPin},
+	{"RC_RX_PIN", &rcRxPin, setupRC},
 	{"RC_ZERO_0", &channelZero[0]},
 	{"RC_ZERO_1", &channelZero[1]},
 	{"RC_ZERO_2", &channelZero[2]},
@@ -110,14 +109,20 @@ Parameter parameters[] = {
 	{"RC_MODE", &modeChannel},
 	// wifi
 	{"WIFI_MODE", &wifiMode},
-	{"WIFI_LOC_PORT", &udpLocalPort},
-	{"WIFI_REM_PORT", &udpRemotePort},
+	{"WIFI_PORT_LOC", &udpLocalPort},
+	{"WIFI_PORT_REM", &udpRemotePort},
+	{"WIFI_LONG_RANGE", &wifiLongRange},
+	// espnow
+	{"ESPNOW_CHANNEL", &espnowChannel},
 	// mavlink
 	{"MAV_SYS_ID", &mavlinkSysId},
 	{"MAV_RATE_SLOW", &telemetrySlow.rate},
-	{"MAV_RATE_FAST", &telemetryFast.rate},
+	{"MAV_RATE_ATT", &telemetryAttitude.rate},
+	{"MAV_RATE_RC", &telemetryRC.rate},
+	{"MAV_RATE_MOT", &telemetryMotors.rate},
+	{"MAV_RATE_IMU", &telemetryIMU.rate},
 	// power
-	{"PWR_VOLT_PIN", &voltagePin},
+	{"PWR_VOLT_PIN", &voltagePin, setupPower},
 	{"PWR_VOLT_SCALE", &voltageScale},
 	{"PWR_VOLT_LPF_A", &voltageFilter.alpha},
 	// safety
@@ -130,10 +135,10 @@ void setupParameters() {
 	storage.begin("flix");
 	// Read parameters from storage
 	for (auto &parameter : parameters) {
-		if (!storage.isKey(parameter.name)) {
-			storage.putFloat(parameter.name, parameter.getValue()); // store default value
+		parameter.inital = parameter.getValue();
+		if (storage.isKey(parameter.name)) {
+			parameter.setValue(storage.getFloat(parameter.name));
 		}
-		parameter.setValue(storage.getFloat(parameter.name, 0));
 		parameter.cache = parameter.getValue();
 	}
 }
@@ -179,17 +184,23 @@ void syncParameters() {
 	if (motorsActive()) return; // don't use flash while flying, it may cause a delay
 
 	for (auto &parameter : parameters) {
-		if (parameter.getValue() == parameter.cache) continue; // no change
-		if (isnan(parameter.getValue()) && isnan(parameter.cache)) continue; // both are NAN
+		if (floatEquals(parameter.getValue(), parameter.cache)) continue; // no change
 
 		storage.putFloat(parameter.name, parameter.getValue());
 		parameter.cache = parameter.getValue(); // update cache
 	}
 }
 
-void printParameters() {
+void printParameters(const char *filter) {
+	print("Name             Value          [Default]\n");
 	for (auto &parameter : parameters) {
-		print("%s = %g\n", parameter.name, parameter.getValue());
+		if (strncasecmp(parameter.name, filter, strlen(filter))) continue;
+
+		if (floatEquals(parameter.getValue(), parameter.inital)) { // parameter changed
+			print("%-15s  %-13g\n", parameter.name, parameter.getValue());
+		} else {
+			print("%-15s  %-13g  [%g]\n", parameter.name, parameter.getValue(), parameter.inital);
+		}
 	}
 }
 

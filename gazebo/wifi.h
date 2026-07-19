@@ -11,7 +11,12 @@
 #include <sys/poll.h>
 #include <gazebo/gazebo.hh>
 
-int wifiMode = 1; // mock
+// Mocks
+int wifiMode = 1;
+int wifiLongRange = 0;
+int espnowChannel = 6;
+const int W_DISABLED = 0, W_AP = 1, W_STA = 2, W_ESPNOW = 3;
+
 int udpLocalPort = 14580;
 int udpRemotePort = 14550;
 const char *udpRemoteIP = "255.255.255.255";

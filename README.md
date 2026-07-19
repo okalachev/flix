@@ -21,8 +21,8 @@
 * Dedicated for education and research.
 * Made from general-purpose components.
 * Simple and clean source code in Arduino (<2k lines firmware).
-* Connectivity using Wi-Fi and MAVLink protocol.
-* Control using USB gamepad, remote control or smartphone.
+* Communication using MAVLink protocol over Wi-Fi or ESP-NOW.
+* Control with USB gamepad, remote control or smartphone.
 * Wireless command line interface and analyzing.
 * Precise simulation with Gazebo.
 * Python library for scripting and automatic flights.
@@ -46,6 +46,14 @@ Usage in education (RoboCamp): https://youtu.be/Wd3yaorjTx0.
 See the [user builds gallery](docs/user.md):
 
 <a href="docs/user.md"><img src="docs/img/user/user.jpg" width=500></a>
+
+### PCB
+
+The official PCB *(Flix2)* is in development now. Follow the [project's channel](https://t.me/opensourcequadcopter) to track the progress.
+
+Outdoor flights demo video of the current prototype:
+
+<a href="https://youtu.be/KXlNmvUTi4g"><img width=300 src="https://i3.ytimg.com/vi/KXlNmvUTi4g/maxresdefault.jpg"></a>
 
 ## Simulation
 
@@ -71,12 +79,12 @@ Additional articles:
 
 |Type|Part|Image|Quantity|
 |-|-|:-:|:-:|
-|Microcontroller board|ESP32 Mini|<img src="docs/img/esp32.jpg" width=100>|1|
-|IMU (and barometer¹) board|GY‑91, MPU-9265 (or other MPU‑9250/MPU‑6500 board)<br>ICM20948V2 (ICM‑20948)³<br>GY-521 (MPU-6050)³⁻¹|<img src="docs/img/gy-91.jpg" width=90 align=center><br><img src="docs/img/icm-20948.jpg" width=100><br><img src="docs/img/gy-521.jpg" width=100>|1|
-|Boost converter (optional, for more stable power supply)|5V output|<img src="docs/img/buck-boost.jpg" width=100>|1|
+|Microcontroller board|ESP32 Mini.<br>ESP32-S3/ESP32-C3 boards are also supported.|<img src="docs/img/esp32.jpg" width=100>|1|
+|IMU (and barometer¹) board|GY‑91, MPU-9265 (or other MPU‑9250/MPU‑6500 board)<br>ICM20948V2 (ICM‑20948)<br>GY-521 (MPU-6050)|<img src="docs/img/gy-91.jpg" width=90 align=center><br><img src="docs/img/icm-20948.jpg" width=100><br><img src="docs/img/gy-521.jpg" width=100>|1|
+|*Boost converter (optional, for more stable power supply)*|*5V output*|<img src="docs/img/buck-boost.jpg" width=100>|1|
 |Motor|8520 3.7V brushed motor.<br>Motor with exact 3.7V voltage is needed, not ranged working voltage (3.7V — 6V).<br>Make sure the motor shaft diameter and propeller hole diameter match!|<img src="docs/img/motor.jpeg" width=100>|4|
 |Propeller|55 mm or 65 mm|<img src="docs/img/prop.jpg" width=100>|4|
-|MOSFET (transistor)|100N03A or [analog](https://t.me/opensourcequadcopter/33)|<img src="docs/img/100n03a.jpg" width=100>|4|
+|MOSFET (transistor)|UMW 100N03A or [analog](https://t.me/opensourcequadcopter/33).<br>Warning: don't use KIA 100N03A or other manufacturers, they might not work!|<img src="docs/img/100n03a.jpg" width=100>|4|
 |Pull-down resistor<br>Voltage measurement resistor|10 kΩ|<img src="docs/img/resistor10k.jpg" width=100>|6|
 |3.7V Li-Po battery|LW 952540 (or any compatible by the size).<br>Make sure the battery has enough discharge rate — 25C or more!|<img src="docs/img/battery.jpg" width=100>|1|
 |Battery connector cable|MX2.0 2P female|<img src="docs/img/mx.png" width=100>|1|
@@ -152,18 +160,16 @@ You can see a user-contributed [variant of complete circuit diagram](https://mir
   |-|-|
   |GND|GND|
   |VIN|VCC (or 3.3V depending on the receiver)|
-  |Signal (TX)|GPIO4¹|
+  |Signal (TX)|GPIO4|
 
-  *¹ — UART2 RX pin was [changed](https://docs.espressif.com/projects/arduino-esp32/en/latest/migration_guides/2.x_to_3.0.html#id14) to GPIO4 in Arduino ESP32 core 3.0.*
+* Optionally connect the battery voltage divider for voltage monitoring to any ADC1 pin (e. g. *GPIO32* on ESP32, *GPIO3* on ESP32-S3).
 
-* Optionally connect the battery voltage divider for voltage monitoring to any ADC1 pin (e. g. *GPIO32* on ESP32, *GPIO3* on ESP32S3).
-
-  ESP32 and ESP32S3 [can measure](https://docs.espressif.com/projects/arduino-esp32/en/latest/api/adc.html#analogsetattenuation) up to 3.1 V and ESP32S3/ESP32C3 can measure up to 2.5 V, so choose the voltage divider resistors accordingly.
+  ESP32 and ESP32-S3 [can measure](https://docs.espressif.com/projects/arduino-esp32/en/latest/api/adc.html#analogsetattenuation) up to 3.1 V and ESP32-S3/ESP32-C3 can measure up to 2.5 V, so choose the voltage divider resistors accordingly.
 
 ## Resources
 
 * Telegram channel on developing the drone and the flight controller (in Russian): https://t.me/opensourcequadcopter.
-* Official Telegram chat: https://t.me/opensourcequadcopterchat.
+* Official Telegram chat: https://t.me/opensourcequadcopterchat (English / Russian).
 * Detailed article on Habr.com about the development of the drone (in Russian): https://habr.com/ru/articles/814127/.
 
 ## Disclaimer

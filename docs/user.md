@@ -4,6 +4,62 @@ This page contains user-built drones based on the Flix project. Publish your pro
 
 ---
 
+Author: Alican Erüst.<br>
+Description: QX95 mm frame, 55 mm propellers, 3.7 V 25C 1050 mAh LiPo battery, MPU6050 IMU, Logitech F310 gamepad controller, with a total quadcopter weight of 66 g.
+
+<img src="img/user/alicanerus/1.jpg" height=200> <img src="img/user/alicanerus/2.jpg" height=200> <img src="img/user/alicanerus/3.jpg" height=200>
+
+[Flight video](https://drive.google.com/file/d/1k0WeWTKnCAfaugkX7LcmNxsUuq79RL8Z/view?usp=sharing).
+
+---
+
+Author: [Неруш Михаил](https://t.me/NerushMV).<br>
+Description: custom frame made of 4 mm plywood, 8520 brushed motors, 75 mm propellers, MPU-6500. FlySky FS-i6X with ESP32-based adapter for ESP-NOW communication (using PPM output).<br>
+Sources and materials: [link](https://drive.google.com/drive/folders/1uWiDcuorLrtVs_IIR7Y13omij-7Q1nx8).
+
+<img src="img/user/nerush/1.jpg" height=200> <img src="img/user/nerush/2.jpg" height=200>
+
+[Flight video](https://drive.google.com/file/d/1jRXeGx34lJpUfw0GKLQeIzkWZvooQJSE/view?usp=sharing).
+
+---
+
+Author: [Konstantinos Paraskevas](https://github.com/Frapais).<br>
+Description: drone with a custom single-boarded airframe, extending the [Sprig-C3 module](https://github.com/Frapais/Sprig-C3).
+ESP32-C3 microcontroller, ICM-20948 IMU, on-board fuel-gauge, status LED indicator.<br>
+Repository with all the code and PCB sources: https://github.com/Frapais/Sprig-Drone.
+
+<img src="img/user/kostas/1.jpg" height=150> <img src="img/user/kostas/2.jpg" height=150>
+
+Detailed video about making the drone:
+
+<a href="https://youtu.be/82Q-uBq6s48"><img width=400 src="https://i3.ytimg.com/vi/82Q-uBq6s48/maxresdefault.jpg"></a>
+
+---
+
+Author: [Awab Anas](http://t.me/AW_VENOM).<br>
+Description: ESP32 D1 Mini, MPU-6050, 8520 3.7V brushed motors, 55 mm propellers, battery li-po 1200 mAh, controlling via [Mavlink Joystick app](https://github.com/goldarte/mavlink-joystick/releases/latest).<br>
+[Flight validation](https://drive.google.com/file/d/12z0jfctZDBA6b5UKCG0Uje5rAxj6DhF-/view?usp=sharing).
+
+<img src="img/user/aw_venom/1.jpg" height=200>
+
+---
+
+Author: [Ina Tix](https://t.me/ina_tix).<br>
+Description: XR2981 based DC-DC converter, ELRS MINI 2.4GHz RX SX1280 receiver (SBUS interface), Radiomaster TX12 remote control.<br>
+[Flight validation](https://drive.google.com/file/d/1yqkKNuz4R_yxGqUNQxVpixJbXqEEcUSj/view?usp=share_link).
+
+<img src="img/user/ina_tix/1.jpg" height=200> <img src="img/user/ina_tix/2.jpg" height=200> <img src="img/user/ina_tix/3.jpg" height=200>
+
+---
+
+Author: Oleg Kalachev.<br>
+Description: the first attempt on making an official PCB based Flix drone (Flix2 board). The IMU is not working on this version, so an external MPU-6050 board was used, therefore considered as **Flix version 1.5**.<br>
+[Flight video](https://drive.google.com/file/d/1R7tuUsFmPY0CGcOCFfMFaCp9kR49K3bl/view?usp=sharing).
+
+<img src="img/flix1.5.jpg" width=300>
+
+---
+
 Author: [FanBy0ru](https://https://github.com/FanBy0ru).<br>
 Description: custom 3D-printed frame.<br>
 Frame STLs and flight validation: https://cults3d.com/en/3d-model/gadget/armature-pour-flix-drone.
@@ -38,6 +94,17 @@ Author: [goldarte](https://t.me/goldarte).<br>
 **Flight video:**
 
 <a href="https://drive.google.com/file/d/1nQtFjEcGGLx-l4xkL5ko9ZpOTVU-WDjL/view?usp=sharing"><img height=200 src="img/user/goldarte/video.jpg"></a>
+
+---
+
+Author: [malagis](https://oshwhub.com/malagis).<br>
+
+A Chinese custom PCB version of Flix with a big community of users, lots of materials and modifications.
+
+Main project's page: https://oshwhub.com/malagis/esp32-mini-plane.<br>
+Video about the project: https://www.bilibili.com/video/BV14vyqBFEJn/.
+
+<img src="img/user/malagis/1.jpg" height=200> <img src="img/user/malagis/2.jpg" height=200> <img src="img/user/malagis/3.jpg" height=200>
 
 ---
 

@@ -28,6 +28,8 @@ from pyflix import Flix
 flix = Flix()  # create a Flix object and wait for connection
 ```
 
+If using ESP-NOW connection, specify the proxy device name in `FLIX_DEVICE` environment variable or pass it to the constructor: `Flix(device='/dev/cu.usbserial-0001')`.
+
 ### Telemetry
 
 Basic telemetry is available through object properties. The property names generally match the corresponding variables in the firmware code:
@@ -37,7 +39,7 @@ print(flix.connected)       # True if connected to the drone
 print(flix.mode)            # current flight mode (str)
 print(flix.armed)           # True if the drone is armed
 print(flix.landed)          # True if the drone is landed
-print(flix.voltage)         # battery voltage
+print(flix.voltage)         # battery voltage (NaN - unknown, ~0 - USB powered)
 print(flix.attitude)        # attitude quaternion [w, x, y, z]
 print(flix.attitude_euler)  # attitude as Euler angles [roll, pitch, yaw]
 print(flix.rates)           # angular rates [roll_rate, pitch_rate, yaw_rate]
@@ -219,6 +221,13 @@ The following scripts demonstrate how to use the library:
 * [`cli.py`](../cli.py) — remote access to the drone's command line interface.
 * [`log.py`](../log.py) — download flight logs from the drone.
 * [`example.py`](../example.py) — a simple example, prints telemetry data and waits for events.
+
+> [!TIP]
+> Set `FLIX_DEVICE` environment variable to use these tools with ESP-NOW connection, for example:
+>
+> ```bash
+> FLIX_DEVICE=/dev/cu.usbserial-0001 tools/cli.py
+> ```
 
 ## Advanced usage
 

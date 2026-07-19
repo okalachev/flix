@@ -5,6 +5,7 @@
 
 import os
 import time
+import math
 from queue import Queue, Empty
 from typing import Optional, Callable, List, Dict, Any, Union, Sequence
 import logging
@@ -26,7 +27,7 @@ class Flix:
     mode: str = ''
     armed: bool = False
     landed: bool = False
-    voltage: float = 0
+    voltage: float = math.nan
     attitude: List[float]
     attitude_euler: List[float]  # roll, pitch, yaw
     rates: List[float]
@@ -43,22 +44,27 @@ class Flix:
     _print_buffer: str = ''
     _modes = ['RAW', 'ACRO', 'STAB', 'AUTO']
 
-    def __init__(self, system_id: int=1, wait_connection: bool=True):
+    def __init__(self, system_id: int=1, wait_connection: bool=True, device=os.getenv('FLIX_DEVICE')):
         if not (0 <= system_id < 256):
             raise ValueError('system_id must be in range [0, 255]')
         self._setup_mavlink()
         self.system_id = system_id
         self._init_state()
-        try:
-            # Direct connection
-            logger.debug('Listening on port 14550')
-            self.connection: mavutil.mavfile = mavutil.mavlink_connection('udpin:0.0.0.0:14550', source_system=255)  # type: ignore
-        except OSError as e:
-            if e.errno != errno.EADDRINUSE:
-                raise
-            # Port busy - using proxy
-            logger.debug('Listening on port 14555 (proxy)')
-            self.connection: mavutil.mavfile = mavutil.mavlink_connection('udpin:0.0.0.0:14555', source_system=254)  # type: ignore
+        if device is not None:
+            # User defined connection
+            logger.debug(f'Connecting to {device}')
+            self.connection: mavutil.mavfile = mavutil.mavlink_connection(device, source_system=255)  # type: ignore
+        else:
+            try:
+                # Direct connection
+                logger.debug('Listening on port 14550')
+                self.connection: mavutil.mavfile = mavutil.mavlink_connection('udpin:0.0.0.0:14550', source_system=255)  # type: ignore
+            except OSError as e:
+                if e.errno != errno.EADDRINUSE:
+                    raise
+                # Port busy - using proxy
+                logger.debug('Listening on port 14555 (proxy)')
+                self.connection: mavutil.mavfile = mavutil.mavlink_connection('udpin:0.0.0.0:14555', source_system=254)  # type: ignore
         self.connection.target_system = system_id
         self.mavlink: mavlink.MAVLink = self.connection.mav
         self._event_listeners: Dict[str, List[Callable[..., Any]]] = {}
