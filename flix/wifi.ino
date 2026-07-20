@@ -58,7 +58,7 @@ void sendWiFi(const uint8_t *buf, int len) {
 		espnow.write(buf, len);
 
 		static Rate discovery(2);
-		if (discovery) espnowBroadcast.write((const uint8_t *)"flix", 4); // broadcast message to help finding this device
+		if (espnow.isEncrypted() && discovery) espnowBroadcast.write((const uint8_t *)"flix", 4); // broadcast message to help finding this device
 		return;
 	}
 
