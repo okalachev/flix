@@ -6,7 +6,7 @@
 #include "vector.h"
 #include "util.h"
 
-int logMemory = 0; // 0 - RAM, 1 - PSRAM, -1 - disabled
+int logMemory = -1; // 0 - RAM, 1 - PSRAM, -1 - disabled
 float logUsage = 0.5; // fraction of free memory to use for log
 
 struct LogValue {
