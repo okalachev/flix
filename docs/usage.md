@@ -76,9 +76,9 @@ See other available Make commands in [Makefile](../Makefile).
 In case if using different IMU model than MPU9250, change `imu` variable declaration in the `imu.ino`:
 
 ```cpp
-ICM20948 imu(SPI);  // For ICM-20948
+ICM20948 imu(SPI);  // For ICM-20948 via SPI
 // or
-MPU6050 imu(Wire);  // For MPU-6050
+MPU6050 imu(Wire);  // For MPU-6050 via I2C
 ```
 
 If using non-default SPI pins, pass SCK, MISO, and MOSI pin numbers to `SPI.begin` call and SS pin to `imu` constructor like that:
