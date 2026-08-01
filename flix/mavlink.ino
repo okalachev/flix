@@ -196,6 +196,13 @@ void handleMavlink(const void *_msg) {
 		sendMessage(&msg);
 	}
 
+	if (msg.msgid == MAVLINK_MSG_ID_VISION_POSITION_ESTIMATE) {
+		mavlink_vision_position_estimate_t m;
+		mavlink_msg_vision_position_estimate_decode(&msg, &m);
+		Vector pos(m.x, m.y, m.z);
+		correctPosition(pos);
+	}
+
 	if (msg.msgid == MAVLINK_MSG_ID_MISSION_REQUEST_LIST) { // handle to make qgc happy
 		mavlink_mission_request_list_t m;
 		mavlink_msg_mission_request_list_decode(&msg, &m);

@@ -26,6 +26,7 @@ void estimate() {
 	applyGyro();
 	applyAcc();
 	applyLevel();
+	estimatePosition();
 }
 
 void applyGyro() {

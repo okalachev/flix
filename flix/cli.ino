@@ -9,7 +9,7 @@
 #include "filter.h"
 
 extern const int MOTOR_REAR_LEFT, MOTOR_REAR_RIGHT, MOTOR_FRONT_RIGHT, MOTOR_FRONT_LEFT;
-extern const int RAW, ACRO, STAB, AUTO;
+extern const int RAW, ACRO, STAB, AUTO, POS;
 extern const int W_AP, W_STA, W_ESPNOW;
 extern float t, dt, loopRate;
 extern uint16_t channels[16];
@@ -134,6 +134,8 @@ void doCommand(String str, bool echo = false) {
 		mode = ACRO;
 	} else if (command == "auto") {
 		mode = AUTO;
+	} else if (command == "pos") {
+		mode = POS;
 	} else if (command == "rc") {
 		print("channels: ");
 		for (int i = 0; i < 16; i++) {

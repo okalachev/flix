@@ -34,7 +34,7 @@
 #define TILT_MAX radians(30)
 #define RATES_D_LPF_ALPHA 0.2 // cutoff frequency ~ 40 Hz
 
-const int RAW = 0, ACRO = 1, STAB = 2, AUTO = 3; // flight modes
+const int RAW = 0, ACRO = 1, STAB = 2, AUTO = 3, POS = 4;
 int mode = STAB;
 bool armed = false;
 
@@ -56,6 +56,7 @@ int flightModes[] = {STAB, STAB, STAB}; // map for rc mode switch
 
 extern const int MOTOR_REAR_LEFT, MOTOR_REAR_RIGHT, MOTOR_FRONT_RIGHT, MOTOR_FRONT_LEFT;
 extern float controlRoll, controlPitch, controlThrottle, controlYaw, controlMode;
+extern Vector position, positionTarget;
 
 void control() {
 	interpretControls();
@@ -79,7 +80,18 @@ void interpretControls() {
 
 	thrustTarget = controlThrottle;
 
-	if (mode == STAB) {
+	if (mode == POS) {
+		if (controlRoll != 0 || controlPitch != 0) {
+			positionTarget.x = NAN;
+			positionTarget.y = NAN;
+		} else if (invalid(positionTarget.x) || invalid(positionTarget.y)) {
+			// reset position target
+			positionTarget.x = position.x;
+			positionTarget.y = position.y;
+		}
+	}
+
+	if (mode == STAB || (mode == POS && invalid(positionTarget.x))) {
 		float yawTarget = attitudeTarget.getYaw();
 		if (!armed || invalid(yawTarget) || controlYaw != 0) yawTarget = attitude.getYaw(); // reset yaw target
 		attitudeTarget = Quaternion::fromEuler(Vector(controlRoll * tiltMax, controlPitch * tiltMax, yawTarget));

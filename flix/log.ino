@@ -68,6 +68,11 @@ LogTopic logTopics[] = {
 		{"attitude.pitch", []() { return attitude.getPitch(); }},
 		{"attitude.yaw", []() { return attitude.getYaw(); }}),
 
+	LogTopic(50,
+		{"position.x", &position.x},
+		{"position.y", &position.y},
+		{"position.z", &position.z}),
+
 	// rc
 	LogTopic(10,
 		{"controlTime", &controlTime, false}, // trigger value

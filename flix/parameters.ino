@@ -5,6 +5,7 @@
 
 #include <Preferences.h>
 #include "util.h"
+#include "pid.h"
 
 extern int channelZero[16], channelMax[16];
 extern int rollChannel, pitchChannel, throttleChannel, yawChannel, armedChannel, modeChannel;
@@ -13,6 +14,7 @@ extern int wifiMode, wifiLongRange, udpLocalPort, udpRemotePort, espnowChannel;
 extern float rcLossTimeout, descendTime, disarmTilt;
 extern float voltageScale;
 extern LowPassFilter<float> voltageFilter;
+extern PID posX_PID, posY_PID;
 
 Preferences storage;
 
@@ -59,6 +61,12 @@ Parameter parameters[] = {
 	{"CTL_FLT_MODE_0", &flightModes[0]},
 	{"CTL_FLT_MODE_1", &flightModes[1]},
 	{"CTL_FLT_MODE_2", &flightModes[2]},
+	// position
+	{"POS_XY_P", &posX_PID.p, setupPosition},
+	{"POS_XY_I", &posX_PID.i, setupPosition},
+	{"POS_XY_D", &posX_PID.d, setupPosition},
+	{"POS_XY_WU", &posX_PID.windup, setupPosition},
+	{"POS_XY_D_A", &posX_PID.lpf.alpha, setupPosition},
 	// imu
 	{"IMU_ROT_ROLL", &imuRotation.x},
 	{"IMU_ROT_PITCH", &imuRotation.y},
