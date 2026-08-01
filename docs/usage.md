@@ -25,7 +25,7 @@ You can build and upload the firmware using either **Arduino IDE** (easier for b
    * `FlixPeriph`, the latest version.
    * `MAVLink`, version 2.0.25.
 5. Open the `flix/flix.ino` sketch from downloaded firmware sources in Arduino IDE.
-6. Connect your ESP32 board to the computer and choose correct board type in Arduino IDE (*WEMOS D1 MINI ESP32* for ESP32 Mini) and the port.
+6. Connect your ESP32 board to the computer and choose correct board type in Arduino IDE (*WEMOS D1 MINI ESP32* for ESP32 Mini, *ESP32S3 Dev Module* for ESP32-S3 Super Mini) and the port.
 7. Set *Tools* ⇒ *Core Debug Level* to *Error* to see the errors in the serial console. Set *Tools* ⇒ *USB CDC on Boot* to *Enabled* for ESP32-S3/ESP32-C3 boards.
 8. [Build and upload](https://docs.arduino.cc/software/ide-v2/tutorials/getting-started/ide-v2-uploading-a-sketch) the firmware using Arduino IDE.
 
@@ -105,7 +105,7 @@ To access the console using serial port:
 To access the console using QGroundControl:
 
 1. Connect to the drone using QGroundControl app.
-2. Go to the QGroundControl menu ⇒ *Vehicle Setup* ⇒ *Analyze Tools* ⇒ *MAVLink Console*.
+2. Go to the QGroundControl menu ⇒ *Analyze Tools* ⇒ *MAVLink Console*.
 
 <img src="img/cli.png" width="400">
 
@@ -333,7 +333,7 @@ To setup ESP-NOW communication:
 
 1. Flash the second ESP32 board with ESP-NOW proxy sketch: [`tools/espnow-proxy/espnow-proxy.ino`](../tools/espnow-proxy/espnow-proxy.ino). Use Arduino IDE or command line: `make upload_proxy`.
 
-2. Open Serial Monitor or use `make monitor` command. The ESP32 will print its MAC address and generated encryption key, for example:
+2. Open Serial Monitor in Arduino IDE or use `make monitor` command. The ESP32 will print its MAC address and generated encryption key, for example:
 
    ```
    espnow 7a:c8:e3:eb:bf:e9 &PiuSysxP9+$L&5E
@@ -352,7 +352,10 @@ To setup ESP-NOW communication:
    * Type: Serial.
    * Serial Port: choose the port of the proxy ESP32 board, e. g. `/dev/cu.usbserial-0001`.
    * Baud Rate: 115200.
-5. Click *Save*. QGroundControl should connect to the drone using ESP-NOW and begin showing the telemetry.
+5. Click *Save*, click *Connect*. QGroundControl should connect to the drone using ESP-NOW and begin showing the telemetry.
+
+> [!TIP]
+> Make sure Arduino IDE is not running when using ESP-NOW proxy board, as it may block the serial port.
 
 ## Flight log
 
