@@ -63,6 +63,7 @@ void failsafe();
 void rcLossFailsafe();
 void descend();
 void autoFailsafe();
+void tiltFailsafe();
 int parametersCount();
 const char *getParameterName(int index);
 float getParameter(int index);

@@ -8,10 +8,12 @@ extern float controlRoll, controlPitch, controlThrottle, controlYaw;
 
 float rcLossTimeout = 1;
 float descendTime = 10;
+float disarmTilt = radians(120);
 
 void failsafe() {
 	rcLossFailsafe();
 	autoFailsafe();
+	tiltFailsafe();
 }
 
 // RC loss failsafe
@@ -44,4 +46,16 @@ void autoFailsafe() {
 	pitch = controlPitch;
 	yaw = controlYaw;
 	throttle = controlThrottle;
+}
+
+// Disarm if tilted too much
+void tiltFailsafe() {
+	if (!armed) return;
+	if (mode != STAB) return;
+
+	Vector up = Quaternion::rotateVector(Vector(0, 0, 1), attitude);
+	float tilt = acos(up.z);
+	if (disarmTilt && tilt > disarmTilt) {
+		armed = false;
+	}
 }
