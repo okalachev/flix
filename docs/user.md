@@ -4,6 +4,15 @@ This page contains user-built drones based on the Flix project. Publish your pro
 
 ---
 
+Author: Alican Erüst.<br>
+Description: QX95 mm frame, 55 mm propellers, 3.7 V 25C 1050 mAh LiPo battery, MPU6050 IMU, Logitech F310 gamepad controller, with a total quadcopter weight of 66 g.
+
+<img src="img/user/alicanerus/1.jpg" height=200> <img src="img/user/alicanerus/2.jpg" height=200> <img src="img/user/alicanerus/3.jpg" height=200>
+
+[Flight video](https://drive.google.com/file/d/1k0WeWTKnCAfaugkX7LcmNxsUuq79RL8Z/view?usp=sharing).
+
+---
+
 Author: [Неруш Михаил](https://t.me/NerushMV).<br>
 Description: custom frame made of 4 mm plywood, 8520 brushed motors, 75 mm propellers, MPU-6500. FlySky FS-i6X with ESP32-based adapter for ESP-NOW communication (using PPM output).<br>
 Sources and materials: [link](https://drive.google.com/drive/folders/1uWiDcuorLrtVs_IIR7Y13omij-7Q1nx8).

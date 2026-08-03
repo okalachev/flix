@@ -42,7 +42,7 @@ const char* getModeName();
 void sendMotors();
 int getDutyCycle(float value);
 bool motorsActive();
-void testMotor(int n);
+void testMotor(int, float);
 void print(const char* format, ...);
 void pause(float duration);
 void doCommand(String str, bool echo);

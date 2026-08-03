@@ -50,8 +50,8 @@ const char* motd =
 "sta <ssid> <password> - configure Wi-Fi client mode\n"
 "espnow <mac> [<key>] - configure ESP-NOW peer\n"
 "mot - show motor output\n"
+"mfr/mfl/mrr/mrl [<thrust>] - test motor (remove props)\n"
 "log [dump] - print log header [and data]\n"
-"mfr, mfl, mrr, mrl - test motor (remove props)\n"
 "log - show log info\n"
 "log header - show log header\n"
 "log reset - reset log\n"
@@ -176,13 +176,13 @@ void doCommand(String str, bool echo = false) {
 	} else if (command == "ca") {
 		calibrateAccel();
 	} else if (command == "mfr") {
-		testMotor(MOTOR_FRONT_RIGHT);
+		testMotor(MOTOR_FRONT_RIGHT, arg0.isEmpty() ? 0.2 : arg0.toFloat());
 	} else if (command == "mfl") {
-		testMotor(MOTOR_FRONT_LEFT);
+		testMotor(MOTOR_FRONT_LEFT, arg0.isEmpty() ? 0.2 : arg0.toFloat());
 	} else if (command == "mrr") {
-		testMotor(MOTOR_REAR_RIGHT);
+		testMotor(MOTOR_REAR_RIGHT, arg0.isEmpty() ? 0.2 : arg0.toFloat());
 	} else if (command == "mrl") {
-		testMotor(MOTOR_REAR_LEFT);
+		testMotor(MOTOR_REAR_LEFT, arg0.isEmpty() ? 0.2 : arg0.toFloat());
 	} else if (command == "sys") {
 #ifdef ESP32
 		print("Chip: %s\n", ESP.getChipModel());
