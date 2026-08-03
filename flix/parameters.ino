@@ -10,7 +10,7 @@ extern int channelZero[16], channelMax[16];
 extern int rollChannel, pitchChannel, throttleChannel, yawChannel, armedChannel, modeChannel;
 extern int rcRxPin, voltagePin;
 extern int wifiMode, wifiLongRange, udpLocalPort, udpRemotePort, espnowChannel;
-extern float rcLossTimeout, descendTime;
+extern float rcLossTimeout, descendTime, disarmTilt;
 extern float voltageScale;
 extern LowPassFilter<float> voltageFilter;
 
@@ -153,6 +153,7 @@ Parameter parameters[] = {
 	// safety
 	{"SF_RC_LOSS_TIME", &rcLossTimeout},
 	{"SF_DESCEND_TIME", &descendTime},
+	{"SF_DISARM_TILT", &disarmTilt},
 };
 
 void setupParameters() {

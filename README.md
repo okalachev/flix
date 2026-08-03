@@ -55,6 +55,12 @@ Outdoor flights demo video of the current prototype:
 
 <a href="https://youtu.be/KXlNmvUTi4g"><img width=300 src="https://i3.ytimg.com/vi/KXlNmvUTi4g/maxresdefault.jpg"></a>
 
+### Position control
+
+The position control feature is in development. RoboCamp 2026 demo (using an overhead camera, [sources](https://github.com/xTimop/flix-poscontrol/compare/robolager2026...xTimop:flix-poscontrol:poscontrol)):
+
+<a href="https://youtu.be/369Xowm4HcU"><img width=300 src="https://i3.ytimg.com/vi/369Xowm4HcU/maxresdefault.jpg"></a>
+
 ## Simulation
 
 The simulator is implemented using Gazebo and runs the original Arduino code:
