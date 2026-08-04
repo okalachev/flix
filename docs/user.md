@@ -4,6 +4,15 @@ This page contains user-built drones based on the Flix project. Publish your pro
 
 ---
 
+Author: [Oleg1405](https://t.me/Oleg1405).<br>
+Description: ESP32 Mini, MPU-6500 IMU, boost converter, BT2.0 power connector, 65 mm props, BetaFPV ELRS Lite Receiver, Radiomaster Pocket + Mavlink Joystick (Android) control.
+
+<img src="img/user/oleg1405/1.jpg" height=300>
+
+[Flight video](https://www.youtube.com/shorts/rbXV4sHbpso).
+
+---
+
 Author: Alican Erüst.<br>
 Description: QX95 mm frame, 55 mm propellers, 3.7 V 25C 1050 mAh LiPo battery, MPU6050 IMU, Logitech F310 gamepad controller, with a total quadcopter weight of 66 g.
 
