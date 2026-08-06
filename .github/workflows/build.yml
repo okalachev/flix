@@ -18,15 +18,15 @@ jobs:
       env:
         ARDUINO_SKETCH_ALWAYS_EXPORT_BINARIES: 1
       run: make
+    - name: Build firmware for ESP32-C3
+      run: make BOARD=esp32:esp32:esp32c3
+    - name: Build firmware for ESP32-S3
+      run: make BOARD=esp32:esp32:esp32s3
     - name: Upload binaries
       uses: actions/upload-artifact@v4
       with:
         name: firmware-binary
         path: flix/build
-    - name: Build firmware for ESP32-C3
-      run: make BOARD=esp32:esp32:esp32c3
-    - name: Build firmware for ESP32-S3
-      run: make BOARD=esp32:esp32:esp32s3
     - name: Build espnow-proxy
       run: arduino-cli compile --fqbn esp32:esp32:esp32 tools/espnow-proxy
     - name: Check c_cpp_properties.json
