@@ -17,6 +17,7 @@ const int W_DISABLED = 0, W_AP = 1, W_STA = 2, W_ESPNOW = 3;
 int wifiMode = W_AP;
 
 int wifiLongRange = 0;
+int wifiBroadcast = 0; // 0 - broadcast until connected, 1 - always broadcast
 int udpLocalPort = 14550;
 int udpRemotePort = 14550;
 IPAddress udpRemoteIP = "255.255.255.255";
@@ -64,7 +65,8 @@ void sendWiFi(const uint8_t *buf, int len) {
 
 	if (WiFi.softAPgetStationNum() == 0 && !WiFi.isConnected()) return;
 
-	udp.beginPacket(t - mavlinkTime < 5 ? udpRemoteIP : IPAddress(255, 255, 255, 255), udpRemotePort); // broadcast if lost connection
+	bool broadcast = wifiBroadcast || !(t - mavlinkTime < 5); // broadcast if lost connection
+	udp.beginPacket(broadcast ? IPAddress(255, 255, 255, 255) : udpRemoteIP, udpRemotePort);
 	udp.write(buf, len);
 	udp.endPacket();
 }
