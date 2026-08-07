@@ -100,7 +100,7 @@ LogTopic logTopics[] = {
 	LogTopic(5,
 		{"voltage", &voltage},
 		{"temp", &temperatureRead},
-		{"imuTemp", []() { return imu.getTemp(); }}),
+		{"imuTemp", []() { return imu->getTemp(); }}),
 };
 
 void *logBuffer; // buffer for log data
