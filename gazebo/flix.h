@@ -97,4 +97,4 @@ void setWiFiMode(const String& mode) { print("Skip WiFi mode set\n"); };
 class IMU {
 public:
 	float getTemp() { return 0; }
-} imu;
+} *imu;
