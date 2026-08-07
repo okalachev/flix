@@ -64,7 +64,7 @@ void sendWiFi(const uint8_t *buf, int len) {
 
 	if (WiFi.softAPgetStationNum() == 0 && !WiFi.isConnected()) return;
 
-	udp.beginPacket(udpRemoteIP, udpRemotePort);
+	udp.beginPacket(t - mavlinkTime < 5 ? udpRemoteIP : IPAddress(255, 255, 255, 255), udpRemotePort); // broadcast if lost connection
 	udp.write(buf, len);
 	udp.endPacket();
 }
@@ -113,7 +113,7 @@ void printWiFiInfo() {
 	} else {
 		print("Mode: Disabled\n");
 	}
-	print("MAVLink connected: %d\n", mavlinkConnected);
+	print("MAVLink connected: %d\n", valid(mavlinkTime));
 }
 
 void configWiFi(int mode, const char *first, const char *second) {
