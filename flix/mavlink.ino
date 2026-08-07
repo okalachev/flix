@@ -18,7 +18,7 @@ Rate telemetryMotors(10);
 Rate telemetryIMU(15);
 Rate telemetryTopic(10);
 
-bool mavlinkConnected = false;
+float mavlinkTime = NAN; // time of last received message
 String mavlinkPrintBuffer;
 
 void processMavlink() {
@@ -41,7 +41,7 @@ void sendMavlink() {
 		sendMessage(&msg);
 	}
 
-	if (!mavlinkConnected) return; // send only heartbeat until connected
+	if (!valid(mavlinkTime)) return; // send only heartbeat until connected
 
 	if (telemetrySlow) {
 		mavlink_msg_extended_sys_state_pack(mavlinkSysId, MAV_COMP_ID_AUTOPILOT1, &msg,
@@ -128,7 +128,7 @@ void receiveMavlink() {
 	mavlink_status_t status;
 	for (int i = 0; i < len; i++) {
 		if (mavlink_parse_char(MAVLINK_COMM_0, buf[i], &msg, &status)) {
-			mavlinkConnected = true;
+			mavlinkTime = t;
 			handleMavlink(&msg);
 		}
 	}
