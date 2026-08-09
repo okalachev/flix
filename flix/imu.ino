@@ -13,7 +13,7 @@
 IMU *imu;
 int imuModel = -1;
 int imuBus = 0; // 0 - SPI, 1 - I2C
-int imuSckPin = SCK, imuMisoPin = MISO, imuMosiPin = MOSI, imuCsPin = -1, imuIntPin = -1;
+int imuSckPin = SCK, imuMisoPin = MISO, imuMosiPin = MOSI, imuCsPin = SS, imuIntPin = -1;
 int imuSdaPin = SDA, imuSclPin = SCL;
 Vector imuRotation(0, 0, PI / 2); // imu orientation as Euler angles
 
@@ -29,17 +29,16 @@ LowPassFilter<Vector> gyroBiasFilter(0.001);
 void setupIMU() {
 	print("Setup IMU\n");
 	free(imu);
-	if (imuBus == 0 && imuCsPin > 0) {
+	if (imuBus == 0) {
 		// SPI connection
-		SPI.begin(imuSckPin, imuMisoPin, imuMosiPin);
+		SPI.begin(imuSckPin, imuMisoPin, imuMosiPin); // SPI connection
 		imu = IMU::create(imuModel, SPI, imuCsPin, imuIntPin);
-		imu->begin();
-	} else if (imuBus == 1) {
+	} else {
 		// I2C connection
 		Wire.setPins(imuSdaPin, imuSclPin);
 		imu = IMU::create(imuModel, Wire, imuIntPin);
-		imu->begin();
 	}
+	imu->begin();
 	configureIMU();
 }
 
