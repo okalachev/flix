@@ -68,7 +68,7 @@ public:
 class Rate {
 public:
 	float rate;
-	float last = 0;
+	float last = -INFINITY;
 	Rate(float rate) : rate(rate) {}
 
 	operator bool() {
