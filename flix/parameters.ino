@@ -66,6 +66,8 @@ Parameter parameters[] = {
 	{"IMU_PIN_MISO", &imuMisoPin},
 	{"IMU_PIN_MOSI", &imuMosiPin},
 	{"IMU_PIN_CS", &imuCsPin},
+	{"IMU_PIN_SDA", &imuSdaPin},
+	{"IMU_PIN_SCL", &imuSclPin},
 	{"IMU_PIN_INT", &imuIntPin},
 	{"IMU_ROT_ROLL", &imuRotation.x},
 	{"IMU_ROT_PITCH", &imuRotation.y},
