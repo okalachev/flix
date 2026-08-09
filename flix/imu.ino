@@ -11,7 +11,7 @@
 #include "util.h"
 
 IMU *imu;
-int imuModel = 1;
+int imuModel = -1;
 int imuBus = 0; // 0 - SPI, 1 - I2C
 int imuSckPin = SCK, imuMisoPin = MISO, imuMosiPin = MOSI, imuCsPin = -1, imuIntPin = -1;
 int imuSdaPin = SDA, imuSclPin = SCL;
