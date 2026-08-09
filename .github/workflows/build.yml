@@ -22,6 +22,10 @@ jobs:
       run: make BOARD=esp32:esp32:esp32
     - name: Build firmware for ESP32-C3
       run: make BOARD=esp32:esp32:esp32c3
+    - name: Build firmware for ESP32-S3 with QSPI PSRAM
+      run: make BOARD=esp32:esp32:esp32s3:CDCOnBoot=cdc,PSRAM=enabled && mv flix/build/esp32.esp32.esp32s3 flix/build/esp32.esp32.esp32s3.qspi
+    - name: Build firmware for ESP32-S3 with OPI PSRAM
+      run: make BOARD=esp32:esp32:esp32s3:CDCOnBoot=cdc,PSRAM=opi && mv flix/build/esp32.esp32.esp32s3 flix/build/esp32.esp32.esp32s3.opi
     - name: Build firmware for ESP32-S3
       run: make BOARD=esp32:esp32:esp32s3
     - name: Upload binaries
