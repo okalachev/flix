@@ -16,10 +16,8 @@ jobs:
     - uses: actions/checkout@v4
     - name: Install Arduino CLI
       run: curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | BINDIR=/usr/local/bin sh
-    - name: Build firmware
+    - name: Build firmware for ESP32
       run: make
-    - name: Build firmware for ESP32 Dev Module
-      run: make BOARD=esp32:esp32:esp32
     - name: Build firmware for ESP32-C3
       run: make BOARD=esp32:esp32:esp32c3
     - name: Build firmware for ESP32-S3 with QSPI PSRAM
