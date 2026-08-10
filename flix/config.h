@@ -52,3 +52,18 @@
 
 // RC
 #define RC_PIN_RX -1
+
+// Flix2 board configuration
+#ifdef FLIX2
+	#define IMU_MODEL 4 // ICM-40609-D
+	#define IMU_PIN_INT 10
+	#define SS 14
+
+	#define MOTOR_PIN_RL 41
+	#define MOTOR_PIN_RR 7
+	#define MOTOR_PIN_FL 38
+	#define MOTOR_PIN_FR 18
+	#define MOT_PWM_FREQ 38000
+
+	#define VOLTAGE_PIN 3
+#endif

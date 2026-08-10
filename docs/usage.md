@@ -18,6 +18,7 @@ You can either use the **prebuilt binaries** or **build the firmware** from sour
    |ESP32-S3 (2MB PSRAM)|S3 Super Mini, S3 Zero (2MB PSRAM)|[`quadcopter.dev/flix.esp32s3.qspi.merged.bin`](https://quadcopter.dev/flix.esp32s3.qspi.merged.bin)|
    |ESP32-S3 (8/16MB PSRAM)|S3 Zero (8MB PSRAM)|[`quadcopter.dev/flix.esp32s3.opi.merged.bin`](https://quadcopter.dev/flix.esp32s3.opi.merged.bin)|
    |ESP32-C3|C3 Super Mini|[`quadcopter.dev/flix.esp32c3.merged.bin`](https://quadcopter.dev/flix.esp32c3.merged.bin)|
+   |Flix2|Flix2 board|[`quadcopter.dev/flix.flix2.merged.bin`](https://quadcopter.dev/flix.flix2.merged.bin)|
    <!-- markdownlint-enable MD044 -->
 
 2. Flash your ESP32 board using [ESP32 Web Flasher](https://www.espboards.dev/tools/program/):
