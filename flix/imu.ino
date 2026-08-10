@@ -15,7 +15,7 @@ int imuModel = -1; // 1 - MPU9250, 2 - ICM20948, 3 - MPU6050, 4 - ICM40609D
 int imuBus = 0; // 0 - SPI, 1 - I2C
 int imuSckPin = SCK, imuMisoPin = MISO, imuMosiPin = MOSI, imuCsPin = SS, imuIntPin = -1;
 int imuSdaPin = SDA, imuSclPin = SCL;
-Vector imuRotation(0, 0, -PI/2); // imu orientation as Euler angles
+Vector imuRotation(0, 0, PI / 2); // imu orientation as Euler angles
 
 Vector gyro; // gyroscope output, rad/s
 Vector gyroBias;
