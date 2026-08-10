@@ -113,14 +113,14 @@ You can also work with parameters using `p` command in the console. Parameter na
 
 ### Configure the IMU
 
-1. Configure the following parameters for the used IMU:
-   * `IMU_MODEL` — IMU model (0 for disabled, 1 for MPU-9250/MPU-6500¹, 2 for ICM-20948, 3 for MPU-6050, 4 for ICM-40609-D).
+1. Configure the following parameters for the IMU:
+   * `IMU_MODEL` — IMU model (1 for MPU-9250/MPU-6500¹, 2 for ICM-20948, 3 for MPU-6050, 4 for ICM-40609-D).
    * `IMU_BUS` — communication bus (0 for SPI, 1 for I²C).
    * `IMU_PIN_SCK`, `IMU_PIN_MISO`, `IMU_PIN_MOSI`, `IMU_PIN_CS` — SPI pin numbers.
    * `IMU_PIN_SCL`, `IMU_PIN_SDA` — I²C pin numbers.
    * `IMU_PIN_INT` — IMU data ready pin number (-1 if not used).
 2. Reboot the drone.
-3. Check the IMU is working using `imu` command in the console (see details below).
+3. Check the IMU is working using `imu` command in the console (should print `status: OK`).
 
 ¹ — not to be confused with MPU-6050.
 
@@ -164,7 +164,7 @@ In case of using brushless motors with ESCs:
 > [!CAUTION]
 > **Remove the props when configuring the motors!** If improperly configured, you may not be able to stop them.
 
-### Battery voltage monitoring
+### Battery voltage monitoring (optional)
 
 ESP32 ADC can measure only up to 3.3 V, so you need to use a voltage divider to monitor the battery voltage. To enable voltage measurement, set the following parameters:
 
