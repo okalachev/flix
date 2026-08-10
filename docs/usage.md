@@ -179,8 +179,6 @@ Before flight you need to calibrate the accelerometer:
 
 If using non-default motor pins, set the pin numbers using the parameters: `MOTOR_PIN_FL`, `MOTOR_PIN_FR`, `MOTOR_PIN_RL`, `MOTOR_PIN_RR` (front-left, front-right, rear-left, rear-right respectively).
 
-Certain ESP32 models (such as ESP32-S3 and ESP32-C3) support a lower maximum PWM frequency; on these boards the parameter `MOT_PWM_FREQ` should be set to 38000 Hz.
-
 #### Brushless motors
 
 In case of using brushless motors with ESCs:

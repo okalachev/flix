@@ -14,6 +14,8 @@ extern float rcLossTimeout, descendTime, disarmTilt;
 extern float voltageScale;
 extern LowPassFilter<float> voltageFilter;
 
+#include "config.h"
+
 Preferences storage;
 
 struct Parameter {
@@ -161,6 +163,7 @@ Parameter parameters[] = {
 
 void setupParameters() {
 	print("Setup parameters\n");
+	setDefaults();
 	storage.begin("flix");
 	// Read parameters from storage
 	for (auto &parameter : parameters) {

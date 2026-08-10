@@ -4,11 +4,10 @@
 // Work with the RC receiver
 
 #include <SBUS.h>
-#include "config.h"
 #include "util.h"
 
 SBUS rc(Serial1);
-int rcRxPin = RC_PIN_RX; // -1 means disabled
+int rcRxPin = -1; // -1 means disabled
 
 uint16_t channels[16]; // raw rc channels
 int channelZero[16]; // calibration zero values

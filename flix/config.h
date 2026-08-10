@@ -1,69 +1,27 @@
 // Copyright (c) 2026 Oleg Kalachev <okalachev@gmail.com>
 // Repository: https://github.com/okalachev/flix
 
-// Default configuration parameters
+// Parameter defaults
 
 #pragma once
 
-// IMU
-#define IMU_MODEL -1
-#define IMU_BUS 0
-#define IMU_PIN_INT -1
-#define IMU_ROT_ROLL 0
-#define IMU_ROT_PITCH 0
-#define IMU_ROT_YAW -PI/2
+void setDefaults() {
+	// Set defaults here
 
-// Motors
-#define MOTOR_PIN_FL 12
-#define MOTOR_PIN_FR 13
-#define MOTOR_PIN_RL 14
-#define MOTOR_PIN_RR 15
-#define MOT_PWM_FREQ 78000
-#define MOT_PWM_RES 10
-#define MOT_PWM_STOP 0
-#define MOT_PWM_MIN 0
-#define MOT_PWM_MAX -1
+	#if defined(CONFIG_IDF_TARGET_ESP32S3) || defined(CONFIG_IDF_TARGET_ESP32C3)
+		pwmFrequency = 38000;
+	#endif
 
-// Control
-#define PITCHRATE_P 0.05
-#define PITCHRATE_I 0.2
-#define PITCHRATE_D 0.001
-#define PITCHRATE_I_LIM 0.3
-#define ROLLRATE_P PITCHRATE_P
-#define ROLLRATE_I PITCHRATE_I
-#define ROLLRATE_D PITCHRATE_D
-#define ROLLRATE_I_LIM PITCHRATE_I_LIM
-#define YAWRATE_P 0.3
-#define YAWRATE_I 0.0
-#define YAWRATE_D 0.0
-#define YAWRATE_I_LIM 0.3
-#define ROLL_P 6
-#define ROLL_I 0
-#define ROLL_D 0
-#define PITCH_P ROLL_P
-#define PITCH_I ROLL_I
-#define PITCH_D ROLL_D
-#define YAW_P 3
-#define RATES_D_LPF_ALPHA 0.2 // cutoff frequency ~ 40 Hz
+	#ifdef FLIX2
+		imuModel = 4; // ICM-40609-D
+		imuIntPin = 10;
+		imuCsPin = 14;
 
-// Power
-#define VOLTAGE_PIN -1
-#define VOLTAGE_SCALE 2
+		motorPins[0] = 41;
+		motorPins[1] = 7;
+		motorPins[2] = 38;
+		motorPins[3] = 18;
 
-// RC
-#define RC_PIN_RX -1
-
-// Flix2 board configuration
-#ifdef FLIX2
-	#define IMU_MODEL 4 // ICM-40609-D
-	#define IMU_PIN_INT 10
-	#define SS 14
-
-	#define MOTOR_PIN_RL 41
-	#define MOTOR_PIN_RR 7
-	#define MOTOR_PIN_FL 38
-	#define MOTOR_PIN_FR 18
-	#define MOT_PWM_FREQ 38000
-
-	#define VOLTAGE_PIN 3
-#endif
+		voltagePin = 3;
+	#endif
+}

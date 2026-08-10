@@ -6,17 +6,16 @@
 #include <SPI.h>
 #include <Wire.h>
 #include <FlixPeriph.h>
-#include "config.h"
 #include "vector.h"
 #include "filter.h"
 #include "util.h"
 
 IMU *imu;
-int imuModel = IMU_MODEL; // 1 - MPU9250, 2 - ICM20948, 3 - MPU6050, 4 - ICM40609D
-int imuBus = IMU_BUS; // 0 - SPI, 1 - I2C
-int imuSckPin = SCK, imuMisoPin = MISO, imuMosiPin = MOSI, imuCsPin = SS, imuIntPin = IMU_PIN_INT;
+int imuModel = -1; // 1 - MPU9250, 2 - ICM20948, 3 - MPU6050, 4 - ICM40609D
+int imuBus = 0; // 0 - SPI, 1 - I2C
+int imuSckPin = SCK, imuMisoPin = MISO, imuMosiPin = MOSI, imuCsPin = SS, imuIntPin = -1;
 int imuSdaPin = SDA, imuSclPin = SCL;
-Vector imuRotation(IMU_ROT_ROLL, IMU_ROT_PITCH, IMU_ROT_YAW); // imu orientation as Euler angles
+Vector imuRotation(0, 0, -PI/2); // imu orientation as Euler angles
 
 Vector gyro; // gyroscope output, rad/s
 Vector gyroBias;

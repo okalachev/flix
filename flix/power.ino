@@ -5,14 +5,13 @@
 
 #include <soc/soc.h>
 #include <soc/rtc_cntl_reg.h>
-#include "config.h"
 #include "filter.h"
 #include "util.h"
 
 float voltage = NAN;
 LowPassFilter<float> voltageFilter(1);
-int voltagePin = VOLTAGE_PIN;
-float voltageScale = VOLTAGE_SCALE;
+int voltagePin = -1;
+float voltageScale = 2;
 
 void setupPower() {
 	REG_CLR_BIT(RTC_CNTL_BROWN_OUT_REG, RTC_CNTL_BROWN_OUT_ENA); // disable reset on low voltage

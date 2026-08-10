@@ -3,17 +3,16 @@
 
 // PWM control for motors
 
-#include "config.h"
 #include "util.h"
 
 float motors[4]; // normalized motor thrusts in range [0..1]
 
-int motorPins[4] = {MOTOR_PIN_RL, MOTOR_PIN_RR, MOTOR_PIN_FR, MOTOR_PIN_FL}; // default pin numbers
-int pwmFrequency = MOT_PWM_FREQ;
-int pwmResolution = MOT_PWM_RES;
-int pwmStop = MOT_PWM_STOP;
-int pwmMin = MOT_PWM_MIN;
-int pwmMax = MOT_PWM_MAX; // -1 means duty cycle mode
+int motorPins[4] = {-1, -1, -1, -1}; // default pin numbers
+int pwmFrequency = 78000;
+int pwmResolution = 10;
+int pwmStop = 0;
+int pwmMin = 0;
+int pwmMax = -1; // -1 means duty cycle mode
 
 const int MOTOR_REAR_LEFT = 0, MOTOR_REAR_RIGHT = 1, MOTOR_FRONT_RIGHT = 2, MOTOR_FRONT_LEFT = 3;
 
