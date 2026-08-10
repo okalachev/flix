@@ -32,7 +32,7 @@ jobs:
     - name: Build book
       run: cd docs && mdbook build
     - name: Wait for Build to complete
-      uses: lewagon/wait-on-check-action@v1.3.4
+      uses: lewagon/wait-on-check-action@v1.9.1
       with:
         ref: ${{ github.sha }}
         check-name: build_linux
