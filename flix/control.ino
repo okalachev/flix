@@ -22,7 +22,7 @@ float thrustTarget;
 
 PID rollRatePID(0.05, 0.2, 0.001, 0.3, 0.2);
 PID pitchRatePID(0.05, 0.2, 0.001, 0.3, 0.2);
-PID yawRatePID(0.3);
+PID yawRatePID(0.3, 0, 0, 0.3);
 PID rollPID(6);
 PID pitchPID(6);
 PID yawPID(3);
