@@ -17,10 +17,10 @@ void setDefaults() {
 		imuIntPin = 10;
 		imuCsPin = 14;
 
-		motorPins[0] = 41;
-		motorPins[1] = 7;
-		motorPins[2] = 38;
-		motorPins[3] = 18;
+		motorPins[MOTOR_REAR_LEFT] = 41;
+		motorPins[MOTOR_REAR_RIGHT] = 7;
+		motorPins[MOTOR_FRONT_RIGHT] = 18;
+		motorPins[MOTOR_FRONT_LEFT] = 38;
 
 		voltagePin = 3;
 	#endif
