@@ -1,18 +1,44 @@
 # Usage: build, setup and flight
 
-To fly Flix quadcopter, you need to build the firmware, upload it to the ESP32 board, and set up the drone for flight.
+To fly Flix quadcopter, you need to upload the firmware to the ESP32 board, and set up the drone for flight.
 
-To get the firmware sources, clone the repository using git:
+## Uploading the firmware
+
+You can either use the **prebuilt binaries** or **build the firmware** from sources — this will let you modify the firmware and add new features.
+
+## Prebuilt binaries (the easiest way)
+
+1. Download the latest firmware file using the following links:
+
+   <!-- markdownlint-disable MD044 -->
+   |Type|Boards|Link|
+   |-|-|-|
+   |ESP32|DevKit, D1 Mini|[`quadcopter.dev/flix.esp32.merged.bin`](https://quadcopter.dev/flix.esp32.merged.bin)|
+   |ESP32-S3|Most S3 based|[`quadcopter.dev/flix.esp32s3.merged.bin`](https://quadcopter.dev/flix.esp32s3.merged.bin)|
+   |ESP32-S3 (2MB PSRAM)|S3 Super Mini, S3 Zero (2MB PSRAM)|[`quadcopter.dev/flix.esp32s3.qspi.merged.bin`](https://quadcopter.dev/flix.esp32s3.qspi.merged.bin)|
+   |ESP32-S3 (8/16MB PSRAM)|S3 Zero (8MB PSRAM)|[`quadcopter.dev/flix.esp32s3.opi.merged.bin`](https://quadcopter.dev/flix.esp32s3.opi.merged.bin)|
+   |ESP32-C3|C3 Super Mini|[`quadcopter.dev/flix.esp32c3.merged.bin`](https://quadcopter.dev/flix.esp32c3.merged.bin)|
+   <!-- markdownlint-enable MD044 -->
+
+2. Flash your ESP32 board using [ESP32 Web Flasher](https://www.espboards.dev/tools/program/):
+   * Connect the board to your computer, press *Connect to ESP*, choose the serial port.
+   * Go to the *Flash* tab.
+   * Choose the downloaded firmware file, set *Flash address* to *0*.
+   * Click *Program* button and wait until the process is finished.
+
+<img src="img/web-flasher.png" width="400">
+
+## Building from sources (flexible)
+
+You can build and upload the firmware using either **Arduino IDE** (easier for beginners) or **command line**.
+
+Get the sources using git:
 
 ```bash
 git clone https://github.com/okalachev/flix.git && cd flix
 ```
 
-Beginners can [download the source code as a ZIP archive](https://github.com/okalachev/flix/archive/refs/heads/master.zip).
-
-## Building the firmware
-
-You can build and upload the firmware using either **Arduino IDE** (easier for beginners) or **command line**.
+Beginners can [download the sources as a ZIP archive](https://github.com/okalachev/flix/archive/refs/heads/master.zip).
 
 ### Arduino IDE (Windows, Linux, macOS)
 
