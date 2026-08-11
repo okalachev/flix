@@ -8,7 +8,7 @@
 #include <WiFiUdp.h>
 #include <MacAddress.h>
 #include <ESP32_NOW_Serial.h>
-#include <Preferences.h>
+#include "prefs.h"
 #include "util.h"
 
 extern Preferences storage; // use the main preferences storage

@@ -3,7 +3,7 @@
 
 // Parameters storage in flash memory
 
-#include <Preferences.h>
+#include "prefs.h"
 #include "util.h"
 
 extern int channelZero[16], channelMax[16];
