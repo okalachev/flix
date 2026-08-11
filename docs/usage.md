@@ -1,20 +1,48 @@
 # Usage: build, setup and flight
 
-To fly Flix quadcopter, you need to build the firmware, upload it to the ESP32 board, and set up the drone for flight.
+To fly Flix quadcopter, you need to upload the firmware to the ESP32 board, and set up the drone for flight.
 
-To get the firmware sources, clone the repository using git:
+## Uploading the firmware
+
+You can either use the **prebuilt binaries** or **build the firmware** from sources — this will let you modify the firmware and add new features.
+
+### Prebuilt binaries (the easiest way)
+
+1. Download the latest firmware file using the following links:
+
+   <!-- markdownlint-disable MD044 -->
+   |Type|Boards|Link|
+   |-|-|-|
+   |ESP32|DevKit, D1 Mini|[`quadcopter.dev/flix.esp32.merged.bin`](https://quadcopter.dev/flix.esp32.merged.bin)|
+   |ESP32-S3|Most S3 based|[`quadcopter.dev/flix.esp32s3.merged.bin`](https://quadcopter.dev/flix.esp32s3.merged.bin)|
+   |ESP32-S3 (2MB PSRAM)|S3 Super Mini, S3 Zero (2MB PSRAM)|[`quadcopter.dev/flix.esp32s3.qspi.merged.bin`](https://quadcopter.dev/flix.esp32s3.qspi.merged.bin)|
+   |ESP32-S3 (8/16MB PSRAM)|S3 Zero (8MB PSRAM)|[`quadcopter.dev/flix.esp32s3.opi.merged.bin`](https://quadcopter.dev/flix.esp32s3.opi.merged.bin)|
+   |ESP32-C3|C3 Super Mini|[`quadcopter.dev/flix.esp32c3.merged.bin`](https://quadcopter.dev/flix.esp32c3.merged.bin)|
+   |Flix2|Flix2 board|[`quadcopter.dev/flix.flix2.merged.bin`](https://quadcopter.dev/flix.flix2.merged.bin)|
+   <!-- markdownlint-enable MD044 -->
+
+2. Flash your ESP32 board using [ESP32 Web Flasher](https://www.espboards.dev/tools/program/):
+
+   <img src="img/web-flasher.png" width="400">
+
+   * Connect the board to your computer, press *Connect to ESP*, choose the serial port.
+   * Go to the *Flash* tab.
+   * Choose the downloaded firmware file, set *Flash address* to *0* (important).
+   * Click *Program* button and wait until the process is finished.
+
+### Building from sources (flexible)
+
+You can build and upload the firmware using either **Arduino IDE** (easier for beginners) or **command line**.
+
+Get the sources using git:
 
 ```bash
 git clone https://github.com/okalachev/flix.git && cd flix
 ```
 
-Beginners can [download the source code as a ZIP archive](https://github.com/okalachev/flix/archive/refs/heads/master.zip).
+Beginners can [download the sources as a ZIP archive](https://github.com/okalachev/flix/archive/refs/heads/master.zip).
 
-## Building the firmware
-
-You can build and upload the firmware using either **Arduino IDE** (easier for beginners) or **command line**.
-
-### Arduino IDE (Windows, Linux, macOS)
+#### Arduino IDE (Windows, Linux, macOS)
 
 <img src="img/arduino-ide.png" width="400" alt="Flix firmware open in Arduino IDE">
 
@@ -29,7 +57,7 @@ You can build and upload the firmware using either **Arduino IDE** (easier for b
 7. Set *Tools* ⇒ *Core Debug Level* to *Error* to see the errors in the serial console. Set *Tools* ⇒ *USB CDC on Boot* to *Enabled* for ESP32-S3/ESP32-C3 boards.
 8. [Build and upload](https://docs.arduino.cc/software/ide-v2/tutorials/getting-started/ide-v2-uploading-a-sketch) the firmware using Arduino IDE.
 
-### Command line (Windows, Linux, macOS)
+#### Command line (Windows, Linux, macOS)
 
 1. [Install Arduino CLI](https://arduino.github.io/arduino-cli/installation/).
 
@@ -149,8 +177,6 @@ Before flight you need to calibrate the accelerometer:
 ### Setup motors
 
 If using non-default motor pins, set the pin numbers using the parameters: `MOTOR_PIN_FL`, `MOTOR_PIN_FR`, `MOTOR_PIN_RL`, `MOTOR_PIN_RR` (front-left, front-right, rear-left, rear-right respectively).
-
-Certain ESP32 models (such as ESP32-S3 and ESP32-C3) support a lower maximum PWM frequency; on these boards the parameter `MOT_PWM_FREQ` should be set to 38000 Hz.
 
 #### Brushless motors
 

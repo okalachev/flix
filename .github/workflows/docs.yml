@@ -8,6 +8,7 @@ on:
 
 permissions:
   contents: read
+  actions: read
   pages: write
   id-token: write
 
@@ -30,6 +31,38 @@ jobs:
       run: cargo install mdbook --vers 0.4.43 --locked
     - name: Build book
       run: cd docs && mdbook build
+    - name: Wait for Build to complete
+      uses: lewagon/wait-on-check-action@v1.9.1
+      with:
+        ref: ${{ github.sha }}
+        check-name: build_linux
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+        wait-interval: 30
+    - name: Find firmware binaries
+      id: build_run
+      run: |
+        RUN_ID=$(gh api "repos/${{ github.repository }}/actions/workflows/build.yml/runs?head_sha=${{ github.sha }}&per_page=1" --jq '.workflow_runs[0].id')
+        echo "id=$RUN_ID" >> $GITHUB_OUTPUT
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Download firmware binaries
+      uses: actions/download-artifact@v4
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        repository: ${{ github.repository }}
+        run-id: ${{ steps.build_run.outputs.id }}
+        name: firmware-binary
+        path: docs/build
+    - name: Create shortcuts for firmware binaries
+      working-directory: docs/build
+      run: |
+        for FQBN in esp32.esp32.*; do
+          zip -r $FQBN.zip $FQBN
+          BOARD="${FQBN#esp32.esp32.}"
+          ln -s "$FQBN/flix.ino.merged.bin" "flix.$BOARD.merged.bin"
+          ln -s "$FQBN/flix.ino.bin" "flix.$BOARD.bin"
+          ln -s "$FQBN/flix.ino.bootloader.bin" "flix.$BOARD.bootloader.bin"
+        done
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v3
       with:
