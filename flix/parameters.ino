@@ -44,6 +44,7 @@ Parameter parameters[] = {
 	{"CTL_Y_RATE_P", &yawRatePID.p},
 	{"CTL_Y_RATE_I", &yawRatePID.i},
 	{"CTL_Y_RATE_D", &yawRatePID.d},
+	{"CTL_Y_RATE_WU", &yawRatePID.windup},
 	{"CTL_Y_RATE_D_A", &yawRatePID.lpf.alpha},
 	{"CTL_R_P", &rollPID.p},
 	{"CTL_R_I", &rollPID.i},
