@@ -6,7 +6,7 @@
 #include "vector.h"
 #include "quaternion.h"
 #include "pid.h"
-#include "lpf.h"
+#include "filter.h"
 #include "util.h"
 
 const int RAW = 0, ACRO = 1, STAB = 2, AUTO = 3; // flight modes

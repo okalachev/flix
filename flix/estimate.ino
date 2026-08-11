@@ -5,7 +5,7 @@
 
 #include "quaternion.h"
 #include "vector.h"
-#include "lpf.h"
+#include "filter.h"
 #include "util.h"
 
 Vector rates; // estimated angular rates, rad/s

@@ -5,7 +5,7 @@
 
 #include <soc/soc.h>
 #include <soc/rtc_cntl_reg.h>
-#include "lpf.h"
+#include "filter.h"
 #include "util.h"
 
 float voltage = NAN;

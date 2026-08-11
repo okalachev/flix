@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "lpf.h"
+#include "filter.h"
 
 class PID {
 public:
