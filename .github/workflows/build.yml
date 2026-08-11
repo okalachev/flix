@@ -10,32 +10,36 @@ on:
 jobs:
   build_linux:
     runs-on: ubuntu-latest
+    env:
+        ARDUINO_SKETCH_ALWAYS_EXPORT_BINARIES: 1
     steps:
     - uses: actions/checkout@v4
     - name: Install Arduino CLI
       run: curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | BINDIR=/usr/local/bin sh
-    - name: Build firmware
-      env:
-        ARDUINO_SKETCH_ALWAYS_EXPORT_BINARIES: 1
+    - name: Build firmware for ESP32
       run: make
+    - name: Build firmware for ESP32-C3
+      run: make BOARD=esp32:esp32:esp32c3
+    - name: Build firmware for ESP32-S3
+      run: make BOARD=esp32:esp32:esp32s3:CDCOnBoot=cdc
+    - name: Build firmware for ESP32-S3 with QSPI PSRAM
+      run: make BOARD=esp32:esp32:esp32s3:CDCOnBoot=cdc,PSRAM=enabled EXTRA=--output-dir=flix/build/esp32.esp32.esp32s3.qspi
+    - name: Build firmware for ESP32-S3 with OPI PSRAM
+      run: make BOARD=esp32:esp32:esp32s3:CDCOnBoot=cdc,PSRAM=opi EXTRA=--output-dir=flix/build/esp32.esp32.esp32s3.opi
+    - name: Build firmware for Flix2
+      run: make BOARD=esp32:esp32:esp32s3:FlashSize=4M,CDCOnBoot=cdc,PSRAM=opi EXTRA='--build-property "compiler.cpp.extra_flags=-DFLIX2" --output-dir=flix/build/esp32.esp32.flix2'
+    - name: Build firmware for STM32F4
+      run: |
+        arduino-cli core install STMicroelectronics:stm32 --additional-urls https://github.com/stm32duino/BoardManagerFiles/raw/main/package_stmicroelectronics_index.json  
+        arduino-cli lib install "Preferences"
+        make BOARD=STMicroelectronics:stm32:GenF4
     - name: Upload binaries
       uses: actions/upload-artifact@v4
       with:
         name: firmware-binary
         path: flix/build
-    - name: Build firmware for ESP32-S3
-      run: make BOARD=esp32:esp32:esp32s3
-    - name: Build firmware with WiFi disabled
-      run: sed -i 's/^#define WIFI_ENABLED 1$/#define WIFI_ENABLED 0/' flix/flix.ino && make
     - name: Check c_cpp_properties.json
       run: tools/check_c_cpp_properties.py
-    - name: Build for Black Pill F411CE (STM32)
-      run: |
-        arduino-cli config set board_manager.additional_urls https://github.com/stm32duino/BoardManagerFiles/raw/main/package_stmicroelectronics_index.json
-        arduino-cli core install STMicroelectronics:stm32
-        arduino-cli board listall STMicroelectronics:stm32
-        arduino-cli lib install "Preferences"
-        make BOARD=STMicroelectronics:stm32:GenF4:pnum=BLACKPILL_F411CE
 
   build_macos:
     runs-on: macos-latest
@@ -71,7 +75,7 @@ jobs:
         apt-get update
         DEBIAN_FRONTEND=noninteractive apt-get install -y curl wget build-essential cmake g++ pkg-config gnupg2 lsb-release sudo
     - name: Install Arduino CLI
-      uses: arduino/setup-arduino-cli@v1.1.1
+      run: curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | BINDIR=/usr/local/bin sh
     - uses: actions/checkout@v4
     - name: Install Gazebo
       run: |

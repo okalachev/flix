@@ -1,24 +1,29 @@
 // Copyright (c) 2023 Oleg Kalachev <okalachev@gmail.com>
 // Repository: https://github.com/okalachev/flix
 
-// Attitude estimation from gyro and accelerometer
+// Attitude estimation using gyro and accelerometer
 
 #include "quaternion.h"
 #include "vector.h"
 #include "lpf.h"
 #include "util.h"
 
-#define WEIGHT_ACC 0.003
-#define RATES_LFP_ALPHA 0.2 // cutoff frequency ~ 40 Hz
+Vector rates; // estimated angular rates, rad/s
+Quaternion attitude; // estimated attitude
+bool landed;
+
+float accWeight = 0.003;
+float levelWeight = 0.0002;
+LowPassFilter<Vector> ratesFilter(0.2); // cutoff frequency ~ 40 Hz
 
 void estimate() {
 	applyGyro();
 	applyAcc();
+	applyLevel();
 }
 
 void applyGyro() {
 	// filter gyro to get angular rates
-	static LowPassFilter<Vector> ratesFilter(RATES_LFP_ALPHA);
 	rates = ratesFilter.update(gyro);
 
 	// apply rates to attitude
@@ -27,15 +32,24 @@ void applyGyro() {
 
 void applyAcc() {
 	// test should we apply accelerometer gravity correction
-	float accNorm = acc.norm();
-	landed = !motorsActive() && abs(accNorm - ONE_G) < ONE_G * 0.1f;
+	landed = !motorsActive() && abs(acc.norm() - ONE_G) < ONE_G * 0.1f;
 
 	if (!landed) return;
 
 	// calculate accelerometer correction
 	Vector up = Quaternion::rotateVector(Vector(0, 0, 1), attitude);
-	Vector correction = Vector::rotationVectorBetween(acc, up) * WEIGHT_ACC;
+	Vector correction = Vector::rotationVectorBetween(acc, up) * accWeight;
 
 	// apply correction
+	attitude = Quaternion::rotate(attitude, Quaternion::fromRotationVector(correction));
+}
+
+void applyLevel() {
+	if (landed) return;
+	if (thrustTarget < 0.1) return; // skip at idle thrust
+
+	// assume the pilot keeps the drone more or less level in flight
+	Vector up = Quaternion::rotateVector(Vector(0, 0, 1), attitude);
+	Vector correction = Vector::rotationVectorBetween(Vector(0, 0, 1), up) * levelWeight;
 	attitude = Quaternion::rotate(attitude, Quaternion::fromRotationVector(correction));
 }

@@ -21,6 +21,8 @@
 #define degrees(rad) ((rad)*RAD_TO_DEG)
 
 #define constrain(amt,low,high) ((amt)<(low)?(low):((amt)>(high)?(high):(amt)))
+template<typename T> T max(T a, T b) { return a > b ? a : b; }
+template<typename T> T min(T a, T b) { return a < b ? a : b; }
 
 long map(long x, long in_min, long in_max, long out_min, long out_max) {
 	const long run = in_max - in_min;
@@ -149,7 +151,7 @@ public:
 	void setRxInvert(bool invert) {};
 };
 
-HardwareSerial Serial, Serial2;
+HardwareSerial Serial, Serial1, Serial2;
 
 class EspClass {
 public:
@@ -165,6 +167,9 @@ void delay(uint32_t ms) {
 
 bool ledcAttach(uint8_t pin, uint32_t freq, uint8_t resolution) { return true; }
 bool ledcWrite(uint8_t pin, uint32_t duty) { return true; }
+uint32_t ledcChangeFrequency(uint8_t pin, uint32_t freq, uint8_t resolution) { return freq; }
+int8_t digitalPinToAnalogChannel(uint8_t pin) { return -1; }
+uint32_t analogReadMilliVolts(uint8_t pin) { return 0; }
 
 unsigned long __micros;
 unsigned long __resetTime = 0;

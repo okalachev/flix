@@ -6,56 +6,64 @@
 #include "pid.h"
 #include "vector.h"
 #include "util.h"
+#include "lpf.h"
 
 extern const int MOTOR_REAR_LEFT, MOTOR_REAR_RIGHT, MOTOR_FRONT_RIGHT, MOTOR_FRONT_LEFT;
-extern const int ACRO, STAB, AUTO;
+extern const int RAW, ACRO, STAB, AUTO;
+extern const int W_AP, W_STA, W_ESPNOW;
 extern float t, dt, loopRate;
 extern uint16_t channels[16];
-extern float controlRoll, controlPitch, controlThrottle, controlYaw, controlMode;
+extern float controlTime;
 extern int mode;
 extern bool armed;
+extern LowPassFilter<Vector> gyroBiasFilter;
+extern float voltage;
 
 const char* motd =
-"\nWelcome to\n"
 " _______  __       __  ___   ___\n"
 "|   ____||  |     |  | \\  \\ /  /\n"
 "|  |__   |  |     |  |  \\  V  /\n"
 "|   __|  |  |     |  |   >   <\n"
 "|  |     |  `----.|  |  /  .  \\\n"
 "|__|     |_______||__| /__/ \\__\\\n\n"
+"(C) Oleg Kalachev\n"
+"https://github.com/okalachev/flix\n\n"
 "Commands:\n\n"
 "help - show help\n"
 "p - show all parameters\n"
-"p <name> - show parameter\n"
+"p <str> - show parameters starting with str\n"
 "p <name> <value> - set parameter\n"
 "preset - reset parameters\n"
 "time - show time info\n"
-"ps - show pitch/roll/yaw\n"
-"psq - show attitude quaternion\n"
 "imu - show IMU data\n"
+"ca - calibrate accel\n"
+"st - show state estimation\n"
 "arm - arm the drone\n"
 "disarm - disarm the drone\n"
-"stab/acro/auto - set mode\n"
+"raw/stab/acro/auto - set mode\n"
 "rc - show RC data\n"
-"mot - show motor output\n"
-"log - dump in-RAM log\n"
 "cr - calibrate RC\n"
-"ca - calibrate accel\n"
-"mfr, mfl, mrr, mrl - test motor (remove props)\n"
+"pw - show power info\n"
+"wifi - show Wi-Fi info\n"
+"wifi ap/sta/espnow/off - set Wi-Fi mode\n"
+"ap <ssid> <password> - configure Wi-Fi access point\n"
+"sta <ssid> <password> - configure Wi-Fi client mode\n"
+"espnow <mac> [<key>] - configure ESP-NOW peer\n"
+"mot - show motor output\n"
+"log [dump] - print log header [and data]\n"
+"mfr/mfl/mrr/mrl [<thrust>] - test motor (remove props)\n"
 "sys - show system info\n"
 "reset - reset drone's state\n"
 "reboot - reboot the drone\n";
 
 void print(const char* format, ...) {
-	char buf[1000];
+	char buf[3000];
 	va_list args;
 	va_start(args, format);
 	vsnprintf(buf, sizeof(buf), format, args);
 	va_end(args);
 	Serial.print(buf);
-#if WIFI_ENABLED
 	mavlinkPrint(buf);
-#endif
 }
 
 void pause(float duration) {
@@ -63,9 +71,7 @@ void pause(float duration) {
 	while (t - start < duration) {
 		step();
 		handleInput();
-#if WIFI_ENABLED
 		processMavlink();
-#endif
 		delay(50);
 	}
 }
@@ -86,14 +92,12 @@ void doCommand(String str, bool echo = false) {
 	// execute command
 	if (command == "help" || command == "motd") {
 		print("%s\n", motd);
-	} else if (command == "p" && arg0 == "") {
-		printParameters();
-	} else if (command == "p" && arg0 != "" && arg1 == "") {
-		print("%s = %g\n", arg0.c_str(), getParameter(arg0.c_str()));
+	} else if (command == "p" && arg1 == "") {
+		printParameters(arg0.c_str());
 	} else if (command == "p") {
 		bool success = setParameter(arg0.c_str(), arg1.toFloat());
 		if (success) {
-			print("%s = %g\n", arg0.c_str(), arg1.toFloat());
+			print("%s = %g\n", arg0.c_str(), getParameter(arg0.c_str()));
 		} else {
 			print("Parameter not found: %s\n", arg0.c_str());
 		}
@@ -103,19 +107,21 @@ void doCommand(String str, bool echo = false) {
 		print("Time: %f\n", t);
 		print("Loop rate: %.0f\n", loopRate);
 		print("dt: %f\n", dt);
-	} else if (command == "ps") {
-		Vector a = attitude.toEuler();
-		print("roll: %f pitch: %f yaw: %f\n", degrees(a.x), degrees(a.y), degrees(a.z));
-	} else if (command == "psq") {
-		print("qw: %f qx: %f qy: %f qz: %f\n", attitude.w, attitude.x, attitude.y, attitude.z);
 	} else if (command == "imu") {
 		printIMUInfo();
 		printIMUCalibration();
+		print("landed: %d\n", landed);
+	} else if (command == "st") {
+		print("rates: %g %g %g\n", rates.x, rates.y, rates.z);
+		print("attitude: %g %g %g %g\n", attitude.w, attitude.x, attitude.y, attitude.z);
+		print("roll: %g° pitch: %g° yaw: %g°\n", degrees(attitude.getRoll()), degrees(attitude.getPitch()), degrees(attitude.getYaw()));
 		print("landed: %d\n", landed);
 	} else if (command == "arm") {
 		armed = true;
 	} else if (command == "disarm") {
 		armed = false;
+	} else if (command == "raw") {
+		mode = RAW;
 	} else if (command == "stab") {
 		mode = STAB;
 	} else if (command == "acro") {
@@ -129,32 +135,48 @@ void doCommand(String str, bool echo = false) {
 		}
 		print("\nroll: %g pitch: %g yaw: %g throttle: %g mode: %g\n",
 			controlRoll, controlPitch, controlYaw, controlThrottle, controlMode);
+		print("time: %.1f\n", controlTime);
 		print("mode: %s\n", getModeName());
 		print("armed: %d\n", armed);
+	} else if (command == "pw") {
+		print("Voltage: %.1f V\n", voltage);
+	} else if (command == "wifi" && arg0 == "") {
+		printWiFiInfo();
+	} else if (command == "wifi") {
+		setWiFiMode(arg0);
+	} else if (command == "ap") {
+		configWiFi(W_AP, arg0.c_str(), arg1.c_str());
+	} else if (command == "sta") {
+		configWiFi(W_STA, arg0.c_str(), arg1.c_str());
+	} else if (command == "espnow") {
+		configWiFi(W_ESPNOW, arg0.c_str(), arg1.c_str());
 	} else if (command == "mot") {
 		print("front-right %g front-left %g rear-right %g rear-left %g\n",
 			motors[MOTOR_FRONT_RIGHT], motors[MOTOR_FRONT_LEFT], motors[MOTOR_REAR_RIGHT], motors[MOTOR_REAR_LEFT]);
 	} else if (command == "log") {
-		dumpLog();
+		printLogHeader();
+		if (arg0 == "dump") printLogData();
 	} else if (command == "cr") {
 		calibrateRC();
 	} else if (command == "ca") {
 		calibrateAccel();
 	} else if (command == "mfr") {
-		testMotor(MOTOR_FRONT_RIGHT);
+		testMotor(MOTOR_FRONT_RIGHT, arg0.isEmpty() ? 0.2 : arg0.toFloat());
 	} else if (command == "mfl") {
-		testMotor(MOTOR_FRONT_LEFT);
+		testMotor(MOTOR_FRONT_LEFT, arg0.isEmpty() ? 0.2 : arg0.toFloat());
 	} else if (command == "mrr") {
-		testMotor(MOTOR_REAR_RIGHT);
+		testMotor(MOTOR_REAR_RIGHT, arg0.isEmpty() ? 0.2 : arg0.toFloat());
 	} else if (command == "mrl") {
-		testMotor(MOTOR_REAR_LEFT);
+		testMotor(MOTOR_REAR_LEFT, arg0.isEmpty() ? 0.2 : arg0.toFloat());
 	} else if (command == "sys") {
 #ifdef ESP32
 		print("Chip: %s\n", ESP.getChipModel());
 		print("Temperature: %.1f °C\n", temperatureRead());
-		print("Free heap: %d\n", ESP.getFreeHeap());
+		print("Total RAM: %d KB\n", ESP.getHeapSize() / 1024);
+		print("Free heap: %d KB\n", ESP.getFreeHeap() / 1024);
+		print("Firmware: " __DATE__ " " __TIME__ "\n");
 		// Print tasks table
-		print("Num  Task                Stack  Prio  Core  CPU%%\n");
+		print("Num  Task                MinSt  Prio  Core  CPU%%\n");
 		int taskCount = uxTaskGetNumberOfTasks();
 		TaskStatus_t *systemState = new TaskStatus_t[taskCount];
 		uint32_t totalRunTime;
@@ -163,12 +185,13 @@ void doCommand(String str, bool echo = false) {
 			String core = systemState[i].xCoreID == tskNO_AFFINITY ? "*" : String(systemState[i].xCoreID);
 			int cpuPercentage = systemState[i].ulRunTimeCounter / (totalRunTime / 100);
 			print("%-5d%-20s%-7d%-6d%-6s%d\n",systemState[i].xTaskNumber, systemState[i].pcTaskName,
-				systemState[i].usStackHighWaterMark, systemState[i].uxCurrentPriority, core, cpuPercentage);
+				systemState[i].usStackHighWaterMark, systemState[i].uxCurrentPriority, core.c_str(), cpuPercentage);
 		}
 		delete[] systemState;
 #endif
 	} else if (command == "reset") {
 		attitude = Quaternion();
+		gyroBiasFilter.reset();
 	} else if (command == "reboot") {
 		ESP.restart();
 	} else {
@@ -187,7 +210,7 @@ void handleInput() {
 
 	while (Serial.available()) {
 		char c = Serial.read();
-		if (c == '\n') {
+		if (c == '\n' || c == '\r') {
 			doCommand(input);
 			input.clear();
 		} else {

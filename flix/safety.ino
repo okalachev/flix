@@ -3,22 +3,23 @@
 
 // Fail-safe functions
 
-#define RC_LOSS_TIMEOUT 1
-#define DESCEND_TIME 10
-
 extern float controlTime;
 extern float controlRoll, controlPitch, controlThrottle, controlYaw;
+
+float rcLossTimeout = 1;
+float descendTime = 10;
+float disarmTilt = radians(120);
 
 void failsafe() {
 	rcLossFailsafe();
 	autoFailsafe();
+	tiltFailsafe();
 }
 
 // RC loss failsafe
 void rcLossFailsafe() {
-	if (controlTime == 0) return; // no RC at all
 	if (!armed) return;
-	if (t - controlTime > RC_LOSS_TIMEOUT) {
+	if (t - controlTime > rcLossTimeout) {
 		descend();
 	}
 }
@@ -27,7 +28,7 @@ void rcLossFailsafe() {
 void descend() {
 	mode = AUTO;
 	attitudeTarget = Quaternion();
-	thrustTarget -= dt / DESCEND_TIME;
+	thrustTarget -= dt / descendTime;
 	if (thrustTarget < 0) {
 		thrustTarget = 0;
 		armed = false;
@@ -37,12 +38,24 @@ void descend() {
 // Allow pilot to interrupt automatic flight
 void autoFailsafe() {
 	static float roll, pitch, yaw, throttle;
-	if (roll != controlRoll || pitch != controlPitch || yaw != controlYaw || abs(throttle - controlThrottle) > 0.05) {
-		// controls changed
-		if (mode == AUTO) mode = STAB; // regain control by the pilot
+	if (abs(roll - controlRoll) > 0.05 || abs(pitch - controlPitch) > 0.05 || abs(yaw - controlYaw) > 0.05 || abs(throttle - controlThrottle) > 0.05) {
+		// controls changed and mode switch is not configured
+		if (mode == AUTO && invalid(controlMode)) mode = STAB; // regain control by the pilot
 	}
 	roll = controlRoll;
 	pitch = controlPitch;
 	yaw = controlYaw;
 	throttle = controlThrottle;
+}
+
+// Disarm if tilted too much
+void tiltFailsafe() {
+	if (!armed) return;
+	if (mode != STAB) return;
+
+	Vector up = Quaternion::rotateVector(Vector(0, 0, 1), attitude);
+	float tilt = acos(up.z);
+	if (disarmTilt && tilt > disarmTilt) {
+		armed = false;
+	}
 }

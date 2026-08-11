@@ -27,6 +27,7 @@
 #include "mavlink.ino"
 #include "motors.ino"
 #include "parameters.ino"
+#include "power.ino"
 #include "rc.ino"
 #include "time.ino"
 
@@ -54,6 +55,7 @@ public:
 		initNode();
 		Serial.begin(0);
 		setupParameters();
+		rcRxPin = 1; // set rc pin to enable rc reading
 		gzmsg << "Flix plugin loaded" << endl;
 	}
 
@@ -71,6 +73,8 @@ public:
 		// read virtual imu
 		gyro = Vector(imu->AngularVelocity().X(), imu->AngularVelocity().Y(), imu->AngularVelocity().Z());
 		acc = this->accFilter.update(Vector(imu->LinearAcceleration().X(), imu->LinearAcceleration().Y(), imu->LinearAcceleration().Z()));
+
+		voltage = 4.2f; // dummy voltage value
 
 		readRC();
 		estimate();

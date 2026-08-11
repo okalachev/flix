@@ -4,12 +4,170 @@ This page contains user-built drones based on the Flix project. Publish your pro
 
 ---
 
+Author: [Oleg1405](https://t.me/Oleg1405).<br>
+Description: ESP32 Mini, MPU-6500 IMU, boost converter, BT2.0 power connector, 65 mm props, BetaFPV ELRS Lite Receiver, Radiomaster Pocket + Mavlink Joystick (Android) control.
+
+<img src="img/user/oleg1405/1.jpg" height=300>
+
+[Flight video](https://www.youtube.com/shorts/rbXV4sHbpso).
+
+---
+
+Author: Alican Erüst.<br>
+Description: QX95 mm frame, 55 mm propellers, 3.7 V 25C 1050 mAh LiPo battery, MPU6050 IMU, Logitech F310 gamepad controller, with a total quadcopter weight of 66 g.
+
+<img src="img/user/alicanerus/1.jpg" height=200> <img src="img/user/alicanerus/2.jpg" height=200> <img src="img/user/alicanerus/3.jpg" height=200>
+
+[Flight video](https://drive.google.com/file/d/1k0WeWTKnCAfaugkX7LcmNxsUuq79RL8Z/view?usp=sharing).
+
+---
+
+Author: [Неруш Михаил](https://t.me/NerushMV).<br>
+Description: custom frame made of 4 mm plywood, 8520 brushed motors, 75 mm propellers, MPU-6500. FlySky FS-i6X with ESP32-based adapter for ESP-NOW communication (using PPM output).<br>
+Sources and materials: [link](https://drive.google.com/drive/folders/1uWiDcuorLrtVs_IIR7Y13omij-7Q1nx8).
+
+<img src="img/user/nerush/1.jpg" height=200> <img src="img/user/nerush/2.jpg" height=200>
+
+[Flight video](https://drive.google.com/file/d/1jRXeGx34lJpUfw0GKLQeIzkWZvooQJSE/view?usp=sharing).
+
+---
+
+Author: [Konstantinos Paraskevas](https://github.com/Frapais).<br>
+Description: drone with a custom single-boarded airframe, extending the [Sprig-C3 module](https://github.com/Frapais/Sprig-C3).
+ESP32-C3 microcontroller, ICM-20948 IMU, on-board fuel-gauge, status LED indicator.<br>
+Repository with all the code and PCB sources: https://github.com/Frapais/Sprig-Drone.
+
+<img src="img/user/kostas/1.jpg" height=150> <img src="img/user/kostas/2.jpg" height=150>
+
+Detailed video about making the drone:
+
+<a href="https://youtu.be/82Q-uBq6s48"><img width=400 src="https://i3.ytimg.com/vi/82Q-uBq6s48/maxresdefault.jpg"></a>
+
+---
+
+Author: [Awab Anas](http://t.me/AW_VENOM).<br>
+Description: ESP32 D1 Mini, MPU-6050, 8520 3.7V brushed motors, 55 mm propellers, battery li-po 1200 mAh, controlling via [Mavlink Joystick app](https://github.com/goldarte/mavlink-joystick/releases/latest).<br>
+[Flight validation](https://drive.google.com/file/d/12z0jfctZDBA6b5UKCG0Uje5rAxj6DhF-/view?usp=sharing).
+
+<img src="img/user/aw_venom/1.jpg" height=200>
+
+---
+
+Author: [Ina Tix](https://t.me/ina_tix).<br>
+Description: XR2981 based DC-DC converter, ELRS MINI 2.4GHz RX SX1280 receiver (SBUS interface), Radiomaster TX12 remote control.<br>
+[Flight validation](https://drive.google.com/file/d/1yqkKNuz4R_yxGqUNQxVpixJbXqEEcUSj/view?usp=share_link).
+
+<img src="img/user/ina_tix/1.jpg" height=200> <img src="img/user/ina_tix/2.jpg" height=200> <img src="img/user/ina_tix/3.jpg" height=200>
+
+---
+
+Author: Oleg Kalachev.<br>
+Description: the first attempt on making an official PCB based Flix drone (Flix2 board). The IMU is not working on this version, so an external MPU-6050 board was used, therefore considered as **Flix version 1.5**.<br>
+[Flight video](https://drive.google.com/file/d/1R7tuUsFmPY0CGcOCFfMFaCp9kR49K3bl/view?usp=sharing).
+
+<img src="img/flix1.5.jpg" width=300>
+
+---
+
+Author: [FanBy0ru](https://https://github.com/FanBy0ru).<br>
+Description: custom 3D-printed frame.<br>
+Frame STLs and flight validation: https://cults3d.com/en/3d-model/gadget/armature-pour-flix-drone.
+
+<img src="img/user/fanby0ru/1.jpg" height=200> <img src="img/user/fanby0ru/2.jpg" height=200>
+
+---
+
+Author: Ivan44 Phalko.<br>
+Description: custom PCB, cusom test bench.<br>
+[Flight validation](https://drive.google.com/file/d/17DNDJ1gPmCmDRAwjedCbJ9RXAyqMqqcX/view?usp=sharing).
+
+<img src="img/user/phalko/1.jpg" height=200> <img src="img/user/phalko/2.jpg" height=200> <img src="img/user/phalko/3.jpg" height=200>
+
+---
+
+Author: **Arkadiy "Arky" Matsekh**, Foucault Dynamics, Gold Coast, Australia.<br>
+The drone was built for the University of Queensland industry-led Master's capstone project.
+
+**Flight video:**
+
+<a href="https://drive.google.com/file/d/1NNYSVXBY-w0JjCo07D8-PgnVq3ca9plj/view?usp=sharing"><img height=300 src="img/user/arkymatsekh/video.jpg"></a>
+
+<img src="img/user/arkymatsekh/1.jpg" height=150> <img src="img/user/arkymatsekh/2.jpg" height=150> <img src="img/user/arkymatsekh/3.jpg" height=150>
+
+---
+
+Author: [goldarte](https://t.me/goldarte).<br>
+
+<img src="img/user/goldarte/1.jpg" height=150> <img src="img/user/goldarte/2.jpg" height=150>
+
+**Flight video:**
+
+<a href="https://drive.google.com/file/d/1nQtFjEcGGLx-l4xkL5ko9ZpOTVU-WDjL/view?usp=sharing"><img height=200 src="img/user/goldarte/video.jpg"></a>
+
+---
+
+Author: [malagis](https://oshwhub.com/malagis).<br>
+
+A Chinese custom PCB version of Flix with a big community of users, lots of materials and modifications.
+
+Main project's page: https://oshwhub.com/malagis/esp32-mini-plane.<br>
+Video about the project: https://www.bilibili.com/video/BV14vyqBFEJn/.
+
+<img src="img/user/malagis/1.jpg" height=200> <img src="img/user/malagis/2.jpg" height=200> <img src="img/user/malagis/3.jpg" height=200>
+
+---
+
+## School 548 course
+
+Special course on quadcopter design and engineering took place in october-november 2025 in School 548, Moscow. The course included UAV control theory, electronics, drone assembly and setup practice, using the Flix project.
+
+<img height=200 src="img/user/school548/1.jpg"> <img height=200 src="img/user/school548/2.jpg"> <img height=200 src="img/user/school548/3.jpg">
+
+STL files and other materials: see [here](https://drive.google.com/drive/folders/1wTUzj087LjKQQl3Lz5CjHCuobxoykhyp?usp=share_link).
+
+### Selected works
+
+Author: [KiraFlux](https://t.me/@kiraflux_0XC0000005).<br>
+Description: **custom ESPNOW remote control** was implemented, modified firmware to support ESPNOW protocol.<br>
+Telegram posts: [1](https://t.me/opensourcequadcopter/106), [2](https://t.me/opensourcequadcopter/114).<br>
+Modified Flix firmware: https://github.com/KiraFlux/flix/tree/klyax.<br>
+Remote control project: https://github.com/KiraFlux/ESP32-DJC.<br>
+Drone design: https://github.com/KiraFlux/Klyax.<br>
+
+<img src="img/user/school548/kiraflux1.jpg" height=150> <img src="img/user/school548/kiraflux2.jpg" height=150>
+
+**ESPNOW remote control demonstration**:
+
+<img height=200 src="img/user/school548/kiraflux-video.jpg"><a href="https://drive.google.com/file/d/1soHDAeHQWnm97Y4dg4nWevJuMiTdJJXW/view?usp=sharing"></a>
+
+Author: [tolyan4krut](https://t.me/tolyan4krut).<br>
+Description: the first drone based on ESP32-S3-CAM board **with a camera**, implementing Wi-Fi video streaming. Runs HTTP server and HTTP video stream.<br>
+Modified Flix firmware: https://github.com/CatRey/Flix-Camera-Streaming.<br>
+[Telegram post](https://t.me/opensourcequadcopter/117).
+
+<img src="img/user/school548/tolyan4krut.jpg" height=150>
+
+**Video streaming and flight demonstration**:
+
+<a href="https://drive.google.com/file/d/1KuOBsujLsk7q8FoqKD8u7uoq4ptS5onp/view?usp=sharing"><img height=200 src="img/user/school548/tolyan4krut-video.jpg"></a>
+
+Author: [Vlad Tolshinov](https://t.me/Vlad_Tolshinov).<br>
+Description: custom frame with enlarged arm length, which provides very high flight stability, 65 mm props.
+
+<img src="img/user/school548/vlad_tolshinov1.jpg" height=150> <img src="img/user/school548/vlad_tolshinov2.jpg" height=150>
+
+**Flight video**:
+
+<a href="https://drive.google.com/file/d/1zu00DZxhC7DJ9Z2mYjtxdNQqOOLAyYbp/view?usp=sharing"><img height=200 src="img/user/school548/vlad_tolshinov-video.jpg"></a>
+
+---
+
 ## RoboCamp
 
 Author: RoboCamp participants.<br>
 Description: 3D-printed and wooden frames, ESP32 Mini, DC-DC buck-boost converters. BetaFPV LiteRadio 3 to control the drones via Wi-Fi connection.<br>
 Features: altitude hold, obstacle avoidance, autonomous flight elements.<br>
-Some of the designed model files: https://drive.google.com/drive/folders/18YHWGquKeIevzrMH4-OUT-zKXMETTEUu?usp=share_link.
+Some of the designed model files: see [here](https://drive.google.com/drive/folders/18YHWGquKeIevzrMH4-OUT-zKXMETTEUu?usp=share_link).
 
 RoboCamp took place in July 2025, Saint Petersburg, where 9 participants designed and built their own drones using the Flix project, and then modified the firmware to complete specific flight tasks.
 

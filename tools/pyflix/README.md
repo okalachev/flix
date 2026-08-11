@@ -1,8 +1,8 @@
 # Flix Python library
 
-The Flix Python library allows you to remotely connect to a Flix quadcopter. It provides access to telemetry data, supports executing CLI commands, and controlling the drone's flight.
+The Flix Python library allows you to remotely connect to a Flix quadcopter. It provides access to telemetry data, supports executing console commands, and controlling the drone's flight.
 
-To use the library, connect to the drone's Wi-Fi. To use it with the simulator, ensure the script runs on the same local network as the simulator.
+To use the library, connect to the drone's Wi-Fi. To use it with the simulator, ensure the script runs on the same network as the simulator.
 
 ## Installation
 
@@ -24,30 +24,36 @@ pip install pyflix
 The API is accessed through the `Flix` class:
 
 ```python
-from flix import Flix
+from pyflix import Flix
 flix = Flix()  # create a Flix object and wait for connection
 ```
 
+If using ESP-NOW connection, specify the proxy device name in `FLIX_DEVICE` environment variable or pass it to the constructor: `Flix(device='/dev/cu.usbserial-0001')`.
+
 ### Telemetry
 
-Basic telemetry is available through object properties. The properties names generally match the corresponding variables in the firmware itself:
+Basic telemetry is available through object properties. The property names generally match the corresponding variables in the firmware code:
 
 ```python
 print(flix.connected)       # True if connected to the drone
 print(flix.mode)            # current flight mode (str)
 print(flix.armed)           # True if the drone is armed
 print(flix.landed)          # True if the drone is landed
+print(flix.voltage)         # battery voltage (NaN - unknown, ~0 - USB powered)
 print(flix.attitude)        # attitude quaternion [w, x, y, z]
 print(flix.attitude_euler)  # attitude as Euler angles [roll, pitch, yaw]
 print(flix.rates)           # angular rates [roll_rate, pitch_rate, yaw_rate]
 print(flix.channels)        # raw RC channels (list)
-print(flix.motors)          # motors outputs (list)
+print(flix.motors)          # motor outputs (list)
 print(flix.acc)             # accelerometer output (list)
 print(flix.gyro)            # gyroscope output (list)
 ```
 
-> [!NOTE]
-> The library uses the Front-Left-Up coordinate system — the same as in the firmware. All angles are in radians.
+The library uses the Front-Left-Up coordinate system — the same as the firmware:
+
+<img src="../../docs/img/drone-axes-rotate.svg" width="300">
+
+All angles are in radians.
 
 ### Events
 
@@ -89,36 +95,37 @@ Full list of events:
 |-----|-----------|----------------|
 |`connected`|Connected to the drone||
 |`disconnected`|Connection is lost||
-|`armed`|Armed state update|Armed state (*bool*)|
-|`mode`|Flight mode update|Flight mode (*str*)|
-|`landed`|Landed state update|Landed state (*bool*)|
-|`print`|The drone sends text to the console|Text|
-|`attitude`|Attitude update|Attitude quaternion (*list*)|
-|`attitude_euler`|Attitude update|Euler angles (*list*)|
-|`rates`|Angular rates update|Angular rates (*list*)|
-|`channels`|Raw RC channels update|Raw RC channels (*list*)|
-|`motors`|Motors outputs update|Motors outputs (*list*)|
-|`acc`|Accelerometer update|Accelerometer output (*list*)|
-|`gyro`|Gyroscope update|Gyroscope output (*list*)|
+|`armed`|Armed state update|Armed state *(bool)*|
+|`mode`|Flight mode update|Flight mode *(str)*|
+|`landed`|Landed state update|Landed state *(bool)*|
+|`voltage`|Battery voltage update|Voltage *(float)*|
+|`print`|The drone prints text to the console|Text|
+|`attitude`|Attitude update|Attitude quaternion *(list)*|
+|`attitude_euler`|Attitude update|Euler angles *(list)*|
+|`rates`|Angular rates update|Angular rates *(list)*|
+|`channels`|Raw RC channels update|Raw RC channels *(list)*|
+|`motors`|Motor outputs update|Motor outputs *(list)*|
+|`acc`|Accelerometer update|Accelerometer output *(list)*|
+|`gyro`|Gyroscope update|Gyroscope output *(list)*|
 |`mavlink`|Received MAVLink message|Message object|
 |`mavlink.<message_name>`|Received specific MAVLink message|Message object|
 |`mavlink.<message_id>`|Received specific MAVLink message|Message object|
 |`value`|Named value update (see below)|Name, value|
-|`value.<name>`|Specific named value update (see bellow)|Value|
+|`value.<name>`|Specific named value update (see below)|Value|
 
 > [!NOTE]
-> Update events trigger on every new data from the drone, and do not mean the value is changed.
+> Update events trigger on every new piece of data from the drone, and do not mean the value has changed.
 
-### Common methods
+### Basic methods
 
 Get and set firmware parameters using `get_param` and `set_param` methods:
 
 ```python
-pitch_p = flix.get_param('PITCH_P')  # get parameter value
-flix.set_param('PITCH_P', 5)         # set parameter value
+pitch_p = flix.get_param('CTL_P_P')  # get parameter value
+flix.set_param('CTL_P_P', 5)         # set parameter value
 ```
 
-Execute CLI commands using `cli` method. This method returns command response:
+Execute console commands using `cli` method. This method returns the command response:
 
 ```python
 imu = flix.cli('imu')    # get detailed IMU data
@@ -136,7 +143,7 @@ flix.set_armed(True)   # arm the drone
 flix.set_armed(False)  # disarm the drone
 ```
 
-You can imitate pilot's controls using `set_controls` method:
+You can pass pilot's controls using `set_controls` method:
 
 ```python
 flix.set_controls(roll=0, pitch=0, yaw=0, throttle=0.6)
@@ -166,10 +173,10 @@ Setting angular rates target:
 flix.set_rates([0.1, 0.2, 0.3], 0.6)  # set target roll rate, pitch rate, yaw rate and thrust
 ```
 
-You also can control raw motors outputs directly:
+You also can control raw motor outputs directly:
 
 ```python
-flix.set_motors([0.5, 0.5, 0.5, 0.5])  # set motors outputs in range [0, 1]
+flix.set_motors([0.5, 0.5, 0.5, 0.5])  # set motor outputs in range [0, 1]
 ```
 
 In *AUTO* mode, the drone will arm automatically if the thrust is greater than zero, and disarm if thrust is zero. Therefore, to disarm the drone, set thrust to zero:
@@ -183,7 +190,7 @@ The following methods are in development and are not functional yet:
 * `set_position` — set target position.
 * `set_velocity` — set target velocity.
 
-To exit from *AUTO* mode move control sticks and the drone will switch to *STAB* mode.
+To exit *AUTO* mode move control sticks and the drone will switch to *STAB* mode.
 
 ## Usage alongside QGroundControl
 
@@ -214,6 +221,13 @@ The following scripts demonstrate how to use the library:
 * [`cli.py`](../cli.py) — remote access to the drone's command line interface.
 * [`log.py`](../log.py) — download flight logs from the drone.
 * [`example.py`](../example.py) — a simple example, prints telemetry data and waits for events.
+
+> [!TIP]
+> Set `FLIX_DEVICE` environment variable to use these tools with ESP-NOW connection, for example:
+>
+> ```bash
+> FLIX_DEVICE=/dev/cu.usbserial-0001 tools/cli.py
+> ```
 
 ## Advanced usage
 
@@ -274,7 +288,3 @@ logger = logging.getLogger('flix')
 logger.setLevel(logging.DEBUG)  # be more verbose
 logger.setLevel(logging.WARNING)  # be less verbose
 ```
-
-## Stability
-
-The library is in development stage. The API is not stable.
