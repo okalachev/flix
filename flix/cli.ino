@@ -191,7 +191,10 @@ void doCommand(String str, bool echo = false) {
 		print("Free heap: %d KB\n", ESP.getFreeHeap() / 1024);
 		print("PSRAM: %d KB\n", ESP.getPsramSize() / 1024);
 		print("Free PSRAM: %d KB\n", ESP.getFreePsram() / 1024);
-		print("Firmware: " __DATE__ " " __TIME__ "\n");
+#ifdef VERSION
+		print("Version: %s\n", STRINGIFY(VERSION));
+#endif
+		print("Build date: " __DATE__ " " __TIME__ "\n");
 		// Print tasks table
 		print("Num  Task                MinSt  Prio  Core  CPU%%\n");
 		int taskCount = uxTaskGetNumberOfTasks();

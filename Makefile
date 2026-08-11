@@ -1,13 +1,17 @@
 BOARD = esp32:esp32:esp32
 PORT := $(strip $(wildcard /dev/serial/by-id/usb-Silicon_Labs_CP21* /dev/serial/by-id/usb-1a86_USB_Single_Serial_* /dev/cu.usbserial-* /dev/cu.usbmodem*))
+VERSION = $(shell git describe --always --dirty)
 
 export ARDUINO_NETWORK_CONNECTION_TIMEOUT := 1h
 
 build: .core .libs
-	arduino-cli compile --fqbn $(BOARD) --build-property "build.core_debug_level=1" flix $(EXTRA)
+	arduino-cli compile flix \
+		--fqbn $(BOARD) \
+		--build-property "build.core_debug_level=1" \
+		--build-property "compiler.cpp.extra_flags=-DVERSION=$(VERSION) $(FLAGS)" $(EXTRA)
 
 upload: build
-	arduino-cli upload --fqbn $(BOARD) -p "$(PORT)" flix
+	arduino-cli upload flix --fqbn $(BOARD) -p "$(PORT)"
 
 erase:
 	arduino-cli burn-bootloader --fqbn $(BOARD) -p "$(PORT)" -P esptool
@@ -27,8 +31,8 @@ libs .libs:
 	touch .libs
 
 upload_proxy: .core .libs
-	arduino-cli compile --fqbn $(BOARD) tools/espnow-proxy
-	arduino-cli upload --fqbn $(BOARD) -p "$(PORT)" tools/espnow-proxy
+	arduino-cli compile tools/espnow-proxy --fqbn $(BOARD)
+	arduino-cli upload tools/espnow-proxy --fqbn $(BOARD) -p "$(PORT)"
 
 gazebo/build cmake: gazebo/CMakeLists.txt
 	mkdir -p gazebo/build
