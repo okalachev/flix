@@ -150,7 +150,9 @@ If using non-default motor pins, set the pin numbers using the parameters: `MOTO
 
 Certain ESP32 models (such as ESP32-S3 and ESP32-C3) support a lower maximum PWM frequency; on these boards the parameter `MOT_PWM_FREQ` should be set to 38000 Hz.
 
-If using brushless motors and ESCs:
+#### Brushless motors
+
+If using brushless motors with ESCs:
 
 1. Set the appropriate PWM using the parameters: `MOT_PWM_STOP`, `MOT_PWM_MIN`, and `MOT_PWM_MAX` (1000, 1000, and 2000 is typical).
 2. Decrease the PWM frequency using the `MOT_PWM_FREQ` parameter (400 is typical).
@@ -158,7 +160,7 @@ If using brushless motors and ESCs:
 > [!CAUTION]
 > **Remove the props when configuring the motors!** If improperly configured, you may not be able to stop them.
 
-### Battery voltage monitoring
+### Battery voltage monitoring (optional)
 
 ESP32 ADC can measure only up to 3.3 V, so you need to use a voltage divider to monitor the battery voltage. To enable voltage measurement, set the following parameters:
 
