@@ -32,6 +32,7 @@ jobs:
     - name: Build book
       run: cd docs && mdbook build
     - name: Wait for Build to complete
+      if: ${{ vars.DOCS_BINARIES == '1' }}
       uses: lewagon/wait-on-check-action@v1.9.1
       with:
         ref: ${{ github.sha }}
@@ -39,6 +40,7 @@ jobs:
         repo-token: ${{ secrets.GITHUB_TOKEN }}
         wait-interval: 30
     - name: Find firmware binaries
+      if: ${{ vars.DOCS_BINARIES == '1' }}
       id: build_run
       run: |
         RUN_ID=$(gh api "repos/${{ github.repository }}/actions/workflows/build.yml/runs?head_sha=${{ github.sha }}&per_page=1" --jq '.workflow_runs[0].id')
@@ -46,6 +48,7 @@ jobs:
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Download firmware binaries
+      if: ${{ vars.DOCS_BINARIES == '1' }}
       uses: actions/download-artifact@v4
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -54,6 +57,7 @@ jobs:
         name: firmware-binary
         path: docs/build
     - name: Create shortcuts for firmware binaries
+      if: ${{ vars.DOCS_BINARIES == '1' }}
       working-directory: docs/build
       run: |
         for FQBN in esp32.esp32.*; do
