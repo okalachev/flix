@@ -33,6 +33,8 @@ jobs:
       with:
         name: firmware-binary
         path: flix/build
+    - name: Build espnow-proxy
+      run: arduino-cli compile --fqbn esp32:esp32:esp32 tools/espnow-proxy
     - name: Check c_cpp_properties.json
       run: tools/check_c_cpp_properties.py
 
