@@ -12,7 +12,6 @@
 const int RAW = 0, ACRO = 1, STAB = 2, AUTO = 3; // flight modes
 int mode = STAB;
 bool armed = false;
-int _desaturate = 1;
 
 Quaternion attitudeTarget;
 Vector ratesTarget;
