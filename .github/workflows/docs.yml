@@ -41,9 +41,7 @@ jobs:
     - name: Find firmware binaries
       id: build_run
       run: |
-        RUN_ID=$(gh api \
-          "repos/${{ github.repository }}/actions/workflows/build.yml/runs?head_sha=${{ github.sha }}&per_page=1" \
-          --jq '.workflow_runs[0].id')
+        RUN_ID=$(gh api "repos/${{ github.repository }}/actions/workflows/build.yml/runs?head_sha=${{ github.sha }}&per_page=1" --jq '.workflow_runs[0].id')
         echo "id=$RUN_ID" >> $GITHUB_OUTPUT
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -55,7 +53,7 @@ jobs:
         run-id: ${{ steps.build_run.outputs.id }}
         name: firmware-binary
         path: docs/build
-    - name: Create shortcuts
+    - name: Create shortcuts for firmware binaries
       working-directory: docs/build
       run: |
         for FQBN in esp32.esp32.*; do

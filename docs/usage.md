@@ -4,9 +4,9 @@ To fly Flix quadcopter, you need to upload the firmware to the ESP32 board, and 
 
 ## Uploading the firmware
 
-You can either use the **prebuilt binaries** or **build the firmware** from sources — this will let you modify the firmware and add new features.
+You can either use the **prebuilt binaries** or **build the firmware** from sources — this will let you modify the firmware and add new features.
 
-## Prebuilt binaries (the easiest way)
+### Prebuilt binaries (the easiest way)
 
 1. Download the latest firmware file using the following links:
 
@@ -22,14 +22,15 @@ You can either use the **prebuilt binaries** or **build the firmware** from sour
    <!-- markdownlint-enable MD044 -->
 
 2. Flash your ESP32 board using [ESP32 Web Flasher](https://www.espboards.dev/tools/program/):
+
+   <img src="img/web-flasher.png" width="400">
+
    * Connect the board to your computer, press *Connect to ESP*, choose the serial port.
    * Go to the *Flash* tab.
-   * Choose the downloaded firmware file, set *Flash address* to *0*.
+   * Choose the downloaded firmware file, set *Flash address* to *0* (important).
    * Click *Program* button and wait until the process is finished.
 
-<img src="img/web-flasher.png" width="400">
-
-## Building from sources (flexible)
+### Building from sources (flexible)
 
 You can build and upload the firmware using either **Arduino IDE** (easier for beginners) or **command line**.
 
@@ -41,7 +42,7 @@ git clone https://github.com/okalachev/flix.git && cd flix
 
 Beginners can [download the sources as a ZIP archive](https://github.com/okalachev/flix/archive/refs/heads/master.zip).
 
-### Arduino IDE (Windows, Linux, macOS)
+#### Arduino IDE (Windows, Linux, macOS)
 
 <img src="img/arduino-ide.png" width="400" alt="Flix firmware open in Arduino IDE">
 
@@ -56,7 +57,7 @@ Beginners can [download the sources as a ZIP archive](https://github.com/okalach
 7. Set *Tools* ⇒ *Core Debug Level* to *Error* to see the errors in the serial console. Set *Tools* ⇒ *USB CDC on Boot* to *Enabled* for ESP32-S3/ESP32-C3 boards.
 8. [Build and upload](https://docs.arduino.cc/software/ide-v2/tutorials/getting-started/ide-v2-uploading-a-sketch) the firmware using Arduino IDE.
 
-### Command line (Windows, Linux, macOS)
+#### Command line (Windows, Linux, macOS)
 
 1. [Install Arduino CLI](https://arduino.github.io/arduino-cli/installation/).
 
@@ -141,15 +142,13 @@ You can also work with parameters using `p` command in the console. Parameter na
 ### Configure the IMU
 
 1. Configure the following parameters for the IMU:
-   * `IMU_MODEL` — IMU model (1 for MPU-9250/MPU-6500¹, 2 for ICM-20948, 3 for MPU-6050, 4 for ICM-40609-D).
+   * `IMU_MODEL` — IMU model (1 for MPU-9250/MPU-6500, 2 for ICM-20948, 3 for MPU-6050, 4 for ICM-40609-D).
    * `IMU_BUS` — communication bus (0 for SPI, 1 for I²C).
    * `IMU_PIN_SCK`, `IMU_PIN_MISO`, `IMU_PIN_MOSI`, `IMU_PIN_CS` — SPI pin numbers.
    * `IMU_PIN_SCL`, `IMU_PIN_SDA` — I²C pin numbers.
    * `IMU_PIN_INT` — IMU data ready pin number (-1 if not used).
 2. Reboot the drone.
 3. Check the IMU is working using `imu` command in the console (should print `status: OK`).
-
-¹ — not to be confused with MPU-6050.
 
 ### Define IMU orientation
 
@@ -181,7 +180,7 @@ If using non-default motor pins, set the pin numbers using the parameters: `MOTO
 
 #### Brushless motors
 
-In case of using brushless motors with ESCs:
+If using brushless motors with ESCs:
 
 1. Set the appropriate PWM using the parameters: `MOT_PWM_STOP`, `MOT_PWM_MIN`, and `MOT_PWM_MAX` (1000, 1000, and 2000 is typical).
 2. Decrease the PWM frequency using the `MOT_PWM_FREQ` parameter (400 is typical).
