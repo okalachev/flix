@@ -4,12 +4,17 @@
 // Work with the IMU sensor
 
 #include <SPI.h>
+#include <Wire.h>
 #include <FlixPeriph.h>
 #include "vector.h"
 #include "lpf.h"
 #include "util.h"
 
-MPU9250 imu(SPI);
+IMU *imu;
+int imuModel = -1; // 1 - MPU9250, 2 - ICM20948, 3 - MPU6050, 4 - ICM40609D
+int imuBus = 0; // 0 - SPI, 1 - I2C
+int imuSckPin = SCK, imuMisoPin = MISO, imuMosiPin = MOSI, imuCsPin = SS, imuIntPin = -1;
+int imuSdaPin = SDA, imuSclPin = SCL;
 Vector imuRotation(0, 0, PI / 2); // imu orientation as Euler angles
 
 Vector gyro; // gyroscope output, rad/s
@@ -23,22 +28,35 @@ LowPassFilter<Vector> gyroBiasFilter(0.001);
 
 void setupIMU() {
 	print("Setup IMU\n");
-	imu.begin();
+	free(imu);
+	if (imuModel == 3) imuBus = 1; // MPU6050 is I2C only
+
+	if (imuBus == 0) {
+		// SPI connection
+		SPI.begin(imuSckPin, imuMisoPin, imuMosiPin);
+		imu = IMU::create(imuModel, SPI, imuCsPin, imuIntPin);
+	} else {
+		// I2C connection
+		Wire.setPins(imuSdaPin, imuSclPin);
+		imu = IMU::create(imuModel, Wire, imuIntPin);
+	}
+
+	imu->begin();
 	configureIMU();
 }
 
 void configureIMU() {
-	imu.setAccelRange(imu.ACCEL_RANGE_4G);
-	imu.setGyroRange(imu.GYRO_RANGE_2000DPS);
-	imu.setDLPF(imu.DLPF_MAX);
-	imu.setRate(imu.RATE_1KHZ_APPROX);
-	imu.setupInterrupt();
+	imu->setAccelRange(IMU::ACCEL_RANGE_4G);
+	imu->setGyroRange(IMU::GYRO_RANGE_2000DPS);
+	imu->setDLPF(IMU::DLPF_MAX);
+	imu->setRate(IMU::RATE_1KHZ_APPROX);
+	imu->setupInterrupt();
 }
 
 void readIMU() {
-	imu.waitForData();
-	imu.getGyro(gyro.x, gyro.y, gyro.z);
-	imu.getAccel(acc.x, acc.y, acc.z);
+	imu->waitForData();
+	imu->getGyro(gyro.x, gyro.y, gyro.z);
+	imu->getAccel(acc.x, acc.y, acc.z);
 	calibrateGyroOnce();
 
 	// Apply scale and bias
@@ -60,7 +78,7 @@ void calibrateGyroOnce() {
 
 void calibrateAccel() {
 	print("Calibrating accelerometer\n");
-	imu.setAccelRange(imu.ACCEL_RANGE_2G); // the most sensitive mode
+	imu->setAccelRange(IMU::ACCEL_RANGE_2G); // the most sensitive mode
 
 	print("1/6 Place level [8 sec]\n");
 	pause(8);
@@ -94,9 +112,9 @@ void calibrateAccelOnce() {
 	// Compute the average of the accelerometer readings
 	acc = Vector(0, 0, 0);
 	for (int i = 0; i < samples; i++) {
-		imu.waitForData();
+		imu->waitForData();
 		Vector sample;
-		imu.getAccel(sample.x, sample.y, sample.z);
+		imu->getAccel(sample.x, sample.y, sample.z);
 		acc = acc + sample;
 	}
 	acc = acc / samples;
@@ -121,17 +139,18 @@ void printIMUCalibration() {
 }
 
 void printIMUInfo() {
-	imu.status() ? print("status: ERROR %d\n", imu.status()) : print("status: OK\n");
-	print("model: %s\n", imu.getModel());
-	print("who am I: 0x%02X\n", imu.whoAmI());
+	imu->status() ? print("status: ERROR %d\n", imu->status()) : print("status: OK\n");
+	print("model: %s\n", imu->getModel());
+	print("who am I: 0x%02X\n", imu->whoAmI());
 	print("rate: %.0f\n", loopRate);
-	print("temperature: %.1f °C\n", imu.getTemp());
+	print("interrupt mode: %s\n", imuIntPin != -1 ? "pin" : "timer");
+	print("temperature: %.1f °C\n", imu->getTemp());
 	print("gyro: %f %f %f\n", gyro.x, gyro.y, gyro.z);
 	print("acc: %f %f %f\n", acc.x, acc.y, acc.z);
-	imu.waitForData();
+	imu->waitForData();
 	Vector rawGyro, rawAcc;
-	imu.getGyro(rawGyro.x, rawGyro.y, rawGyro.z);
-	imu.getAccel(rawAcc.x, rawAcc.y, rawAcc.z);
+	imu->getGyro(rawGyro.x, rawGyro.y, rawGyro.z);
+	imu->getAccel(rawAcc.x, rawAcc.y, rawAcc.z);
 	print("raw gyro: %f %f %f\n", rawGyro.x, rawGyro.y, rawGyro.z);
 	print("raw acc: %f %f %f\n", rawAcc.x, rawAcc.y, rawAcc.z);
 }

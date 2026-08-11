@@ -71,15 +71,6 @@ See other available Make commands in [Makefile](../Makefile).
 
 ## Before first flight
 
-### Choose the IMU model
-
-In case if using different IMU model than MPU9250, change `imu` variable declaration in the `imu.ino`:
-
-```cpp
-ICM20948 imu(SPI);  // For ICM-20948
-MPU6050 imu(Wire);  // For MPU-6050
-```
-
 ### Connect using QGroundControl
 
 QGroundControl is a ground control station software that can be used to monitor and control the drone.
@@ -119,6 +110,17 @@ The drone is configured using parameters. To access and modify them, go to the Q
 <img src="img/parameters.png" width="400">
 
 You can also work with parameters using `p` command in the console. Parameter names are case-insensitive.
+
+### Configure the IMU
+
+1. Configure the following parameters for the IMU:
+   * `IMU_MODEL` — IMU model (1 for MPU-9250/MPU-6500, 2 for ICM-20948, 3 for MPU-6050, 4 for ICM-40609-D).
+   * `IMU_BUS` — communication bus (0 for SPI, 1 for I²C).
+   * `IMU_PIN_SCK`, `IMU_PIN_MISO`, `IMU_PIN_MOSI`, `IMU_PIN_CS` — SPI pin numbers.
+   * `IMU_PIN_SCL`, `IMU_PIN_SDA` — I²C pin numbers.
+   * `IMU_PIN_INT` — IMU data ready pin number (-1 if not used).
+2. Reboot the drone.
+3. Check the IMU is working using `imu` command in the console (should print `status: OK`).
 
 ### Define IMU orientation
 
