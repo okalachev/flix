@@ -10,7 +10,7 @@ jobs:
   csv_to_ulog:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
     - name: Build csv_to_ulog
       run: cd tools/csv_to_ulog && mkdir build && cd build && cmake .. && make
     - name: Test csv_to_ulog
@@ -22,13 +22,13 @@ jobs:
   pyflix:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
     - name: Install Python build tools
       run: pip install build
     - name: Build pyflix
       run: python3 -m build tools
     - name: Upload artifacts
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: pyflix
         path: |
@@ -37,7 +37,7 @@ jobs:
   python_tools:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
     - name: Install Python dependencies
       run: pip install -r tools/requirements.txt
     - name: Test csv_to_mcap tool
@@ -49,12 +49,12 @@ jobs:
   sloc:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
     - run: sudo apt-get install -y cloc jq
     - name: Print source lines of code
       run: cloc --by-file-by-lang flix
     - name: Checkout previous revision
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
       with:
         ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.before }}
         path: prev

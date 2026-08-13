@@ -16,7 +16,7 @@ jobs:
   markdownlint:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
     - name: Install markdownlint
       run: npm install -g markdownlint-cli2
     - name: Run markdownlint
@@ -28,7 +28,7 @@ jobs:
     env:
       BINARIES: ${{ github.event_name == 'push' && (github.ref_name == 'master' || github.ref_name == 'dev') && github.repository == 'okalachev/flix' }}
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
     - name: Install mdBook
       run: cargo install mdbook --vers 0.4.43 --locked
     - name: Build book
@@ -51,7 +51,7 @@ jobs:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Download firmware binaries
       if: ${{ env.BINARIES }}
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v7
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         repository: ${{ github.repository }}
@@ -70,12 +70,12 @@ jobs:
           ln -s "$FQBN/flix.ino.bootloader.bin" "flix.$BOARD.bootloader.bin"
         done
     - name: Upload artifact
-      uses: actions/upload-pages-artifact@v3
+      uses: actions/upload-pages-artifact@v5
       with:
         path: docs/build
 
   deploy:
-    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
+    if: ${{ github.event_name == 'push' && github.ref_name == 'master' }}
     concurrency:
       group: "pages"
       cancel-in-progress: true
@@ -87,4 +87,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5

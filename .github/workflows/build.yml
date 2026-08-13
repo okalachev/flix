@@ -13,7 +13,7 @@ jobs:
     env:
         ARDUINO_SKETCH_ALWAYS_EXPORT_BINARIES: 1
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
     - name: Install Arduino CLI
       run: curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | BINDIR=/usr/local/bin sh
     - name: Build firmware for ESP32
@@ -29,7 +29,7 @@ jobs:
     - name: Build firmware for Flix2
       run: make BOARD=esp32:esp32:esp32s3:FlashSize=4M,CDCOnBoot=cdc,PSRAM=opi FLAGS=-DFLIX2 EXTRA=--output-dir=flix/build/esp32.esp32.flix2
     - name: Upload binaries
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: firmware-binary
         path: flix/build
@@ -41,7 +41,7 @@ jobs:
   build_macos:
     runs-on: macos-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
     - name: Install Arduino CLI
       run: brew install arduino-cli
     - name: Build firmware
@@ -52,7 +52,7 @@ jobs:
   build_windows:
     runs-on: windows-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
     - name: Install Arduino CLI
       run: choco install arduino-cli
     - name: Install Make
@@ -73,7 +73,7 @@ jobs:
         DEBIAN_FRONTEND=noninteractive apt-get install -y curl wget build-essential cmake g++ pkg-config gnupg2 lsb-release sudo
     - name: Install Arduino CLI
       run: curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | BINDIR=/usr/local/bin sh
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
     - name: Install Gazebo
       run: |
         sudo sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-stable.list'
@@ -84,7 +84,7 @@ jobs:
       run: sudo apt-get install -y libsdl2-dev
     - name: Build simulator
       run: make build_simulator
-    - uses: actions/upload-artifact@v4
+    - uses: actions/upload-artifact@v7
       with:
         name: gazebo-plugin-binary
         path: gazebo/build/*.so
@@ -96,7 +96,7 @@ jobs:
     steps:
     - name: Install Arduino CLI
       run: brew install arduino-cli
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
     - name: Clean up python binaries # Workaround for https://github.com/actions/setup-python/issues/577
       run: |
         rm -f /usr/local/bin/2to3*
