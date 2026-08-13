@@ -56,7 +56,7 @@ jobs:
     - name: Install Arduino CLI
       run: choco install arduino-cli
     - name: Install Make
-      run: choco install make
+      run: scoop install make
     - name: Build firmware
       run: make
     - name: Check c_cpp_properties.json
