@@ -53,7 +53,16 @@ jobs:
     - run: sudo apt-get install -y cloc jq
     - name: Print source lines of code
       run: cloc --by-file-by-lang flix
+    - name: Checkout previous revision
+      uses: actions/checkout@v4
+      with:
+        ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.before }}
+        path: prev
     - name: Annotate total source lines
       run: |
-        sloc=$(cloc flix --json | jq -r '.SUM.code')
-        echo "::notice title=SLOC::Current SLOC = $sloc"
+        SLOC=$(cloc flix --json | jq -r '.SUM.code')
+        PREV_SLOC=$(cloc prev/flix --json | jq -r '.SUM.code')
+        DIFF=$(printf '%+d' "$((SLOC - PREV_SLOC))")
+        echo "* Current SLOC: $SLOC" >> $GITHUB_STEP_SUMMARY
+        echo "* Previous SLOC: $PREV_SLOC" >> $GITHUB_STEP_SUMMARY
+        echo "* Diff: $DIFF" >> $GITHUB_STEP_SUMMARY
