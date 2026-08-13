@@ -4,10 +4,10 @@ PORT := $(strip $(wildcard /dev/serial/by-id/usb-Silicon_Labs_CP21* /dev/serial/
 export ARDUINO_NETWORK_CONNECTION_TIMEOUT := 1h
 
 build: .core .libs
-	arduino-cli compile --fqbn $(BOARD) --build-property "build.core_debug_level=1" flix $(EXTRA)
+	arduino-cli compile flix --fqbn $(BOARD) --build-property "build.core_debug_level=1" $(EXTRA)
 
 upload: build
-	arduino-cli upload --fqbn $(BOARD) -p "$(PORT)" flix
+	arduino-cli upload flix --fqbn $(BOARD) -p "$(PORT)"
 
 erase:
 	arduino-cli burn-bootloader --fqbn $(BOARD) -p "$(PORT)" -P esptool
@@ -27,8 +27,8 @@ libs .libs:
 	touch .libs
 
 upload_proxy: .core .libs
-	arduino-cli compile --fqbn $(BOARD) tools/espnow-proxy
-	arduino-cli upload --fqbn $(BOARD) -p "$(PORT)" tools/espnow-proxy
+	arduino-cli compile tools/espnow-proxy --fqbn $(BOARD)
+	arduino-cli upload tools/espnow-proxy --fqbn $(BOARD) -p "$(PORT)"
 
 gazebo/build cmake: gazebo/CMakeLists.txt
 	mkdir -p gazebo/build
