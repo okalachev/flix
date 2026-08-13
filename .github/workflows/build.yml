@@ -55,8 +55,8 @@ jobs:
     - uses: actions/checkout@v4
     - name: Install Arduino CLI
       run: choco install arduino-cli
-    - name: Install Make
-      run: scoop install make
+    - name: Add Make to PATH
+      run: echo "C:\Program Files\Git\usr\bin" >> $env:GITHUB_PATH
     - name: Build firmware
       run: make
     - name: Check c_cpp_properties.json
