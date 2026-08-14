@@ -84,6 +84,15 @@ jobs:
       run: sudo apt-get install -y libsdl2-dev
     - name: Build simulator
       run: make build_simulator
+    - name: Run simulator
+      env:
+        GAZEBO_MODEL_PATH: ${{ github.workspace }}/gazebo/models
+        GAZEBO_PLUGIN_PATH: ${{ github.workspace }}/gazebo/build
+      run: |
+        OUT=$(timeout -k 10s 120s gzserver --verbose gazebo/flix.world 2>&1 | tee /dev/stderr)
+        if echo "$OUT" | grep -Pq "\[Err\](?! \[RenderEngine)"; then
+          exit 1
+        fi
     - uses: actions/upload-artifact@v7
       with:
         name: gazebo-plugin-binary
