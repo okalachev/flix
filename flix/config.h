@@ -8,8 +8,6 @@
 void setDefaults() {
 	// Set defaults here
 
-	int __x = 0;
-
 	#if defined(CONFIG_IDF_TARGET_ESP32S3) || defined(CONFIG_IDF_TARGET_ESP32C3)
 		pwmFrequency = 38000;
 	#endif
