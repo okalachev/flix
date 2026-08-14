@@ -60,9 +60,9 @@ jobs:
         path: prev
     - name: Annotate total source lines
       run: |
-        SLOC=$(cloc flix --json | jq -r '.SUM.code')
-        PREV_SLOC=$(cloc prev/flix --json | jq -r '.SUM.code')
-        DIFF=$(printf '%+d' "$((SLOC - PREV_SLOC))")
-        echo "* Current SLOC: $SLOC" >> $GITHUB_STEP_SUMMARY
-        echo "* Previous SLOC: $PREV_SLOC" >> $GITHUB_STEP_SUMMARY
+        SLOC_CURR=$(cloc flix --json | jq -r '.SUM.code')
+        SLOC_PREV=$(cloc prev/flix --json | jq -r '.SUM.code')
+        DIFF=$(printf '%+d' "$((SLOC_CURR - SLOC_PREV))")
+        echo "* Current SLOC: $SLOC_CURR" >> $GITHUB_STEP_SUMMARY
+        echo "* Previous SLOC: $SLOC_PREV" >> $GITHUB_STEP_SUMMARY
         echo "* Diff: $DIFF" >> $GITHUB_STEP_SUMMARY
