@@ -229,15 +229,15 @@ void handleMavlink(const void *_msg) {
 			attitudeTarget.x = m.q[1];
 			attitudeTarget.y = -m.q[2]; // convert to flu
 			attitudeTarget.z = -m.q[3];
-			ratesExtra.x = m.type_mask & ATTITUDE_TARGET_TYPEMASK_BODY_ROLL_RATE_IGNORE ? 0 : m.body_roll_rate;
-			ratesExtra.y = m.type_mask & ATTITUDE_TARGET_TYPEMASK_BODY_PITCH_RATE_IGNORE ? 0 : -m.body_pitch_rate;
-			ratesExtra.z = m.type_mask & ATTITUDE_TARGET_TYPEMASK_BODY_YAW_RATE_IGNORE ? 0 : -m.body_yaw_rate;
+			ratesExtra.x = m.body_roll_rate;
+			ratesExtra.y = -m.body_pitch_rate;
+			ratesExtra.z = -m.body_yaw_rate;
 		} else {
 			// Rates control
 			attitudeTarget.invalidate();
-			ratesTarget.x = m.type_mask & ATTITUDE_TARGET_TYPEMASK_BODY_ROLL_RATE_IGNORE ? ratesTarget.x : m.body_roll_rate;
-			ratesTarget.y = m.type_mask & ATTITUDE_TARGET_TYPEMASK_BODY_PITCH_RATE_IGNORE ? ratesTarget.y : -m.body_pitch_rate;
-			ratesTarget.z = m.type_mask & ATTITUDE_TARGET_TYPEMASK_BODY_YAW_RATE_IGNORE ? ratesTarget.z : -m.body_yaw_rate;
+			ratesTarget.x = m.body_roll_rate;
+			ratesTarget.y = -m.body_pitch_rate;
+			ratesTarget.z = -m.body_yaw_rate;
 		}
 
 		thrustTarget = valid(m.thrust) ? m.thrust : thrustTarget;
