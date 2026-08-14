@@ -46,3 +46,23 @@ jobs:
         echo -e "t,x,y,z\n0,1,2,3\n1,4,5,6" > log.csv
         ./csv_to_mcap.py log.csv
         test $(stat -c %s log.mcap) -eq 883
+  sloc:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v7
+    - run: sudo apt-get install -y cloc jq
+    - name: Print source lines of code
+      run: cloc --by-file-by-lang flix
+    - name: Checkout previous revision
+      uses: actions/checkout@v7
+      with:
+        ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.before }}
+        path: prev
+    - name: Annotate total source lines
+      run: |
+        SLOC_CURR=$(cloc flix --json | jq -r '.SUM.code')
+        SLOC_PREV=$(cloc prev/flix --json | jq -r '.SUM.code')
+        DIFF=$(printf '%+d' "$((SLOC_CURR - SLOC_PREV))")
+        echo "* Current SLOC: $SLOC_CURR" >> $GITHUB_STEP_SUMMARY
+        echo "* Previous SLOC: $SLOC_PREV" >> $GITHUB_STEP_SUMMARY
+        echo "* Diff: $DIFF" >> $GITHUB_STEP_SUMMARY
