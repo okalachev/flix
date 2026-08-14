@@ -105,7 +105,7 @@ void doCommand(String str, bool echo = false) {
 		if (success) {
 			print("%s = %g\n", arg0.c_str(), getParameter(arg0.c_str()));
 		} else {
-			print("Parameter not found: %s\n", arg0.c_str());
+			print("Cannot set parameter: %s\n", arg0.c_str());
 		}
 	} else if (command == "preset") {
 		resetParameters();

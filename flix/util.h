@@ -99,13 +99,19 @@ struct Value {
 		}
 	};
 
-	void set(float value) const {
-		switch (type) {
-			case FLOAT: *_float = value; break;
-			case INT: *_int = value; break;
-			case BOOL: *_bool = (value != 0); break;
-			default: break;
+	bool set(float value) const {
+		if (type == FLOAT) {
+			*_float = value;
+			return true;
+		} else if (type == INT) {
+			if (!isfinite(value)) return false;
+			*_int = value;
+			return true;
+		} else if (type == BOOL) {
+			*_bool = (value != 0);
+			return true;
 		}
+		return false;
 	};
 };
 
