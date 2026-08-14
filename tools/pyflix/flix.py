@@ -326,7 +326,7 @@ class Flix:
     def set_velocity(self, velocity: List[float], yaw: Optional[float] = None):
         raise NotImplementedError('Velocity control is not implemented yet')
 
-    def set_attitude(self, attitude: List[float], thrust: float):
+    def set_attitude(self, attitude: List[float], thrust: float, rates_extra: List[float] = [0, 0, 0]):
         if len(attitude) == 3:
             attitude = Quaternion([attitude[0], attitude[1], attitude[2]]).q  # type: ignore
         elif len(attitude) != 4:
@@ -334,10 +334,11 @@ class Flix:
         if not (0 <= thrust <= 1):
             raise ValueError('Thrust must be in range [0, 1]')
         attitude = self._flu_to_mavlink(attitude)
+        rates_extra = self._flu_to_mavlink(rates_extra)
         for _ in range(2): # duplicate to ensure delivery
             self.mavlink.set_attitude_target_send(0, self.system_id, 0, 0,
                 [attitude[0], attitude[1], attitude[2], attitude[3]],
-                0, 0, 0, thrust)
+                rates_extra[0], rates_extra[1], rates_extra[2], thrust)
 
     def set_rates(self, rates: List[float], thrust: float):
         if len(rates) != 3:
