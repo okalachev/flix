@@ -100,19 +100,14 @@ struct Value {
 	};
 
 	bool set(float value) const {
-		if (type == FLOAT) {
-			*_float = value;
-			return true;
-		} else if (type == INT) {
-			if (!isfinite(value)) return false;
-			*_int = value;
-			return true;
-		} else if (type == BOOL) {
-			*_bool = (value != 0);
-			return true;
+		switch (type) {
+			case FLOAT: *_float = value; break;
+			case INT: if (!isfinite(value)) return false; *_int = value; break;
+			case BOOL: *_bool = (value != 0); break;
+			default: return false;
 		}
-		return false;
-	};
+		return true;
+	}
 };
 
 // Rate limiter
