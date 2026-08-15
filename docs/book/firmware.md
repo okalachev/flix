@@ -31,7 +31,7 @@
 
 * [`vector.h`](https://github.com/okalachev/flix/blob/master/flix/vector.h), [`quaternion.h`](https://github.com/okalachev/flix/blob/master/flix/quaternion.h) — библиотеки векторов и кватернионов.
 * [`pid.h`](https://github.com/okalachev/flix/blob/master/flix/pid.h) — ПИД-регулятор.
-* [`lpf.h`](https://github.com/okalachev/flix/blob/master/flix/lpf.h) — фильтр нижних частот.
+* [`filter.h`](https://github.com/okalachev/flix/blob/master/flix/filter.h) — фильтр нижних частот.
 
 ### Подсистема управления
 
