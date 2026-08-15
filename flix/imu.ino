@@ -33,11 +33,23 @@ void setupIMU() {
 
 	if (imuBus == 0) {
 		// SPI connection
+#if defined(ESP32)
 		SPI.begin(imuSckPin, imuMisoPin, imuMosiPin);
+#elif defined(ARDUINO_ARCH_STM32)
+		SPI.setSCLK(imuSckPin);
+		SPI.setMOSI(imuMosiPin);
+		SPI.setMISO(imuMisoPin);
+		SPI.begin();
+#endif
 		imu = IMU::create(imuModel, SPI, imuCsPin, imuIntPin);
 	} else {
 		// I2C connection
+#if defined(ESP32)
 		Wire.setPins(imuSdaPin, imuSclPin);
+#elif defined(ARDUINO_ARCH_STM32)
+		Wire.setSDA(imuSdaPin);
+		Wire.setSCL(imuSclPin);
+#endif
 		imu = IMU::create(imuModel, Wire, imuIntPin);
 	}
 
