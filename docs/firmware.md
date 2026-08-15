@@ -34,7 +34,7 @@ Utility files:
 
 * [`vector.h`](../flix/vector.h), [`quaternion.h`](../flix/quaternion.h) — vector and quaternion libraries.
 * [`pid.h`](../flix/pid.h) — generic PID controller.
-* [`lpf.h`](../flix/lpf.h) — generic low-pass filter.
+* [`filter.h`](../flix/filter.h) — generic low-pass filter.
 
 ### Control subsystem
 
