@@ -28,10 +28,12 @@ jobs:
       run: make BOARD=esp32:esp32:esp32s3:CDCOnBoot=cdc,PSRAM=opi EXTRA=--output-dir=flix/build/esp32.esp32.esp32s3.opi
     - name: Build firmware for Flix2
       run: make BOARD=esp32:esp32:esp32s3:FlashSize=4M,CDCOnBoot=cdc,PSRAM=opi EXTRA='--build-property "compiler.cpp.extra_flags=-DFLIX2" --output-dir=flix/build/esp32.esp32.flix2'
+    - name: Install STM32 core
+      run: arduino-cli core install STMicroelectronics:stm32 --additional-urls https://github.com/stm32duino/BoardManagerFiles/raw/main/package_stmicroelectronics_index.json
     - name: Build firmware for STM32F4
-      run: |
-        arduino-cli core install STMicroelectronics:stm32 --additional-urls https://github.com/stm32duino/BoardManagerFiles/raw/main/package_stmicroelectronics_index.json
-        make BOARD=STMicroelectronics:stm32:GenF4 EXTRA='--build-property compiler.cpp.extra_flags=-DENABLE_HWSERIAL1'
+      run: make BOARD=STMicroelectronics:stm32:GenF4 EXTRA='--build-property compiler.cpp.extra_flags=-DENABLE_HWSERIAL1'
+    - name: Build firmware for STM32H7
+      run: make BOARD=STMicroelectronics:stm32:GenH7 EXTRA='--build-property compiler.cpp.extra_flags=-DENABLE_HWSERIAL1'
     - name: Upload binaries
       uses: actions/upload-artifact@v7
       with:
