@@ -29,10 +29,11 @@ void readVoltage() {
 	static Rate rate(10);
 	if (!rate) return;
 
+	float v = 0;
 #if defined(ESP32)
-	float v = analogReadMilliVolts(voltagePin) * voltageScale / 1000.0f;
+	v = analogReadMilliVolts(voltagePin) * voltageScale / 1000.0f;
 #elif defined(ARDUINO_ARCH_STM32)
-	float v = analogRead(voltagePin) * voltageScale * 3.3f / 4095.0f;
+	v = analogRead(voltagePin) * voltageScale * 3.3f / 4095.0f;
 #endif
 
 	voltage = voltageFilter.update(v);
