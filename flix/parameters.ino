@@ -221,5 +221,5 @@ void printParameters(const char *filter) {
 
 void resetParameters() {
 	storage.clear();
-	ESP.restart();
+	reboot();
 }

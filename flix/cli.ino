@@ -212,7 +212,7 @@ void handleInput() {
 		char c = Serial.read();
 		if (c == '\n' || c == '\r') {
 			doCommand(input);
-			input.clear();
+			input = "";
 		} else {
 			input += c;
 		}

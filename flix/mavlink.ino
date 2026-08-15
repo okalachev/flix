@@ -291,5 +291,5 @@ void sendMavlinkPrint() {
 			0, 0, strlen(data), (uint8_t *)data, 0, 0);
 		sendMessage(&msg);
 	}
-	mavlinkPrintBuffer.clear();
+	mavlinkPrintBuffer = "";
 }
