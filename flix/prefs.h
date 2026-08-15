@@ -1,4 +1,4 @@
-#ifdef ESP32
+#ifndef ARDUINO_ARCH_STM32
 #include <Preferences.h>
 #else
 
