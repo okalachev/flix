@@ -70,6 +70,14 @@ public:
 };
 #endif
 
+void reboot() {
+#if defined(ESP32)
+	ESP.restart();
+#elif defined(ARDUINO_ARCH_STM32)
+	NVIC_SystemReset();
+#endif
+}
+
 // Rate limiter
 class Rate {
 public:

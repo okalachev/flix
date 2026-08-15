@@ -193,7 +193,7 @@ void doCommand(String str, bool echo = false) {
 		attitude = Quaternion();
 		gyroBiasFilter.reset();
 	} else if (command == "reboot") {
-		ESP.restart();
+		reboot();
 	} else {
 		print("Invalid command: %s\n", command.c_str());
 	}
