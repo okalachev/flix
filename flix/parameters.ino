@@ -22,7 +22,7 @@ struct Parameter {
 	const char *name; // max length is 15
 	bool integer;
 	union { float *f; int *i; }; // pointer to the variable
-	float inital; // default value
+	float initial; // default value
 	float cache; // what's stored in flash
 	void (*callback)(); // called after parameter change
 	Parameter(const char *name, float *variable, void (*callback)() = nullptr) : name(name), integer(false), f(variable), callback(callback) {};
@@ -150,7 +150,7 @@ void setupParameters() {
 	storage.begin("flix");
 	// Read parameters from storage
 	for (auto &parameter : parameters) {
-		parameter.inital = parameter.getValue();
+		parameter.initial = parameter.getValue();
 		if (storage.isKey(parameter.name)) {
 			parameter.setValue(storage.getFloat(parameter.name));
 		}
@@ -211,10 +211,10 @@ void printParameters(const char *filter) {
 	for (auto &parameter : parameters) {
 		if (strncasecmp(parameter.name, filter, strlen(filter))) continue;
 
-		if (floatEquals(parameter.getValue(), parameter.inital)) { // parameter changed
+		if (floatEquals(parameter.getValue(), parameter.initial)) { // parameter changed
 			print("%-15s  %-13g\n", parameter.name, parameter.getValue());
 		} else {
-			print("%-15s  %-13g  [%g]\n", parameter.name, parameter.getValue(), parameter.inital);
+			print("%-15s  %-13g  [%g]\n", parameter.name, parameter.getValue(), parameter.initial);
 		}
 	}
 }

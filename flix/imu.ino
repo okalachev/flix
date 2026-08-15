@@ -7,7 +7,7 @@
 #include <Wire.h>
 #include <FlixPeriph.h>
 #include "vector.h"
-#include "lpf.h"
+#include "filter.h"
 #include "util.h"
 
 IMU *imu;

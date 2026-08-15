@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "lpf.h"
+#include "filter.h"
 
 class PID {
 public:
@@ -18,7 +18,7 @@ public:
 
 	LowPassFilter<float> lpf; // low pass filter for derivative term
 
-	PID(float p, float i = 0, float d = 0, float windup = 0, float dAlpha = 1, float dtMax = 0.1) :
+	PID(float p, float i = 0, float d = 0, float windup = INFINITY, float dAlpha = 1, float dtMax = 0.1) :
 		p(p), i(i), d(d), windup(windup), lpf(dAlpha), dtMax(dtMax) {}
 
 	float update(float error) {

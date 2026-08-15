@@ -27,6 +27,10 @@ int udpRemotePort = 14550;
 // ESPNOWSerial espnowBroadcast(ESP_NOW.BROADCAST_ADDR, 0, WIFI_IF_AP);
 int espnowChannel = 6;
 
+ESPNOWSerial espnow(NULL, 0, WIFI_IF_AP);
+ESPNOWSerial espnowBroadcast(ESP_NOW.BROADCAST_ADDR, 0, WIFI_IF_AP);
+int espnowChannel = 6;
+
 void setupWiFi() {
 	// print("Setup Wi-Fi\n");
 	// WiFi.enableLongRange(wifiLongRange);

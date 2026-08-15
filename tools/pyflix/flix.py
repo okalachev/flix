@@ -243,7 +243,7 @@ class Flix:
             time.sleep(1)
 
     @staticmethod
-    def _mavlink_to_flu(v: List[float]) -> List[float]:
+    def _mavlink_to_flu(v: Sequence[float]) -> List[float]:
         if len(v) == 3:  # vector
             return [v[0], -v[1], -v[2]]
         elif len(v) == 4:  # quaternion
@@ -252,8 +252,8 @@ class Flix:
             raise ValueError(f'List must have 3 (vector) or 4 (quaternion) elements')
 
     @staticmethod
-    def _flu_to_mavlink(v: List[float]) -> List[float]:
-        return Flix._mavlink_to_flu(v)
+    def _flu_to_mavlink(v: Sequence[float]) -> List[float]:
+        return Flix._mavlink_to_flu(v)  # flu to mavlink is the same as mavlink to flu
 
     def _command_send(self, command: int, params: Sequence[float]):
         if len(params) != 7:
@@ -320,13 +320,13 @@ class Flix:
     def set_armed(self, armed: bool):
         self._command_send(mavlink.MAV_CMD_COMPONENT_ARM_DISARM, (1 if armed else 0, 0, 0, 0, 0, 0, 0))
 
-    def set_position(self, position: List[float], yaw: Optional[float] = None, wait: bool = False, tolerance: float = 0.1):
+    def set_position(self, position: Sequence[float], yaw: Optional[float] = None, wait: bool = False, tolerance: float = 0.1):
         raise NotImplementedError('Position control is not implemented yet')
 
-    def set_velocity(self, velocity: List[float], yaw: Optional[float] = None):
+    def set_velocity(self, velocity: Sequence[float], yaw: Optional[float] = None):
         raise NotImplementedError('Velocity control is not implemented yet')
 
-    def set_attitude(self, attitude: List[float], thrust: float):
+    def set_attitude(self, attitude: Sequence[float], thrust: float):
         if len(attitude) == 3:
             attitude = Quaternion([attitude[0], attitude[1], attitude[2]]).q  # type: ignore
         elif len(attitude) != 4:
@@ -339,7 +339,7 @@ class Flix:
                 [attitude[0], attitude[1], attitude[2], attitude[3]],
                 0, 0, 0, thrust)
 
-    def set_rates(self, rates: List[float], thrust: float):
+    def set_rates(self, rates: Sequence[float], thrust: float):
         if len(rates) != 3:
             raise ValueError('Rates must be [roll_rate, pitch_rate, yaw_rate]')
         if not (0 <= thrust <= 1):
@@ -351,7 +351,7 @@ class Flix:
                 [1, 0, 0, 0],
                 rates[0], rates[1], rates[2], thrust)
 
-    def set_motors(self, motors: List[float]):
+    def set_motors(self, motors: Sequence[float]):
         if len(motors) != 4:
             raise ValueError('motors must have 4 values')
         if not all(0 <= m <= 1 for m in motors):

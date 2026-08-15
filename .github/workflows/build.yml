@@ -13,7 +13,7 @@ jobs:
     env:
         ARDUINO_SKETCH_ALWAYS_EXPORT_BINARIES: 1
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
     - name: Install Arduino CLI
       run: curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | BINDIR=/usr/local/bin sh
     - name: Build firmware for ESP32
@@ -33,17 +33,19 @@ jobs:
         arduino-cli core install STMicroelectronics:stm32 --additional-urls https://github.com/stm32duino/BoardManagerFiles/raw/main/package_stmicroelectronics_index.json
         make BOARD=STMicroelectronics:stm32:GenF4 EXTRA='--build-property compiler.cpp.extra_flags=-DENABLE_HWSERIAL1'
     - name: Upload binaries
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: firmware-binary
         path: flix/build
+    - name: Build espnow-proxy
+      run: arduino-cli compile --fqbn esp32:esp32:esp32 tools/espnow-proxy
     - name: Check c_cpp_properties.json
       run: tools/check_c_cpp_properties.py
 
   build_macos:
     runs-on: macos-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
     - name: Install Arduino CLI
       run: brew install arduino-cli
     - name: Build firmware
@@ -54,7 +56,7 @@ jobs:
   build_windows:
     runs-on: windows-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
     - name: Install Arduino CLI
       run: choco install arduino-cli
     - name: Install Make
@@ -75,7 +77,7 @@ jobs:
         DEBIAN_FRONTEND=noninteractive apt-get install -y curl wget build-essential cmake g++ pkg-config gnupg2 lsb-release sudo
     - name: Install Arduino CLI
       run: curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | BINDIR=/usr/local/bin sh
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
     - name: Install Gazebo
       run: |
         sudo sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-stable.list'
@@ -86,7 +88,16 @@ jobs:
       run: sudo apt-get install -y libsdl2-dev
     - name: Build simulator
       run: make build_simulator
-    - uses: actions/upload-artifact@v4
+    - name: Run simulator
+      env:
+        GAZEBO_MODEL_PATH: ${{ github.workspace }}/gazebo/models
+        GAZEBO_PLUGIN_PATH: ${{ github.workspace }}/gazebo/build
+      run: |
+        OUT=$(timeout -k 10s 120s gzserver --verbose gazebo/flix.world 2>&1 | tee /dev/stderr)
+        if echo "$OUT" | grep -Pq "\[Err\](?! \[RenderEngine)"; then
+          exit 1
+        fi
+    - uses: actions/upload-artifact@v7
       with:
         name: gazebo-plugin-binary
         path: gazebo/build/*.so
@@ -98,7 +109,7 @@ jobs:
     steps:
     - name: Install Arduino CLI
       run: brew install arduino-cli
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
     - name: Clean up python binaries # Workaround for https://github.com/actions/setup-python/issues/577
       run: |
         rm -f /usr/local/bin/2to3*
