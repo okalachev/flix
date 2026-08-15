@@ -25,7 +25,7 @@ core .core:
 
 libs .libs:
 	arduino-cli lib update-index
-	arduino-cli lib install "FlixPeriph"
+	ARDUINO_LIBRARY_ENABLE_UNSAFE_INSTALL=1 arduino-cli lib install --git-url 'https://github.com/okalachev/flixperiph.git#dev'
 	arduino-cli lib install "MAVLink"@2.0.25
 	touch .libs
 
