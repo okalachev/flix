@@ -170,6 +170,8 @@ bool ledcWrite(uint8_t pin, uint32_t duty) { return true; }
 uint32_t ledcChangeFrequency(uint8_t pin, uint32_t freq, uint8_t resolution) { return freq; }
 int8_t digitalPinToAnalogChannel(uint8_t pin) { return -1; }
 uint32_t analogReadMilliVolts(uint8_t pin) { return 0; }
+void analogWriteResolution(uint8_t res) {}
+void analogWriteFrequency(uint32_t freq) {}
 
 unsigned long __micros;
 unsigned long __resetTime = 0;
