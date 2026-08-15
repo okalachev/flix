@@ -11,7 +11,7 @@ public:
 	Preferences() = default;
 	~Preferences() = default;
 
-	bool begin(const char *name, bool readOnly = false, const char *partition_label = NULL) {
+	bool begin(const char *name, bool readOnly = false, const char *partition_label = nullptr) {
 		(void)name;
 		(void)readOnly;
 		(void)partition_label;
@@ -128,9 +128,7 @@ private:
 	}
 
 	int availableStorageSize() {
-		int n = STORAGE_SIZE;
-		if (EEPROM.length() > 0 && EEPROM.length() < n) n = EEPROM.length();
-		return n;
+		return STORAGE_SIZE;
 	}
 
 	bool save() {
@@ -187,7 +185,6 @@ private:
 		for (int i = 0; i < storageSize; i++) {
 			EEPROM.write(i, buffer[i]);
 		}
-		EEPROM.commit();
 		return true;
 	}
 
