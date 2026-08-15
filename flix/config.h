@@ -12,16 +12,22 @@ void setDefaults() {
 		pwmFrequency = 38000;
 	#endif
 
+	#ifdef CONFIG_IDF_TARGET_ESP32
+		// classic esp32 configuration
+		motorPins[0] = 12;
+		motorPins[1] = 13;
+		motorPins[2] = 14;
+		motorPins[3] = 15;
+	#endif
+
 	#ifdef FLIX2
 		imuModel = 4; // ICM-40609-D
 		imuIntPin = 10;
 		imuCsPin = 14;
-
-		motorPins[MOTOR_REAR_LEFT] = 41;
-		motorPins[MOTOR_REAR_RIGHT] = 7;
-		motorPins[MOTOR_FRONT_RIGHT] = 18;
-		motorPins[MOTOR_FRONT_LEFT] = 38;
-
 		voltagePin = 3;
+		motorPins[0] = 41;
+		motorPins[1] = 7;
+		motorPins[2] = 18;
+		motorPins[3] = 38;
 	#endif
 }
