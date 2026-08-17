@@ -7,14 +7,14 @@
 
 float motors[4]; // normalized motor thrusts in range [0..1]
 
-int motorPins[4] = {12, 13, 14, 15}; // default pin numbers
+int motorPins[4] = {-1, -1, -1, -1}; // default pin numbers
 int pwmFrequency = 78000;
 int pwmResolution = 10;
 int pwmStop = 0;
 int pwmMin = 0;
 int pwmMax = -1; // -1 means duty cycle mode
 
-const int MOTOR_REAR_LEFT = 0, MOTOR_REAR_RIGHT = 1, MOTOR_FRONT_RIGHT = 2, MOTOR_FRONT_LEFT = 3;
+const int MOT_RL = 0, MOT_RR = 1, MOT_FR = 2, MOT_FL = 3;
 
 void setupMotors() {
 	print("Setup motors\n");

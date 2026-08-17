@@ -8,7 +8,7 @@
 #include "util.h"
 #include "filter.h"
 
-extern const int MOTOR_REAR_LEFT, MOTOR_REAR_RIGHT, MOTOR_FRONT_RIGHT, MOTOR_FRONT_LEFT;
+extern const int MOT_RL, MOT_RR, MOT_FR, MOT_FL;
 extern const int RAW, ACRO, STAB, AUTO;
 extern const int W_AP, W_STA, W_ESPNOW;
 extern float t, dt, loopRate;
@@ -152,7 +152,7 @@ void doCommand(String str, bool echo = false) {
 		configWiFi(W_ESPNOW, arg0.c_str(), arg1.c_str());
 	} else if (command == "mot") {
 		print("front-right %g front-left %g rear-right %g rear-left %g\n",
-			motors[MOTOR_FRONT_RIGHT], motors[MOTOR_FRONT_LEFT], motors[MOTOR_REAR_RIGHT], motors[MOTOR_REAR_LEFT]);
+			motors[MOT_FR], motors[MOT_FL], motors[MOT_RR], motors[MOT_RL]);
 	} else if (command == "log") {
 		printLogHeader();
 		if (arg0 == "dump") printLogData();
@@ -161,13 +161,13 @@ void doCommand(String str, bool echo = false) {
 	} else if (command == "ca") {
 		calibrateAccel();
 	} else if (command == "mfr") {
-		testMotor(MOTOR_FRONT_RIGHT, arg0.isEmpty() ? 0.2 : arg0.toFloat());
+		testMotor(MOT_FR, arg0.isEmpty() ? 0.2 : arg0.toFloat());
 	} else if (command == "mfl") {
-		testMotor(MOTOR_FRONT_LEFT, arg0.isEmpty() ? 0.2 : arg0.toFloat());
+		testMotor(MOT_FL, arg0.isEmpty() ? 0.2 : arg0.toFloat());
 	} else if (command == "mrr") {
-		testMotor(MOTOR_REAR_RIGHT, arg0.isEmpty() ? 0.2 : arg0.toFloat());
+		testMotor(MOT_RR, arg0.isEmpty() ? 0.2 : arg0.toFloat());
 	} else if (command == "mrl") {
-		testMotor(MOTOR_REAR_LEFT, arg0.isEmpty() ? 0.2 : arg0.toFloat());
+		testMotor(MOT_RL, arg0.isEmpty() ? 0.2 : arg0.toFloat());
 	} else if (command == "sys") {
 #ifdef ESP32
 		print("Chip: %s\n", ESP.getChipModel());

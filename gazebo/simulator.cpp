@@ -98,10 +98,10 @@ public:
 		const double maxThrust = 0.03 * ONE_G; // ~30 g, https://youtu.be/VtKI4Pjx8Sk?&t=78
 
 		const float scale0 = 1.0, scale1 = 1.1, scale2 = 0.9, scale3 = 1.05; // imitating motors asymmetry
-		float mfl = scale0 * maxThrust * motors[MOTOR_FRONT_LEFT];
-		float mfr = scale1 * maxThrust * motors[MOTOR_FRONT_RIGHT];
-		float mrl = scale2 * maxThrust * motors[MOTOR_REAR_LEFT];
-		float mrr = scale3 * maxThrust * motors[MOTOR_REAR_RIGHT];
+		float mfl = scale0 * maxThrust * motors[MOT_FL];
+		float mfr = scale1 * maxThrust * motors[MOT_FR];
+		float mrl = scale2 * maxThrust * motors[MOT_RL];
+		float mrr = scale3 * maxThrust * motors[MOT_RR];
 
 		body->AddLinkForce(Vector3d(0.0, 0.0, mfl), Vector3d(dist, dist, 0.0));
 		body->AddLinkForce(Vector3d(0.0, 0.0, mfr), Vector3d(dist, -dist, 0.0));
@@ -110,10 +110,10 @@ public:
 
 		// torque
 		const double maxTorque = 0.0024 * ONE_G; // ~24 g*cm
-		body->AddRelativeTorque(Vector3d(0.0, 0.0, scale0 * maxTorque * motors[MOTOR_FRONT_LEFT]));
-		body->AddRelativeTorque(Vector3d(0.0, 0.0, scale1 * -maxTorque * motors[MOTOR_FRONT_RIGHT]));
-		body->AddRelativeTorque(Vector3d(0.0, 0.0, scale2 * -maxTorque * motors[MOTOR_REAR_LEFT]));
-		body->AddRelativeTorque(Vector3d(0.0, 0.0, scale3 * maxTorque * motors[MOTOR_REAR_RIGHT]));
+		body->AddRelativeTorque(Vector3d(0.0, 0.0, scale0 * maxTorque * motors[MOT_FL]));
+		body->AddRelativeTorque(Vector3d(0.0, 0.0, scale1 * -maxTorque * motors[MOT_FR]));
+		body->AddRelativeTorque(Vector3d(0.0, 0.0, scale2 * -maxTorque * motors[MOT_RL]));
+		body->AddRelativeTorque(Vector3d(0.0, 0.0, scale3 * maxTorque * motors[MOT_RR]));
 	}
 
 	void initNode() {
