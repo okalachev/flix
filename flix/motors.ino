@@ -14,7 +14,7 @@ int pwmStop = 0;
 int pwmMin = 0;
 int pwmMax = -1; // -1 means duty cycle mode
 
-const int MOTOR_REAR_LEFT = 0, MOTOR_REAR_RIGHT = 1, MOTOR_FRONT_RIGHT = 2, MOTOR_FRONT_LEFT = 3;
+const int MOT_RL = 0, MOT_RR = 1, MOT_FR = 2, MOT_FL = 3;
 
 void setupMotors() {
 	print("Setup motors\n");

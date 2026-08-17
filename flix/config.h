@@ -14,10 +14,10 @@ void setDefaults() {
 
 	#ifdef CONFIG_IDF_TARGET_ESP32
 		// classic esp32 configuration
-		motorPins[0] = 12;
-		motorPins[1] = 13;
-		motorPins[2] = 14;
-		motorPins[3] = 15;
+		motorPins[MOT_RL] = 12;
+		motorPins[MOT_RR] = 13;
+		motorPins[MOT_FR] = 14;
+		motorPins[MOT_FL] = 15;
 	#endif
 
 	#ifdef FLIX2
@@ -25,9 +25,9 @@ void setDefaults() {
 		imuIntPin = 10;
 		imuCsPin = 14;
 		voltagePin = 3;
-		motorPins[0] = 41;
-		motorPins[1] = 7;
-		motorPins[2] = 18;
-		motorPins[3] = 38;
+		motorPins[MOT_RL] = 41;
+		motorPins[MOT_RR] = 7;
+		motorPins[MOT_FR] = 18;
+		motorPins[MOT_FL] = 38;
 	#endif
 }
