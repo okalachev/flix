@@ -5,6 +5,7 @@ on:
     branches: [ '*' ]
   pull_request:
     branches: [ master ]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -43,9 +44,9 @@ jobs:
         token: ${{ secrets.QUADCOPTER_DEV_TOKEN }}
         path: quadcopter.dev
         fetch-depth: 1
-    - name: Add additional files to build
+    - name: Add additional files
       if: ${{ env.QUADCOPTER_DEV_TOKEN && env.FULL }}
-      run: cp -a -n quadcopter.dev/. docs/build/
+      run: cp -a quadcopter.dev/. docs/build/
     - name: Wait for Build to complete
       if: ${{ env.FULL }}
       uses: matiasalbarello/wait-on-check-action-ts@v1.2.0

@@ -53,7 +53,7 @@ The official PCB *(Flix2)* is in development now. Follow the [project's channel]
 
 Outdoor flights demo video of the current prototype:
 
-<a href="https://youtu.be/7g0j1k6r8xM"><img width=300 src="https://quadcopter.dev/video/7g0j1k6r8xM.svg"></a>
+<a href="https://youtu.be/KXlNmvUTi4g"><img width=300 src="https://quadcopter.dev/video/KXlNmvUTi4g.svg"></a>
 
 ### Position control
 
