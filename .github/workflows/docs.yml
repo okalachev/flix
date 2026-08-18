@@ -5,6 +5,7 @@ on:
     branches: [ '*' ]
   pull_request:
     branches: [ master ]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -26,15 +27,28 @@ jobs:
     runs-on: ubuntu-latest
     needs: markdownlint
     env:
-      BINARIES: ${{ github.event_name == 'push' && (github.ref_name == 'master' || github.ref_name == 'dev') && github.repository == 'okalachev/flix' }}
+      FULL: ${{ github.event_name == 'push' && (github.ref_name == 'master' || github.ref_name == 'dev') && github.repository == 'okalachev/flix' }}
+      QUADCOPTER_DEV_TOKEN: ${{ secrets.QUADCOPTER_DEV_TOKEN }}
     steps:
     - uses: actions/checkout@v7
     - name: Install mdBook
       run: cargo install mdbook --vers 0.4.43 --locked
     - name: Build book
       run: cd docs && mdbook build
+    - name: Download additional files
+      if: ${{ env.QUADCOPTER_DEV_TOKEN && env.FULL }}
+      uses: actions/checkout@v7
+      with:
+        repository: okalachev/quadcopter.dev
+        ref: content
+        token: ${{ secrets.QUADCOPTER_DEV_TOKEN }}
+        path: quadcopter.dev
+        fetch-depth: 1
+    - name: Add additional files
+      if: ${{ env.QUADCOPTER_DEV_TOKEN && env.FULL }}
+      run: cp -a quadcopter.dev/. docs/build/
     - name: Wait for Build to complete
-      if: ${{ env.BINARIES }}
+      if: ${{ env.FULL }}
       uses: lewagon/wait-on-check-action@v1.9.1
       with:
         ref: ${{ github.sha }}
@@ -42,7 +56,7 @@ jobs:
         repo-token: ${{ secrets.GITHUB_TOKEN }}
         wait-interval: 30
     - name: Find firmware binaries
-      if: ${{ env.BINARIES }}
+      if: ${{ env.FULL }}
       id: build_run
       run: |
         RUN_ID=$(gh api "repos/${{ github.repository }}/actions/workflows/build.yml/runs?head_sha=${{ github.sha }}&per_page=1" --jq '.workflow_runs[0].id')
@@ -50,7 +64,7 @@ jobs:
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Download firmware binaries
-      if: ${{ env.BINARIES }}
+      if: ${{ env.FULL }}
       uses: actions/download-artifact@v7
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -59,7 +73,7 @@ jobs:
         name: firmware-binary
         path: docs/build
     - name: Create shortcuts for firmware binaries
-      if: ${{ env.BINARIES }}
+      if: ${{ env.FULL }}
       working-directory: docs/build
       run: |
         for FQBN in esp32.esp32.*; do
