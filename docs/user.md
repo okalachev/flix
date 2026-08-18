@@ -4,6 +4,24 @@ This page contains user-built drones based on the Flix project. Publish your pro
 
 ---
 
+## RoboCamp 2026
+
+<p align=center>
+	<a href="https://quadcopter.dev/img/user/robocamp2026/1.jpg"><img height=200 src="https://quadcopter.dev/img/user/robocamp2026/1.preview.jpg"></a> <a href="https://quadcopter.dev/img/user/robocamp2026/2.jpg"><img height=200 src="https://quadcopter.dev/img/user/robocamp2026/2.preview.jpg"></a> <a href="https://quadcopter.dev/img/user/robocamp2026/3.jpg"><img height=200 src="https://quadcopter.dev/img/user/robocamp2026/3.preview.jpg"></a>
+</p>
+
+The second Flix RoboCamp event took place in July 2026 in Saint Petersburg. The main goal for the competitors was to build a Flix-based quadcopter and implement **autonomous position control** using distance sensors and an overhead camera. Several participants were able to implement altitude hold, and two participants implemented stable position hold.
+
+### Highlights
+
+The winning project performed an automatic takeoff, stable position hold (2 min+), and navigation to a point selected by the user by clicking on the camera image.
+
+See the demonstration video:
+
+<a href="https://youtu.be/369Xowm4HcU"><img width=300 src="https://quadcopter.dev/video/369Xowm4HcU.svg"></a>
+
+---
+
 Author: [Oleg1405](https://t.me/Oleg1405).<br>
 Description: ESP32 Mini, MPU-6500 IMU, boost converter, BT2.0 power connector, 65 mm props, BetaFPV ELRS Lite Receiver, Radiomaster Pocket + Mavlink Joystick (Android) control.
 
