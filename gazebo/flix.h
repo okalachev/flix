@@ -36,7 +36,7 @@ void interpretControls();
 void controlAttitude();
 void controlRates();
 void controlTorque();
-void desaturate(float& a, float& b, float& c, float& d);
+void desaturate();
 const char* getModeName();
 void sendMotors();
 int getDutyCycle(float value);
