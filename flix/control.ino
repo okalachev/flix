@@ -107,15 +107,12 @@ void controlTorque() {
 	if (!torqueTarget.valid()) return; // skip torque control
 
 	if (!armed) {
-		memset(motors, 0, sizeof(motors)); // stop motors if disarmed
+		for (float& m : motors) m = 0; // stop motors if disarmed
 		return;
 	}
 
 	if (thrustTarget < 0.1) {
-		motors[0] = 0.1; // idle thrust
-		motors[1] = 0.1;
-		motors[2] = 0.1;
-		motors[3] = 0.1;
+		for (float& m : motors) m = 0.1; // idle thrust
 		return;
 	}
 
@@ -124,23 +121,27 @@ void controlTorque() {
 	motors[MOT_RL] = thrustTarget + torqueTarget.x + torqueTarget.y - torqueTarget.z;
 	motors[MOT_RR] = thrustTarget - torqueTarget.x + torqueTarget.y + torqueTarget.z;
 
-	// Prioritize angle control over thrust control
-	desaturate(motors[MOT_FL], motors[MOT_FR], motors[MOT_RL], motors[MOT_RR]);
-
-	motors[0] = constrain(motors[0], 0, 1);
-	motors[1] = constrain(motors[1], 0, 1);
-	motors[2] = constrain(motors[2], 0, 1);
-	motors[3] = constrain(motors[3], 0, 1);
+	desaturate(); // prioritize angle control over thrust control
 }
 
-void desaturate(float& a, float& b, float& c, float& d) {
-	float maxThrust = max(max(a, b), max(c, d));
-	if (maxThrust > 1) {
-		float diff = maxThrust - 1;
-		a -= diff;
-		b -= diff;
-		c -= diff;
-		d -= diff;
+void desaturate() {
+	float max_ = -INFINITY, min_ = INFINITY;
+	float correction = 0;
+
+	// Find maximum and minimum thrust
+	for (float m : motors) {
+		if (m > max_) max_ = m;
+		if (m < min_) min_ = m;
+	}
+
+	if (max_ > 1) { // thrust is above maximum
+		correction = max_ - 1;
+	} else if (min_ < 0) { // thrust is below minimum
+		correction = min_;
+	}
+
+	for (float& m : motors) {
+		m -= correction;
 	}
 }
 
