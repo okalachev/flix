@@ -28,7 +28,7 @@ Do the following:
 * **Calibrate the accelerometer.** if is wasn't done before. Type `ca` command in Serial Monitor and follow the instructions.
 * **Check the attitude estimation**. Connect to the drone using QGroundControl. Rotate the drone in different orientations and check if the attitude estimation is shown exactly as on the video below:
 
-  <a href="https://youtu.be/yVRN23-GISU"><img width=200 src="https://i3.ytimg.com/vi/yVRN23-GISU/maxresdefault.jpg"></a>
+  <a href="https://youtu.be/yVRN23-GISU"><img width=200 src="https://quadcopter.dev/video/yVRN23-GISU.svg"></a>
 
 * **Check the IMU output**. Connect to the drone using QGroundControl on your computer. Go to the *Analyze* tab, *MAVLINK Inspector*. Plot the data from the `SCALED_IMU` message. The gyroscope and accelerometer data should change according to the drone movement.
 * **Check the motors type**. Motors with exact 3.7V voltage are needed, not ranged working voltage (3.7V — 6V).
