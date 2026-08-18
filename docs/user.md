@@ -2,8 +2,6 @@
 
 This page contains user-built drones based on the Flix project. Publish your projects into the official Telegram-chat: [@opensourcequadcopterchat](https://t.me/opensourcequadcopterchat) or send materials as a pull request.
 
----
-
 ## RoboCamp 2026
 
 <p align=center>
@@ -59,7 +57,7 @@ Repository with all the code and PCB sources: https://github.com/Frapais/Sprig-D
 
 Detailed video about making the drone:
 
-<a href="https://youtu.be/82Q-uBq6s48"><img width=400 src="https://i3.ytimg.com/vi/82Q-uBq6s48/maxresdefault.jpg"></a>
+<a href="https://youtu.be/82Q-uBq6s48"><img width=400 src="https://quadcopter.dev/video/82Q-uBq6s48.svg"></a>
 
 ---
 
@@ -191,7 +189,7 @@ RoboCamp took place in July 2025, Saint Petersburg, where 9 participants designe
 
 See the detailed video about the event:
 
-<a href="https://youtu.be/Wd3yaorjTx0"><img width=500 src="https://img.youtube.com/vi/Wd3yaorjTx0/sddefault.jpg"></a>
+<a href="https://youtu.be/Wd3yaorjTx0"><img width=500 src="https://quadcopter.dev/video/Wd3yaorjTx0.sd.svg"></a>
 
 Built drones:
 
