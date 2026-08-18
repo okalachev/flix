@@ -49,7 +49,7 @@ jobs:
       run: cp -a quadcopter.dev/. docs/build/
     - name: Wait for Build to complete
       if: ${{ env.FULL }}
-      uses: lewagon/wait-on-check-action@v1.9.1
+      uses: matiasalbarello/wait-on-check-action-ts@v1.2.0
       with:
         ref: ${{ github.sha }}
         check-name: build_linux
