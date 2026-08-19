@@ -18,7 +18,7 @@
 #include "Arduino.h"
 #include "flix.h"
 
-#include "cli.ino"
+#include "console.ino"
 #include "control.ino"
 #include "estimate.ino"
 #include "safety.ino"
