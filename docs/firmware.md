@@ -28,7 +28,7 @@ Firmware source files are located in `flix` directory.
 * [`control.ino`](../flix/control.ino) — control subsystem, three-dimensional two-level cascade PID controller.
 * [`motors.ino`](../flix/motors.ino) — PWM motor output control.
 * [`mavlink.ino`](../flix/mavlink.ino) — interaction with QGroundControl or [pyflix](../tools/pyflix) via MAVLink protocol.
-* [`cli.ino`](../flix/cli.ino) — serial and MAVLink console.
+* [`console.ino`](../flix/console.ino) — serial and MAVLink console.
 
 Utility files:
 
@@ -60,7 +60,7 @@ To write into the console, `print()` function is used. This function sends data 
 print("Test value: %.2f\n", testValue);
 ```
 
-In order to add a console command, modify the `doCommand()` function in `cli.ino` file.
+In order to add a console command, modify the `doCommand()` function in `console.ino` file.
 
 > [!IMPORTANT]
 > Avoid using delays in in-flight commands, it will **crash** the drone! (The design is one-threaded.)

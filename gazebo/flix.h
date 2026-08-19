@@ -45,7 +45,7 @@ void testMotor(int, float);
 void print(const char* format, ...);
 void pause(float duration);
 void doCommand(String str, bool echo);
-void handleInput();
+void handleConsole();
 void setupRC();
 void normalizeRC();
 void calibrateRC();

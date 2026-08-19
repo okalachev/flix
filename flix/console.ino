@@ -56,6 +56,19 @@ const char* motd =
 "reset - reset drone's state\n"
 "reboot - reboot the drone\n";
 
+// Always redirect Serial to USB on ESP32-S3/ESP32-C3
+#if SOC_USB_SERIAL_JTAG_SUPPORTED && ARDUINO_USB_MODE
+#if !ARDUINO_USB_CDC_ON_BOOT
+HWCDC HWCDCSerial;
+#endif
+#undef Serial
+#define Serial HWCDCSerial
+#endif
+
+void setupConsole() {
+	Serial.begin(115200);
+}
+
 void print(const char* format, ...) {
 	char buf[3000];
 	va_list args;
@@ -70,7 +83,7 @@ void pause(float duration) {
 	float start = t;
 	while (t - start < duration) {
 		step();
-		handleInput();
+		handleConsole();
 		processMavlink();
 		delay(50);
 	}
@@ -199,7 +212,7 @@ void doCommand(String str, bool echo = false) {
 	}
 }
 
-void handleInput() {
+void handleConsole() {
 	static bool showMotd = true;
 	static String input;
 

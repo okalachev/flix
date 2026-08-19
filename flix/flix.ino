@@ -16,7 +16,7 @@ extern bool landed;
 extern float motors[4];
 
 void setup() {
-	Serial.begin(115200);
+	setupConsole();
 	print("Initializing Flix\n");
 	setupParameters();
 	setupPower();
@@ -37,7 +37,7 @@ void loop() {
 	estimate();
 	control();
 	sendMotors();
-	handleInput();
+	handleConsole();
 	processMavlink();
 	readVoltage();
 	logData();
