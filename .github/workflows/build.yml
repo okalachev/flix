@@ -21,13 +21,13 @@ jobs:
     - name: Build firmware for ESP32-C3
       run: make BOARD=esp32:esp32:esp32c3
     - name: Build firmware for ESP32-S3
-      run: make BOARD=esp32:esp32:esp32s3:CDCOnBoot=cdc
+      run: make BOARD=esp32:esp32:esp32s3
     - name: Build firmware for ESP32-S3 with QSPI PSRAM
-      run: make BOARD=esp32:esp32:esp32s3:CDCOnBoot=cdc,PSRAM=enabled EXTRA=--output-dir=flix/build/esp32.esp32.esp32s3.qspi
+      run: make BOARD=esp32:esp32:esp32s3:PSRAM=enabled EXTRA=--output-dir=flix/build/esp32.esp32.esp32s3.qspi
     - name: Build firmware for ESP32-S3 with OPI PSRAM
-      run: make BOARD=esp32:esp32:esp32s3:CDCOnBoot=cdc,PSRAM=opi EXTRA=--output-dir=flix/build/esp32.esp32.esp32s3.opi
+      run: make BOARD=esp32:esp32:esp32s3:PSRAM=opi EXTRA=--output-dir=flix/build/esp32.esp32.esp32s3.opi
     - name: Build firmware for Flix2
-      run: make BOARD=esp32:esp32:esp32s3:FlashSize=4M,CDCOnBoot=cdc,PSRAM=opi FLAGS=-DFLIX2 EXTRA=--output-dir=flix/build/esp32.esp32.flix2
+      run: make BOARD=esp32:esp32:esp32s3:PSRAM=opi FLAGS=-DFLIX2 EXTRA=--output-dir=flix/build/esp32.esp32.flix2
     - name: Upload binaries
       uses: actions/upload-artifact@v7
       with:
