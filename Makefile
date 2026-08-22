@@ -42,6 +42,23 @@ simulator: build_simulator
 	GAZEBO_PLUGIN_PATH=$$GAZEBO_PLUGIN_PATH:${CURDIR}/gazebo/build \
 	gazebo --verbose ${CURDIR}/gazebo/flix.world
 
+docker:
+	xhost +local:docker
+	GPU_DOCKER_ARG="--gpus all"; if ! command -v nvidia-smi > /dev/null 2>&1 || ! nvidia-smi > /dev/null 2>&1; then GPU_DOCKER_ARG=""; fi; \
+	docker run -it --rm --name gazebo_flix \
+		--device=/dev/dri \
+		-e DISPLAY=$$DISPLAY \
+		-v /tmp/.X11-unix:/tmp/.X11-unix \
+		-v arduino_cache:/home/ubuntu/.config/arduino \
+		-v arduino_data:/home/ubuntu/.arduino15 \
+		-v arduino_home:/home/ubuntu/Arduino \
+		-v ${CURDIR}:/flix \
+		-w /flix \
+		--network host \
+		$$GPU_DOCKER_ARG \
+		goldarte/gazebo-with-arduino \
+		bash
+
 log:
 	tools/log.py
 
@@ -51,4 +68,4 @@ plot:
 clean:
 	rm -rf gazebo/build flix/build flix/cache .core .libs
 
-.PHONY: build upload monitor core libs cmake build_simulator simulator log clean
+.PHONY: build upload monitor core libs cmake build_simulator simulator docker log clean
