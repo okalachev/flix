@@ -83,6 +83,11 @@ jobs:
           ln -s "$FQBN/flix.ino.bin" "flix.$BOARD.bin"
           ln -s "$FQBN/flix.ino.bootloader.bin" "flix.$BOARD.bootloader.bin"
         done
+    - name: Test build artifacts
+      working-directory: docs/build
+      run: |
+        ls; ls index.html gyro.html geometry.html firmware.html flix.esp32.merged.bin flix.esp32c3.merged.bin \
+        flix.esp32s3.merged.bin flix.esp32s3.opi.merged.bin flix.esp32s3.qspi.merged.bin flix.flix2.merged.bin
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v5
       with:
