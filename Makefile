@@ -1,8 +1,9 @@
 BOARD = esp32:esp32:esp32
-PORT := $(strip $(wildcard /dev/serial/by-id/usb-Silicon_Labs_CP21* /dev/serial/by-id/usb-1a86_USB_Single_Serial_* /dev/cu.usbserial-* /dev/cu.usbmodem*))
+PORT = $(strip $(wildcard /dev/serial/by-id/usb-Silicon_Labs_CP21* /dev/serial/by-id/usb-1a86_USB_Single_Serial_* /dev/cu.usbserial-* /dev/cu.usbmodem*))
 VERSION = $(shell git describe --always --dirty)
 
-export ARDUINO_NETWORK_CONNECTION_TIMEOUT := 1h
+export ARDUINO_NETWORK_CONNECTION_TIMEOUT = 1h
+export ARDUINO_SKETCH_ALWAYS_EXPORT_BINARIES = 1
 
 build: .core .libs
 	arduino-cli compile flix \

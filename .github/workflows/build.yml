@@ -10,8 +10,6 @@ on:
 jobs:
   build_linux:
     runs-on: ubuntu-latest
-    env:
-        ARDUINO_SKETCH_ALWAYS_EXPORT_BINARIES: 1
     steps:
     - uses: actions/checkout@v7
     - name: Install Arduino CLI
