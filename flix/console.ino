@@ -89,7 +89,7 @@ void pause(float duration) {
 	float start = t;
 	while (t - start < duration) {
 		step();
-		handleInput();
+		handleConsole();
 		processMavlink();
 		delay(50);
 	}
@@ -232,7 +232,7 @@ void doCommand(String str, bool echo = false) {
 	}
 }
 
-void handleInput() {
+void handleConsole() {
 	static bool showMotd = true;
 	static String input;
 

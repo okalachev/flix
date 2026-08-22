@@ -39,7 +39,7 @@ void loop() {
 	estimate();
 	control();
 	sendMotors();
-	handleInput();
+	handleConsole();
 	processMavlink();
 	readVoltage();
 	loopLog();
