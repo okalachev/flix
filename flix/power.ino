@@ -3,8 +3,10 @@
 
 // Power management
 
+#ifndef CONFIG_IDF_TARGET_ESP32S31
 #include <soc/soc.h>
 #include <soc/rtc_cntl_reg.h>
+#endif
 #include "filter.h"
 #include "util.h"
 
@@ -14,7 +16,9 @@ int voltagePin = -1;
 float voltageScale = 2;
 
 void setupPower() {
+#ifndef CONFIG_IDF_TARGET_ESP32S31
 	REG_CLR_BIT(RTC_CNTL_BROWN_OUT_REG, RTC_CNTL_BROWN_OUT_ENA); // disable reset on low voltage
+#endif
 	if (digitalPinToAnalogChannel(voltagePin) == -1) voltagePin = -1; // test ADC pin
 }
 

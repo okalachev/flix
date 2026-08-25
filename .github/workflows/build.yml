@@ -38,6 +38,28 @@ jobs:
     - name: Check c_cpp_properties.json
       run: tools/check_c_cpp_properties.py
 
+  build_linux_s31:
+    runs-on: ubuntu-latest
+    env:
+        ARDUINO_SKETCH_ALWAYS_EXPORT_BINARIES: 1
+    steps:
+    - uses: actions/checkout@v7
+    - name: Install Arduino CLI
+      run: curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | BINDIR=/usr/local/bin sh
+    - name: Install Arduino ESP32 core from idf-release/v6.1
+      run: |
+        mkdir -p ~/Arduino/hardware/espressif
+        git clone --depth 1 --branch idf-release/v6.1 --recursive https://github.com/espressif/arduino-esp32.git ~/Arduino/hardware/espressif/esp32
+        python3 ~/Arduino/hardware/espressif/esp32/tools/get.py
+        touch .core
+    - name: Build firmware for ESP32-S31
+      run: make BOARD=espressif:esp32:esp32s31
+    - name: Upload binaries
+      uses: actions/upload-artifact@v7
+      with:
+        name: firmware-binary-s31
+        path: flix/build
+
   build_macos:
     runs-on: macos-latest
     steps:
