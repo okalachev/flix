@@ -51,7 +51,7 @@ Beginners can [download the sources as a ZIP archive](https://github.com/okalach
 3. Install ESP32 core, version 3.3.10. See the [official Espressif's instructions](https://docs.espressif.com/projects/arduino-esp32/en/latest/installing.html#installing-using-arduino-ide) on installing ESP32 Core in Arduino IDE.
 4. Install the following libraries using [Library Manager](https://docs.arduino.cc/software/ide-v2/tutorials/ide-v2-installing-a-library):
    * `FlixPeriph`, the latest version.
-   * `MAVLink`, version 2.0.25.
+   * `MAVLink`, version 2.0.33.
 5. Open the `flix/flix.ino` sketch from downloaded firmware sources in Arduino IDE.
 6. Connect your ESP32 board to the computer and choose correct board type in Arduino IDE (*WEMOS D1 MINI ESP32* for ESP32 Mini, *ESP32S3 Dev Module* for ESP32-S3 Super Mini) and the port.
 7. Set *Tools* ⇒ *Core Debug Level* to *Error* to see the errors in the serial console.

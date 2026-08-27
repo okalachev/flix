@@ -33,7 +33,7 @@ void sendMavlink() {
 	uint32_t time = t * 1000;
 
 	if (telemetrySlow) {
-		mavlink_msg_heartbeat_pack(mavlinkSysId, MAV_COMP_ID_AUTOPILOT1, &msg, MAV_TYPE_QUADROTOR, MAV_AUTOPILOT_GENERIC,
+		mavlink_msg_heartbeat_pack(mavlinkSysId, MAV_COMP_ID_AUTOPILOT1, &msg, MAV_TYPE_QUADROTOR, MAV_AUTOPILOT_FLIX,
 			(armed ? MAV_MODE_FLAG_SAFETY_ARMED : 0) |
 			((mode == STAB) ? MAV_MODE_FLAG_STABILIZE_ENABLED : 0) |
 			((mode == AUTO) ? MAV_MODE_FLAG_AUTO_ENABLED : MAV_MODE_FLAG_MANUAL_INPUT_ENABLED),
