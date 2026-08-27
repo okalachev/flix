@@ -23,7 +23,7 @@ core .core:
 libs .libs:
 	arduino-cli lib update-index
 	arduino-cli lib install "FlixPeriph"
-	arduino-cli lib install "MAVLink"@2.0.25
+	arduino-cli lib install "MAVLink"@2.0.33
 	touch .libs
 
 upload_proxy: .core .libs
