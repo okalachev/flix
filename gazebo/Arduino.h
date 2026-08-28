@@ -64,6 +64,10 @@ public:
 		std::transform(this->begin(), this->end(), this->begin(),
 			[](unsigned char c) { return std::tolower(c); });
 	}
+	void toUpperCase() {
+		std::transform(this->begin(), this->end(), this->begin(),
+			[](unsigned char c) { return std::toupper(c); });
+	}
 };
 
 class Print;
@@ -151,6 +155,17 @@ public:
 			return c;
 		}
 		return -1;
+	}
+
+	int read(uint8_t *buf, int len) {
+		if (available()) {
+			return ::read(STDIN_FILENO, buf, len);
+		}
+		return 0;
+	}
+
+	int write(const uint8_t *data, int len) {
+		return ::write(STDOUT_FILENO, data, len);
 	}
 
 	void setRxInvert(bool invert) {};
