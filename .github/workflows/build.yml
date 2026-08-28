@@ -90,7 +90,7 @@ jobs:
         GAZEBO_PLUGIN_PATH: ${{ github.workspace }}/gazebo/build
       run: |
         gzserver --verbose gazebo/flix.world &
-        timeout -k 10s 120s tools/example.py
+        timeout -k 10s 120s tools/test.py
     - uses: actions/upload-artifact@v7
       with:
         name: gazebo-plugin-binary
