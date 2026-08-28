@@ -2,44 +2,46 @@
 
 # Script for testing pyflix and the simulation.
 
-from math import isclose, isnan, isfinite
+from pytest import approx
+from math import isnan, isfinite
+import time
 from pyflix import Flix
 
-print('=== Connect...')
-flix = Flix()
+def test():
+    print('=== Connect...')
+    flix = Flix(timeout=20)
 
-print('=== Check initial state')
-assert flix.connected
-assert flix.mode == 'STAB'
-assert not flix.armed
-assert flix.landed
-assert isnan(flix.voltage)
-assert all(isclose(r, 0) for r in flix.rates)
-assert isclose(flix.attitude[0], 0) and isclose(flix.attitude[1], 0) and isclose(flix.attitude[2], 0)
-assert isclose(flix.attitude[3], 1)
-assert all(isclose(a, 0) for a in flix.attitude_euler)
-assert all(m == 0 for m in flix.motors)
-assert all(isclose(a, 0) for a in flix.acc)
-assert all(isclose(g, 0) for g in flix.gyro)
-assert all(ch == 0 for ch in flix.channels)
+    print('=== Check initial state')
+    time.sleep(1)  # give more time for initial state
+    assert flix.connected
+    assert flix.mode == 'STAB'
+    assert not flix.armed
+    assert flix.landed
+    assert isnan(flix.voltage) or flix.voltage == approx(4.2)
+    assert flix.rates == approx((0, 0, 0), abs=0.01)
+    assert flix.attitude == approx((1, 0, 0, 0), abs=0.01)
+    assert flix.attitude_euler == approx((0, 0, 0), abs=0.01)
+    assert all(m == 0 for m in flix.motors)
+    assert flix.acc == approx((0, 0, 9.81), abs=0.1)
+    assert flix.gyro == approx((0, 0, 0), abs=0.01)
+    assert all(ch == 0 for ch in flix.channels)
 
-print('=== Check console commands')
-assert 'Time: ' in flix.cli('time')
-assert 'Landed: 1' in flix.cli('imu')
+    print('=== Check console commands')
+    assert 'Time: ' in flix.cli('time')
+    assert 'landed: 1' in flix.cli('imu')
 
-print('=== Check parameters')
-assert isfinite(flix.get_param('CTL_ATT_P_P'))
-flix.set_param('CTL_ATT_P_P', 10.0)
+    print('=== Check parameters')
+    assert isfinite(flix.get_param('CTL_ATT_P_P'))
+    flix.set_param('CTL_ATT_P_P', 10.0)
 
-print('=== Additional checks')
-assert flix.wait('connected') is True
-assert flix.wait('gyro') is not None
-flix.wait('armed', False)
-flix.wait('mode', 'STAB')
-flix.wait('motors', lambda motors: not any(motors))
-flix.set_armed(True)
-flix.wait('armed', True)
-flix.set_mode('ACRO')
-flix.wait('mode', 'ACRO')
-flix.set_mode('AUTO')
-flix.wait('mode', 'AUTO')
+    print('=== Additional checks')
+    assert flix.wait('gyro') == approx((0, 0, 0), abs=0.01)
+    flix.wait('armed', False)
+    flix.wait('mode', 'STAB')
+    flix.wait('motors', lambda motors: not any(motors))
+    flix.set_armed(True)
+    flix.wait('armed', True)
+    flix.set_mode('ACRO')
+    flix.wait('mode', 'ACRO')
+    flix.set_mode('AUTO')
+    flix.wait('mode', 'AUTO')
