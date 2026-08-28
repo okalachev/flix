@@ -44,7 +44,7 @@ class Flix:
     _print_buffer: str = ''
     _modes = ['RAW', 'ACRO', 'STAB', 'AUTO']
 
-    def __init__(self, system_id: int=1, wait_connection: bool=True, device=os.getenv('FLIX_DEVICE')):
+    def __init__(self, system_id: int=1, wait_connection: bool=True, timeout: Optional[float]=None, device=os.getenv('FLIX_DEVICE')):
         if not (0 <= system_id < 256):
             raise ValueError('system_id must be in range [0, 255]')
         self._setup_mavlink()
@@ -74,7 +74,7 @@ class Flix:
         self._heartbeat_thread = Thread(target=self._send_heartbeat, daemon=True)
         self._heartbeat_thread.start()
         if wait_connection:
-            self.wait('mavlink.HEARTBEAT')
+            self.wait('mavlink.HEARTBEAT', timeout=timeout)
             time.sleep(0.6) # give some time to receive initial state
 
     def _init_state(self):
