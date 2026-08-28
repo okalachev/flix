@@ -138,6 +138,7 @@ public:
 
 	int available() {
 		// to implement for Windows, see https://stackoverflow.com/a/71992965/6850197
+		if (!isatty(STDIN_FILENO)) return 0;
 		struct pollfd pfd = { .fd = STDIN_FILENO, .events = POLLIN };
 		return poll(&pfd, 1, 0) > 0;
 	}

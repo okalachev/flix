@@ -1,3 +1,4 @@
+pymavlink
 docopt
 matplotlib
 mcap
