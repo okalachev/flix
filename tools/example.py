@@ -36,5 +36,5 @@ print('Gyro: ', flix.wait('gyro'))
 print('=== Wait for HEARTBEAT message...')
 print(flix.wait('mavlink.HEARTBEAT'))
 
-print('=== When until landed = False (remove drone from the surface)')
-flix.wait('landed', value=False)
+# print('=== When until landed = False (remove drone from the surface)')
+# flix.wait('landed', value=False)
