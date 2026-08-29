@@ -48,6 +48,6 @@ def test():
 
     print("=== Check command errors")
     with raises(RuntimeError, match='MAV_RESULT_DENIED'):
-        flix._command_send(mavlink.MAV_CMD_DO_SET_MODE, [0, 99, 0, 0, 0, 0, 0])  # invalid mode
+        flix.send_command(mavlink.MAV_CMD_DO_SET_MODE, [0, 99, 0, 0, 0, 0, 0])  # invalid mode
     with raises(RuntimeError, match='MAV_RESULT_UNSUPPORTED'):
-        flix._command_send(mavlink.MAV_CMD_DO_PARACHUTE, [0, 0, 0, 0, 0, 0, 0])  # unsupported command
+        flix.send_command(mavlink.MAV_CMD_DO_PARACHUTE, [0, 0, 0, 0, 0, 0, 0])  # unsupported command

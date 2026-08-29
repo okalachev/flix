@@ -255,23 +255,6 @@ class Flix:
     def _flu_to_mavlink(v: Sequence[float]) -> List[float]:
         return Flix._mavlink_to_flu(v)  # flu to mavlink is the same as mavlink to flu
 
-    def _command_send(self, command: int, params: Sequence[float]):
-        if len(params) != 7:
-            raise ValueError('Command must have 7 parameters')
-        for attempt in range(3):
-            try:
-                logger.debug(f'Send command {command} with params {params} (attempt #{attempt + 1})')
-                self.mavlink.command_long_send(self.system_id, 0, command, 0, *params)  # type: ignore
-                ack = self.wait('mavlink.COMMAND_ACK', value=lambda msg: msg.command == command, timeout=0.1)
-                if ack.result != mavlink.MAV_RESULT_ACCEPTED:
-                    name = getattr(mavlink.enums['MAV_CMD'].get(command, {}), 'name', f'UNKNOWN({command})')
-                    result = getattr(mavlink.enums['MAV_RESULT'].get(ack.result, {}), 'name', f'UNKNOWN({ack.result})')
-                    raise RuntimeError(f'Command {name} failed with result {result}')
-                return
-            except TimeoutError:
-                continue
-        raise RuntimeError(f'Failed to send command {command} after 3 attempts')
-
     def _connected(self):
         # Reset disconnection timer
         self._disconnected_timer.cancel()
@@ -287,6 +270,23 @@ class Flix:
         logger.info('Connection is lost')
         self.connected = False
         self._trigger('disconnected')
+
+    def send_command(self, command: int, params: Sequence[float]):
+        if len(params) != 7:
+            raise ValueError('Command must have 7 parameters')
+        for attempt in range(3):
+            try:
+                logger.debug(f'Send command {command} with params {params} (attempt #{attempt + 1})')
+                self.mavlink.command_long_send(self.system_id, 0, command, 0, *params)  # type: ignore
+                ack: mavlink.MAVLink_command_ack_message = self.wait('mavlink.COMMAND_ACK', value=lambda msg: msg.command == command, timeout=0.1)
+                if ack.result != mavlink.MAV_RESULT_ACCEPTED:
+                    name = getattr(mavlink.enums['MAV_CMD'].get(command, {}), 'name', f'UNKNOWN({command})')
+                    result = getattr(mavlink.enums['MAV_RESULT'].get(ack.result, {}), 'name', f'UNKNOWN({ack.result})')
+                    raise RuntimeError(f'Command {name} failed with result {result}')
+                return
+            except TimeoutError:
+                continue
+        raise RuntimeError(f'Failed to send command {command} after 3 attempts')
 
     def get_param(self, name: str) -> float:
         if len(name.encode('ascii')) > 16:
@@ -319,10 +319,10 @@ class Flix:
     def set_mode(self, mode: Union[str, int]):
         if isinstance(mode, str):
             mode = self._modes.index(mode.upper())
-        self._command_send(mavlink.MAV_CMD_DO_SET_MODE, (0, mode, 0, 0, 0, 0, 0))
+        self.send_command(mavlink.MAV_CMD_DO_SET_MODE, (0, mode, 0, 0, 0, 0, 0))
 
     def set_armed(self, armed: bool):
-        self._command_send(mavlink.MAV_CMD_COMPONENT_ARM_DISARM, (1 if armed else 0, 0, 0, 0, 0, 0, 0))
+        self.send_command(mavlink.MAV_CMD_COMPONENT_ARM_DISARM, (1 if armed else 0, 0, 0, 0, 0, 0, 0))
 
     def set_position(self, position: Sequence[float], yaw: Optional[float] = None, wait: bool = False, tolerance: float = 0.1):
         raise NotImplementedError('Position control is not implemented yet')
