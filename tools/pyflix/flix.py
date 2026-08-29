@@ -264,7 +264,9 @@ class Flix:
                 self.mavlink.command_long_send(self.system_id, 0, command, 0, *params)  # type: ignore
                 ack = self.wait('mavlink.COMMAND_ACK', value=lambda msg: msg.command == command, timeout=0.1)
                 if ack.result != mavlink.MAV_RESULT_ACCEPTED:
-                    raise RuntimeError(f'Command {command} failed with result {ack.result}')
+                    name = getattr(mavlink.enums['MAV_CMD'].get(command, {}), 'name', f'UNKNOWN({command})')
+                    result = getattr(mavlink.enums['MAV_RESULT'].get(ack.result, {}), 'name', f'UNKNOWN({ack.result})')
+                    raise RuntimeError(f'Command {name} failed with result {result}')
                 return
             except TimeoutError:
                 continue
