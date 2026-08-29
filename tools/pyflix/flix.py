@@ -262,7 +262,9 @@ class Flix:
             try:
                 logger.debug(f'Send command {command} with params {params} (attempt #{attempt + 1})')
                 self.mavlink.command_long_send(self.system_id, 0, command, 0, *params)  # type: ignore
-                self.wait('mavlink.COMMAND_ACK', value=lambda msg: msg.command == command and msg.result == mavlink.MAV_RESULT_ACCEPTED, timeout=0.1)
+                ack = self.wait('mavlink.COMMAND_ACK', value=lambda msg: msg.command == command, timeout=0.1)
+                if ack.result != mavlink.MAV_RESULT_ACCEPTED:
+                    raise RuntimeError(f'Command {command} failed with result {ack.result}')
                 return
             except TimeoutError:
                 continue

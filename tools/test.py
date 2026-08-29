@@ -2,10 +2,10 @@
 
 # Script for testing pyflix and the simulation.
 
-from pytest import approx
+from pytest import approx, raises
 from math import isnan, isfinite
 import time
-from pyflix import Flix
+from pyflix import Flix, mavlink
 
 def test():
     print('=== Connect...')
@@ -45,3 +45,6 @@ def test():
     flix.wait('mode', 'ACRO')
     flix.set_mode('AUTO')
     flix.wait('mode', 'AUTO')
+
+    raises(RuntimeError, lambda: flix._command_send(mavlink.MAV_CMD_DO_SET_MODE, [0, 99, 0, 0, 0, 0, 0]))  # invalid mode
+    raises(RuntimeError, lambda: flix._command_send(mavlink.MAV_CMD_DO_PARACHUTE, [0, 0, 0, 0, 0, 0, 0]))  # unsupported command

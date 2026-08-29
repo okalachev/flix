@@ -245,38 +245,42 @@ void handleMavlink(const void *_msg) {
 		}
 	}
 
-	// Handle commands
 	if (msg.msgid == MAVLINK_MSG_ID_COMMAND_LONG) {
 		mavlink_command_long_t m;
 		mavlink_msg_command_long_decode(&msg, &m);
 		if (m.target_system && m.target_system != mavlinkSysId) return;
-		mavlink_message_t response;
-		bool accepted = false;
 
-		if (m.command == MAV_CMD_REQUEST_MESSAGE && m.param1 == MAVLINK_MSG_ID_AUTOPILOT_VERSION) {
-			accepted = true;
-			mavlink_msg_autopilot_version_pack(mavlinkSysId, MAV_COMP_ID_AUTOPILOT1, &response,
-				MAV_PROTOCOL_CAPABILITY_PARAM_FLOAT | MAV_PROTOCOL_CAPABILITY_MAVLINK2, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0);
-			sendMessage(&response);
-		}
-
-		if (m.command == MAV_CMD_COMPONENT_ARM_DISARM) {
-			if (m.param1 == 1 && controlThrottle > 0.05) return; // don't arm if throttle is not low
-			accepted = true;
-			armed = m.param1 == 1;
-		}
-
-		if (m.command == MAV_CMD_DO_SET_MODE) {
-			if (m.param2 < 0 || m.param2 > AUTO) return; // incorrect mode
-			accepted = true;
-			mode = m.param2;
-		}
-
-		// send command ack
+		int result = handleMavlinkCommand(&m);
 		mavlink_message_t ack;
-		mavlink_msg_command_ack_pack(mavlinkSysId, MAV_COMP_ID_AUTOPILOT1, &ack, m.command, accepted ? MAV_RESULT_ACCEPTED : MAV_RESULT_UNSUPPORTED, UINT8_MAX, 0, msg.sysid, msg.compid);
+		mavlink_msg_command_ack_pack(mavlinkSysId, MAV_COMP_ID_AUTOPILOT1, &ack, m.command, result, UINT8_MAX, 0, msg.sysid, msg.compid);
 		sendMessage(&ack);
 	}
+}
+
+int handleMavlinkCommand(const void *_m) {
+	const mavlink_command_long_t& m = *(mavlink_command_long_t *)_m;
+
+	if (m.command == MAV_CMD_REQUEST_MESSAGE && m.param1 == MAVLINK_MSG_ID_AUTOPILOT_VERSION) {
+		mavlink_message_t response;
+		mavlink_msg_autopilot_version_pack(mavlinkSysId, MAV_COMP_ID_AUTOPILOT1, &response,
+			MAV_PROTOCOL_CAPABILITY_PARAM_FLOAT | MAV_PROTOCOL_CAPABILITY_MAVLINK2, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0);
+		sendMessage(&response);
+		return MAV_RESULT_ACCEPTED;
+	}
+
+	if (m.command == MAV_CMD_COMPONENT_ARM_DISARM) {
+		if (m.param1 == 1 && controlThrottle > 0.05) return MAV_RESULT_DENIED; // don't arm if throttle is not low
+		armed = m.param1 == 1;
+		return MAV_RESULT_ACCEPTED;
+	}
+
+	if (m.command == MAV_CMD_DO_SET_MODE) {
+		if (m.param2 < 0 || m.param2 > AUTO) return MAV_RESULT_DENIED; // incorrect mode
+		mode = m.param2;
+		return MAV_RESULT_ACCEPTED;
+	}
+
+	return MAV_RESULT_UNSUPPORTED;
 }
 
 // Send shell output to GCS
