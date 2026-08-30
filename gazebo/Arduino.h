@@ -23,6 +23,8 @@
 #define MALLOC_CAP_SPIRAM (1<<10)
 #define MALLOC_CAP_8BIT (1<<2)
 #define ESP_NOW_MAX_DATA_LEN_V2 1470
+#define digitalPinIsValid(pin) true
+#define digitalPinCanOutput(pin) true
 
 #define constrain(amt,low,high) ((amt)<(low)?(low):((amt)>(high)?(high):(amt)))
 template<typename T> T max(T a, T b) { return a > b ? a : b; }
@@ -192,6 +194,7 @@ void *heap_caps_calloc(size_t n, size_t size, uint32_t caps) {
 }
 
 bool ledcAttach(uint8_t pin, uint32_t freq, uint8_t resolution) { return true; }
+bool ledcDetach(uint8_t pin) { return true; }
 bool ledcWrite(uint8_t pin, uint32_t duty) { return true; }
 uint32_t ledcChangeFrequency(uint8_t pin, uint32_t freq, uint8_t resolution) { return freq; }
 int8_t digitalPinToAnalogChannel(uint8_t pin) { return -1; }

@@ -372,6 +372,17 @@ class Flix:
             raise ValueError('throttle must be in range [0, 1]')
         self.mavlink.manual_control_send(self.system_id, int(pitch * 1000), int(roll * 1000), int(throttle * 1000), int(yaw * 1000), 0)  # type: ignore
 
+    def set_pin(self, pin: int, duty: Optional[float] = None, frequency: float = 50, pwm: Optional[int] = None):
+        if frequency <= 0:
+            raise ValueError('Frequency must be positive')
+        if pwm is None:
+            if duty is None or duty < 0 or duty > 1:
+                raise ValueError('Duty cycle must be in range [0, 1]')
+            pwm = int(duty * 1000000 / frequency)
+        if pwm < 0 or pwm > 1000000 / frequency:
+            raise ValueError(f'PWM must be in range [0, {1000000 / frequency}]')
+        self.send_command(mavlink.MAV_CMD_DO_SET_SERVO, (pin, pwm, frequency, 0, 0, 0, 0))
+
     def cli(self, cmd: str, wait_response: bool = True) -> str:
         cmd = cmd.strip()
         if cmd == 'reboot':

@@ -34,6 +34,13 @@ def test():
     assert isfinite(flix.get_param('CTL_ATT_P_P'))
     flix.set_param('CTL_ATT_P_P', 10.0)
 
+    print('=== Check methods')
+    flix.set_pin(5, 1)  # all pin sets should just return successfully in the sim doing nothing
+    flix.set_pin(6, 0)
+    flix.set_pin(7, 0.5)
+    flix.set_pin(8, duty=0.6, frequency=50)
+    flix.set_pin(9, pwm=500, frequency=100)
+
     print('=== Additional checks')
     assert flix.wait('gyro') == approx((0, 0, 0), abs=0.01)
     flix.wait('armed', False)

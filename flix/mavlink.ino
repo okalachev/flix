@@ -8,6 +8,7 @@
 
 extern float controlTime;
 extern float voltage;
+extern int voltagePin, rcRxPin;
 
 int mavlinkSysId = 1;
 
@@ -326,6 +327,24 @@ int handleMavlinkCommand(const void *_m) {
 		if (m.param2 < 0 || m.param2 > AUTO) return MAV_RESULT_DENIED; // incorrect mode
 		mode = m.param2;
 		return MAV_RESULT_ACCEPTED;
+	}
+
+	if (m.command == MAV_CMD_DO_SET_SERVO) {
+		int pin = m.param1;
+		int pwm = m.param2;
+		int frequency = m.param3 > 0 ? m.param3 : 50; // non-standard
+		int resolution = m.param4 > 0 ? m.param4 : 10; // non-standard
+
+		// Basic safety checks to avoid short circuits
+		if (!digitalPinCanOutput(pin)) return MAV_RESULT_DENIED;
+		if (pin == imuIntPin || pin == voltagePin || pin == rcRxPin) return MAV_RESULT_DENIED;
+		if (imuBus == 0 && (pin == imuSckPin || pin == imuMisoPin || pin == imuMosiPin || pin == imuCsPin)) return MAV_RESULT_DENIED;
+		if (imuBus == 1 && (pin == imuSdaPin || pin == imuSclPin)) return MAV_RESULT_DENIED;
+
+		ledcDetach(pin);
+		ledcAttach(pin, frequency, resolution);
+		ledcChangeFrequency(pin, frequency, resolution);
+		return ledcWrite(pin, pwm * frequency * (1 << resolution) / 1000000) ? MAV_RESULT_ACCEPTED : MAV_RESULT_FAILED;
 	}
 
 	return MAV_RESULT_UNSUPPORTED;

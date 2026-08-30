@@ -192,6 +192,21 @@ The following methods are in development and are not functional yet:
 
 To exit *AUTO* mode move control sticks and the drone will switch to *STAB* mode.
 
+### Additional methods
+
+You can set arbitrary output to any ESP32 pin using `set_pin` method:
+
+```python
+flix.set_pin(5, 1)  # set pin 5 to HIGH
+flix.set_pin(6, 0)  # set pin 6 to LOW
+flix.set_pin(7, 0.5)  # set pin 7 to 50% duty cycle
+flix.set_pin(8, duty=0.6, frequency=50)  # set pin 7 to 60% duty cycle at 50 Hz
+flix.set_pin(9, pwm=500, frequency=100)  # set pin 9 to 500 us pulse width at 100 Hz
+```
+
+> [!WARNING]
+> The `set_pin` method allows to set output value for almost any pin, with very few safety checks. Some configurations may lead to short circuit or other damage. Use with caution!
+
 ## Usage alongside QGroundControl
 
 You can use the Flix library alongside the QGroundControl app, using proxy mode. To do that:
