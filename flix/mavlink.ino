@@ -13,6 +13,7 @@ int mavlinkSysId = 1;
 
 Rate telemetrySlow(2);
 Rate telemetryAttitude(20);
+Rate telemetryAttitudeTarget(0);
 Rate telemetryRC(10);
 Rate telemetryMotors(10);
 Rate telemetryIMU(15);
@@ -62,6 +63,15 @@ void sendMavlink() {
 		const float offset[] = {0, 0, 0, 0};
 		mavlink_msg_attitude_quaternion_pack(mavlinkSysId, MAV_COMP_ID_AUTOPILOT1, &msg,
 			time, attitude.w, attitude.x, -attitude.y, -attitude.z, rates.x, -rates.y, -rates.z, offset); // convert to frd
+		sendMessage(&msg);
+	}
+
+	if (telemetryAttitudeTarget) {
+		const float att[] = {attitudeTarget.w, attitudeTarget.x, -attitudeTarget.y, -attitudeTarget.z};
+		Vector rt = attitudeTarget.invalid() ? ratesTarget : ratesExtra;
+		mavlink_msg_attitude_target_pack(mavlinkSysId, MAV_COMP_ID_AUTOPILOT1, &msg, time,
+			attitudeTarget.invalid() ? ATTITUDE_TARGET_TYPEMASK_ATTITUDE_IGNORE : 0,
+			att, rt.x, -rt.y, -rt.z, thrustTarget);
 		sendMessage(&msg);
 	}
 
