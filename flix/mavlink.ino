@@ -268,6 +268,15 @@ int handleMavlinkCommand(const void *_m) {
 		return MAV_RESULT_ACCEPTED;
 	}
 
+	if (m.command == MAV_CMD_REQUEST_MESSAGE && m.param1 == MAVLINK_MSG_ID_COMPONENT_METADATA) {
+		mavlink_message_t response;
+		mavlink_msg_component_metadata_pack(mavlinkSysId, MAV_COMP_ID_AUTOPILOT1, &response, t * 1000,
+		2566517357, // crc
+		"https://quadcopter.dev/meta/2566517357/general.json");
+		sendMessage(&response);
+		return MAV_RESULT_ACCEPTED;
+	}
+
 	if (m.command == MAV_CMD_COMPONENT_ARM_DISARM) {
 		if (m.param1 == 1 && controlThrottle > 0.05) return MAV_RESULT_DENIED; // don't arm if throttle is not low
 		armed = m.param1 == 1;

@@ -7,6 +7,12 @@ on:
     branches: [ master ]
 
 jobs:
+  metadata:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v7
+    - name: Check metadata
+      run: tools/metadata.py
   csv_to_ulog:
     runs-on: ubuntu-latest
     steps:
