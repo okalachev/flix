@@ -1,0 +1,192 @@
+{
+	"version": 1,
+	"parameters": [
+		{ "name": "CTL_RATE_R_P", "type": "Float", "group": "Control", "shortDesc": "Proportional gain for roll rate" },
+		{ "name": "CTL_RATE_R_I", "type": "Float", "group": "Control", "shortDesc": "Integral gain for roll rate" },
+		{ "name": "CTL_RATE_R_D", "type": "Float", "group": "Control", "shortDesc": "Derivative gain for roll rate" },
+		{ "name": "CTL_RATE_R_WU", "type": "Float", "group": "Control", "shortDesc": "Integral windup limit for roll rate" },
+		{ "name": "CTL_RATE_R_D_A", "type": "Float", "group": "Control", "shortDesc": "Low-pass filter alpha for roll rate" },
+		{ "name": "CTL_RATE_P_P", "type": "Float", "group": "Control", "shortDesc": "Proportional gain for pitch rate" },
+		{ "name": "CTL_RATE_P_I", "type": "Float", "group": "Control", "shortDesc": "Integral gain for pitch rate" },
+		{ "name": "CTL_RATE_P_D", "type": "Float", "group": "Control", "shortDesc": "Derivative gain for pitch rate" },
+		{ "name": "CTL_RATE_P_WU", "type": "Float", "group": "Control", "shortDesc": "Integral windup limit for pitch rate" },
+		{ "name": "CTL_RATE_P_D_A", "type": "Float", "group": "Control", "shortDesc": "Low-pass filter alpha for pitch rate" },
+		{ "name": "CTL_RATE_Y_P", "type": "Float", "group": "Control", "shortDesc": "Proportional gain for yaw rate" },
+		{ "name": "CTL_RATE_Y_I", "type": "Float", "group": "Control", "shortDesc": "Integral gain for yaw rate" },
+		{ "name": "CTL_RATE_Y_D", "type": "Float", "group": "Control", "shortDesc": "Derivative gain for yaw rate" },
+		{ "name": "CTL_RATE_Y_WU", "type": "Float", "group": "Control", "shortDesc": "Integral windup limit for yaw rate" },
+		{ "name": "CTL_RATE_Y_D_A", "type": "Float", "group": "Control", "shortDesc": "Low-pass filter alpha for yaw rate" },
+
+		{ "name": "CTL_RATE_P_MAX", "type": "Float", "group": "Control", "units": "rad/s", "shortDesc": "Maximum pitch rate for ACRO mode" },
+		{ "name": "CTL_RATE_R_MAX", "type": "Float", "group": "Control", "units": "rad/s", "shortDesc": "Maximum roll rate for ACRO mode" },
+		{ "name": "CTL_RATE_Y_MAX", "type": "Float", "group": "Control", "units": "rad/s", "shortDesc": "Maximum yaw rate for ACRO mode" },
+
+		{ "name": "CTL_ATT_R_P", "type": "Float", "group": "Control", "shortDesc": "Proportional gain for roll angle" },
+		{ "name": "CTL_ATT_P_P", "type": "Float", "group": "Control", "shortDesc": "Proportional gain for pitch angle" },
+		{ "name": "CTL_ATT_Y_P", "type": "Float", "group": "Control", "shortDesc": "Proportional gain for yaw angle" },
+		{ "name": "CTL_ATT_MAX", "type": "Float", "group": "Control", "units": "radians", "shortDesc": "Maximum tilt angle for STAB mode" },
+
+		{
+			"name": "CTL_FLT_MODE_{n}",
+			"type": "Float",
+			"group": "Control",
+			"shortDesc": "Flight mode for switch position {n}",
+			"values": [{ "value": 0, "description": "RAW" }, { "value": 1, "description": "ACRO" }, { "value": 2, "description": "STAB" }, { "value": 3, "description": "AUTO" }, { "value": 4, "description": "POS" }]
+		},
+
+		{
+			"name": "IMU_MODEL",
+			"type": "Float",
+			"shortDesc": "IMU sensor model",
+			"group": "IMU",
+			"increment": 1,
+			"decimalPlaces": 0,
+			"values": [{ "value": -1, "description": "Disabled"}, { "value": 1, "description": "MPU-9250"}, { "value": 2, "description": "ICM-20948"}, { "value": 3, "description": "MPU-6050"}, { "value": 4, "description": "ICM-40609-D"}],
+			"rebootRequired": true
+		},
+		{
+			"name": "IMU_BUS",
+			"type": "Float",
+			"shortDesc": "IMU bus type",
+			"group": "IMU",
+			"values": [
+				{ "value": 0, "description": "SPI" },
+				{ "value": 1, "description": "I2C" }
+			],
+			"rebootRequired": true
+		},
+		{ "name": "IMU_PIN_SCK", "type": "Float", "group": "IMU", "shortDesc": "IMU SPI SCK pin", "min": 1, "increment": 1, "decimalPlaces": 0 },
+		{ "name": "IMU_PIN_MISO", "type": "Float", "group": "IMU", "shortDesc": "IMU SPI MISO pin", "min": 1, "increment": 1, "decimalPlaces": 0 },
+		{ "name": "IMU_PIN_MOSI", "type": "Float", "group": "IMU", "shortDesc": "IMU SPI MOSI pin", "min": 1, "increment": 1, "decimalPlaces": 0 },
+		{ "name": "IMU_PIN_CS", "type": "Float", "group": "IMU", "shortDesc": "IMU SPI CS pin", "min": 1, "increment": 1, "decimalPlaces": 0 },
+		{ "name": "IMU_PIN_SDA", "type": "Float", "group": "IMU", "shortDesc": "IMU I2C SDA pin", "min": 1, "increment": 1, "decimalPlaces": 0 },
+		{ "name": "IMU_PIN_SCL", "type": "Float", "group": "IMU", "shortDesc": "IMU I2C SCL pin", "min": 1, "increment": 1, "decimalPlaces": 0 },
+		{ "name": "IMU_PIN_INT", "type": "Float", "group": "IMU", "shortDesc": "IMU interrupt pin (-1 for using timer)", "min": -1, "increment": 1, "decimalPlaces": 0 },
+
+		{ "name": "IMU_ROT_ROLL", "type": "Float", "group": "IMU", "units": "radians", "shortDesc": "IMU roll rotation" },
+		{ "name": "IMU_ROT_PITCH", "type": "Float", "group": "IMU", "units": "radians", "shortDesc": "IMU pitch rotation" },
+		{ "name": "IMU_ROT_YAW", "type": "Float", "group": "IMU", "units": "radians", "shortDesc": "IMU yaw rotation" },
+
+		{ "name": "IMU_ACC_BIAS_X", "type": "Float", "group": "IMU (Calibration)", "units": "m/s^2", "shortDesc": "Accelerometer bias X", "volatile": true },
+		{ "name": "IMU_ACC_BIAS_Y", "type": "Float", "group": "IMU (Calibration)", "units": "m/s^2", "shortDesc": "Accelerometer bias Y", "volatile": true },
+		{ "name": "IMU_ACC_BIAS_Z", "type": "Float", "group": "IMU (Calibration)", "units": "m/s^2", "shortDesc": "Accelerometer bias Z", "volatile": true },
+
+		{ "name": "IMU_ACC_SCALE_X", "type": "Float", "group": "IMU (Calibration)", "shortDesc": "Accelerometer scale X", "volatile": true },
+		{ "name": "IMU_ACC_SCALE_Y", "type": "Float", "group": "IMU (Calibration)", "shortDesc": "Accelerometer scale Y", "volatile": true },
+		{ "name": "IMU_ACC_SCALE_Z", "type": "Float", "group": "IMU (Calibration)", "shortDesc": "Accelerometer scale Z", "volatile": true },
+
+		{ "name": "IMU_GYRO_BIAS_A", "type": "Float", "group": "IMU", "shortDesc": "Alpha for gyroscope bias estimation" },
+
+		{ "name": "EST_ACC_WEIGHT", "type": "Float", "group": "Estimation", "shortDesc": "Accelerometer weight" },
+		{ "name": "EST_LVL_WEIGHT", "type": "Float", "group": "Estimation", "shortDesc": "Level weight", "decimalPlaces": 5 },
+		{ "name": "EST_RATES_LPF_A", "type": "Float", "group": "Estimation", "shortDesc": "Low-pass filter alpha for rates" },
+		{ "name": "EST_RATES_NO_F", "type": "Float", "group": "Estimation", "units": "Hz", "shortDesc": "Notch filter center frequency for rates", "min": 0, "decimalPlaces": 0 },
+		{ "name": "EST_RATES_NO_BW", "type": "Float", "group": "Estimation", "units": "Hz", "shortDesc": "Notch filter bandwidth for rates", "min": 0, "decimalPlaces": 0 },
+
+		{ "name": "MOT_PIN_FL", "type": "Float", "group": "Motors", "shortDesc": "Front-left motor pin (-1 to disabled)", "min": -1, "increment": 1, "decimalPlaces": 0 },
+		{ "name": "MOT_PIN_FR", "type": "Float", "group": "Motors", "shortDesc": "Front-right motor pin (-1 to disabled)", "min": -1, "increment": 1, "decimalPlaces": 0 },
+		{ "name": "MOT_PIN_RL", "type": "Float", "group": "Motors", "shortDesc": "Rear-left motor pin (-1 to disabled)", "min": -1, "increment": 1, "decimalPlaces": 0 },
+		{ "name": "MOT_PIN_RR", "type": "Float", "group": "Motors", "shortDesc": "Rear-right motor pin (-1 to disabled)", "min": -1, "increment": 1, "decimalPlaces": 0 },
+		{ "name": "MOT_PWM_FREQ", "type": "Float", "group": "Motors", "units": "Hz", "shortDesc": "PWM frequency", "min": 0, "increment": 1, "decimalPlaces": 0 },
+		{ "name": "MOT_PWM_RES", "type": "Float", "group": "Motors", "units": "bits", "shortDesc": "PWM resolution", "min": 1, "increment": 1, "decimalPlaces": 0 },
+		{ "name": "MOT_PWM_STOP", "type": "Float", "group": "Motors", "units": "μs", "shortDesc": "PWM for stopping the motors (brushless motors)", "min": 0, "decimalPlaces": 0 },
+		{ "name": "MOT_PWM_MIN", "type": "Float", "group": "Motors", "units": "μs", "shortDesc": "PWM for minimum throttle (brushless motors)", "min": 0, "decimalPlaces": 0 },
+		{ "name": "MOT_PWM_MAX", "type": "Float", "group": "Motors", "units": "μs", "shortDesc": "PWM for maximum throttle (-1 for brushed motors)", "min": -1, "decimalPlaces": 0 },
+
+		{ "name": "RC_RX_PIN", "type": "Float", "group": "RC", "shortDesc": "RC receiver RX pin (-1 for disabled)", "min": -1, "increment": 1, "decimalPlaces": 0 },
+		{
+			"name": "RC_ZERO_{n}",
+			"type": "Float",
+			"group": "RC (Calibration)",
+			"shortDesc": "RC channel {n} zero PWM",
+			"units": "μs",
+			"min": 0,
+			"decimalPlaces": 0
+		},
+		{
+			"name": "RC_MAX_{n}",
+			"type": "Float",
+			"group": "RC (Calibration)",
+			"shortDesc": "RC channel {n} maximum PWM",
+			"units": "μs",
+			"min": 0,
+			"decimalPlaces": 0
+		},
+
+		{ "name": "RC_ROLL", "type": "Float", "group": "RC (Calibration)", "shortDesc": "RC roll channel", "min": 0, "increment": 1, "decimalPlaces": 0 },
+		{ "name": "RC_PITCH", "type": "Float", "group": "RC (Calibration)", "shortDesc": "RC pitch channel", "min": 0, "increment": 1, "decimalPlaces": 0 },
+		{ "name": "RC_THROTTLE", "type": "Float", "group": "RC (Calibration)", "shortDesc": "RC throttle channel", "min": 0, "increment": 1, "decimalPlaces": 0 },
+		{ "name": "RC_YAW", "type": "Float", "group": "RC (Calibration)", "shortDesc": "RC yaw channel", "min": 0, "increment": 1, "decimalPlaces": 0 },
+		{ "name": "RC_MODE", "type": "Float", "group": "RC (Calibration)", "shortDesc": "RC mode switch channel", "min": 0, "increment": 1, "decimalPlaces": 0 },
+
+		{
+			"name": "WIFI_MODE",
+			"type": "Float",
+			"group": "Wi-Fi",
+			"shortDesc": "Wi-Fi mode",
+			"values": [
+				{ "value": 0, "description": "Disabled" },
+				{ "value": 1, "description": "Access point (AP)" },
+				{ "value": 2, "description": "Client (STA)" },
+				{ "value": 3, "description": "ESP-NOW" }
+			]
+		},
+		{ "name": "WIFI_PORT_LOC", "type": "Float", "group": "Wi-Fi", "shortDesc": "Local UDP port", "min": 0, "max": 65535, "increment": 1, "decimalPlaces": 0 },
+		{ "name": "WIFI_PORT_REM", "type": "Float", "group": "Wi-Fi", "shortDesc": "Remote UDP port", "min": 0, "max": 65535, "increment": 1, "decimalPlaces": 0 },
+		{
+			"name": "WIFI_LONG_RANGE",
+			"type": "Float",
+			"group": "Wi-Fi",
+			"shortDesc": "Long-range WiFi mode",
+			"values": [
+				{ "value": 0, "description": "Off" },
+				{ "value": 1, "description": "On" }
+			]
+		},
+		{
+			"name": "WIFI_BROADCAST",
+			"type": "Float",
+			"group": "Wi-Fi",
+			"shortDesc": "Always broadcast UDP",
+			"values": [
+				{ "value": 0, "description": "Off" },
+				{ "value": 1, "description": "On" }
+			]
+		},
+
+		{ "name": "ESPNOW_CHANNEL", "type": "Float", "group": "ESP-NOW", "shortDesc": "ESP-NOW channel", "min": 1, "max": 13, "increment": 1, "decimalPlaces": 0 },
+
+		{ "name": "MAV_SYS_ID", "type": "Float", "group": "MAVLink", "shortDesc": "MAVLink system ID", "min": 1, "increment": 1, "decimalPlaces": 0 },
+		{ "name": "MAV_RATE_SLOW", "type": "Float", "group": "MAVLink", "units": "Hz", "shortDesc": "Rate for heartbeats and battery state", "min": 0, "decimalPlaces": 0 },
+		{ "name": "MAV_RATE_FAST", "type": "Float", "group": "MAVLink", "units": "Hz", "shortDesc": "Rate for attitude, RC channels and motors state", "min": 0, "decimalPlaces": 0 },
+		{ "name": "MAV_RATE_EXTRA", "type": "Float", "group": "MAVLink", "units": "Hz", "shortDesc": "Rate for IMU data and exposed log topic", "min": 0, "decimalPlaces": 0 },
+		{ "name": "MAV_RATE_ATT", "type": "Float", "group": "MAVLink", "units": "Hz", "shortDesc": "Rate for attitude", "min": 0, "decimalPlaces": 0 },
+		{ "name": "MAV_RATE_ATT_TG", "type": "Float", "group": "MAVLink", "units": "Hz", "shortDesc": "Rate for attitude target", "min": 0, "decimalPlaces": 0 },
+		{ "name": "MAV_RATE_RC", "type": "Float", "group": "MAVLink", "units": "Hz", "shortDesc": "Rate for RC channels", "min": 0, "decimalPlaces": 0 },
+		{ "name": "MAV_RATE_MOT", "type": "Float", "group": "MAVLink", "units": "Hz", "shortDesc": "Rate for motors state", "min": 0, "decimalPlaces": 0 },
+		{ "name": "MAV_RATE_IMU", "type": "Float", "group": "MAVLink", "units": "Hz", "shortDesc": "Rate for IMU data", "min": 0, "decimalPlaces": 0 },
+		{ "name": "MAV_RATE_TOPIC", "type": "Float", "group": "MAVLink", "units": "Hz", "shortDesc": "Rate for exposed log topic", "min": 0, "decimalPlaces": 0 },
+
+		{
+			"name": "LOG_MEMORY",
+			"type": "Float",
+			"group": "Log",
+			"shortDesc": "Memory type for logging",
+			"values": [
+				{ "value": -1, "description": "Disabled" },
+				{ "value": 0, "description": "RAM" },
+				{ "value": 1, "description": "PSRAM" }
+			]
+		},
+		{ "name": "LOG_USAGE", "type": "Float", "group": "Log", "units": "norm", "shortDesc": "Percentage of memory to use for logging" },
+		{ "name": "LOG_RATE_{n}", "type": "Float", "group": "Log", "units": "Hz", "shortDesc": "Log topic {n} rate", "min": 0, "decimalPlaces": 0 },
+
+		{ "name": "PWR_VOLT_PIN", "type": "Float", "group": "Power", "shortDesc": "Voltage ADC input pin (-1 for disabled)", "min": -1, "increment": 1, "decimalPlaces": 0 },
+		{ "name": "PWR_VOLT_SCALE", "type": "Float", "group": "Power", "shortDesc": "Voltage divider scale factor" },
+		{ "name": "PWR_VOLT_LPF_A", "type": "Float", "group": "Power", "shortDesc": "Low-pass filter alpha for battery voltage" },
+
+		{ "name": "SF_RC_LOSS_TIME", "type": "Float", "group": "Safety", "units": "s", "shortDesc": "RC signal loss timeout in seconds", "min": 0, "decimalPlaces": 1 },
+		{ "name": "SF_DESCEND_TIME", "type": "Float", "group": "Safety", "units": "s", "shortDesc": "Automatic descent timeout in seconds", "min": 0, "decimalPlaces": 1 },
+		{ "name": "SF_DISARM_TILT", "type": "Float", "group": "Safety", "units": "radians", "shortDesc": "Tilt angle above which auto-disarm triggers" }
+	]
+}
