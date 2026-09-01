@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Script for checking and updating the metadata files
+# Script for checking the metadata files
 
 import sys
 import re
@@ -29,16 +29,11 @@ for parameter in parameters:
 
     for meta in parameters_meta['parameters']:
         name_meta = meta['name']
-
-        # handle {n} wildcards
-        regex = re.sub(r'\{[^\}]+\}', r'.*', name_meta)
-
+        regex = re.sub(r'\{[^\}]+\}', r'.*', name_meta) # handle {n} wildcards
         if re.fullmatch(regex, name):
             break
-
     else:
         raise RuntimeError(f'Parameter {name} is missing in parameters.json')
-
 
 general_meta_file = Path(__file__).parent / 'general.json'
 general_crc = mavlink_crc323(general_meta_file.read_bytes())
