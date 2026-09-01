@@ -12,7 +12,15 @@ jobs:
     steps:
     - uses: actions/checkout@v7
     - name: Check metadata
-      run: tools/metadata.py
+      run: tools/metadata.py generate
+    - name: Copy latest versions
+      if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+      run: cp tools/general.json meta/ && cp tools/parameters.json meta/
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v7
+      with:
+        name: metadata
+        path: meta
   csv_to_ulog:
     runs-on: ubuntu-latest
     steps:
