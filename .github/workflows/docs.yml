@@ -33,8 +33,6 @@ jobs:
     - uses: actions/checkout@v7
     - name: Install mdBook
       run: cargo install mdbook --vers 0.4.43 --locked
-    - name: Build book
-      run: cd docs && mdbook build
     - name: Download additional files
       if: ${{ env.QUADCOPTER_DEV_TOKEN && env.FULL }}
       uses: actions/checkout@v7
@@ -46,7 +44,9 @@ jobs:
         fetch-depth: 1
     - name: Add additional files
       if: ${{ env.QUADCOPTER_DEV_TOKEN && env.FULL }}
-      run: cp -a quadcopter.dev/. docs/build/
+      run: tree -a quadcopter.dev; cp -a quadcopter.dev/. docs/build/
+    - name: Build book
+      run: cd docs && mdbook build
     - name: Wait for Build to complete
       if: ${{ env.FULL }}
       uses: matiasalbarello/wait-on-check-action-ts@v1.2.0
@@ -83,11 +83,15 @@ jobs:
           ln -s "$FQBN/flix.ino.bin" "flix.$BOARD.bin"
           ln -s "$FQBN/flix.ino.bootloader.bin" "flix.$BOARD.bootloader.bin"
         done
+    - name: Put version file
+      run: echo "${{ github.sha }}" > docs/build/version.txt
     - name: Test build artifacts
       working-directory: docs/build
       run: |
-        ls; ls index.html gyro.html geometry.html firmware.html flix.esp32.merged.bin flix.esp32c3.merged.bin \
-        flix.esp32s3.merged.bin flix.esp32s3.opi.merged.bin flix.esp32s3.qspi.merged.bin flix.flix2.merged.bin
+        tree -a
+        ls index.html gyro.html geometry.html firmware.html flix.esp32.merged.bin flix.esp32c3.merged.bin \
+        flix.esp32s3.merged.bin flix.esp32s3.opi.merged.bin flix.esp32s3.qspi.merged.bin flix.flix2.merged.bin \
+        meta/general.json meta/parameters.json version.txt
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v5
       with:
