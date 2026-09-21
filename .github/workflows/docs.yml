@@ -59,7 +59,7 @@ jobs:
       if: ${{ env.FULL }}
       id: build_run
       run: |
-        RUN_ID=$(gh api "repos/${{ github.repository }}/actions/workflows/build.yml/runs?head_sha=${{ github.sha }}&per_page=1" --jq '.workflow_runs[0].id')
+        RUN_ID=$(gh api "repos/${{ github.repository }}/actions/workflows/build.yml/runs?head_sha=${{ github.sha }}" --jq '.workflow_runs[0].id')
         echo "id=$RUN_ID" >> $GITHUB_OUTPUT
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -88,7 +88,7 @@ jobs:
     - name: Test build artifacts
       working-directory: docs/build
       run: |
-        tree -a
+        tree -a -I .git
         ls index.html gyro.html geometry.html firmware.html flix.esp32.merged.bin flix.esp32c3.merged.bin \
         flix.esp32s3.merged.bin flix.esp32s3.opi.merged.bin flix.esp32s3.qspi.merged.bin flix.flix2.merged.bin \
         meta/general.json meta/parameters.json version.txt
