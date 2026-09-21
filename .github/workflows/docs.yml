@@ -92,6 +92,7 @@ jobs:
         ls index.html gyro.html geometry.html firmware.html flix.esp32.merged.bin flix.esp32c3.merged.bin \
         flix.esp32s3.merged.bin flix.esp32s3.opi.merged.bin flix.esp32s3.qspi.merged.bin flix.flix2.merged.bin \
         meta/general.json meta/parameters.json version.txt
+        grep "${{ github.sha }}" flix.esp32.bin
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v5
       with:
