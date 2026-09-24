@@ -27,14 +27,16 @@ jobs:
     runs-on: ubuntu-latest
     needs: markdownlint
     env:
-      FULL: ${{ github.event_name == 'push' && (github.ref_name == 'master' || github.ref_name == 'dev') && github.repository == 'okalachev/flix' }}
+      DEPLOY: ${{ (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && (github.ref_name == 'master' || github.ref_name == 'dev') }}
       QUADCOPTER_DEV_TOKEN: ${{ secrets.QUADCOPTER_DEV_TOKEN }}
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
     steps:
     - uses: actions/checkout@v7
     - name: Install mdBook
       run: cargo install mdbook --vers 0.4.43 --locked
     - name: Download additional files
-      if: ${{ env.QUADCOPTER_DEV_TOKEN && env.FULL }}
+      if: ${{ env.DEPLOY && env.QUADCOPTER_DEV_TOKEN }}
       uses: actions/checkout@v7
       with:
         repository: okalachev/quadcopter.dev
@@ -43,12 +45,12 @@ jobs:
         path: quadcopter.dev
         fetch-depth: 1
     - name: Add additional files
-      if: ${{ env.QUADCOPTER_DEV_TOKEN && env.FULL }}
+      if: ${{ env.DEPLOY && env.QUADCOPTER_DEV_TOKEN }}
       run: rsync -a --keep-dirlinks quadcopter.dev/. docs/book/
     - name: Build book
       run: cd docs && mdbook build
     - name: Wait for Build to complete
-      if: ${{ env.FULL }}
+      if: ${{ env.DEPLOY }}
       uses: matiasalbarello/wait-on-check-action-ts@v1.2.0
       with:
         ref: ${{ github.sha }}
@@ -56,7 +58,7 @@ jobs:
         repo-token: ${{ secrets.GITHUB_TOKEN }}
         wait-interval: 30
     - name: Find firmware binaries
-      if: ${{ env.FULL }}
+      if: ${{ env.DEPLOY }}
       id: build_run
       run: |
         RUN_ID=$(gh api "repos/${{ github.repository }}/actions/workflows/build.yml/runs?head_sha=${{ github.sha }}" --jq '.workflow_runs[0].id')
@@ -64,7 +66,7 @@ jobs:
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Download firmware binaries
-      if: ${{ env.FULL }}
+      if: ${{ env.DEPLOY }}
       uses: actions/download-artifact@v7
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -73,7 +75,6 @@ jobs:
         name: firmware-binary
         path: docs/build
     - name: Create shortcuts for firmware binaries
-      if: ${{ env.FULL }}
       working-directory: docs/build
       run: |
         for FQBN in esp32.esp32.*; do
@@ -86,6 +87,7 @@ jobs:
     - name: Put version file
       run: echo "${{ github.sha }}" > docs/build/version.txt
     - name: Test build artifacts
+      if: ${{ env.DEPLOY }}
       working-directory: docs/build
       run: |
         tree -a -I .git
@@ -98,9 +100,16 @@ jobs:
       with:
         path: docs/build
         retention-days: 3
+    - name: Upload Preview
+      uses: cloudflare/wrangler-action@v4
+      if: ${{ env.DEPLOY && github.ref_name == 'dev' && env.CLOUDFLARE_API_TOKEN }}
+      with:
+        apiToken: ${{ env.CLOUDFLARE_API_TOKEN }}
+        accountId: ${{ env.CLOUDFLARE_ACCOUNT_ID }}
+        command: pages deploy docs/build --project-name=dev-quadcopter --branch=dev
 
   deploy:
-    if: ${{ github.event_name == 'push' && github.ref_name == 'master' }}
+    if: ${{ (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref_name == 'master' }}
     concurrency:
       group: "pages"
       cancel-in-progress: true
