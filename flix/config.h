@@ -5,17 +5,19 @@
 
 #pragma once
 
-#include <string_view>
 
 // Uncomment this to build for certain target in Arduino IDE
 // #define FLIX2
 
-#define ASSERT_FQBN(str, msg) static_assert(std::string_view(ARDUINO_FQBN).find(str) != std::string_view::npos, msg);
 
 #ifdef FLIX2
 #define RGB_BUILTIN 21
-ASSERT_FQBN("PSRAM=opi", "Set Tools -> PSRAM to OPI for Flix2 board")
-ASSERT_FQBN("esp32:esp32:esp32s3:", "Set Tools -> Board to ESP32S3 Dev Module for Flix2 board")
+#ifndef CONFIG_IDF_TARGET_ESP32S3
+#error "Set Tools -> Board to ESP32S3 Dev Module for Flix2 board"
+#endif
+#ifndef CONFIG_SPIRAM_MODE_OCT
+#error "Set Tools -> PSRAM to OPI for Flix2 board"
+#endif
 #endif
 
 void setDefaults() {
