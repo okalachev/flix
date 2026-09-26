@@ -294,6 +294,18 @@ void handleMavlink(const void *_msg) {
 		flushBatchMessages();
 	}
 
+	if (msg.msgid == MAVLINK_MSG_ID_TUNNEL) {
+		mavlink_tunnel_t m;
+		mavlink_msg_tunnel_decode(&msg, &m);
+		if (m.target_system && m.target_system != mavlinkSysId) return;
+
+		if (m.payload_type == 789) { // 789 is led control
+			for (int i = 0; i < m.payload_length; i += 4) {
+				led[m.payload[i]] = RGB(m.payload[i + 1], m.payload[i + 2], m.payload[i + 3]);
+			}
+		}
+	}
+
 	if (msg.msgid == MAVLINK_MSG_ID_COMMAND_LONG) {
 		mavlink_command_long_t m;
 		mavlink_msg_command_long_decode(&msg, &m);
@@ -320,8 +332,8 @@ int handleMavlinkCommand(const void *_m) {
 	if (m.command == MAV_CMD_REQUEST_MESSAGE && m.param1 == MAVLINK_MSG_ID_COMPONENT_METADATA) {
 		mavlink_message_t response;
 		mavlink_msg_component_metadata_pack(mavlinkSysId, MAV_COMP_ID_AUTOPILOT1, &response, t * 1000,
-		2566517357, // crc
-		"https://quadcopter.dev/meta/2566517357/general.json");
+		1453394476, // crc
+		"https://quadcopter.dev/meta/1453394476/general.json");
 		sendMessage(&response);
 		return MAV_RESULT_ACCEPTED;
 	}

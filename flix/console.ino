@@ -11,13 +11,15 @@
 extern const int MOT_RL, MOT_RR, MOT_FR, MOT_FL;
 extern const int RAW, ACRO, STAB, AUTO;
 extern const int W_AP, W_STA, W_ESPNOW;
-extern float t, dt, loopRate;
+extern const int FILL, BLINK, RAINBOW;
+extern float t, dt, loopRate, controlTime, ledTime;
 extern uint16_t channels[16];
-extern float controlTime;
 extern int mode;
 extern bool armed;
 extern LowPassFilter<Vector> gyroBiasFilter;
 extern float voltage;
+extern bool mavlinkSerial;
+extern int ledAnimation, ledColor[3];
 
 const char* motd =
 " _______  __       __  ___   ___\n"
@@ -51,6 +53,7 @@ const char* motd =
 "espnow <mac> [<key>] - configure ESP-NOW peer\n"
 "mot - show motor output\n"
 "mfr/mfl/mrr/mrl [<thrust>] - test motor (remove props)\n"
+"led off/fill/blink/rainbow/<number> [<r> <g> <b>] - set LED\n"
 "log [dump] - print log header [and data]\n"
 "log - show log info\n"
 "log header - show log header\n"
@@ -199,6 +202,20 @@ void doCommand(String str, bool echo = false) {
 		testMotor(MOT_RR, arg0.isEmpty() ? 0.2 : arg0.toFloat());
 	} else if (command == "mrl") {
 		testMotor(MOT_RL, arg0.isEmpty() ? 0.2 : arg0.toFloat());
+	} else if (command == "led") {
+		// parse animation
+		if (arg0 == "off" || arg0 == "fill") ledAnimation = FILL;
+		else if (arg0 == "blink") ledAnimation = BLINK;
+		else if (arg0 == "rainbow") ledAnimation = RAINBOW;
+		else ledAnimation = arg0.toInt();
+		// parse color
+		int r = 255, g = 255, b = 255; // assume white color by default
+		sscanf(arg1.c_str(), "%d %d %d", &r, &g, &b);
+		if (arg0 == "off") r = g = b = 0;
+		ledColor[0] = r;
+		ledColor[1] = g;
+		ledColor[2] = b;
+		ledTime = t;
 	} else if (command == "sys") {
 #ifdef ESP32
 		print("Chip: %s\n", ESP.getChipModel());

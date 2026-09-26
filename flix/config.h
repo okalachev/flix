@@ -19,6 +19,8 @@
 #endif
 #endif
 
+extern const int RAW, ACRO, STAB, AUTO;
+
 void setDefaults() {
 	// Set defaults here
 
@@ -34,6 +36,11 @@ void setDefaults() {
 		motorPins[MOT_FL] = 15;
 	#endif
 
+	#ifdef RGB_BUILTIN
+		ledType = 1; // WS2812
+		ledPin = RGB_BUILTIN;
+	#endif
+
 	#ifdef FLIX2
 		imuModel = 4; // ICM-40609-D
 		imuIntPin = 10;
@@ -44,4 +51,12 @@ void setDefaults() {
 		motorPins[MOT_FR] = 18;
 		motorPins[MOT_FL] = 38;
 	#endif
+
+	if (ledType == 1) {
+		// Default animations for LED strip
+		modeAnimation[RAW] = packAnimation(FILL, 255, 0, 0);
+		modeAnimation[ACRO] = packAnimation(BLINK, 0, 255, 0);
+		modeAnimation[STAB] = packAnimation(RAINBOW, 0, 0, 255);
+		modeAnimation[AUTO] = packAnimation(FILL, 255, 255, 255);
+	}
 }

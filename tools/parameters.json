@@ -187,6 +187,25 @@
 
 		{ "name": "SF_RC_LOSS_TIME", "type": "Float", "group": "Safety", "units": "s", "shortDesc": "RC signal loss timeout in seconds", "min": 0, "decimalPlaces": 1 },
 		{ "name": "SF_DESCEND_TIME", "type": "Float", "group": "Safety", "units": "s", "shortDesc": "Automatic descent timeout in seconds", "min": 0, "decimalPlaces": 1 },
-		{ "name": "SF_DISARM_TILT", "type": "Float", "group": "Safety", "units": "radians", "shortDesc": "Tilt angle above which auto-disarm triggers" }
+		{ "name": "SF_DISARM_TILT", "type": "Float", "group": "Safety", "units": "radians", "shortDesc": "Tilt angle above which auto-disarm triggers" },
+
+		{
+			"name": "LED_TYPE",
+			"type": "Float",
+			"group": "LED",
+			"shortDesc": "LED type",
+			"values": [
+				{ "value": -1, "description": "Disabled" },
+				{ "value": 0, "description": "Single LED" },
+				{ "value": 1, "description": "WS2812" }
+			]
+		},
+		{ "name": "LED_PIN", "type": "Float", "group": "LED", "shortDesc": "LED control pin", "min": -1, "increment": 1, "decimalPlaces": 0 },
+		{ "name": "LED_COUNT", "type": "Float", "group": "LED", "shortDesc": "Number of LEDs in the strip", "min": 1, "increment": 1, "decimalPlaces": 0 },
+		{ "name": "LED_BRIGHTNESS", "type": "Float", "group": "LED", "shortDesc": "LED brightness", "units": "norm" },
+		{ "name": "LED_ANIM_RAW", "type": "Float", "group": "LED", "shortDesc": "Animation for RAW mode" },
+		{ "name": "LED_ANIM_ACRO", "type": "Float", "group": "LED", "shortDesc": "Animation for ACRO mode" },
+		{ "name": "LED_ANIM_STAB", "type": "Float", "group": "LED", "shortDesc": "Animation for STAB mode" },
+		{ "name": "LED_ANIM_AUTO", "type": "Float", "group": "LED", "shortDesc": "Animation for AUTO mode" }
 	]
 }
