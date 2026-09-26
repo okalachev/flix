@@ -5,7 +5,6 @@
 
 #pragma once
 
-
 // Uncomment this to build for certain target in Arduino IDE
 // #define FLIX2
 
