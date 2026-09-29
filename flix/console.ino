@@ -224,6 +224,7 @@ void doCommand(String str, bool echo = false) {
 		print("Free heap: %d KB\n", ESP.getFreeHeap() / 1024);
 		print("PSRAM: %d KB\n", ESP.getPsramSize() / 1024);
 		print("Free PSRAM: %d KB\n", ESP.getFreePsram() / 1024);
+		print("Reset reason: %d\n", esp_reset_reason());
 #ifdef VERSION
 		print("Version: %s\n", STRINGIFY(VERSION));
 #endif
