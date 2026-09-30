@@ -3,6 +3,8 @@
 
 // SBUS library mock to make it possible to compile simulator with rc.ino
 
+#pragma once
+
 #include "joystick.h"
 
 struct SBUSData {

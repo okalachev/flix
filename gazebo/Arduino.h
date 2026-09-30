@@ -19,6 +19,10 @@
 #define RAD_TO_DEG 57.295779513082320876798154814105
 #define radians(deg) ((deg)*DEG_TO_RAD)
 #define degrees(rad) ((rad)*RAD_TO_DEG)
+#define LOW 0x0
+#define HIGH 0x1
+#define INPUT 0x01
+#define OUTPUT 0x03
 
 #define MALLOC_CAP_SPIRAM (1<<10)
 #define MALLOC_CAP_8BIT (1<<2)
@@ -193,6 +197,8 @@ void *heap_caps_calloc(size_t n, size_t size, uint32_t caps) {
 	return calloc(n, size);
 }
 
+void pinMode(uint8_t pin, uint8_t mode) {};
+void digitalWrite(uint8_t pin, uint8_t val) {};
 bool ledcAttach(uint8_t pin, uint32_t freq, uint8_t resolution) { return true; }
 bool ledcDetach(uint8_t pin) { return true; }
 bool ledcWrite(uint8_t pin, uint32_t duty) { return true; }

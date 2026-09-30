@@ -84,6 +84,9 @@ float getParameter(const char *name);
 bool setParameter(const char *name, const float value);
 void printParameters(const char *filter);
 void resetParameters();
+void handleAnimation();
+float packAnimation(uint8_t, uint8_t, uint8_t, uint8_t);
+void unpackAnimation(float, int&, int&, int&, int&);
 
 // mocks
 void setLED(bool on) {};
