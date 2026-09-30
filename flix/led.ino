@@ -96,7 +96,7 @@ float packAnimation(uint8_t animation, uint8_t r, uint8_t g, uint8_t b) {
 	return value;
 }
 
-void unpackAnimation(float value, int &animation, int &r, int &g, int &b) {
+void unpackAnimation(float value, int& animation, int& r, int& g, int& b) {
 	uint8_t bytes[4];
 	memcpy(bytes, &value, sizeof(value));
 	animation = bytes[0];

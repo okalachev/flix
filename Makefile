@@ -56,4 +56,4 @@ plot:
 clean:
 	rm -rf gazebo/build flix/build flix/cache .core .libs
 
-.PHONY: build upload monitor core libs cmake build_simulator simulator log clean
+.PHONY: build upload monitor core libs cmake build_simulator simulator log clean upload_proxy
