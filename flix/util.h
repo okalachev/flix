@@ -8,6 +8,8 @@
 #include <math.h>
 #include <ESP32_NOW_Serial.h>
 
+const char* getParameterName(int index);
+
 const float ONE_G = 9.80665;
 extern float t;
 
