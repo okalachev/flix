@@ -1,0 +1,119 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 544.13 637.15">
+  <defs>
+    <style>
+      .a {
+        fill: #dbe1e2;
+      }
+
+      .b {
+        fill: #c2c1c0;
+      }
+
+      .c {
+        fill: #c6c6c5;
+      }
+
+      .d {
+        fill: #ec7d23;
+      }
+
+      .e {
+        font-size: 50px;
+        font-family: Tahoma;
+      }
+
+      .e, .n {
+        fill: #010101;
+      }
+
+      .f {
+        opacity: 0.8;
+      }
+
+      .g, .i, .k, .m {
+        fill: none;
+        stroke-width: 10px;
+      }
+
+      .g {
+        stroke: #0577ba;
+      }
+
+      .g, .i, .k {
+        stroke-linejoin: bevel;
+      }
+
+      .h {
+        fill: #0577ba;
+      }
+
+      .i {
+        stroke: #76c043;
+      }
+
+      .j {
+        fill: #76c043;
+      }
+
+      .k {
+        stroke: #d71f26;
+      }
+
+      .l {
+        fill: #d71f26;
+      }
+
+      .m {
+        stroke: #010101;
+        stroke-miterlimit: 10;
+      }
+    </style>
+  </defs>
+  <g>
+    <g>
+      <rect class="a" x="51.25" y="538.09" width="111.96" height="44.06"/>
+      <polygon class="b" points="204.47 515.98 163.21 582.15 163.21 538.09 204.47 471.91 204.47 515.98"/>
+      <polygon class="c" points="163.21 538.19 51.25 538.19 92.46 471.91 204.42 471.91 163.21 538.19"/>
+      <ellipse class="d" cx="101.09" cy="480" rx="7.45" ry="3.7" transform="translate(-117.09 40.67) rotate(-14.52)"/>
+    </g>
+    <text class="e" transform="translate(166.62 107.43)">Z</text>
+    <g class="f">
+      <g>
+        <line class="g" x1="127.84" y1="505.05" x2="127.84" y2="70.04"/>
+        <polygon class="h" points="145.79 75.3 127.84 44.21 109.89 75.3 145.79 75.3"/>
+      </g>
+    </g>
+    <g class="f">
+      <g>
+        <line class="i" x1="127.84" y1="505.05" x2="315.74" y2="203.61"/>
+        <polygon class="j" points="328.2 217.57 329.41 181.69 297.73 198.57 328.2 217.57"/>
+      </g>
+    </g>
+    <text class="e" transform="translate(338.14 279.7)">Y</text>
+    <g class="f">
+      <g>
+        <line class="k" x1="127.94" y1="504.62" x2="467.04" y2="504.62"/>
+        <polygon class="l" points="461.79 522.58 492.87 504.62 461.79 486.67 461.79 522.58"/>
+      </g>
+    </g>
+    <text class="e" transform="translate(438.99 582.15)">X</text>
+    <g class="f">
+      <g>
+        <path class="m" d="M80,98.74a52.66,52.66,0,1,0,98.43,36.72"/>
+        <polygon class="n" points="190.29 140.9 180.45 116.91 164.59 137.41 190.29 140.9"/>
+      </g>
+    </g>
+    <g class="f">
+      <g>
+        <path class="m" d="M474,467.75a52.66,52.66,0,1,0-59.23,86.77"/>
+        <polygon class="n" points="406.68 564.7 432.32 560.9 416.21 540.59 406.68 564.7"/>
+      </g>
+    </g>
+    <g class="f">
+      <g>
+        <path class="m" d="M222.38,257.69a52.66,52.66,0,1,1,93.83,47.25"/>
+        <polygon class="n" points="308.22 293.44 303.95 319.01 328.23 309.93 308.22 293.44"/>
+      </g>
+    </g>
+  </g>
+</svg>
