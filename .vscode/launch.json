@@ -1,0 +1,25 @@
+{
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"name": "Debug simulation",
+			"type": "cppdbg",
+			"request": "launch",
+			"program": "/usr/bin/gzserver",
+			"osx": {
+				"program": "/opt/homebrew/bin/gzserver",
+				"MIMode": "lldb",
+			},
+			"args": ["--verbose", "${workspaceFolder}/gazebo/flix.world"],
+			"stopAtEntry": false,
+			"cwd": "${fileDirname}",
+			"environment": [
+				{"name": "GAZEBO_MODEL_PATH", "value": "${workspaceFolder}/gazebo/models"},
+				{"name": "GAZEBO_PLUGIN_PATH", "value": "${workspaceFolder}/gazebo/build"}
+			],
+			"MIMode": "gdb",
+			"preLaunchTask": "Build simulator",
+			"externalConsole": true,
+		},
+	]
+}
