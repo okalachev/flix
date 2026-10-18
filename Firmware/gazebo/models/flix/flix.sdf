@@ -1,0 +1,71 @@
+<?xml version="1.0"?>
+<sdf version="1.5">
+	<model name="flix">
+		<plugin name="flix" filename="libflix.so"/>
+		<link name="body">
+			<inertial>
+				<mass>0.065</mass>
+				<inertia>
+					<ixx>3.55E-5</ixx>
+					<iyy>4.23E-5</iyy>
+					<izz>7.47E-5</izz>
+				</inertia>
+			</inertial>
+			<collision name="collision">
+				<geometry>
+					<box>
+						<size>0.095 0.095 0.0276</size>
+					</box>
+				</geometry>
+			</collision>
+			<sensor name="imu" type="imu">
+				<always_on>1</always_on>
+				<visualize>1</visualize>
+				<update_rate>1000</update_rate>
+				<imu>
+					<angular_velocity>
+						<x><noise type="gaussian"><stddev>0.00174533</stddev></noise></x><!-- 0.1 degrees per second -->
+						<y><noise type="gaussian"><stddev>0.00174533</stddev></noise></y>
+						<z><noise type="gaussian"><stddev>0.00174533</stddev></noise></z>
+					</angular_velocity>
+					<linear_acceleration>
+						<x><noise type="gaussian"><stddev>0.0784</stddev></noise></x><!-- 8 mg -->
+						<y><noise type="gaussian"><stddev>0.0784</stddev></noise></y>
+						<z><noise type="gaussian"><stddev>0.0784</stddev></noise></z>
+					</linear_acceleration>
+				</imu>
+			</sensor>
+			<visual name="body">
+				<geometry>
+					<mesh><uri>model://flix/flix.stl</uri></mesh>
+				</geometry>
+				<material>
+					<ambient>0.5 0.5 0.6 1</ambient>
+					<diffuse>0.5 0.5 0.6 1</diffuse>
+					<specular>0 0 0 1</specular>
+					<emissive>0 0 0 1</emissive>
+				</material>
+			</visual>
+			<visual name="prop0"><!-- rear left -->
+				<geometry><cylinder><radius>0.0275</radius><length>0</length></cylinder></geometry>
+				<pose>-0.04243 0.04243 0.0142 0 0 0</pose>
+				<material><ambient>0.8 0.3 0.3 0.5</ambient><diffuse>0.8 0.3 0.3 0.5</diffuse></material>
+			</visual>
+			<visual name="prop1"><!-- rear right -->
+				<geometry><cylinder><radius>0.0275</radius><length>0</length></cylinder></geometry>
+				<pose>-0.04243 -0.04243 0.0142 0 0 0</pose>
+				<material><ambient>0.8 0.3 0.3 0.5</ambient><diffuse>0.8 0.3 0.3 0.5</diffuse></material>
+			</visual>
+			<visual name="prop2"><!-- front right -->
+				<geometry><cylinder><radius>0.0275</radius><length>0</length></cylinder></geometry>
+				<pose>0.04243 -0.04243 0.0142 0 0 0</pose>
+				<material><ambient>1 1 1 0.5</ambient><diffuse>1 1 1 0.5</diffuse></material>
+			</visual>
+			<visual name="prop3"><!-- front left -->
+				<geometry><cylinder><radius>0.0275</radius><length>0</length></cylinder></geometry>
+				<pose>0.04243 0.04243 0.0142 0 0 0</pose>
+				<material><ambient>1 1 1 0.5</ambient><diffuse>1 1 1 0.5</diffuse></material>
+			</visual>
+		</link>
+	</model>
+</sdf>
