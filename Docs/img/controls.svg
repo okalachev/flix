@@ -1,0 +1,123 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 464.2 249.05">
+  <defs>
+    <style>
+      .a {
+        fill: #d5d5d5;
+      }
+
+      .b {
+        fill: #fff;
+      }
+
+      .c {
+        fill: #636363;
+      }
+
+      .d {
+        opacity: 0.7;
+      }
+
+      .e {
+        fill: none;
+        stroke: #0076ba;
+        stroke-linecap: round;
+        stroke-miterlimit: 10;
+        stroke-width: 13px;
+      }
+
+      .f {
+        fill: #0076ba;
+      }
+
+      .g {
+        font-size: 30px;
+        font-family: Tahoma;
+      }
+
+      .h {
+        letter-spacing: 0em;
+      }
+
+      .i {
+        letter-spacing: -0.01em;
+      }
+
+      .j {
+        letter-spacing: -0.06em;
+      }
+
+      .k {
+        letter-spacing: 0em;
+      }
+
+      .l {
+        letter-spacing: -0.02em;
+      }
+
+      .m {
+        letter-spacing: 0em;
+      }
+
+      .n {
+        opacity: 0.6;
+      }
+    </style>
+  </defs>
+  <path class="a" d="M408.84,197.08c-4.74-86-35.9-128.7-35.9-128.7C357.17,47.3,338,40.68,320.73,38.17S298.43,46,298.43,46C270.57,41.81,239,42,239,42s-31.59-.15-59.45,4.07c0,0-5-10.38-22.31-7.86S120.78,47.3,105,68.38c0,0-31.16,42.68-35.9,128.7-2.82,51.08,19.68,55.36,38.42,50.4a60.06,60.06,0,0,0,30.56-19.66c7.51-9,19.64-25.32,34-28,17.27-3.26,33.14-4.77,45.09-4.78L239,195l21.82,0c11.95,0,27.81,1.52,45.09,4.78,14.34,2.71,26.47,19,34,28a60.08,60.08,0,0,0,30.55,19.66C389.16,252.44,411.66,248.16,408.84,197.08Z"/>
+  <circle class="b" cx="157.41" cy="123.52" r="45.22"/>
+  <circle class="b" cx="320.54" cy="123.52" r="45.22"/>
+  <circle class="c" cx="320.54" cy="123.52" r="13.8"/>
+  <circle class="c" cx="157.41" cy="149.89" r="13.8"/>
+  <g class="d">
+    <g>
+      <line class="e" x1="157.41" y1="149.89" x2="157.41" y2="49.87"/>
+      <polygon class="f" points="180.74 56.7 157.41 16.29 134.07 56.7 180.74 56.7"/>
+    </g>
+  </g>
+  <text class="g" transform="translate(38.38 25.91)">Th<tspan class="h" x="34.25" y="0">r</tspan><tspan x="44.91" y="0">o</tspan><tspan class="i" x="61.2" y="0">t</tspan><tspan x="71" y="0">tle</tspan></text>
+  <g class="d">
+    <g>
+      <line class="e" x1="157.41" y1="149.89" x2="82.41" y2="149.89"/>
+      <polygon class="f" points="89.24 126.56 48.82 149.89 89.24 173.23 89.24 126.56"/>
+    </g>
+  </g>
+  <text class="g" transform="translate(0.18 176.36)"><tspan class="j">Y</tspan><tspan class="h" x="15.37" y="0">a</tspan><tspan x="30.97" y="0">w</tspan></text>
+  <g class="d">
+    <g>
+      <line class="e" x1="320.54" y1="123.52" x2="320.54" y2="50.32"/>
+      <polygon class="f" points="343.88 57.15 320.54 16.74 297.2 57.15 343.88 57.15"/>
+    </g>
+  </g>
+  <text class="g" transform="translate(336.56 26.36)">P<tspan class="k" x="16.54" y="0">i</tspan><tspan x="23.45" y="0">tch</tspan></text>
+  <g class="d">
+    <g>
+      <line class="e" x1="320.54" y1="123.52" x2="395.54" y2="123.52"/>
+      <polygon class="f" points="388.71 146.86 429.12 123.52 388.71 100.19 388.71 146.86"/>
+    </g>
+  </g>
+  <text class="g" transform="translate(416.03 160.01)"><tspan class="l">R</tspan><tspan x="18.08" y="0">o</tspan><tspan class="m" x="34.37" y="0">l</tspan><tspan x="41.31" y="0">l</tspan></text>
+  <g class="d">
+    <g>
+      <line class="e" x1="157.41" y1="149.89" x2="213.73" y2="149.89"/>
+      <polygon class="f" points="206.9 173.23 247.32 149.89 206.9 126.56 206.9 173.23"/>
+    </g>
+  </g>
+  <g class="d">
+    <g>
+      <line class="e" x1="320.54" y1="124.52" x2="320.54" y2="197.73"/>
+      <polygon class="f" points="297.2 190.9 320.54 231.31 343.88 190.9 297.2 190.9"/>
+    </g>
+  </g>
+  <g class="n">
+    <g>
+      <line class="e" x1="318.03" y1="123.52" x2="262.32" y2="123.52"/>
+      <polygon class="f" points="269.14 100.19 228.73 123.52 269.14 146.86 269.14 100.19"/>
+    </g>
+  </g>
+  <g class="d">
+    <g>
+      <line class="e" x1="157.41" y1="151.66" x2="157.41" y2="197.73"/>
+      <polygon class="f" points="134.07 190.9 157.41 231.31 180.74 190.9 134.07 190.9"/>
+    </g>
+  </g>
+</svg>
