@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<sdf version="1.4">
+	<world name="default">
+		<scene>
+			<ambient>1 1 1 1</ambient>
+			<sky/>
+			<origin_visual>false</origin_visual>
+			<grid>false</grid>
+		</scene>
+		<gui>
+			<camera name="user_camera">
+				<pose>-2.3 0 1.1 0 0.3 0</pose>
+			</camera>
+		</gui>
+		<physics type="ode">
+			<max_step_size>0.001</max_step_size>
+		</physics>
+		<include>
+			<uri>model://floor</uri>
+		</include>
+		<include>
+			<uri>model://sun</uri>
+		</include>
+		<include>
+			<uri>model://flix</uri>
+			<pose>0 0 0.3 0 0 0</pose>
+		</include>
+	</world>
+</sdf>
