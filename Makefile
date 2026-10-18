@@ -1,54 +1,24 @@
-BOARD = esp32:esp32:esp32
-PORT = $(strip $(wildcard /dev/serial/by-id/usb-Silicon_Labs_CP21* /dev/serial/by-id/usb-1a86_USB_Single_Serial_* /dev/cu.usbserial-* /dev/cu.usbmodem*))
+# Flix 构建入口转发器（耀坤复刻版目录整理后）
+#
+# 【为什么需要这个文件】
+#   目录整理后，真正的构建脚本在 Firmware/Makefile。但上游 CI（.github/workflows/build.yml）
+#   以及很多老习惯都是"在仓库根目录直接跑 make"。若没有本文件，根目录 make 会报
+#   "No targets specified and no makefile found"，等于把上游 CI 全跑挂了。
+#   所以根目录保留一个只做转发的 Makefile：把 BOARD / PORT / EXTRA 等变量原样传下去。
+#
+# 【效果】
+#   make                      等价于 make -C Firmware
+#   make BOARD=esp32:esp32:esp32s3
+#   make EXTRA=--output-dir=flix/build/esp32.esp32.esp32s3.opi
+#
+# 注意：EXTRA 里若带相对路径，是相对 Firmware/ 解析的（如上例的 flix/build）。
 
-export ARDUINO_NETWORK_CONNECTION_TIMEOUT = 1h
+.PHONY: all build upload erase monitor core libs upload_proxy cmake \
+        build_simulator simulator log plot clean
 
-build: .core .libs
-	arduino-cli compile flix --fqbn $(BOARD) --build-property "build.core_debug_level=1" $(EXTRA)
+all:
+	$(MAKE) -C Firmware
 
-upload: build
-	arduino-cli upload flix --fqbn $(BOARD) -p "$(PORT)"
-
-erase:
-	arduino-cli burn-bootloader --fqbn $(BOARD) -p "$(PORT)" -P esptool
-
-monitor:
-	arduino-cli monitor -p "$(PORT)" -c baudrate=115200
-
-core .core:
-	arduino-cli core update-index --additional-urls https://espressif.github.io/arduino-esp32/package_esp32_index.json
-	arduino-cli core install esp32:esp32@3.3.10 --additional-urls https://espressif.github.io/arduino-esp32/package_esp32_index.json
-	touch .core
-
-libs .libs:
-	arduino-cli lib update-index
-	arduino-cli lib install "FlixPeriph"
-	arduino-cli lib install "MAVLink"@2.0.33
-	touch .libs
-
-upload_proxy: .core .libs
-	arduino-cli compile tools/espnow-proxy --fqbn $(BOARD)
-	arduino-cli upload tools/espnow-proxy --fqbn $(BOARD) -p "$(PORT)"
-
-gazebo/build cmake: gazebo/CMakeLists.txt
-	mkdir -p gazebo/build
-	cd gazebo/build && cmake ..
-
-build_simulator: .libs gazebo/build
-	make -C gazebo/build
-
-simulator: build_simulator
-	GAZEBO_MODEL_PATH=$$GAZEBO_MODEL_PATH:${CURDIR}/gazebo/models \
-	GAZEBO_PLUGIN_PATH=$$GAZEBO_PLUGIN_PATH:${CURDIR}/gazebo/build \
-	gazebo --verbose ${CURDIR}/gazebo/flix.world
-
-log:
-	tools/log.py
-
-plot:
-	plotjuggler -d $(shell ls -t tools/log/*.csv | head -n1)
-
-clean:
-	rm -rf gazebo/build flix/build flix/cache .core .libs
-
-.PHONY: build upload monitor core libs cmake build_simulator simulator log clean
+build upload erase monitor core libs upload_proxy cmake \
+build_simulator simulator log plot clean:
+	$(MAKE) -C Firmware $@

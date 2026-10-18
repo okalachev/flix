@@ -1,0 +1,2994 @@
+#include <Arduino.h>
+#line 1 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\flix.ino"
+// Copyright (c) 2023 Oleg Kalachev <okalachev@gmail.com>
+// Repository: https://github.com/okalachev/flix
+// 耀坤整理版修改：https://github.com/YaoKunS/flix
+
+// 主固件文件（setup / loop）
+//
+// 【主循环顺序的讲究（第 4.1 节的"为什么是这个顺序"在这里落地）】
+//   readIMU()      —— 必须最先：所有控制都基于本帧的 IMU 数据
+//   step()         —— 紧接着更新时间：dt 是从上一次 step 到现在的差，
+//                     放在 IMU 之后才能让 dt 与"这帧数据的新鲜度"对应
+//   readRC()       —— 拿到本帧飞手输入（SBUS；ESP-NOW 的输入在 processMavlink 里）
+//   estimate()     —— 姿态解算（用 gyro/acc + dt）
+//   control()      —— 三层环 + 失效保护（用姿态与输入）
+//   sendMotors()   —— 输出 PWM，越早越好，避免控制延迟
+//   handleConsole/processMavlink —— 通信放在控制之后：通信再忙也不能推迟电机输出
+//   readVoltage/logData/syncParameters —— 低频事务放最后
+//   updateLED()    —— 灯语/蜂鸣器是纯非阻塞状态机，放最后不影响时序
+//
+// 这段顺序是从上游继承的，**不要为了"看起来整齐"去调换**：把通信挪到
+// sendMotors() 之前，会让电机输出抖动几毫秒，PID 表现为高频抖动。
+
+#include "vector.h"
+#include "quaternion.h"
+#include "util.h"
+#include "i18n.h"
+
+extern float t, dt;
+extern float controlRoll, controlPitch, controlYaw, controlThrottle, controlMode;
+extern Vector gyro, acc;
+extern Vector rates;
+extern Quaternion attitude;
+extern bool landed;
+extern bool imuOK;
+extern float motors[4];
+
+// ============================================================================
+// 【固件指纹】开机横幅里的身份串
+// ----------------------------------------------------------------------------
+// 用途：现场快速确认"这块板子烧的是哪一版固件、属于哪条产品线"。
+// 与耀坤自研飞控 YaoKunDrone、开源 ESP-Drone 整理版保持同一套指纹语义：
+//    组织 | 产品名 | 固件家族 | 品牌
+// 排查时只需看串口第一屏，无需查 SHA-256。
+// 参数表里也暴露同名项的读取入口（只读语义，见 parameters.ino 注释）。
+// ============================================================================
+const char *identityString = "YaoKunS | 耀坤S3无人机 | Flix | 耀坤智联";
+
+#line 47 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\flix.ino"
+void setup();
+#line 84 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\flix.ino"
+void loop();
+#line 94 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\console.ino"
+void setupConsole();
+#line 101 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\console.ino"
+void print(const char* format, ...);
+#line 111 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\console.ino"
+void pause(float duration);
+#line 262 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\console.ino"
+void handleConsole();
+#line 35 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\control.ino"
+void control();
+#line 43 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\control.ino"
+void interpretControls();
+#line 78 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\control.ino"
+void controlAttitude();
+#line 95 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\control.ino"
+void controlRates();
+#line 106 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\control.ino"
+void controlTorque();
+#line 127 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\control.ino"
+void desaturate();
+#line 148 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\control.ino"
+const char * getModeName();
+#line 19 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\estimate.ino"
+void estimate();
+#line 25 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\estimate.ino"
+void applyGyro();
+#line 33 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\estimate.ino"
+void applyAcc();
+#line 47 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\estimate.ino"
+void applyLevel();
+#line 63 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\imu.ino"
+static bool isMpu6050Id(int who);
+#line 67 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\imu.ino"
+static bool isMpu9x50Id(int who);
+#line 72 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\imu.ino"
+static int probeI2C(uint8_t addr);
+#line 84 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\imu.ino"
+static int probeSPI(int cs);
+#line 108 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\imu.ino"
+static void applyIMUProfile(int model, int bus, int who, const char *why);
+#line 125 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\imu.ino"
+static bool detectIMU();
+#line 202 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\imu.ino"
+void createIMU();
+#line 214 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\imu.ino"
+void setupIMU();
+#line 256 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\imu.ino"
+void configureIMU();
+#line 264 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\imu.ino"
+void readIMU();
+#line 281 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\imu.ino"
+void calibrateGyroOnce();
+#line 301 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\imu.ino"
+void calibrateAccel();
+#line 337 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\imu.ino"
+void calibrateAccelOnce();
+#line 363 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\imu.ino"
+void printIMUCalibration();
+#line 369 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\imu.ino"
+void printIMUInfo();
+#line 67 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\led.ino"
+void setRed(bool on);
+#line 74 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\led.ino"
+void setGreen(bool on);
+#line 81 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\led.ino"
+void setBlue(bool on);
+#line 89 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\led.ino"
+void setLED(bool on);
+#line 109 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\led.ino"
+void buzzerPlay(char pattern);
+#line 158 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\led.ino"
+static void buzzerUpdate();
+#line 201 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\led.ino"
+void runBuzzerFor(unsigned long ms);
+#line 212 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\led.ino"
+void setupLED();
+#line 233 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\led.ino"
+void updateLED();
+#line 41 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\log.ino"
+void prepareLogData();
+#line 46 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\log.ino"
+void logData();
+#line 64 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\log.ino"
+void printLogHeader();
+#line 70 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\log.ino"
+void printLogData();
+#line 60 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\mavlink.ino"
+void processMavlink();
+#line 65 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\mavlink.ino"
+void sendMavlink();
+#line 126 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\mavlink.ino"
+void sendMessage(const void *msg);
+#line 132 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\mavlink.ino"
+void receiveMavlink();
+#line 153 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\mavlink.ino"
+void handleMavlink(const void *_msg);
+#line 322 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\mavlink.ino"
+int handleMavlinkCommand(const void *_m);
+#line 368 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\mavlink.ino"
+void mavlinkPrint(const char* str);
+#line 372 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\mavlink.ino"
+void sendMavlinkPrint();
+#line 32 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\motors.ino"
+void setupMotors();
+#line 43 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\motors.ino"
+void sendMotors();
+#line 50 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\motors.ino"
+int getDutyCycle(float value);
+#line 63 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\motors.ino"
+bool motorsActive();
+#line 67 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\motors.ino"
+void testMotor(int n, float thrust);
+#line 193 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\parameters.ino"
+void setupParameters();
+#line 207 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\parameters.ino"
+int parametersCount();
+#line 211 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\parameters.ino"
+const char * getParameterName(int index);
+#line 216 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\parameters.ino"
+float getParameter(int index);
+#line 221 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\parameters.ino"
+float getParameter(const char *name);
+#line 230 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\parameters.ino"
+bool setParameter(const char *name, const float value);
+#line 242 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\parameters.ino"
+void syncParameters();
+#line 255 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\parameters.ino"
+void printParameters(const char *filter);
+#line 268 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\parameters.ino"
+void resetParameters();
+#line 26 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\power.ino"
+void setupPower();
+#line 39 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\power.ino"
+void readVoltage();
+#line 37 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\rc.ino"
+void setupRC();
+#line 46 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\rc.ino"
+bool readRC();
+#line 57 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\rc.ino"
+bool rcHardwarePresent();
+#line 61 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\rc.ino"
+void normalizeRC();
+#line 74 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\rc.ino"
+void calibrateRC();
+#line 106 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\rc.ino"
+void calibrateRCChannel(int *channel, uint16_t in[16], uint16_t out[16], const char *str);
+#line 131 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\rc.ino"
+void printRCCalibration();
+#line 13 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\safety.ino"
+void failsafe();
+#line 20 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\safety.ino"
+void rcLossFailsafe();
+#line 28 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\safety.ino"
+void descend();
+#line 39 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\safety.ino"
+void autoFailsafe();
+#line 52 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\safety.ino"
+void tiltFailsafe();
+#line 42 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\time.ino"
+void step();
+#line 64 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\time.ino"
+void computeLoopRate();
+#line 102 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\wifi.ino"
+static bool isPeerKnown(const uint8_t *mac);
+#line 133 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\wifi.ino"
+void learnPeerIfNeeded();
+#line 178 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\wifi.ino"
+static bool initNativeRecv();
+#line 199 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\wifi.ino"
+void setupWiFi();
+#line 238 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\wifi.ino"
+void sendWiFi(const uint8_t *buf, int len);
+#line 260 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\wifi.ino"
+int receiveWiFi(uint8_t *buf, int len);
+#line 278 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\wifi.ino"
+void printWiFiInfo();
+#line 338 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\wifi.ino"
+void configWiFi(int mode, const char *first, const char *second);
+#line 356 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\wifi.ino"
+void setWiFiMode(const String& mode);
+#line 47 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\flix.ino"
+void setup() {
+	setupConsole();
+	print(TXT_BOOT_START);
+	print("%s\n", identityString); // 指纹串：紧跟在开机首行之后
+	print(TXT_BOOT_VERSION);
+
+	setupParameters();
+	setupPower();
+
+	// ---- 灯 / 蜂鸣器 ----
+	// 蓝灯常亮 = 初始化中；短鸣一声 = 开始
+	print(TXT_SETUP_LED);
+	setupLED();
+	setBlue(true);
+	buzzerPlay('S');
+	runBuzzerFor(250); // 只在 setup 期阻塞播放，此时未解锁，安全
+
+	setupMotors();
+	setupWiFi();
+	setupIMU();
+	setupRC();
+
+	// ---- 初始化结束提示 ----
+	setBlue(false);
+	if (!imuOK) {
+		// IMU 不可用：用红灯常亮 + 长鸣明确告警，避免用户以为"正常但就是不解锁"
+		setRed(true);
+		buzzerPlay('L');
+		runBuzzerFor(700);
+	} else {
+		buzzerPlay('D'); // 双短鸣 = 就绪
+		runBuzzerFor(600);
+	}
+
+	print(TXT_BOOT_DONE);
+}
+
+void loop() {
+	readIMU();
+	step();
+	readRC();
+	estimate();
+	control();
+	sendMotors();
+	handleConsole();
+	processMavlink();
+	learnPeerIfNeeded(); // 自动学习遥控器 MAC 并登记到 ESP-NOW peer 表
+	readVoltage();
+	logData();
+	syncParameters();
+	updateLED(); // 刷新灯语与蜂鸣器状态（非阻塞）
+}
+
+#line 1 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\console.ino"
+// Copyright (c) 2023 Oleg Kalachev <okalachev@gmail.com>
+// Repository: https://github.com/okalachev/flix
+// 耀坤整理版修改：https://github.com/YaoKunS/flix
+
+// 命令行控制台（串口 / USB-CDC 上的交互界面）
+//
+// 【耀坤整理版的改动】
+//   1) 全部界面文字改为中文（通过 i18n.h 的 TXT_* 宏；定义 FLIX_LANG_EN 可编英文版）。
+//   2) 开机横幅换成耀坤品牌 + 版权声明：GPL 要求保留原作者署名，所以
+//      "(C) Oleg Kalachev" 与上游仓库地址必须保留，耀坤信息追加在其后。
+//   3) 新增 `ch` 命令：查看/设置 ESP-NOW 信道 —— 遥控器与飞机必须同信道，
+//      没有这条命令就得改代码重编，联调时极其痛苦。
+
+#include "pid.h"
+#include "vector.h"
+#include "util.h"
+#include "filter.h"
+#include "i18n.h"
+
+extern const int MOT_RL, MOT_RR, MOT_FR, MOT_FL;
+extern const int RAW, ACRO, STAB, AUTO;
+extern const int W_AP, W_STA, W_ESPNOW;
+extern float t, dt, loopRate;
+extern uint16_t channels[16];
+extern float controlTime;
+extern int mode;
+extern bool armed;
+extern LowPassFilter<Vector> gyroBiasFilter;
+extern float voltage;
+extern uint32_t tRewinds;
+extern int espnowChannel;
+
+// ---------------------------------------------------------------------------
+// 开机横幅（motd）
+//
+// 设计取舍：
+//   · 不再用上游那个 6 行 ASCII 大字 "FLIX" —— 它占 6 行屏幕，而第一屏最该看到的
+//     是"这是什么、谁做的、能敲什么"。改成品牌条 + 命令表。
+//   · 版权行不能删：flix 是 GPL 项目，分发二进制必须保留原作者署名与源码地址。
+//     所以这里先写 Oleg，再写耀坤；这不是客套，是许可证义务。
+// ---------------------------------------------------------------------------
+const char* motd =
+"\n"
+"==============================================================\n"
+"  耀坤S3 飞控（Flix 整理版）   YaoKunS Flight Controller\n"
+"  硬件：立创 ESP32-S3 + MPU6500/MPU6050   遥控：ESP-NOW\n"
+"--------------------------------------------------------------\n"
+"  开源：https://github.com/YaoKunS/flix\n"
+"  淘宝：耀坤智联  https://shop35432590.taobao.com/\n"
+"  B 站：耀坤智联  https://space.bilibili.com/3707011699050767/\n"
+"--------------------------------------------------------------\n"
+"  内核 (C) Oleg Kalachev   https://github.com/okalachev/flix\n"
+"  本固件由耀坤智联二次开发（目录整理 / 中文界面 / 硬件适配）\n"
+"==============================================================\n"
+"\n"
+TXT_HELP_TITLE
+TXT_HELP_HELP
+TXT_HELP_P
+TXT_HELP_P_STR
+TXT_HELP_P_SET
+TXT_HELP_PRESET
+TXT_HELP_TIME
+TXT_HELP_IMU
+TXT_HELP_CA
+TXT_HELP_ST
+TXT_HELP_ARM
+TXT_HELP_MODE
+TXT_HELP_RC
+TXT_HELP_CR
+TXT_HELP_PW
+TXT_HELP_WIFI
+TXT_HELP_WIFI_SET
+TXT_HELP_AP
+TXT_HELP_STA
+TXT_HELP_ESPNOW
+TXT_HELP_CH
+TXT_HELP_MOT
+TXT_HELP_LOG
+TXT_HELP_MFR
+TXT_HELP_SYS
+TXT_HELP_RESET
+TXT_HELP_REBOOT
+"\n";
+
+// Always redirect Serial to USB on ESP32-S3/ESP32-C3
+#if SOC_USB_SERIAL_JTAG_SUPPORTED && ARDUINO_USB_MODE
+#if !ARDUINO_USB_CDC_ON_BOOT
+HWCDC HWCDCSerial;
+#endif
+#undef Serial
+#define Serial HWCDCSerial
+#endif
+
+void setupConsole() {
+	Serial.begin(115200);
+#if SOC_USB_SERIAL_JTAG_SUPPORTED
+	Serial.setTxTimeoutMs(0); // never block on usb write
+#endif
+}
+
+void print(const char* format, ...) {
+	char buf[3000];
+	va_list args;
+	va_start(args, format);
+	vsnprintf(buf, sizeof(buf), format, args);
+	va_end(args);
+	Serial.print(buf);
+	mavlinkPrint(buf);
+}
+
+void pause(float duration) {
+	float start = t;
+	while (t - start < duration) {
+		step();
+		handleConsole();
+		processMavlink();
+		delay(50);
+	}
+}
+
+void doCommand(String str, bool echo = false) {
+	// parse command
+	String command, arg0, arg1;
+	splitString(str, command, arg0, arg1);
+	if (command.isEmpty()) return;
+
+	// echo command
+	if (echo) {
+		print("> %s\n", str.c_str());
+	}
+
+	command.toLowerCase();
+
+	// 执行命令
+	if (command == "help" || command == "motd") {
+		print("%s\n", motd);
+	} else if (command == "p" && arg1 == "") {
+		printParameters(arg0.c_str());
+	} else if (command == "p") {
+		bool success = setParameter(arg0.c_str(), arg1.toFloat());
+		if (success) {
+			print("%s = %g\n", arg0.c_str(), getParameter(arg0.c_str()));
+		} else {
+			print(TXT_PARAM_NOT_FOUND, arg0.c_str());
+			print(TXT_HINT_HELP);
+		}
+	} else if (command == "preset") {
+		resetParameters();
+	} else if (command == "time") {
+		print(TXT_TIME, t);
+		print(TXT_LOOP_RATE, loopRate);
+		print(TXT_DT, dt);
+		print(TXT_TIMEBASE, tRewinds);
+	} else if (command == "imu") {
+		printIMUInfo();
+		printIMUCalibration();
+		print(TXT_IMU_LANDED, landed);
+	} else if (command == "st") {
+		print(TXT_ST_RATES, rates.x, rates.y, rates.z);
+		print(TXT_ST_ATT, attitude.w, attitude.x, attitude.y, attitude.z);
+		print(TXT_ST_EULER, degrees(attitude.getRoll()), degrees(attitude.getPitch()), degrees(attitude.getYaw()));
+		print(TXT_ST_LANDED, landed);
+	} else if (command == "arm") {
+		armed = true;
+	} else if (command == "disarm") {
+		armed = false;
+	} else if (command == "raw") {
+		mode = RAW;
+	} else if (command == "stab") {
+		mode = STAB;
+	} else if (command == "acro") {
+		mode = ACRO;
+	} else if (command == "auto") {
+		mode = AUTO;
+	} else if (command == "rc") {
+		print(TXT_RC_CHANNELS);
+		for (int i = 0; i < 16; i++) {
+			print("%u ", channels[i]);
+		}
+		print(TXT_RC_CONTROLS, controlRoll, controlPitch, controlYaw, controlThrottle, controlMode);
+		print(TXT_RC_TIME, controlTime);
+		print(TXT_RC_MODE, getModeName());
+		print(TXT_RC_ARMED, armed);
+	} else if (command == "pw") {
+		print(TXT_VOLTAGE, voltage);
+	} else if (command == "wifi" && arg0 == "") {
+		printWiFiInfo();
+	} else if (command == "wifi") {
+		setWiFiMode(arg0);
+	} else if (command == "ap") {
+		configWiFi(W_AP, arg0.c_str(), arg1.c_str());
+	} else if (command == "sta") {
+		configWiFi(W_STA, arg0.c_str(), arg1.c_str());
+	} else if (command == "espnow") {
+		configWiFi(W_ESPNOW, arg0.c_str(), arg1.c_str());
+	} else if (command == "ch") {
+		// 【为什么加这条命令】ESP-NOW 是"同信道才能通"的：遥控器端代码里钉死了
+		// 一个信道（耀坤英文版遥控器 = 6，见其 Control.hpp 的 esp_wifi_set_channel(6)）。
+		// 飞机端若不同步，表现就是"遥控器显示已连接但飞机毫无反应"，且没有任何报错，
+		// 极难排查。以前只能改源码重编，现在一条命令就能对齐。
+		// 不带参数 = 查看；带参数 = 设置（走参数层，自动存 NVS，重启生效）。
+		if (arg0 == "") {
+			print(TXT_WIFI_CHANNEL, espnowChannel);
+		} else {
+			int ch = arg0.toInt();
+			if (ch >= 1 && ch <= 13) {
+				setParameter("ESPNOW_CHANNEL", ch);
+				print(TXT_CH_SET, ch);
+			} else {
+				print(TXT_CH_RANGE);
+			}
+		}
+	} else if (command == "mot") {
+		print(TXT_MOT_OUT, motors[MOT_FR], motors[MOT_FL], motors[MOT_RR], motors[MOT_RL]);
+	} else if (command == "log") {
+		printLogHeader();
+		if (arg0 == "dump") printLogData();
+	} else if (command == "cr") {
+		calibrateRC();
+	} else if (command == "ca") {
+		calibrateAccel();
+	} else if (command == "mfr") {
+		testMotor(MOT_FR, arg0.isEmpty() ? 0.2 : arg0.toFloat());
+	} else if (command == "mfl") {
+		testMotor(MOT_FL, arg0.isEmpty() ? 0.2 : arg0.toFloat());
+	} else if (command == "mrr") {
+		testMotor(MOT_RR, arg0.isEmpty() ? 0.2 : arg0.toFloat());
+	} else if (command == "mrl") {
+		testMotor(MOT_RL, arg0.isEmpty() ? 0.2 : arg0.toFloat());
+	} else if (command == "sys") {
+#ifdef ESP32
+		print(TXT_SYS_CHIP, ESP.getChipModel());
+		print(TXT_SYS_TEMP, temperatureRead());
+		print(TXT_SYS_RAM, ESP.getHeapSize() / 1024);
+		print(TXT_SYS_HEAP, ESP.getFreeHeap() / 1024);
+		print(TXT_SYS_FIRMWARE);
+		// Print tasks table
+		print(TXT_SYS_TASKS);
+		int taskCount = uxTaskGetNumberOfTasks();
+		TaskStatus_t *systemState = new TaskStatus_t[taskCount];
+		uint32_t totalRunTime;
+		uxTaskGetSystemState(systemState, taskCount, &totalRunTime);
+		for (int i = 0; i < taskCount; i++) {
+			String core = systemState[i].xCoreID == tskNO_AFFINITY ? "*" : String(systemState[i].xCoreID);
+			int cpuPercentage = systemState[i].ulRunTimeCounter / (totalRunTime / 100);
+			print("%-5d%-20s%-7d%-6d%-6s%d\n", systemState[i].xTaskNumber, systemState[i].pcTaskName,
+				systemState[i].usStackHighWaterMark, systemState[i].uxCurrentPriority, core.c_str(), cpuPercentage);
+		}
+		delete[] systemState;
+#endif
+	} else if (command == "reset") {
+		attitude = Quaternion();
+		gyroBiasFilter.reset();
+	} else if (command == "reboot") {
+		ESP.restart();
+	} else {
+		print(TXT_INVALID_CMD, command.c_str());
+		print(TXT_HINT_HELP);
+	}
+}
+
+void handleConsole() {
+	static bool showMotd = true;
+	static String input;
+
+	if (showMotd) {
+		print("%s\n", motd);
+		showMotd = false;
+	}
+
+	while (Serial.available()) {
+		char c = Serial.read();
+		if (c == '\n' || c == '\r') {
+			doCommand(input);
+			input.clear();
+		} else {
+			input += c;
+		}
+	}
+}
+
+#line 1 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\control.ino"
+// Copyright (c) 2023 Oleg Kalachev <okalachev@gmail.com>
+// Repository: https://github.com/okalachev/flix
+
+// Flight control
+
+#include "vector.h"
+#include "quaternion.h"
+#include "pid.h"
+#include "filter.h"
+#include "util.h"
+
+const int RAW = 0, ACRO = 1, STAB = 2, AUTO = 3; // flight modes
+int mode = STAB;
+bool armed = false;
+
+Quaternion attitudeTarget;
+Vector ratesTarget;
+Vector ratesExtra; // feedforward rates
+Vector torqueTarget;
+float thrustTarget;
+
+PID rollRatePID(0.05, 0.2, 0.001, 0.3, 0.2);
+PID pitchRatePID(0.05, 0.2, 0.001, 0.3, 0.2);
+PID yawRatePID(0.3, 0, 0, 0.3);
+PID rollPID(6);
+PID pitchPID(6);
+PID yawPID(3);
+Vector maxRate(radians(360), radians(360), radians(360));
+float tiltMax = radians(30);
+int flightModes[] = {STAB, STAB, STAB}; // map for rc mode switch
+
+extern const int MOT_RL, MOT_RR, MOT_FR, MOT_FL;
+extern float controlRoll, controlPitch, controlThrottle, controlYaw, controlMode;
+
+void control() {
+	interpretControls();
+	failsafe();
+	controlAttitude();
+	controlRates();
+	controlTorque();
+}
+
+void interpretControls() {
+	if (controlMode < 0.25) mode = flightModes[0];
+	else if (controlMode <= 0.75) mode = flightModes[1];
+	else if (controlMode > 0.75) mode = flightModes[2];
+
+	if (mode == AUTO) return; // pilot is not effective in AUTO mode
+
+	if (controlThrottle < 0.05 && controlYaw > 0.95) armed = true; // arm gesture
+	if (controlThrottle < 0.05 && controlYaw < -0.95) armed = false; // disarm gesture
+
+	if (abs(controlYaw) < 0.1) controlYaw = 0; // yaw dead zone
+
+	thrustTarget = controlThrottle;
+
+	if (mode == STAB) {
+		float yawTarget = attitudeTarget.getYaw();
+		if (!armed || invalid(yawTarget) || controlYaw != 0) yawTarget = attitude.getYaw(); // reset yaw target
+		attitudeTarget = Quaternion::fromEuler(Vector(controlRoll * tiltMax, controlPitch * tiltMax, yawTarget));
+		ratesExtra = Vector(0, 0, -controlYaw * maxRate.z); // positive yaw stick means clockwise rotation in FLU
+	}
+
+	if (mode == ACRO) {
+		attitudeTarget.invalidate(); // skip attitude control
+		ratesTarget.x = controlRoll * maxRate.x;
+		ratesTarget.y = controlPitch * maxRate.y;
+		ratesTarget.z = -controlYaw * maxRate.z; // positive yaw stick means clockwise rotation in FLU
+	}
+
+	if (mode == RAW) { // direct torque control
+		attitudeTarget.invalidate(); // skip attitude control
+		ratesTarget.invalidate(); // skip rate control
+		torqueTarget = Vector(controlRoll, controlPitch, -controlYaw) * 0.1;
+	}
+}
+
+void controlAttitude() {
+	if (!armed || attitudeTarget.invalid() || thrustTarget < 0.1) return; // skip attitude control
+
+	const Vector up(0, 0, 1);
+	Vector upActual = Quaternion::rotateVector(up, attitude);
+	Vector upTarget = Quaternion::rotateVector(up, attitudeTarget);
+
+	Vector error = Vector::rotationVectorBetween(upTarget, upActual);
+
+	ratesTarget.x = rollPID.update(error.x) + ratesExtra.x;
+	ratesTarget.y = pitchPID.update(error.y) + ratesExtra.y;
+
+	float yawError = wrapAngle(attitudeTarget.getYaw() - attitude.getYaw());
+	ratesTarget.z = yawPID.update(yawError) + ratesExtra.z;
+}
+
+
+void controlRates() {
+	if (!armed || ratesTarget.invalid() || thrustTarget < 0.1) return; // skip rates control
+
+	Vector error = ratesTarget - rates;
+
+	// Calculate desired torque, where 0 - no torque, 1 - maximum possible torque
+	torqueTarget.x = rollRatePID.update(error.x);
+	torqueTarget.y = pitchRatePID.update(error.y);
+	torqueTarget.z = yawRatePID.update(error.z);
+}
+
+void controlTorque() {
+	if (!torqueTarget.valid()) return; // skip torque control
+
+	if (!armed) {
+		for (float& m : motors) m = 0; // stop motors if disarmed
+		return;
+	}
+
+	if (thrustTarget < 0.1) {
+		for (float& m : motors) m = 0.1; // idle thrust
+		return;
+	}
+
+	motors[MOT_FL] = thrustTarget + torqueTarget.x - torqueTarget.y + torqueTarget.z;
+	motors[MOT_FR] = thrustTarget - torqueTarget.x - torqueTarget.y - torqueTarget.z;
+	motors[MOT_RL] = thrustTarget + torqueTarget.x + torqueTarget.y - torqueTarget.z;
+	motors[MOT_RR] = thrustTarget - torqueTarget.x + torqueTarget.y + torqueTarget.z;
+
+	desaturate(); // prioritize angle control over thrust control
+}
+
+void desaturate() {
+	float max_ = -INFINITY, min_ = INFINITY;
+	float correction = 0;
+
+	// Find maximum and minimum thrust
+	for (float m : motors) {
+		if (m > max_) max_ = m;
+		if (m < min_) min_ = m;
+	}
+
+	if (max_ > 1) { // thrust is above maximum
+		correction = max_ - 1;
+	} else if (min_ < 0) { // thrust is below minimum
+		correction = min_;
+	}
+
+	for (float& m : motors) {
+		m -= correction;
+	}
+}
+
+const char* getModeName() {
+	switch (mode) {
+		case RAW: return "RAW";
+		case ACRO: return "ACRO";
+		case STAB: return "STAB";
+		case AUTO: return "AUTO";
+		default: return "UNKNOWN";
+	}
+}
+
+#line 1 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\estimate.ino"
+// Copyright (c) 2023 Oleg Kalachev <okalachev@gmail.com>
+// Repository: https://github.com/okalachev/flix
+
+// Attitude estimation using gyro and accelerometer
+
+#include "quaternion.h"
+#include "vector.h"
+#include "filter.h"
+#include "util.h"
+
+Vector rates; // estimated angular rates, rad/s
+Quaternion attitude; // estimated attitude
+bool landed;
+
+float accWeight = 0.003;
+float levelWeight = 0.0002;
+LowPassFilter<Vector> ratesFilter(0.2); // cutoff frequency ~ 40 Hz
+
+void estimate() {
+	applyGyro();
+	applyAcc();
+	applyLevel();
+}
+
+void applyGyro() {
+	// filter gyro to get angular rates
+	rates = ratesFilter.update(gyro);
+
+	// apply rates to attitude
+	attitude = Quaternion::rotate(attitude, Quaternion::fromRotationVector(rates * dt));
+}
+
+void applyAcc() {
+	// test should we apply accelerometer gravity correction
+	landed = !motorsActive() && abs(acc.norm() - ONE_G) < ONE_G * 0.1f;
+
+	if (!landed) return;
+
+	// calculate accelerometer correction
+	Vector up = Quaternion::rotateVector(Vector(0, 0, 1), attitude);
+	Vector correction = Vector::rotationVectorBetween(acc, up) * accWeight;
+
+	// apply correction
+	attitude = Quaternion::rotate(attitude, Quaternion::fromRotationVector(correction));
+}
+
+void applyLevel() {
+	if (landed) return;
+	if (thrustTarget < 0.1) return; // skip at idle thrust
+
+	// assume the pilot keeps the drone more or less level in flight
+	Vector up = Quaternion::rotateVector(Vector(0, 0, 1), attitude);
+	Vector correction = Vector::rotationVectorBetween(Vector(0, 0, 1), up) * levelWeight;
+	attitude = Quaternion::rotate(attitude, Quaternion::fromRotationVector(correction));
+}
+
+#line 1 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\imu.ino"
+// Copyright (c) 2023 Oleg Kalachev <okalachev@gmail.com>
+// Repository: https://github.com/okalachev/flix
+// 耀坤整理版修改：https://github.com/YaoKunS/flix
+
+// 惯性测量单元（IMU）驱动与校准
+//
+// 【耀坤整理版的改动】
+//   1) 出厂默认带耀坤 S3 的引脚与型号（上游原版是 -1 / 未分配，直接用会崩）。
+//   2) 新增上电自动识别（I2C 先探、SPI 再探），排母换模块不用改代码。
+//   3) 朝向按**总线**分档：I2C(6050 系) +π/2，SPI(6500 系) −π/2。
+//   4) 全部提示文字中文（i18n.h）。
+//   5) imu 不可用时不再死等：上游 readIMU() 直接调 imu->waitForData()，
+//      一旦探测失败拿到 nullptr 就是整机卡死（表现为"上电无输出、像砖头"）。
+
+#include <SPI.h>
+#include <Wire.h>
+#include <FlixPeriph.h>
+#include "vector.h"
+#include "filter.h"
+#include "util.h"
+#include "i18n.h"
+
+IMU *imu;
+int imuAutoDetect = 1; // 1 - 上电自动识别（默认）；0 - 只用下面的 IMU_MODEL 手动值
+int imuModel = -1;     // 1 - MPU9250/MPU6500, 2 - ICM20948, 3 - MPU6050, 4 - ICM40609D, -1 待识别
+int imuBus = 0;        // 0 - SPI, 1 - I2C
+int imuRotLock = 0;    // 1 - 自动识别不覆盖 IMU_ROT_YAW（现场锁定自定义朝向时用）
+bool imuOK = false;    // IMU 是否就绪；false 时禁止解锁，且主循环不阻塞
+const char *imuDetectNote = "manual"; // 自动识别的依据（I2C id / SPI id / manual），供 imu 命令回显
+
+// 耀坤 S3 实测引脚（以《耀坤S3无人机引脚定义.xlsx》V2 版为准，V1 老板靠自动扫描兼容）：
+//   MPU6500 走 SPI：SCK=38 / MISO=21 / MOSI=18；CS 新板=42、老板实测=17（探测候选表两者都试）
+//   MPU6050 走 I2C0：SDA=9 / SCL=8（表格与实物一致，2026-10-18 用户确认"按表格没错"）
+int imuSckPin = 38, imuMisoPin = 21, imuMosiPin = 18, imuCsPin = 17, imuIntPin = -1;
+// 【坑】这里曾按错误记忆写成 SDA=8 / SCL=9（与表格相反），导致 2 号机 I2C 模块探不到。
+// 引脚表与实际布线冲突时以实测为准，但本次实测证明表格是对的 —— 恢复 SDA=9 / SCL=8。
+int imuSdaPin = 9, imuSclPin = 8;
+
+// 默认朝向（SPI 档）。识别成功后 applyIMUProfile() 会按总线覆盖。
+Vector imuRotation(0, 0, -PI / 2);
+
+Vector gyro; // 角速度，rad/s
+Vector gyroBias;
+
+Vector acc; // 加速度，m/s^2
+Vector accBias;
+Vector accScale(1, 1, 1);
+
+LowPassFilter<Vector> gyroBiasFilter(0.001);
+
+// ---------------------------------------------------------------------------
+// IMU 自动识别
+//
+// 判别依据 = WHO_AM_I 寄存器 0x75：
+//   0x68 / 0x34 / 0x38 / 0x0C / 0x3A -> MPU6050 系（含部分国产克隆片）model=3, I2C
+//   0x70 / 0x71 / 0x73               -> MPU6500 / MPU9250 / MPU9255   model=1, SPI
+//
+// 探测顺序：先 I2C（有 ACK 机制，不会误判）→ 再 SPI（悬空可能读到噪声，靠白名单兜底）。
+// 只在 setup() 里跑一次，带超时，绝不进入 1 kHz 主循环。
+// 识别结果只放内存、不写 NVS —— 排母随时可换模块，每次上电重探才符合直觉。
+// ---------------------------------------------------------------------------
+
+static bool isMpu6050Id(int who) {
+	return who == 0x68 || who == 0x34 || who == 0x38 || who == 0x0C || who == 0x3A;
+}
+
+static bool isMpu9x50Id(int who) {
+	return who == 0x70 || who == 0x71 || who == 0x73;
+}
+
+// 裸 I2C 读 WHO_AM_I（不依赖 FlixPeriph 内部实现，避免版本差异）
+static int probeI2C(uint8_t addr) {
+	Wire.begin(imuSdaPin, imuSclPin);
+	Wire.setTimeOut(20);
+	Wire.beginTransmission(addr);
+	Wire.write(0x75);
+	if (Wire.endTransmission(false) != 0) return -1; // 无 ACK
+	if (Wire.requestFrom((uint16_t)addr, (size_t)1) != 1) return -1;
+	if (!Wire.available()) return -1;
+	return Wire.read();
+}
+
+// 裸 SPI 读 WHO_AM_I（MPU9x50 的 SPI 为 MODE3，读寄存器需置 bit7）
+static int probeSPI(int cs) {
+	if (cs < 0) return -1;
+	SPI.begin(imuSckPin, imuMisoPin, imuMosiPin);
+	pinMode(cs, OUTPUT);
+	digitalWrite(cs, HIGH);
+	delayMicroseconds(10);
+	SPI.beginTransaction(SPISettings(1000000, MSBFIRST, SPI_MODE3));
+	digitalWrite(cs, LOW);
+	delayMicroseconds(10);
+	SPI.transfer(0x75 | 0x80); // 读位
+	const uint8_t who = SPI.transfer(0x00);
+	digitalWrite(cs, HIGH);
+	SPI.endTransaction();
+	return who;
+}
+
+// 按识别出的型号设置总线与安装朝向
+//
+// 【朝向为什么按总线分档，而不按 WHO_AM_I】
+//   6050 模块插 8P 排母：丝印 X → 机体左、Y → 机尾  ⇒ Rz(+90度)
+//   6500 模块插 10P 排母：丝印 X → 机体右、Y → 机头 ⇒ Rz(-90度)
+//   180 度差异来自**模块插入方向相反**，不是芯片差异。
+//   而且国产 6050 兼容片 WHO_AM_I 可能读成 0x70（I2C），若按"0x70→6500 档"
+//   就会差 180 度（实测：姿态球 roll/pitch 同时反）⇒ 分档依据只能是总线。
+static void applyIMUProfile(int model, int bus, int who, const char *why) {
+	imuModel = model;
+	imuBus = bus;
+	imuDetectNote = why;
+
+	const Vector detected = (bus == 1) ? Vector(0, 0, PI / 2) : Vector(0, 0, -PI / 2);
+	if (!imuRotLock) imuRotation = detected;
+
+	if (bus == 1) {
+		print(TXT_IMU_FOUND_I2C, imuSdaPin, imuSclPin);
+	} else {
+		print(TXT_IMU_FOUND_SPI, imuSckPin, imuMisoPin, imuMosiPin, imuCsPin);
+	}
+	if (who >= 0) print(TXT_IMU_WHOAMI2, who);
+	print(TXT_IMU_ROT_APPLIED, imuRotation.z, why);
+}
+
+static bool detectIMU() {
+	print(TXT_IMU_DETECTING);
+
+	// ① I2C0 —— 全总线扫描（0x08~0x77），不再只试 0x68/0x69
+	// 【为什么要扫全总线】市面上 MPU6050 模块的 I2C 地址理论上是 0x68/0x69（AD0 决定），
+	// 但耀坤采购的部分模块丝印/资料标注非标地址（如 0x08），固定探测表会漏。
+	// 做法：逐地址 ACK 探测，对每个有应答的地址读 WHO_AM_I：
+	//   - 读到合法 MPU id（6050 系或 6500 系克隆片）→ 直接采用；
+	//   - 有 ACK 但 WHO 不合法（0x00/0xFF/其他外设）→ 记为兜底候选（可能是识别表没覆盖的兼容片）；
+	//   - 0x68/0x69 优先级最高（标准地址最可信），其余按地址从小到大。
+	// V1/V2 PCB 的 I2C0 布线相同（SDA=9/SCL=8），无需按 PCB 版本区分。
+	int who = -1;
+	uint8_t foundAddr = 0;
+	uint8_t fallbackAddr = 0;        // 有 ACK 但 WHO 不合法的兜底候选
+	{
+		Wire.begin(imuSdaPin, imuSclPin);
+		Wire.setTimeOut(20);
+		for (uint8_t addr = 0x08; addr <= 0x77; addr++) {
+			Wire.beginTransmission(addr);
+			if (Wire.endTransmission() != 0) continue;   // 无 ACK，下一地址
+			// 有 ACK：尝试读 WHO_AM_I（0x75）
+			Wire.beginTransmission(addr);
+			Wire.write(0x75);
+			int r = Wire.endTransmission(false);
+			int w = -1;
+			if (r == 0 && Wire.requestFrom((uint16_t)addr, (size_t)1) == 1 && Wire.available())
+				w = Wire.read();
+			if (isMpu6050Id(w) || isMpu9x50Id(w)) { who = w; foundAddr = addr; break; }
+			if (fallbackAddr == 0) fallbackAddr = addr;  // 只记第一个兜底候选
+		}
+	}
+	if (who < 0 && fallbackAddr != 0) {
+		// 没找到合法 id，但有地址在应答 —— 可能是识别表外的国产兼容片，赌一把
+		// （0x68/0x69 之外的地址一律按 6050 系处理，setupIMU() 里 begin 失败还会换型号重试）
+		who = probeI2C(fallbackAddr);
+		foundAddr = fallbackAddr;
+	}
+	if (who >= 0) {
+		// 注意：I2C（8P 排母）上只会插 6050 系模块 —— 6500 走 10P/SPI 排母，物理上插不进来。
+		// 型号选择：0x70/0x71/0x73（6500 系克隆片）→ model=1；其余（含标准 6050 id 与
+		// 全总线扫描兜底读到的非法 id 0x00）→ model=3（MPU6050）。
+		// 选错时 setupIMU() 里 begin 失败还会换型号重试，不会死在这。
+		const int model = isMpu9x50Id(who) ? 1 : 3;
+		applyIMUProfile(model, 1, who, isMpu9x50Id(who) ? "I2C id（6050 系克隆片）" : "I2C id");
+		return true;
+	}
+
+	// ② SPI —— MPU6500 / MPU9250 / MPU9255
+	// 【兼容新旧 PCB，无需重编】V1 老板 MPU6500 片选实测接 GPIO17（INT 也在 17）；
+	// V2 新板按《耀坤S3无人机引脚定义.xlsx》：MPU6500_CS=GPIO42、MPU6500_INT=GPIO40（INT 本工程不用，定时器采样）。
+	// 所以按候选表 {17, 42} 依次探测，谁读到合法 WHO_AM_I 就用谁 —— 两个版本的板子都能自动适配。
+	int foundCs = -1, foundWho = -1, looseCs = -1, looseWho = -1;
+	const int csCandidates[3] = { imuCsPin, 42, 17 };
+	for (int k = 0; k < 3; k++) {
+		const int cs = csCandidates[k];
+		if (cs < 0) continue;
+		bool seen = false;
+		for (int j = 0; j < k; j++) if (csCandidates[j] == cs) seen = true;
+		if (seen) continue;
+
+		const int who = probeSPI(cs);
+		print(TXT_IMU_PROBE_CS, cs, who);
+		if (isMpu9x50Id(who)) { foundCs = cs; foundWho = who; break; }
+		// 非标 ID 的国产克隆片：留个候选，交给 begin() 里的状态判定兜底
+		if (who != 0x00 && who != 0xFF && looseCs < 0) { looseCs = cs; looseWho = who; }
+	}
+	if (foundCs < 0 && looseCs >= 0) { foundCs = looseCs; foundWho = looseWho; }
+	if (foundCs >= 0) {
+		imuCsPin = foundCs; // 记住真正可用的片选，后续 createIMU() 与打印都用它
+		applyIMUProfile(1, 0, foundWho, "SPI id");
+		return true;
+	}
+
+	print(TXT_IMU_NOT_FOUND);
+	return false;
+}
+
+void createIMU() {
+	if (imuBus == 0) {
+		// SPI 连接
+		SPI.begin(imuSckPin, imuMisoPin, imuMosiPin);
+		imu = IMU::create(imuModel, SPI, imuCsPin, imuIntPin);
+	} else {
+		// I2C 连接
+		Wire.begin(imuSdaPin, imuSclPin);
+		imu = IMU::create(imuModel, Wire, imuIntPin);
+	}
+}
+
+void setupIMU() {
+	print(TXT_SETUP_IMU);
+	free(imu);
+	imu = nullptr;
+
+	if (imuAutoDetect) detectIMU();
+
+	if (imuModel == 3) imuBus = 1; // MPU6050 只能走 I2C
+	if (imuModel < 0) {
+		// 没识别出来且没有手动值：先按 MPU6050/I2C 试，避免 IMU::create(-1) 返回 nullptr
+		imuModel = 3;
+		imuBus = 1;
+	}
+
+	createIMU();
+	if (imu != nullptr) imu->begin();
+
+	// 首次启动失败：自动模式下换另一种型号再试一次（兜住国产克隆片 / 探测误判）
+	if (imu != nullptr && imu->status() != 0 && imuAutoDetect) {
+		print(TXT_IMU_RETRY, imuModel, imuBus, imu->status());
+		free(imu);
+		const int fallback = (imuModel == 3) ? 1 : 3;
+		applyIMUProfile(fallback, fallback == 3 ? 1 : 0, -1, "fallback");
+		createIMU();
+		if (imu != nullptr) imu->begin();
+		print(TXT_IMU_RETRY_RESULT, imuModel, imuBus, imu == nullptr ? -1 : imu->status());
+	}
+
+	if (imu == nullptr || imu->status() != 0) {
+		// 【为什么要这个分支】上游没有它：探测失败时 imu 是 nullptr，
+		// readIMU() 里 imu->waitForData() 直接空指针崩溃（表现为上电即死、看门狗重启循环，
+		// 串口只有半行输出）。这里改为"标记不可用 + 禁止解锁"，飞机仍能连上、能看日志。
+		imuOK = false;
+		print(TXT_IMU_UNUSABLE);
+		return;
+	}
+
+	imuOK = true;
+	print(TXT_IMU_READY, imu->getModel(), imuBus == 0 ? "SPI" : "I2C");
+	configureIMU();
+}
+
+void configureIMU() {
+	imu->setAccelRange(IMU::ACCEL_RANGE_4G);
+	imu->setGyroRange(IMU::GYRO_RANGE_2000DPS);
+	imu->setDLPF(IMU::DLPF_MAX);
+	imu->setRate(IMU::RATE_1KHZ_APPROX);
+	imu->setupInterrupt();
+}
+
+void readIMU() {
+	if (!imuOK || imu == nullptr) return; // 不可用时直接返回：waitForData() 会死等，绝不能进
+	imu->waitForData();
+	imu->getGyro(gyro.x, gyro.y, gyro.z);
+	imu->getAccel(acc.x, acc.y, acc.z);
+	calibrateGyroOnce();
+
+	// 应用比例与零偏
+	acc = (acc - accBias) / accScale;
+	gyro = gyro - gyroBias;
+
+	// 旋转到机体坐标系
+	Quaternion rotation = Quaternion::fromEuler(imuRotation);
+	acc = Quaternion::rotateVector(acc, rotation.inversed());
+	gyro = Quaternion::rotateVector(gyro, rotation.inversed());
+}
+
+void calibrateGyroOnce() {
+	static Delay landedDelay(2);
+	if (!landedDelay.update(landed)) return; // 只在确认静止时校准
+
+	gyroBias = gyroBiasFilter.update(gyro);
+}
+
+// 六面校准的极值累加器
+// 【🔴 必须每轮重置，曾经是 bug 根源（2026-10-18 台架实测发现）】
+// 原写法把这两个变量放在 calibrateAccelOnce() 里当 `static`：
+//     static Vector accMax(-INFINITY, -INFINITY, -INFINITY);
+//     static Vector accMin(INFINITY, INFINITY, INFINITY);
+// C++ 的 static 局部变量**只在第一次调用时初始化**，之后再进来保留上次的值。
+// 后果：第二次执行 `ca` 时，accMax/accMin 还是上一轮（甚至上电以来）的残留，
+// 于是 accScale = (accMax-accMin)/2/G 完全失真 —— 实测算出 0.0002（应≈1.0），
+// 加速度读数随之变成 -0.86/0.19/9.19（应≈0/0/9.8），姿态彻底不准。
+// 修法：提成文件级全局，在 calibrateAccel() 开头显式重置。
+static Vector accCalMax(-INFINITY, -INFINITY, -INFINITY);
+static Vector accCalMin(INFINITY, INFINITY, INFINITY);
+
+void calibrateAccel() {
+	if (!imuOK || imu == nullptr) {
+		print(TXT_IMU_CAL_UNAVAIL);
+		return;
+	}
+	print(TXT_CAL_START);
+	imu->setAccelRange(IMU::ACCEL_RANGE_2G); // 最灵敏档
+
+	// 【关键】每轮校准开始前清空极值累加器，否则会累加上一次的结果
+	accCalMax = Vector(-INFINITY, -INFINITY, -INFINITY);
+	accCalMin = Vector(INFINITY, INFINITY, INFINITY);
+
+	print(TXT_CAL_1);
+	pause(8);
+	calibrateAccelOnce();
+	print(TXT_CAL_2);
+	pause(8);
+	calibrateAccelOnce();
+	print(TXT_CAL_3);
+	pause(8);
+	calibrateAccelOnce();
+	print(TXT_CAL_4);
+	pause(8);
+	calibrateAccelOnce();
+	print(TXT_CAL_5);
+	pause(8);
+	calibrateAccelOnce();
+	print(TXT_CAL_6);
+	pause(8);
+	calibrateAccelOnce();
+
+	printIMUCalibration();
+	print(TXT_CAL_DONE);
+	configureIMU();
+}
+
+void calibrateAccelOnce() {
+	const int samples = 1000;
+
+	// 求加速度计读数的均值
+	acc = Vector(0, 0, 0);
+	for (int i = 0; i < samples; i++) {
+		imu->waitForData();
+		Vector sample;
+		imu->getAccel(sample.x, sample.y, sample.z);
+		acc = acc + sample;
+	}
+	acc = acc / samples;
+
+	// 更新六面校准的极值（累加器在 calibrateAccel() 开头已重置，见那里的说明）
+	if (acc.x > accCalMax.x) accCalMax.x = acc.x;
+	if (acc.y > accCalMax.y) accCalMax.y = acc.y;
+	if (acc.z > accCalMax.z) accCalMax.z = acc.z;
+	if (acc.x < accCalMin.x) accCalMin.x = acc.x;
+	if (acc.y < accCalMin.y) accCalMin.y = acc.y;
+	if (acc.z < accCalMin.z) accCalMin.z = acc.z;
+
+	// 求比例与零偏
+	accScale = (accCalMax - accCalMin) / 2 / ONE_G;
+	accBias = (accCalMax + accCalMin) / 2;
+}
+
+void printIMUCalibration() {
+	print(TXT_CAL_GYRO_BIAS, gyroBias.x, gyroBias.y, gyroBias.z);
+	print(TXT_CAL_ACC_BIAS, accBias.x, accBias.y, accBias.z);
+	print(TXT_CAL_ACC_SCALE, accScale.x, accScale.y, accScale.z);
+}
+
+void printIMUInfo() {
+	if (imu == nullptr) {
+		print(TXT_IMU_NOT_FOUND_SHORT);
+		return;
+	}
+	imu->status() ? print(TXT_IMU_STATUS_ERR, imu->status()) : print(TXT_IMU_STATUS_OK);
+	print(TXT_IMU_MODEL, imu->getModel());
+	print(TXT_IMU_WHOAMI, imu->whoAmI());
+	print(TXT_IMU_SUMMARY, imuBus == 0 ? "SPI" : "I2C0", imuDetectNote, imuOK);
+	if (imuBus == 0) {
+		print(TXT_IMU_PINS_SPI, imuSckPin, imuMisoPin, imuMosiPin, imuCsPin, imuIntPin);
+	} else {
+		print(TXT_IMU_PINS_I2C, imuSdaPin, imuSclPin, imuIntPin);
+	}
+	print(TXT_IMU_RATE, loopRate);
+	print(TXT_IMU_INT_MODE, imuIntPin != -1 ? TXT_IMU_PIN_STR : TXT_IMU_PIN_TIMER);
+	print(TXT_IMU_TEMP, imu->getTemp());
+	print(TXT_IMU_GYRO, gyro.x, gyro.y, gyro.z);
+	print(TXT_IMU_ACC, acc.x, acc.y, acc.z);
+	imu->waitForData();
+	Vector rawGyro, rawAcc;
+	imu->getGyro(rawGyro.x, rawGyro.y, rawGyro.z);
+	imu->getAccel(rawAcc.x, rawAcc.y, rawAcc.z);
+	print(TXT_IMU_RAW_GYRO, rawGyro.x, rawGyro.y, rawGyro.z);
+	print(TXT_IMU_RAW_ACC, rawAcc.x, rawAcc.y, rawAcc.z);
+}
+
+#line 1 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\led.ino"
+// Copyright (c) 2023 Oleg Kalachev <okalachev@gmail.com>
+// Repository: https://github.com/okalachev/flix
+// 耀坤整理版修改：https://github.com/YaoKunS/flix
+
+// ============================================================================
+// 耀坤S3 飞控：RGB 灯语系统 + 蜂鸣器音频反馈
+// ============================================================================
+//
+// 【硬件映射（耀坤 S3 立创版 PCB 实测）】
+//   红灯   GPIO41   低电报警 / 失联慢闪
+//   绿灯   GPIO7    已连接常亮 / 已解锁快闪
+//   蓝灯   GPIO14   初始化过程指示
+//   蜂鸣器 GPIO39   有源蜂鸣器，高电平触发（S8050 三极管驱动）
+//
+// 【灯语优先级（高 → 低）】
+//   1. 低电量（电压 < 3.5 V） → 红灯 100 ms 快闪 + 蜂鸣器连续急鸣
+//   2. 已连接 且 已解锁      → 绿灯 200 ms 快闪
+//   3. 已连接 且 未解锁      → 绿灯常亮
+//   4. 未连接                → 红灯 500 ms 慢闪
+//   5. 初始化中              → 蓝灯常亮（由 setup() 直接控制）
+//
+// 【声音反馈（非阻塞播放器）】
+//   'S' 短鸣   上电 / 初始化完成
+//   'D' 双短鸣 遥控连接成功
+//   'T' 三短鸣 解锁成功
+//   'L' 长鸣   失去遥控
+//   'C' 连续急鸣 低电量（循环直到电压恢复）
+//   'X' 立即停止
+//
+// 【为什么写非阻塞播放器】
+//   如果在 setup()/loop() 里用 delay() 放音，1 kHz 的主循环会被直接打断，
+//   姿态解算跟着丢步 ⇒ 解锁瞬间就翻。所以这里用"状态机 + 由主循环驱动"：
+//   任何时刻都不阻塞，只有 setup() 里那两次"开始/完成"提示音会用
+//   runBuzzerFor() 主动跑一小段（此时还没解锁，阻塞无害）。
+//
+// 【与自研飞控 YaoKunDrone 的一致性】
+//   低电阈值同样取 3.5 V（1S 锂电），音效语义保持"短/双/三/长/急"，
+//   让两套飞控的操作反馈手感一致，用户不用重新学。
+// ============================================================================
+
+#include "util.h"
+#include "i18n.h"   // 界面文字唯一数据源：中/英文可切（FLIX_LANG_EN）
+
+extern float t;
+extern float mavlinkTime;   // 安全层：最后收到遥控的时刻
+extern bool armed;
+extern float voltage;
+extern float controlTime;   // MANUAL_CONTROL 的时间戳（见下方 connected 判定说明）
+
+// ---- 引脚与阈值（耀坤 S3 实测；已接入参数表，可用 `p LED_R_PIN ...` 现场改）----
+// 【为什么用变量而不是 #define】参数表 parameters[] 需要变量指针才能读写；
+// 用宏就没有地址。这里定义成全局变量后，LED_* / BUZ_* 参数可直接映射到它们，
+// 改引脚不必重编固件（换板/飞线调试时非常有用）。
+int ledRedPin = 41;        // 红灯：低电报警 / 失联慢闪
+int ledGreenPin = 7;       // 绿灯：已连接常亮 / 已解锁快闪
+int ledBluePin = 14;       // 蓝灯：初始化过程指示
+int buzzerPin = 39;        // 有源蜂鸣器，高电平触发（S8050 三极管驱动）
+int buzzerEnable = 1;      // 蜂鸣器总开关：0 = 全程静音（夜间室内调试用）
+float ledLowVoltage = 3.5f; // 低电告警阈值（1S 锂电，与自研飞控 YaoKunDrone 一致）
+
+// ---- LED 状态缓存（避免重复写 IO）----
+static bool redState = false, greenState = false, blueState = false;
+
+// ============================================================================
+// LED 独立控制（带状态缓存）
+// ============================================================================
+void setRed(bool on) {
+	if (on != redState) {
+		digitalWrite(ledRedPin, on ? HIGH : LOW);
+		redState = on;
+	}
+}
+
+void setGreen(bool on) {
+	if (on != greenState) {
+		digitalWrite(ledGreenPin, on ? HIGH : LOW);
+		greenState = on;
+	}
+}
+
+void setBlue(bool on) {
+	if (on != blueState) {
+		digitalWrite(ledBluePin, on ? HIGH : LOW);
+		blueState = on;
+	}
+}
+
+// 兼容上游代码（只控制蓝灯）
+void setLED(bool on) {
+	setBlue(on);
+}
+
+// ============================================================================
+// 非阻塞蜂鸣器播放器
+// ============================================================================
+static unsigned long buzzerStartTime = 0; // 当前阶段起始时刻（ms）
+static int buzzerPhase = 0;               // 0=空闲, 1=发声, 2=静音间隔
+static int buzzerDurationOn = 0;          // 发声时长（ms）
+static int buzzerDurationOff = 0;         // 静音时长（ms）
+static int buzzerRepeatCount = 0;         // 剩余重复次数（-1 = 无限）
+static bool buzzerInfinite = false;       // 是否无限循环
+
+/**
+ * 触发一段蜂鸣音效（非阻塞）
+ * @param pattern 音效类型：'S' 短鸣 / 'L' 长鸣 / 'D' 双短鸣 / 'T' 三短鸣
+ *                'C' 连续急鸣（无限） / 'X' 立即停止
+ * 调用时机：状态变化时调用一次即可，之后由 buzzerUpdate() 在后台推进。
+ */
+void buzzerPlay(char pattern) {
+	buzzerInfinite = false;
+	if (!buzzerEnable) { // 蜂鸣器被参数关掉：只清状态，不驱动 IO
+		buzzerPhase = 0;
+		return;
+	}
+	switch (pattern) {
+		case 'S': // 短鸣
+			buzzerDurationOn = 120;
+			buzzerDurationOff = 100;
+			buzzerRepeatCount = 1;
+			break;
+		case 'L': // 长鸣
+			buzzerDurationOn = 500;
+			buzzerDurationOff = 200;
+			buzzerRepeatCount = 1;
+			break;
+		case 'D': // 双短鸣
+			buzzerDurationOn = 120;
+			buzzerDurationOff = 100;
+			buzzerRepeatCount = 2;
+			break;
+		case 'T': // 三短鸣
+			buzzerDurationOn = 120;
+			buzzerDurationOff = 100;
+			buzzerRepeatCount = 3;
+			break;
+		case 'C': // 连续急鸣（无限循环）
+			buzzerDurationOn = 150;
+			buzzerDurationOff = 150;
+			buzzerRepeatCount = -1;
+			buzzerInfinite = true;
+			break;
+		case 'X': // 停止
+		default:
+			buzzerPhase = 0;
+			digitalWrite(buzzerPin, LOW);
+			return;
+	}
+	// 立即开始发声
+	buzzerPhase = 1;
+	buzzerStartTime = millis();
+	digitalWrite(buzzerPin, HIGH);
+}
+
+/**
+ * 蜂鸣器状态推进（必须由主循环高频调用）
+ * 处理"发声 → 静音 → 下一次发声"的时序。
+ */
+static void buzzerUpdate() {
+	if (buzzerPhase == 0) return; // 空闲
+
+	const unsigned long now = millis();
+	if (buzzerPhase == 1) { // 正在发声
+		if (now - buzzerStartTime >= (unsigned long)buzzerDurationOn) {
+			digitalWrite(buzzerPin, LOW);
+			buzzerPhase = 2;
+			buzzerStartTime = now;
+			// 有限音效且已是最后一次 → 直接结束
+			if (!buzzerInfinite && buzzerRepeatCount == 1) {
+				buzzerPhase = 0;
+				buzzerRepeatCount = 0;
+			}
+		}
+	} else if (buzzerPhase == 2) { // 静音间隔
+		if (now - buzzerStartTime >= (unsigned long)buzzerDurationOff) {
+			if (buzzerInfinite) {
+				buzzerPhase = 1;
+				buzzerStartTime = now;
+				digitalWrite(buzzerPin, HIGH);
+				return;
+			}
+			if (buzzerRepeatCount > 0) buzzerRepeatCount--;
+			if (buzzerRepeatCount == 0) {
+				buzzerPhase = 0;
+				digitalWrite(buzzerPin, LOW);
+			} else {
+				buzzerPhase = 1;
+				buzzerStartTime = now;
+				digitalWrite(buzzerPin, HIGH);
+			}
+		}
+	}
+}
+
+/**
+ * 阻塞式跑一段蜂鸣器（仅供 setup() 使用）
+ *
+ * 【为什么 setup 里可以阻塞】此时还没解锁、电机没转，阻塞几百毫秒无副作用，
+ * 反而能让"开机提示音"完整播完再往下走，用户体验更清楚。
+ * 主循环里**绝对不要**调用它。
+ */
+void runBuzzerFor(unsigned long ms) {
+	const unsigned long start = millis();
+	while (millis() - start < ms) {
+		buzzerUpdate();
+		delay(1);
+	}
+}
+
+// ============================================================================
+// 初始化
+// ============================================================================
+void setupLED() {
+	pinMode(ledRedPin, OUTPUT);
+	pinMode(ledGreenPin, OUTPUT);
+	pinMode(ledBluePin, OUTPUT);
+	pinMode(buzzerPin, OUTPUT);
+	digitalWrite(ledRedPin, LOW);
+	digitalWrite(ledGreenPin, LOW);
+	digitalWrite(ledBluePin, LOW);
+	digitalWrite(buzzerPin, LOW);
+	// 同步缓存，避免首次 setXxx(true) 被"状态未变"逻辑吞掉
+	redState = greenState = blueState = false;
+}
+
+// ============================================================================
+// 灯语 + 音频主状态机（主循环每帧调用）
+// ============================================================================
+
+// 状态编码：-2=低电量, 0=未连接, 1=已连接未解锁, 2=已连接已解锁
+static int lastBuzzerState = -1;
+static bool buzzerLowBatteryStarted = false;
+
+void updateLED() {
+	// 1. 先推进蜂鸣器时序
+	buzzerUpdate();
+
+	// 2. 低电量报警（最高优先级）
+	//    阈值来自参数 LED_LOW_VOLT（出厂 3.5 V，与自研飞控 YaoKunDrone 保持一致，1S 锂电）
+	const bool lowBattery = valid(voltage) && (voltage < ledLowVoltage);
+	if (lowBattery) {
+		const uint32_t now = millis();
+		setRed((now / 50) % 2); // 红灯 100 ms 快闪
+		setGreen(false);
+		setBlue(false);
+		if (!buzzerLowBatteryStarted) {
+			buzzerPlay('C');
+			buzzerLowBatteryStarted = true;
+		}
+		lastBuzzerState = -2;
+		return;
+	}
+	if (buzzerLowBatteryStarted) { // 刚退出低电量
+		buzzerPlay('X');
+		buzzerLowBatteryStarted = false;
+	}
+
+	// 3. 连接判定
+	//    【为什么不直接用 mavlinkTime】上游任何 MAVLink 帧都会刷新 mavlinkTime，
+	//    包括飞机自己发出去的包被回环计数、以及 GCS 的心跳。结果就是"没接遥控
+	//    也显示已连接"，灯语骗人。这里改用 controlTime —— 它只在
+	//    MANUAL_CONTROL（遥控摇杆帧）到达时更新，语义上才是"遥控在线"。
+	//    若启用了 SBUS，readRC() 也会更新 controlTime，两条路径都对。
+	const bool connected = valid(controlTime) && (t - controlTime < 1.0f);
+
+	// 4. 状态编码
+	const int currentState = connected ? (armed ? 2 : 1) : 0;
+
+	// 5. 状态变化 → 触发一次音效（跳过上电后的首次状态）
+	if (currentState != lastBuzzerState && lastBuzzerState != -1) {
+		switch (currentState) {
+			case 0: buzzerPlay('L'); break; // 失联：长鸣
+			case 1: buzzerPlay('D'); break; // 连接成功：双短鸣
+			case 2: buzzerPlay('T'); break; // 解锁成功：三短鸣
+			default: break;
+		}
+	}
+	lastBuzzerState = currentState;
+
+	// 6. 灯语
+	const uint32_t now = millis();
+	if (connected && armed) {
+		setGreen((now / 100) % 2); // 已解锁：绿灯快闪
+		setRed(false);
+		setBlue(false);
+	} else if (connected) {
+		setGreen(true); // 未解锁：绿灯常亮
+		setRed(false);
+		setBlue(false);
+	} else {
+		setRed((now / 250) % 2); // 未连接：红灯慢闪
+		setGreen(false);
+		setBlue(false);
+	}
+}
+
+#line 1 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\log.ino"
+// Copyright (c) 2023 Oleg Kalachev <okalachev@gmail.com>
+// Repository: https://github.com/okalachev/flix
+
+// In-RAM logging
+
+#include "vector.h"
+#include "util.h"
+
+#define LOG_RATE 100
+#define LOG_DURATION 10
+#define LOG_SIZE LOG_DURATION * LOG_RATE
+
+Vector attitudeEuler;
+Vector attitudeTargetEuler;
+
+struct LogEntry {
+	const char *name;
+	float *value;
+};
+
+LogEntry logEntries[] = {
+	{"t", &t},
+	{"rates.x", &rates.x},
+	{"rates.y", &rates.y},
+	{"rates.z", &rates.z},
+	{"ratesTarget.x", &ratesTarget.x},
+	{"ratesTarget.y", &ratesTarget.y},
+	{"ratesTarget.z", &ratesTarget.z},
+	{"attitude.x", &attitudeEuler.x},
+	{"attitude.y", &attitudeEuler.y},
+	{"attitude.z", &attitudeEuler.z},
+	{"attitudeTarget.x", &attitudeTargetEuler.x},
+	{"attitudeTarget.y", &attitudeTargetEuler.y},
+	{"attitudeTarget.z", &attitudeTargetEuler.z},
+	{"thrustTarget", &thrustTarget}
+};
+
+const int logColumns = sizeof(logEntries) / sizeof(logEntries[0]);
+float logBuffer[LOG_SIZE][logColumns];
+
+void prepareLogData() {
+	attitudeEuler = attitude.toEuler();
+	attitudeTargetEuler = attitudeTarget.toEuler();
+}
+
+void logData() {
+	if (!armed) return;
+	static int logPointer = 0;
+	static Rate period(LOG_RATE);
+	if (!period) return;
+
+	prepareLogData();
+
+	for (int i = 0; i < logColumns; i++) {
+		logBuffer[logPointer][i] = *logEntries[i].value;
+	}
+
+	logPointer++;
+	if (logPointer >= LOG_SIZE) {
+		logPointer = 0;
+	}
+}
+
+void printLogHeader() {
+	for (int i = 0; i < logColumns; i++) {
+		print("%s%s", logEntries[i].name, i < logColumns - 1 ? "," : "\n");
+	}
+}
+
+void printLogData() {
+	for (int i = 0; i < LOG_SIZE; i++) {
+		if (logBuffer[i][0] == 0) continue; // skip empty records
+		for (int j = 0; j < logColumns; j++) {
+			print("%g%s", logBuffer[i][j], j < logColumns - 1 ? "," : "\n");
+		}
+	}
+}
+
+#line 1 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\mavlink.ino"
+// Copyright (c) 2023 Oleg Kalachev <okalachev@gmail.com>
+// Repository: https://github.com/okalachev/flix
+
+// MAVLink communication
+
+/*
+ * ============================================================================
+ * 【耀坤整理版】MAVLink 通信层
+ * ----------------------------------------------------------------------------
+ * 本文件负责：
+ *   1) 遥测下行：心跳 / 姿态 / 遥控通道 / 电机 / IMU / 电池 → 地面站（QGC、MAVProxy）
+ *   2) 指令上行：MANUAL_CONTROL（手动摇杆）/ PARAM_*（参数读写）/ COMMAND_LONG（解锁-模式-请求消息）
+ *   3) Shell 回显透传：把控制台 print() 的输出打包成 SERIAL_CONTROL 帧发给地面站
+ *
+ * 本版相对上游的两处关键改动（R2）：
+ *   - 🔴 handleMavlinkCommand 改为「accepted 标志 + 统一 ACK」：上游在解锁被拒/模式非法时
+ *     用 return 提前退出。虽然当前上游在 COMMAND_LONG 分支里是「拿返回值再发 ACK」的写法，
+ *     但由于早期版本（以及 QGC 的实际行为）出现过「被拒绝时地面站永远收不到 ACK → 界面卡在
+ *     "正在执行"」的现象，这里统一成：函数内部只置 accepted 标志，函数返回后**必定**发一帧
+ *     COMMAND_ACK。地面站据此立刻知道是被拒绝还是接受，而不是超时。
+ *   - 被拒绝时通过控制台打印中文原因（TXT_MAV_DENIED_THROTTLE 等），方便现场排查。
+ *
+ * ⚠️ MANUAL_CONTROL 的量程语义（重要，实测前不可改）：
+ *   协议规定 x/y/z/r 均为 int16，范围 -1000~+1000。
+ *   本工程把 z 直接映射成 0~1 的油门（z=-1000 → -1.0，z=0 → 0，z=+1000 → +1.0），
+ *   而 control.ino 的混控里 controlThrottle 期望 0~1（负值会被钳到 0）。
+ *   ⇒ 遥控器必须发送「-1000~+1000 全量程」，摇杆中位 = 0，上半程才产生正推力。
+ *   ⇒ 若遥控器只发 0~1000（把中位当 0），则摇杆中位就已经是 0 油门，上推才有推力，
+ *      表现为「行程只有一半、且中点起跳」。首次台架务必确认：摇杆最低 → z≈-1000，
+ *      中位 → z≈0，最高 → z≈+1000。
+ * ============================================================================
+ */
+
+#include <MAVLink.h>
+#include "util.h"
+#include "i18n.h"   // 界面文字唯一数据源：中/英文可切（FLIX_LANG_EN）
+
+extern float controlTime;
+extern float voltage;
+
+int mavlinkSysId = 1;
+
+Rate telemetrySlow(2);
+Rate telemetryAttitude(20);
+Rate telemetryRC(10);
+Rate telemetryMotors(10);
+Rate telemetryIMU(15);
+
+float mavlinkTime = NAN; // time of last received message
+String mavlinkPrintBuffer;
+
+// 【诊断】最近收到的 MAVLink 消息特征，供控制台 `wifi` 命令显示。
+// 用途：台架排查"遥控器明明在发、飞机 rc 却全 0"这类问题时，
+// 一眼就能看出①到底有没有解析出帧 ②帧的 msgid 是不是 MANUAL_CONTROL(69)
+// ③来源 sysid 是多少（耀坤遥控 = 127）。纯运行时变量，不写 NVS。
+uint32_t rxMsgCount = 0;     // 成功解析的 MAVLink 帧总数
+uint32_t rxLastMsgId = 0;    // 最近一帧的 msgid
+uint8_t rxLastSrcSys = 0;    // 最近一帧的来源 sysid
+
+void processMavlink() {
+	sendMavlink();
+	receiveMavlink();
+}
+
+void sendMavlink() {
+	sendMavlinkPrint();
+
+	mavlink_message_t msg;
+	uint32_t time = t * 1000;
+
+	if (telemetrySlow) {
+		mavlink_msg_heartbeat_pack(mavlinkSysId, MAV_COMP_ID_AUTOPILOT1, &msg, MAV_TYPE_QUADROTOR, MAV_AUTOPILOT_FLIX,
+			(armed ? MAV_MODE_FLAG_SAFETY_ARMED : 0) |
+			((mode == STAB) ? MAV_MODE_FLAG_STABILIZE_ENABLED : 0) |
+			((mode == AUTO) ? MAV_MODE_FLAG_AUTO_ENABLED : MAV_MODE_FLAG_MANUAL_INPUT_ENABLED),
+			mode, MAV_STATE_STANDBY);
+		sendMessage(&msg);
+	}
+
+	if (!valid(mavlinkTime)) return; // send only heartbeat until connected
+
+	if (telemetrySlow) {
+		mavlink_msg_extended_sys_state_pack(mavlinkSysId, MAV_COMP_ID_AUTOPILOT1, &msg,
+			MAV_VTOL_STATE_UNDEFINED, landed ? MAV_LANDED_STATE_ON_GROUND : MAV_LANDED_STATE_IN_AIR);
+		sendMessage(&msg);
+	}
+
+	if (telemetrySlow && valid(voltage)) {
+		uint16_t voltages[] = {(uint16_t)(voltage * 1000), UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX};
+		uint16_t voltagesExt[] = {0, 0, 0, 0};
+		float remaining = constrain(mapf(voltage, 3.4, 4.2, 0, 1), 0, 1);
+		mavlink_msg_battery_status_pack(mavlinkSysId, MAV_COMP_ID_AUTOPILOT1, &msg, 0, MAV_BATTERY_FUNCTION_ALL,
+			MAV_BATTERY_TYPE_LIPO, INT16_MAX, voltages, -1, -1, -1, remaining * 100, 0, MAV_BATTERY_CHARGE_STATE_OK, voltagesExt, 0, 0);
+		sendMessage(&msg);
+	}
+
+	if (telemetryAttitude) {
+		const float offset[] = {0, 0, 0, 0};
+		mavlink_msg_attitude_quaternion_pack(mavlinkSysId, MAV_COMP_ID_AUTOPILOT1, &msg,
+			time, attitude.w, attitude.x, -attitude.y, -attitude.z, rates.x, -rates.y, -rates.z, offset); // convert to frd
+		sendMessage(&msg);
+	}
+
+	if (telemetryRC && channels[0]) { // 0 means no RC input
+		mavlink_msg_rc_channels_raw_pack(mavlinkSysId, MAV_COMP_ID_AUTOPILOT1, &msg, controlTime * 1000, 0,
+			channels[0], channels[1], channels[2], channels[3], channels[4], channels[5], channels[6], channels[7], UINT8_MAX);
+		sendMessage(&msg);
+	}
+
+	if (telemetryMotors) {
+		float controls[8];
+		memcpy(controls, motors, sizeof(motors));
+		mavlink_msg_actuator_control_target_pack(mavlinkSysId, MAV_COMP_ID_AUTOPILOT1, &msg, time, 0, controls);
+		sendMessage(&msg);
+	}
+
+	if (telemetryIMU) {
+		mavlink_msg_scaled_imu_pack(mavlinkSysId, MAV_COMP_ID_AUTOPILOT1, &msg, time,
+			acc.x / ONE_G * 1000, -acc.y / ONE_G * 1000, -acc.z / ONE_G * 1000, // convert to frd
+			gyro.x * 1000, -gyro.y * 1000, -gyro.z * 1000,
+			0, 0, 0, 0);
+		sendMessage(&msg);
+	}
+}
+
+void sendMessage(const void *msg) {
+	uint8_t buf[MAVLINK_MAX_PACKET_LEN];
+	int len = mavlink_msg_to_send_buffer(buf, (mavlink_message_t *)msg);
+	sendWiFi(buf, len);
+}
+
+void receiveMavlink() {
+	uint8_t buf[MAVLINK_MAX_PACKET_LEN];
+	int len = receiveWiFi(buf, MAVLINK_MAX_PACKET_LEN);
+
+	// New packet, parse it
+	mavlink_message_t msg;
+	mavlink_status_t status;
+	for (int i = 0; i < len; i++) {
+		if (mavlink_parse_char(MAVLINK_COMM_0, buf[i], &msg, &status)) {
+			mavlinkTime = t;
+			// 【诊断】记录最近收到的消息 ID 与来源 sysid，
+			// 用于区分"遥控器发的是 MANUAL_CONTROL 还是别的（如 HEARTBEAT）"，
+			// 以及"是不是被 target 过滤挡掉了"。只在控制台 `wifi` 里显示，不影响控制。
+			rxLastMsgId = msg.msgid;
+			rxLastSrcSys = msg.sysid;
+			rxMsgCount++;
+			handleMavlink(&msg);
+		}
+	}
+}
+
+void handleMavlink(const void *_msg) {
+	const mavlink_message_t& msg = *(mavlink_message_t *)_msg;
+
+	if (msg.msgid == MAVLINK_MSG_ID_MANUAL_CONTROL) {
+		mavlink_manual_control_t m;
+		mavlink_msg_manual_control_decode(&msg, &m);
+		if (m.target && m.target != mavlinkSysId) return; // 0 means broadcast
+
+		// 摇杆归一化：MAVLink 的 x/y/z/r 是 int16，协议规定满量程 ±1000。
+		// 直接除以 1000 得到 -1~+1 的归一化值，control.ino 内部再按需使用：
+		//   controlRoll/Pitch/Yaw ∈ [-1, 1]（角度或角速度环的目标）
+		//   controlThrottle      ∈ [-1, 1]，混控里会被钳到 [0, 1]
+		// ⚠️ 若遥控器发的是 0~1000（中位=0）而非 ±1000，则中位即 0 油门、上半程才有推力。
+		//    首次台架必须确认：最低杆 → z≈-1000；中位 → z≈0；最高杆 → z≈+1000。
+		controlThrottle = m.z / 1000.0f;
+		controlPitch = m.x / 1000.0f;
+		controlRoll = m.y / 1000.0f;
+		controlYaw = m.r / 1000.0f;
+		controlMode = NAN; // 手动控制不改变模式
+		controlTime = t;
+	}
+
+	if (msg.msgid == MAVLINK_MSG_ID_PARAM_REQUEST_LIST) {
+		mavlink_param_request_list_t m;
+		mavlink_msg_param_request_list_decode(&msg, &m);
+		if (m.target_system && m.target_system != mavlinkSysId) return;
+
+		mavlink_message_t msg;
+		for (int i = 0; i < parametersCount(); i++) {
+			mavlink_msg_param_value_pack(mavlinkSysId, MAV_COMP_ID_AUTOPILOT1, &msg,
+				getParameterName(i), getParameter(i), MAV_PARAM_TYPE_REAL32, parametersCount(), i);
+			sendMessage(&msg);
+		}
+	}
+
+	if (msg.msgid == MAVLINK_MSG_ID_PARAM_REQUEST_READ) {
+		mavlink_param_request_read_t m;
+		mavlink_msg_param_request_read_decode(&msg, &m);
+		if (m.target_system && m.target_system != mavlinkSysId) return;
+
+		char name[MAVLINK_MSG_PARAM_REQUEST_READ_FIELD_PARAM_ID_LEN + 1];
+		strlcpy(name, m.param_id, sizeof(name)); // param_id might be not null-terminated
+		float value = strlen(name) == 0 ? getParameter(m.param_index) : getParameter(name);
+		if (m.param_index != -1) {
+			memcpy(name, getParameterName(m.param_index), 16);
+		}
+		mavlink_message_t msg;
+		mavlink_msg_param_value_pack(mavlinkSysId, MAV_COMP_ID_AUTOPILOT1, &msg,
+			name, value, MAV_PARAM_TYPE_REAL32, parametersCount(), m.param_index);
+		sendMessage(&msg);
+	}
+
+	if (msg.msgid == MAVLINK_MSG_ID_PARAM_SET) {
+		mavlink_param_set_t m;
+		mavlink_msg_param_set_decode(&msg, &m);
+		if (m.target_system && m.target_system != mavlinkSysId) return;
+
+		char name[MAVLINK_MSG_PARAM_SET_FIELD_PARAM_ID_LEN + 1];
+		strlcpy(name, m.param_id, sizeof(name)); // param_id might be not null-terminated
+		bool success = setParameter(name, m.param_value);
+		if (!success) return;
+		// send ack
+		mavlink_message_t msg;
+		mavlink_msg_param_value_pack(mavlinkSysId, MAV_COMP_ID_AUTOPILOT1, &msg,
+			m.param_id, getParameter(name), MAV_PARAM_TYPE_REAL32, parametersCount(), 0); // index is unknown
+		sendMessage(&msg);
+	}
+
+	if (msg.msgid == MAVLINK_MSG_ID_MISSION_REQUEST_LIST) { // handle to make qgc happy
+		mavlink_mission_request_list_t m;
+		mavlink_msg_mission_request_list_decode(&msg, &m);
+		if (m.target_system && m.target_system != mavlinkSysId) return;
+
+		mavlink_message_t msg;
+		mavlink_msg_mission_count_pack(mavlinkSysId, MAV_COMP_ID_AUTOPILOT1, &msg, 0, 0, 0, MAV_MISSION_TYPE_MISSION, 0);
+		sendMessage(&msg);
+	}
+
+	if (msg.msgid == MAVLINK_MSG_ID_SERIAL_CONTROL) {
+		mavlink_serial_control_t m;
+		mavlink_msg_serial_control_decode(&msg, &m);
+		if (m.target_system && m.target_system != mavlinkSysId) return;
+
+		char data[MAVLINK_MSG_SERIAL_CONTROL_FIELD_DATA_LEN + 1];
+		strlcpy(data, (const char *)m.data, m.count); // data might be not null-terminated
+		doCommand(data, true);
+	}
+
+	if (msg.msgid == MAVLINK_MSG_ID_SET_ATTITUDE_TARGET) {
+		if (mode != AUTO) return;
+
+		mavlink_set_attitude_target_t m;
+		mavlink_msg_set_attitude_target_decode(&msg, &m);
+		if (m.target_system && m.target_system != mavlinkSysId) return;
+
+		if (!(m.type_mask & ATTITUDE_TARGET_TYPEMASK_ATTITUDE_IGNORE)) {
+			// Attitude control
+			attitudeTarget.w = m.q[0];
+			attitudeTarget.x = m.q[1];
+			attitudeTarget.y = -m.q[2]; // convert to flu
+			attitudeTarget.z = -m.q[3];
+			ratesExtra.x = m.body_roll_rate;
+			ratesExtra.y = -m.body_pitch_rate;
+			ratesExtra.z = -m.body_yaw_rate;
+		} else {
+			// Rates control
+			attitudeTarget.invalidate();
+			ratesTarget.x = m.body_roll_rate;
+			ratesTarget.y = -m.body_pitch_rate;
+			ratesTarget.z = -m.body_yaw_rate;
+		}
+
+		thrustTarget = valid(m.thrust) ? m.thrust : thrustTarget;
+		armed = m.thrust > 0;
+	}
+
+	if (msg.msgid == MAVLINK_MSG_ID_SET_ACTUATOR_CONTROL_TARGET) {
+		if (mode != AUTO) return;
+
+		mavlink_set_actuator_control_target_t m;
+		mavlink_msg_set_actuator_control_target_decode(&msg, &m);
+		if (m.target_system && m.target_system != mavlinkSysId) return;
+
+		attitudeTarget.invalidate();
+		ratesTarget.invalidate();
+		torqueTarget.invalidate();
+		memcpy(motors, m.controls, sizeof(motors)); // copy motor thrusts
+		armed = motors[0] > 0 || motors[1] > 0 || motors[2] > 0 || motors[3] > 0;
+	}
+
+	if (msg.msgid == MAVLINK_MSG_ID_LOG_REQUEST_DATA) {
+		mavlink_log_request_data_t m;
+		mavlink_msg_log_request_data_decode(&msg, &m);
+		if (m.target_system && m.target_system != mavlinkSysId) return;
+
+		// Send all log records
+		for (int i = 0; i < sizeof(logBuffer) / sizeof(logBuffer[0]); i++) {
+			mavlink_message_t msg;
+			mavlink_msg_log_data_pack(mavlinkSysId, MAV_COMP_ID_AUTOPILOT1, &msg, 0, i,
+				sizeof(logBuffer[0]), (uint8_t *)logBuffer[i]);
+			sendMessage(&msg);
+		}
+	}
+
+	if (msg.msgid == MAVLINK_MSG_ID_COMMAND_LONG) {
+		mavlink_command_long_t m;
+		mavlink_msg_command_long_decode(&msg, &m);
+		if (m.target_system && m.target_system != mavlinkSysId) return;
+
+		// 【R2】无论成功、被拒绝还是不支持，都必须回一帧 COMMAND_ACK。
+		// 地面站（QGC）收到 ACK 才会结束「正在执行」状态；不回 ACK 会一直超时重发。
+		int result = handleMavlinkCommand(&m);
+		mavlink_message_t ack;
+		mavlink_msg_command_ack_pack(mavlinkSysId, MAV_COMP_ID_AUTOPILOT1, &ack, m.command, result, UINT8_MAX, 0, msg.sysid, msg.compid);
+		sendMessage(&ack);
+	}
+}
+
+/*
+ * 处理 COMMAND_LONG 指令，返回 MAV_RESULT_* 结果码。
+ *
+ * 参数：_m —— 指向已解码的 mavlink_command_long_t（用 void* 是为了与头文件里的
+ *              前向声明保持 ABI 一致，避免把 MAVLink 头文件引入所有翻译单元）。
+ * 返回：MAV_RESULT_ACCEPTED / DENIED / UNSUPPORTED，调用方负责打包成 COMMAND_ACK 发回。
+ * 调用时机：receiveMavlink() 每收到一帧 COMMAND_LONG 调一次。
+ *
+ * 【设计说明】本函数只决定结果码 + 做副作用（改 armed / mode），不发 ACK；
+ * 发 ACK 统一由调用方做。这样新增指令时不会漏掉 ACK。
+ */
+int handleMavlinkCommand(const void *_m) {
+	const mavlink_command_long_t& m = *(mavlink_command_long_t *)_m;
+
+	if (m.command == MAV_CMD_REQUEST_MESSAGE && m.param1 == MAVLINK_MSG_ID_AUTOPILOT_VERSION) {
+		mavlink_message_t response;
+		mavlink_msg_autopilot_version_pack(mavlinkSysId, MAV_COMP_ID_AUTOPILOT1, &response,
+			MAV_PROTOCOL_CAPABILITY_PARAM_FLOAT | MAV_PROTOCOL_CAPABILITY_MAVLINK2, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0);
+		sendMessage(&response);
+		return MAV_RESULT_ACCEPTED;
+	}
+
+	if (m.command == MAV_CMD_REQUEST_MESSAGE && m.param1 == MAVLINK_MSG_ID_COMPONENT_METADATA) {
+		mavlink_message_t response;
+		mavlink_msg_component_metadata_pack(mavlinkSysId, MAV_COMP_ID_AUTOPILOT1, &response, t * 1000,
+		2566517357, // crc
+		"https://quadcopter.dev/meta/2566517357/general.json");
+		sendMessage(&response);
+		return MAV_RESULT_ACCEPTED;
+	}
+
+	if (m.command == MAV_CMD_COMPONENT_ARM_DISARM) {
+		// 解锁前必须确认油门在最低位 —— 否则一解锁电机立刻高速旋转，是炸机头号原因。
+		// 0.05 对应归一化油门 5%，留出一点点死区容忍摇杆零点漂移（实测 AT9S Pro 零位约 0.008）。
+		if (m.param1 == 1 && controlThrottle > 0.05) {
+			print(TXT_MAV_DENIED_THROTTLE); // 中文告知：油门未归零，拒绝解锁
+			return MAV_RESULT_DENIED;
+		}
+		armed = m.param1 == 1;
+		return MAV_RESULT_ACCEPTED;
+	}
+
+	if (m.command == MAV_CMD_DO_SET_MODE) {
+		// 优先用 custom_mode（param2）指定；QGC 有时先写 base_mode 再写 custom_mode。
+		// 这里只认 param2，且必须落在 [STAB, AUTO] 的有效枚举内。
+		if (m.param2 < STAB || m.param2 > AUTO) {
+			print(TXT_MAV_DENIED_MODE);
+			return MAV_RESULT_DENIED;
+		}
+		mode = m.param2;
+		return MAV_RESULT_ACCEPTED;
+	}
+
+	return MAV_RESULT_UNSUPPORTED;
+}
+
+// Send shell output to GCS
+void mavlinkPrint(const char* str) {
+	mavlinkPrintBuffer += str;
+}
+
+void sendMavlinkPrint() {
+	// Send mavlink print data in chunks
+	const char *str = mavlinkPrintBuffer.c_str();
+	for (int i = 0; i < strlen(str); i += MAVLINK_MSG_SERIAL_CONTROL_FIELD_DATA_LEN) {
+		char data[MAVLINK_MSG_SERIAL_CONTROL_FIELD_DATA_LEN + 1];
+		strlcpy(data, str + i, sizeof(data));
+		mavlink_message_t msg;
+		mavlink_msg_serial_control_pack(mavlinkSysId, MAV_COMP_ID_AUTOPILOT1, &msg,
+			SERIAL_CONTROL_DEV_SHELL,
+			i + MAVLINK_MSG_SERIAL_CONTROL_FIELD_DATA_LEN < strlen(str) ? SERIAL_CONTROL_FLAG_MULTI : 0, // more chunks to go
+			0, 0, strlen(data), (uint8_t *)data, 0, 0);
+		sendMessage(&msg);
+	}
+	mavlinkPrintBuffer.clear();
+}
+
+#line 1 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\motors.ino"
+// Copyright (c) 2023 Oleg Kalachev <okalachev@gmail.com>
+// Repository: https://github.com/okalachev/flix
+// 耀坤整理版修改：https://github.com/YaoKunS/flix
+
+// 电机 PWM 输出
+//
+// 【耀坤 S3 硬件（2026-08 实测，与主工程 Flix-YaoKun 完全一致）】
+//   MOT_RL（左后）GPIO15   MOT_RR（右后）GPIO5
+//   MOT_FR（右前）GPIO6    MOT_FL（左前）GPIO16
+//   PWM 频率 20 kHz：耀坤电调（1S 有刷 MOS 驱动）在此频率下噪声小、线性好。
+//   上游默认 78 kHz 是为无刷+专用电调准备的，用在耀坤板子上会"叫"且推力曲线异常。
+//
+// 【注意 pwmMax = -1 的语义】上游用"占空比模式"（duty 0~100%），不是 PWM 脉宽
+//   模式。耀坤电调按占空比调速，保持 -1 即可；若换成需要 1000~2000us 的标准
+//   电调，才需要设 MOT_PWM_MIN/MAX。
+
+#include "util.h"
+#include "i18n.h"
+
+float motors[4]; // 归一化推力，范围 [0..1]
+
+// 【耀坤设置】引脚按 PCB 实测填写；顺序与下面的 MOT_* 常量一一对应
+int motorPins[4] = {15, 5, 6, 16}; // 依次为 MOT_RL / MOT_RR / MOT_FR / MOT_FL
+int pwmFrequency = 20000;          // 耀坤电调 20 kHz（上游默认 78000）
+int pwmResolution = 10;
+int pwmStop = 0;
+int pwmMin = 0;
+int pwmMax = -1; // -1 表示占空比模式
+
+const int MOT_RL = 0, MOT_RR = 1, MOT_FR = 2, MOT_FL = 3;
+
+void setupMotors() {
+	print(TXT_SETUP_MOTORS);
+	// 配置引脚
+	for (int i = 0; i < 4; i++) {
+		if (motorPins[i] < 0) continue; // 跳过未分配的电机
+		ledcAttach(motorPins[i], pwmFrequency, pwmResolution);
+		pwmFrequency = ledcChangeFrequency(motorPins[i], pwmFrequency, pwmResolution); // 重新配置时取实际生效值
+	}
+	sendMotors();
+}
+
+void sendMotors() {
+	for (int i = 0; i < 4; i++) {
+		if (motorPins[i] < 0) continue; // 跳过未分配的电机
+		ledcWrite(motorPins[i], getDutyCycle(motors[i]));
+	}
+}
+
+int getDutyCycle(float value) {
+	value = constrain(value, 0, 1);
+
+	if (pwmMax >= 0) { // 脉宽模式
+		float pwm = mapf(value, 0, 1, pwmMin, pwmMax);
+		if (value == 0) pwm = pwmStop;
+		float duty = mapf(pwm, 0, 1000000 / pwmFrequency, 0, (1 << pwmResolution) - 1);
+		return round(duty);
+	} else { // 占空比模式（耀坤电调用这个）
+		return round(value * ((1 << pwmResolution) - 1));
+	}
+}
+
+bool motorsActive() {
+	return motors[0] != 0 || motors[1] != 0 || motors[2] != 0 || motors[3] != 0;
+}
+
+void testMotor(int n, float thrust) {
+	print(TXT_MOT_TEST, n);
+	motors[n] = thrust;
+	delay(50); // ESP32 需等当前 PWM 周期结束才改占空比（见 arduino-esp32 issue #5306）
+	sendMotors();
+	pause(3);
+	motors[n] = 0;
+	sendMotors();
+	print(TXT_MOT_DONE);
+}
+
+#line 1 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\parameters.ino"
+// Copyright (c) 2024 Oleg Kalachev <okalachev@gmail.com>
+// Repository: https://github.com/okalachev/flix
+
+// Parameters storage in flash memory
+
+/*
+ * ============================================================================
+ * 【耀坤整理版】参数表与参数持久化（NVS / Preferences）
+ * ----------------------------------------------------------------------------
+ * 设计要点：
+ *   - parameters[] 是本固件**唯一**的「可调参数注册表」。控制台 `p` 命令、地面站
+ *     PARAM_REQUEST_LIST / PARAM_SET、以及开机 setDefaults() 全部围绕这张表工作。
+ *   - 每个参数项 = {名称, 变量指针, 变更回调}。变量指针指向真正的全局变量，
+ *     所以 `p CTL_RATE_R_P 0.2` 写入后立刻生效，不需要额外的同步代码。
+ *   - 名称最长 15 字符（MAVLink PARAM_VALUE.param_id 只有 16 字节，含结尾 0）。
+ *   - 带回调的参数（如 MOT_PIN_* → setupMotors）在值改变后会重新初始化对应外设。
+ *
+ * 【R10】本版相较上游新增的参数：
+ *   IMU_AUTO_DETECT  开 / 关 IMU 自动识别（1=开，出厂默认）
+ *   IMU_ROT_LOCK     锁定当前 IMU 朝向，禁止自动识别再改（1=锁，校准后置 1）
+ *   LED_R_PIN / LED_G_PIN / LED_B_PIN   三色指示灯 GPIO（耀坤 S3 板：41/7/14）
+ *   LED_LOW_VOLT     低电告警阈值（伏）
+ *   BUZ_PIN          蜂鸣器 GPIO（耀坤 S3 板：39）
+ *   BUZ_ENABLE       蜂鸣器总开关（0 = 静音，夜间调试用）
+ *
+ * 注：开机指纹串 identityString 定义在 flix.ino，**不放进参数表** —— 它是字符串，
+ *    而参数表的存储是 float/int 联合体，塞字符串需要额外机制。指纹只在开机横幅输出。
+ *
+ * ⚠️ 关于 NVS 的坑：参数值存在 Preferences("flix") 命名空间里。烧写「带 NVS 状态」
+ *    的固件时，如果整片从 0x0 连写会覆盖 0x9000 的 NVS 分区，导致 AP SSID、IMU
+ *    识别结果、遥控标定值全部丢失。必须按 build/<fqbn>/flash_args 的分段偏移烧写。
+ * ============================================================================
+ */
+
+#include <Preferences.h>
+#include "util.h"
+#include "i18n.h"   // 界面文字唯一数据源：中/英文可切（FLIX_LANG_EN）
+
+extern int channelZero[16], channelMax[16];
+extern int rollChannel, pitchChannel, throttleChannel, yawChannel, armedChannel, modeChannel;
+extern int rcRxPin, voltagePin;
+extern int wifiMode, wifiLongRange, wifiBroadcast, udpLocalPort, udpRemotePort, espnowChannel;
+extern float rcLossTimeout, descendTime, disarmTilt;
+extern float voltageScale;
+extern LowPassFilter<float> voltageFilter;
+
+// 耀坤整理版新增的外部变量（定义在 imu.ino / led.ino）
+extern int imuAutoDetect, imuRotLock;
+extern int ledRedPin, ledGreenPin, ledBluePin;
+extern float ledLowVoltage;
+extern int buzzerPin, buzzerEnable;
+
+#include "config.h"
+
+Preferences storage;
+
+struct Parameter {
+	const char *name; // max length is 15
+	bool integer;
+	union { float *f; int *i; }; // pointer to the variable
+	float initial; // default value
+	float cache; // what's stored in flash
+	void (*callback)(); // called after parameter change
+	Parameter(const char *name, float *variable, void (*callback)() = nullptr) : name(name), integer(false), f(variable), callback(callback) {};
+	Parameter(const char *name, int *variable, void (*callback)() = nullptr) : name(name), integer(true), i(variable), callback(callback) {};
+	float getValue() const { return integer ? *i : *f; };
+	void setValue(const float value) { if (integer) *i = value; else *f = value; };
+};
+
+Parameter parameters[] = {
+	// control
+	{"CTL_RATE_R_P", &rollRatePID.p},
+	{"CTL_RATE_R_I", &rollRatePID.i},
+	{"CTL_RATE_R_D", &rollRatePID.d},
+	{"CTL_RATE_R_WU", &rollRatePID.windup},
+	{"CTL_RATE_R_D_A", &rollRatePID.lpf.alpha},
+	{"CTL_RATE_P_P", &pitchRatePID.p},
+	{"CTL_RATE_P_I", &pitchRatePID.i},
+	{"CTL_RATE_P_D", &pitchRatePID.d},
+	{"CTL_RATE_P_WU", &pitchRatePID.windup},
+	{"CTL_RATE_P_D_A", &pitchRatePID.lpf.alpha},
+	{"CTL_RATE_Y_P", &yawRatePID.p},
+	{"CTL_RATE_Y_I", &yawRatePID.i},
+	{"CTL_RATE_Y_D", &yawRatePID.d},
+	{"CTL_RATE_Y_WU", &yawRatePID.windup},
+	{"CTL_RATE_Y_D_A", &yawRatePID.lpf.alpha},
+	{"CTL_RATE_P_MAX", &maxRate.y},
+	{"CTL_RATE_R_MAX", &maxRate.x},
+	{"CTL_RATE_Y_MAX", &maxRate.z},
+	{"CTL_ATT_R_P", &rollPID.p},
+	{"CTL_ATT_P_P", &pitchPID.p},
+	{"CTL_ATT_Y_P", &yawPID.p},
+	{"CTL_ATT_MAX", &tiltMax},
+	{"CTL_FLT_MODE_0", &flightModes[0]},
+	{"CTL_FLT_MODE_1", &flightModes[1]},
+	{"CTL_FLT_MODE_2", &flightModes[2]},
+	// imu
+	{"IMU_MODEL", &imuModel},
+	{"IMU_BUS", &imuBus},
+	{"IMU_PIN_SCK", &imuSckPin},
+	{"IMU_PIN_MISO", &imuMisoPin},
+	{"IMU_PIN_MOSI", &imuMosiPin},
+	{"IMU_PIN_CS", &imuCsPin},
+	{"IMU_PIN_SDA", &imuSdaPin},
+	{"IMU_PIN_SCL", &imuSclPin},
+	{"IMU_PIN_INT", &imuIntPin},
+	{"IMU_ROT_ROLL", &imuRotation.x},
+	{"IMU_ROT_PITCH", &imuRotation.y},
+	{"IMU_ROT_YAW", &imuRotation.z},
+	{"IMU_ACC_BIAS_X", &accBias.x},
+	{"IMU_ACC_BIAS_Y", &accBias.y},
+	{"IMU_ACC_BIAS_Z", &accBias.z},
+	{"IMU_ACC_SCALE_X", &accScale.x},
+	{"IMU_ACC_SCALE_Y", &accScale.y},
+	{"IMU_ACC_SCALE_Z", &accScale.z},
+	{"IMU_GYRO_BIAS_A", &gyroBiasFilter.alpha},
+	// 【R10 新增】IMU 自动识别 / 朝向锁定
+	// IMU_AUTO_DETECT=1：开机裸读 WHO_AM_I 判断是 MPU6050(I2C) 还是 MPU6500(SPI)，
+	//   并自动套用对应朝向。换 IMU 不用改代码重编，直接上电即可。
+	// IMU_ROT_LOCK=1：锁定朝向，自动识别不再覆盖。跑完 `cal`（IMU 校准）后应置 1，
+	//   避免下次上电探测失败时把已标定好的朝向改错。
+	{"IMU_AUTO_DETECT", &imuAutoDetect},
+	{"IMU_ROT_LOCK", &imuRotLock},
+	// estimate
+	{"EST_ACC_WEIGHT", &accWeight},
+	{"EST_LVL_WEIGHT", &levelWeight},
+	{"EST_RATES_LPF_A", &ratesFilter.alpha},
+	// motors
+	{"MOT_PIN_FL", &motorPins[MOT_FL], setupMotors},
+	{"MOT_PIN_FR", &motorPins[MOT_FR], setupMotors},
+	{"MOT_PIN_RL", &motorPins[MOT_RL], setupMotors},
+	{"MOT_PIN_RR", &motorPins[MOT_RR], setupMotors},
+	{"MOT_PWM_FREQ", &pwmFrequency, setupMotors},
+	{"MOT_PWM_RES", &pwmResolution, setupMotors},
+	{"MOT_PWM_STOP", &pwmStop},
+	{"MOT_PWM_MIN", &pwmMin},
+	{"MOT_PWM_MAX", &pwmMax},
+	// rc
+	{"RC_RX_PIN", &rcRxPin, setupRC},
+	{"RC_ZERO_0", &channelZero[0]},
+	{"RC_ZERO_1", &channelZero[1]},
+	{"RC_ZERO_2", &channelZero[2]},
+	{"RC_ZERO_3", &channelZero[3]},
+	{"RC_ZERO_4", &channelZero[4]},
+	{"RC_ZERO_5", &channelZero[5]},
+	{"RC_ZERO_6", &channelZero[6]},
+	{"RC_ZERO_7", &channelZero[7]},
+	{"RC_MAX_0", &channelMax[0]},
+	{"RC_MAX_1", &channelMax[1]},
+	{"RC_MAX_2", &channelMax[2]},
+	{"RC_MAX_3", &channelMax[3]},
+	{"RC_MAX_4", &channelMax[4]},
+	{"RC_MAX_5", &channelMax[5]},
+	{"RC_MAX_6", &channelMax[6]},
+	{"RC_MAX_7", &channelMax[7]},
+	{"RC_ROLL", &rollChannel},
+	{"RC_PITCH", &pitchChannel},
+	{"RC_THROTTLE", &throttleChannel},
+	{"RC_YAW", &yawChannel},
+	{"RC_MODE", &modeChannel},
+	// wifi
+	{"WIFI_MODE", &wifiMode},
+	{"WIFI_PORT_LOC", &udpLocalPort},
+	{"WIFI_PORT_REM", &udpRemotePort},
+	{"WIFI_LONG_RANGE", &wifiLongRange},
+	{"WIFI_BROADCAST", &wifiBroadcast},
+	// espnow
+	{"ESPNOW_CHANNEL", &espnowChannel},
+	// mavlink
+	{"MAV_SYS_ID", &mavlinkSysId},
+	{"MAV_RATE_SLOW", &telemetrySlow.rate},
+	{"MAV_RATE_ATT", &telemetryAttitude.rate},
+	{"MAV_RATE_RC", &telemetryRC.rate},
+	{"MAV_RATE_MOT", &telemetryMotors.rate},
+	{"MAV_RATE_IMU", &telemetryIMU.rate},
+	// power
+	{"PWR_VOLT_PIN", &voltagePin, setupPower},
+	{"PWR_VOLT_SCALE", &voltageScale},
+	{"PWR_VOLT_LPF_A", &voltageFilter.alpha},
+	// safety
+	{"SF_RC_LOSS_TIME", &rcLossTimeout},
+	{"SF_DESCEND_TIME", &descendTime},
+	{"SF_DISARM_TILT", &disarmTilt},
+	// 【R10 新增】指示灯与蜂鸣器（耀坤 S3 板实测引脚，改板型时只改这里）
+	{"LED_R_PIN", &ledRedPin, setupLED},
+	{"LED_G_PIN", &ledGreenPin, setupLED},
+	{"LED_B_PIN", &ledBluePin, setupLED},
+	{"LED_LOW_VOLT", &ledLowVoltage},
+	{"BUZ_PIN", &buzzerPin, setupLED},
+	{"BUZ_ENABLE", &buzzerEnable},
+};
+
+void setupParameters() {
+	print(TXT_SETUP_PARAMS);
+	setDefaults();
+	storage.begin("flix");
+	// Read parameters from storage
+	for (auto &parameter : parameters) {
+		parameter.initial = parameter.getValue();
+		if (storage.isKey(parameter.name)) {
+			parameter.setValue(storage.getFloat(parameter.name));
+		}
+		parameter.cache = parameter.getValue();
+	}
+}
+
+int parametersCount() {
+	return sizeof(parameters) / sizeof(parameters[0]);
+}
+
+const char *getParameterName(int index) {
+	if (index < 0 || index >= parametersCount()) return "";
+	return parameters[index].name;
+}
+
+float getParameter(int index) {
+	if (index < 0 || index >= parametersCount()) return NAN;
+	return parameters[index].getValue();
+}
+
+float getParameter(const char *name) {
+	for (auto &parameter : parameters) {
+		if (strcasecmp(parameter.name, name) == 0) {
+			return parameter.getValue();
+		}
+	}
+	return NAN;
+}
+
+bool setParameter(const char *name, const float value) {
+	for (auto &parameter : parameters) {
+		if (strcasecmp(parameter.name, name) == 0) {
+			if (parameter.integer && !isfinite(value)) return false; // can't set integer to NaN or Inf
+			parameter.setValue(value);
+			if (parameter.callback) parameter.callback();
+			return true;
+		}
+	}
+	return false;
+}
+
+void syncParameters() {
+	static Rate rate(1);
+	if (!rate) return; // sync once per second
+	if (motorsActive()) return; // don't use flash while flying, it may cause a delay
+
+	for (auto &parameter : parameters) {
+		if (floatEquals(parameter.getValue(), parameter.cache)) continue; // no change
+
+		storage.putFloat(parameter.name, parameter.getValue());
+		parameter.cache = parameter.getValue(); // update cache
+	}
+}
+
+void printParameters(const char *filter) {
+	print(TXT_PARAM_HEADER);
+	for (auto &parameter : parameters) {
+		if (strncasecmp(parameter.name, filter, strlen(filter))) continue;
+
+		if (floatEquals(parameter.getValue(), parameter.initial)) { // parameter changed
+			print("%-15s  %-13g\n", parameter.name, parameter.getValue());
+		} else {
+			print("%-15s  %-13g  [%g]\n", parameter.name, parameter.getValue(), parameter.initial);
+		}
+	}
+}
+
+void resetParameters() {
+	print(TXT_PRESET_DONE);
+	storage.clear();
+	ESP.restart();
+}
+
+#line 1 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\power.ino"
+// Copyright (c) 2026 Oleg Kalachev <okalachev@gmail.com>
+// Repository: https://github.com/okalachev/flix
+// 耀坤整理版修改：https://github.com/YaoKunS/flix
+
+// 电源与电压检测
+//
+// 【耀坤 S3 硬件】电池分压接在 GPIO2（ADC2_CH1），实测分压比约 1:2。
+//   上游默认 voltagePin = -1（禁用）⇒ 没有电压显示、没有低电报警，
+//   对 1S 锂电来说是很危险的默认值（3.5 V 以下继续飞会过放损坏电池）。
+//
+// 【为什么必须关掉 brownout】上游已经关了（REG_CLR_BIT）、这里保留：
+//   1S 锂电 + ME6217 LDO 的压差余量很小，起飞瞬间电机浪涌会把 3.3 V 拉塌，
+//   硬件欠压复位会让飞机在空中重启 —— 这是必炸机级别的故障。
+
+#include <soc/soc.h>
+#include <soc/rtc_cntl_reg.h>
+#include "filter.h"
+#include "util.h"
+#include "i18n.h"
+
+float voltage = NAN;
+LowPassFilter<float> voltageFilter(1);
+int voltagePin = 2;        // 【耀坤设置】GPIO2 = 电池电压分压输入
+float voltageScale = 2;    // 分压比 1:2 ⇒ 读数乘 2
+
+void setupPower() {
+	print(TXT_SETUP_POWER);
+	REG_CLR_BIT(RTC_CNTL_BROWN_OUT_REG, RTC_CNTL_BROWN_OUT_ENA); // 关闭欠压复位（原因见文件头）
+	if (digitalPinToAnalogChannel(voltagePin) == -1) {
+		// 引脚不是 ADC 口时明确告警：否则用户会以为"电压一直是 nan"是别的原因
+		print(TXT_VOLT_PIN_ERR, voltagePin);
+		voltagePin = -1;
+		return;
+	}
+	// 打出实际生效的引脚与分压系数 —— 换板子后一眼就能确认参数有没有生效
+	print(TXT_VOLT_PIN_OK, voltagePin, voltageScale);
+}
+
+void readVoltage() {
+	if (voltagePin < 0) return;
+
+	static Rate rate(10);
+	if (!rate) return;
+
+	float v = analogReadMilliVolts(voltagePin) * voltageScale / 1000.0f;
+	voltage = voltageFilter.update(v);
+}
+
+#line 1 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\rc.ino"
+// Copyright (c) 2023 Oleg Kalachev <okalachev@gmail.com>
+// Repository: https://github.com/okalachev/flix
+// 耀坤整理版修改：https://github.com/YaoKunS/flix
+
+// 遥控接收（SBUS 接收机 + ESP-NOW 摇杆值归一化）
+//
+// 【耀坤整理版的改动】
+//   1) 出厂默认**不启用 SBUS**（rcRxPin = -1）—— 耀坤主用遥控是 ESP-NOW，
+//      SBUS 只是备选。要用 SBUS 就 `p RC_RX_PIN 1` 然后重启。
+//   2) 新增 rcHardwarePresent()：判"遥控到底有没有接"。上游 readRC() 在 SBUS
+//      未接时直接 return false，但 controlTime 仍会被 MAVLink 分支刷新，
+//      导致安全层以为"遥控一直在动"，失联保护形同虚设。
+//   3) 校准步骤提示改中文 + 打印完成项数。
+//   4) 【与上游的差异】normalizeRC() 里 throttle 用 channelZero 作零位，
+//      而 ESP-NOW 路直接用 MAVLink 的 -1000/+1000 归一化，两条路径互不干扰：
+//      SBUS 只用 SBUS，ESP-NOW 只用 mavlink.ino 的 MANUAL_CONTROL 分支。
+
+#include <SBUS.h>
+#include "util.h"
+#include "i18n.h"
+
+SBUS rc(Serial1);
+
+// 【耀坤设置】-1 = 不启用 SBUS（默认，走 ESP-NOW）；GPIO1 = 板上 EXT01 的 SBUS 输入
+int rcRxPin = -1;
+
+uint16_t channels[16]; // 原始通道值
+int channelZero[16];   // 通道零位（校准值）
+int channelMax[16];    // 通道满量程（校准值）
+
+float controlRoll, controlPitch, controlYaw, controlThrottle; // 飞手输入，范围 [-1, 1]
+float controlMode = NAN;
+float controlTime = NAN; // 最后一次控制输入更新的时刻（安全层据此判失联）
+
+int rollChannel = -1, pitchChannel = -1, throttleChannel = -1, yawChannel = -1, modeChannel = -1; // 通道映射
+
+void setupRC() {
+	if (rcRxPin < 0) {
+		print(TXT_RC_SBUS_OFF, rcRxPin);
+		return;
+	}
+	print(TXT_SETUP_RC);
+	rc.begin(rcRxPin);
+}
+
+bool readRC() {
+	if (rcRxPin < 0) return false;
+	if (!rc.read()) return false;
+
+	rc.getChannels(channels);
+	normalizeRC();
+	controlTime = t;
+	return true;
+}
+
+// 遥控硬件是否在用（SBUS 接了就认为在用；未接则由 ESP-NOW 侧负责刷新 controlTime）
+bool rcHardwarePresent() {
+	return rcRxPin >= 0;
+}
+
+void normalizeRC() {
+	float controls[16];
+	for (int i = 0; i < 16; i++) {
+		controls[i] = mapf(channels[i], channelZero[i], channelMax[i], 0, 1);
+	}
+	// 更新控制量
+	controlRoll = rollChannel < 0 ? 0 : controls[rollChannel];
+	controlPitch = pitchChannel < 0 ? 0 : controls[pitchChannel];
+	controlYaw = yawChannel < 0 ? 0 : controls[yawChannel];
+	controlThrottle = throttleChannel < 0 ? 0 : controls[throttleChannel];
+	controlMode = modeChannel < 0 ? NAN : controls[modeChannel]; // 未映射模式开关时该值无效
+}
+
+void calibrateRC() {
+	if (rcRxPin < 0) {
+		print(TXT_RC_DISABLED, rcRxPin);
+		print(TXT_RC_ESPNOW_NOCAL);
+		return;
+	}
+
+	uint16_t zero[16];   // 零位采样
+	uint16_t center[16]; // 中位采样
+	uint16_t _[16];      // 未使用的数据
+	print(TXT_CR_1);
+	pause(3);
+	calibrateRCChannel(NULL, _, zero, TXT_CR_2);
+	calibrateRCChannel(&throttleChannel, zero, _, TXT_CR_3);
+	calibrateRCChannel(NULL, _, center, TXT_CR_4);
+	calibrateRCChannel(&yawChannel, center, _, TXT_CR_5);
+	calibrateRCChannel(&pitchChannel, zero, _, TXT_CR_6);
+	calibrateRCChannel(&rollChannel, zero, _, TXT_CR_7);
+	calibrateRCChannel(&modeChannel, zero, _, TXT_CR_8);
+	printRCCalibration();
+
+	// 统计成功的项数，明确告诉用户"到底校准上了几路"
+	// （上游只打印表格，用户看不出哪几路其实没识别到）
+	int ok = 0;
+	if (rollChannel >= 0) ok++;
+	if (pitchChannel >= 0) ok++;
+	if (yawChannel >= 0) ok++;
+	if (throttleChannel >= 0) ok++;
+	if (modeChannel >= 0) ok++;
+	print(TXT_CR_SUMMARY, ok, 5);
+}
+
+void calibrateRCChannel(int *channel, uint16_t in[16], uint16_t out[16], const char *str) {
+	print("%s", str);
+	pause(3);
+	for (int i = 0; i < 30; i++) readRC(); // 最多尝试刷新 30 次
+	memcpy(out, channels, sizeof(channels));
+
+	if (channel == NULL) return; // 无需识别通道
+
+	// 找出 in 与 out 之间变化最大的通道
+	int ch = -1, diff = 0;
+	for (int i = 0; i < 16; i++) {
+		if (abs(out[i] - in[i]) > diff) {
+			ch = i;
+			diff = abs(out[i] - in[i]);
+		}
+	}
+	if (ch >= 0 && diff > 10) { // 差值阈值为 10
+		*channel = ch;
+		channelZero[ch] = in[ch];
+		channelMax[ch] = out[ch];
+	} else {
+		*channel = -1;
+	}
+}
+
+void printRCCalibration() {
+	print(TXT_CR_HEADER);
+	print("横滚      %-7d%-7d%-7d\n", rollChannel, rollChannel < 0 ? 0 : channelZero[rollChannel], rollChannel < 0 ? 0 : channelMax[rollChannel]);
+	print("俯仰      %-7d%-7d%-7d\n", pitchChannel, pitchChannel < 0 ? 0 : channelZero[pitchChannel], pitchChannel < 0 ? 0 : channelMax[pitchChannel]);
+	print("偏航      %-7d%-7d%-7d\n", yawChannel, yawChannel < 0 ? 0 : channelZero[yawChannel], yawChannel < 0 ? 0 : channelMax[yawChannel]);
+	print("油门      %-7d%-7d%-7d\n", throttleChannel, throttleChannel < 0 ? 0 : channelZero[throttleChannel], throttleChannel < 0 ? 0 : channelMax[throttleChannel]);
+	print("模式开关  %-7d%-7d%-7d\n", modeChannel, modeChannel < 0 ? 0 : channelZero[modeChannel], modeChannel < 0 ? 0 : channelMax[modeChannel]);
+}
+
+#line 1 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\safety.ino"
+// Copyright (c) 2024 Oleg Kalachev <okalachev@gmail.com>
+// Repository: https://github.com/okalachev/flix
+
+// Fail-safe functions
+
+extern float controlTime;
+extern float controlRoll, controlPitch, controlThrottle, controlYaw;
+
+float rcLossTimeout = 1;
+float descendTime = 10;
+float disarmTilt = radians(120);
+
+void failsafe() {
+	rcLossFailsafe();
+	autoFailsafe();
+	tiltFailsafe();
+}
+
+// RC loss failsafe
+void rcLossFailsafe() {
+	if (!armed) return;
+	if (t - controlTime > rcLossTimeout) {
+		descend();
+	}
+}
+
+// Smooth descend on RC lost
+void descend() {
+	mode = AUTO;
+	attitudeTarget = Quaternion();
+	thrustTarget -= dt / descendTime;
+	if (thrustTarget < 0) {
+		thrustTarget = 0;
+		armed = false;
+	}
+}
+
+// Allow pilot to interrupt automatic flight
+void autoFailsafe() {
+	static float roll, pitch, yaw, throttle;
+	if (abs(roll - controlRoll) > 0.05 || abs(pitch - controlPitch) > 0.05 || abs(yaw - controlYaw) > 0.05 || abs(throttle - controlThrottle) > 0.05) {
+		// controls changed and mode switch is not configured
+		if (mode == AUTO && invalid(controlMode)) mode = STAB; // regain control by the pilot
+	}
+	roll = controlRoll;
+	pitch = controlPitch;
+	yaw = controlYaw;
+	throttle = controlThrottle;
+}
+
+// Disarm if tilted too much
+void tiltFailsafe() {
+	if (!armed) return;
+	if (mode != STAB) return;
+
+	Vector up = Quaternion::rotateVector(Vector(0, 0, 1), attitude);
+	float tilt = acos(up.z);
+	if (disarmTilt && tilt > disarmTilt) {
+		armed = false;
+	}
+}
+
+#line 1 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\time.ino"
+// Copyright (c) 2023 Oleg Kalachev <okalachev@gmail.com>
+// Repository: https://github.com/okalachev/flix
+// 耀坤整理版修改：https://github.com/YaoKunS/flix
+
+// 时间基准与主循环节拍
+
+// ---------------------------------------------------------------------------
+// 【为什么改成 64 位微秒累加器】—— 修「上电约 71.6 分钟后遥测全停」
+//
+// 现象：飞机连续上电约 71.6 分钟后，串口敲命令**有回显**，但姿态不再更新、
+//   一帧遥测都没有；reboot 或拔插数据线立刻恢复。
+//
+// 根因：原实现 `t = micros() / 1e6`，而 ESP32 的 micros() 是 **32 位微秒**计数，
+//   每 2^32 us = 4294967296 us，约 4294.97 秒 = **71.6 分钟回绕一次**。
+//   回绕瞬间 t 从 4295 直接跳回 ~0（**倒退**）。而全工程所有"按时间放行"的门
+//   都写成 `t - last >= 周期`（mavlink.ino 的 5 个遥测 Rate、parameters/power/log
+//   的 Rate、这里的 1 秒统计窗口）—— t 一倒退，差值变负，这些门**集体停止放行**，
+//   且要等 t 重新爬回原值（最多再 71.6 分钟）才自愈。这正好解释"有回显
+//   （print 不受门控）但遥测全死"的割裂现象。
+//
+// 修法：维护一个 64 位累加器 timeUs，每步累加 `nowMicros - lastMicros`
+//   的**无符号差值**。C++ 无符号减法在回绕时是良定义的：32 位回绕自动抵消，
+//   得到的必然是本步真实微秒差（前提：本函数至少每 71.6 分钟被调用一次，
+//   实际是近 1 kHz，绝对满足）。64 位可跑 2^64 us，实际永不回绕。
+//   附带好处：dt 直接由微秒差换算，比原来"两个大浮点相减"更精确。
+//
+// 探针 tRewinds：记录原始 micros() 的回绕次数。修好之后它**仍可能 >0**，
+//   但那只表示"硬件回绕发生过且已被吸收"，不再影响任何门控 ——
+//   用它来验收"跨过 71.6 分钟遥测照样在跑"。
+// ---------------------------------------------------------------------------
+
+float t = NAN;      // 当前时间，秒（**单调递增**，不再随 micros 回绕倒退）
+float dt;           // 与上一步的时间差，秒
+float loopRate;     // 实测主循环频率，Hz
+
+static uint64_t timeUs = 0;     // 累计微秒（64 位，永不回绕）
+static uint32_t lastMicros = 0; // 上一次原始 micros() 值，用于无符号求差
+
+uint32_t tRewinds = 0; // 探针：原始 micros() 回绕次数（已被吸收，无害）
+float tRewindAt = 0;   // 探针：最近一次回绕发生时的 t（秒），正常应 ≈4295 s
+
+void step() {
+	const uint32_t nowMicros = micros();
+	const uint32_t deltaUs = nowMicros - lastMicros; // 无符号减法：32 位回绕自动抵消
+
+	if (nowMicros < lastMicros) { // 抓到一次原始 micros() 回绕（差值本身已正确）
+		tRewinds++;
+		tRewindAt = t;
+	}
+	lastMicros = nowMicros;
+	timeUs += deltaUs; // 64 位累加 ⇒ t 单调递增
+
+	const bool firstStep = !valid(t); // 首圈 t 仍是 NAN
+	t = timeUs / 1000000.0f;
+	dt = firstStep ? 0 : (float)deltaUs / 1000000.0f;
+
+	if (!(dt > 0)) {
+		dt = 0; // 首圈或复位后把 dt 归零，避免把"上电到第一次 step 的时长"喂给 PID
+	}
+
+	computeLoopRate();
+}
+
+void computeLoopRate() {
+	static float windowStart = 0;
+	static uint32_t rate = 0;
+	rate++;
+	if (t - windowStart >= 1) { // 1 秒统计窗口
+		loopRate = rate;
+		windowStart = t;
+		rate = 0;
+	}
+}
+
+#line 1 "D:\\YaoKunS\\Forks\\flix\\Firmware\\flix\\wifi.ino"
+// Copyright (c) 2023 Oleg Kalachev <okalachev@gmail.com>
+// Repository: https://github.com/okalachev/flix
+// 耀坤整理版修改：https://github.com/YaoKunS/flix
+
+// 无线通信：Wi-Fi（AP / STA）与 ESP-NOW
+//
+// ============================================================================
+// 【本节是全工程最关键的改动：ESP-NOW 接收为什么要动原生 API】
+//
+// 现象：换成上游 2026-09 之后，耀坤自研的 ESP-NOW 遥控器连上飞机却"毫无反应"，
+//   遥控器端显示已连接、飞机端串口也不报错，就是不动。2026-08 版是可以控的。
+//
+// 根因（读上游 ESP32_NOW_Serial 库源码确认）：
+//   上游接收走 `espnow.read()`，而 ESPNOWSerial 是"**会话式**"的 —— 它只把
+//   **已登记 peer** 发来的数据交上来。而登记 peer 的唯一途径是收到 4 字节
+//   发现包 "flix"（ESP_NOW.onNewPeer 回调）。更要命的是，上游的发现包广播
+//   还被 `if (espnow.isEncrypted())` 门控 —— 不加密就根本不广播。
+//   于是：遥控器不知道飞机存在 → 不建会话 → 飞机永远收不到摇杆数据。
+//
+// 修法（沿用 2026-08 已验证的做法）：
+//   1) 额外注册**原生** `esp_now_register_recv_cb()`，把收到的每个字节塞进
+//      FreeRTOS 队列 recvQueue（1024 字节）。注意是"额外"——ESPNOWSerial 的
+//      发送链路仍然保留，日志/发现包还能正常走。
+//   2) `receiveWiFi()` 在 ESP-NOW 模式下优先从队列取字节，队列空才返回 0。
+//   3) 发现包改为**无条件广播**（不再依赖是否加密），这样标准 flix 遥控代理
+//      也能找到本机。
+//   4) 默认信道 6：与耀坤英文版遥控器 `Control.hpp` 里的
+//      `esp_wifi_set_channel(6)` 对齐。信道不一致时 ESP-NOW 物理层就收不到，
+//      表现同样是"连着但不动"，且没有任何日志 —— 这是最难查的一类问题。
+//
+// 为什么用"字节队列"而不是"MavLink 帧队列"：
+//   MAVLink 解析器本身是流式的（mavlink_parse_char 逐字节喂），队列里存字节
+//   就等于把"网络接收"和"协议解析"解耦，解析不完整时不会丢帧。
+// ============================================================================
+
+#include <WiFi.h>
+#include <ESP32_NOW_Serial.h>
+#include <MacAddress.h>
+#include <Preferences.h>
+#include <esp_now.h>         // 原生 ESP-NOW API（会话式封装之外的那一层）
+#include <freertos/queue.h>  // 接收队列
+#include "util.h"
+#include "i18n.h"
+
+extern Preferences storage; // 使用主参数存储
+extern float mavlinkTime;   // 安全层判失联用（sendWiFi 里判"该不该转广播"）
+
+// 三种无线模式：关闭 / 热点 / 客户端 / ESP-NOW
+const int W_DISABLED = 0, W_AP = 1, W_STA = 2, W_ESPNOW = 3;
+int wifiMode = W_ESPNOW;
+
+int wifiLongRange = 0;
+int wifiBroadcast = 0; // 0 - 连上前先广播，1 - 一直广播
+int udpLocalPort = 14550;
+int udpRemotePort = 14550;
+IPAddress udpRemoteIP = "255.255.255.255";
+WiFiUDP udp;
+
+// 发送仍用 ESPNOWSerial（这条链路已验证可用）
+ESPNOWSerial espnow(NULL, 0, WIFI_IF_AP);
+ESPNOWSerial espnowBroadcast(ESP_NOW.BROADCAST_ADDR, 0, WIFI_IF_AP);
+
+// 【耀坤设置】信道 1：必须与遥控器一致
+// 【为什么是 1 而不是 6，这是一次实测纠错（2026-10-18）】
+//   早期按"耀坤英文版遥控器 Control.hpp 里 esp_wifi_set_channel(6)"把默认值定成 6，
+//   但中文版遥控（ESP32-DJI-Dev-Yaokun20260815）**完全没调 esp_wifi_set_channel**，
+//   走的是 Wi-Fi 默认信道 1。于是飞机听 6、遥控发 1，物理层彻底错开 ——
+//   现象极具迷惑性：遥控器"对端发现"页能列出飞机（扫描是跨信道的），
+//   点选后也显示"已连接"，但飞机 rxPackets 恒为 0，rc 全 0。
+//   现以已确认可用的 D:\YaoKunS\Flix-YaoKun\flix 为准，取 1。
+// ⚠️ 换遥控器（英文版 / 其他固件）时必须两边对齐：控制台 `ch <1-13>` 改飞机端。
+int espnowChannel = 1;
+
+// ---- 原生接收队列与回调 ----
+static QueueHandle_t recvQueue = nullptr;
+static volatile uint32_t lostPackets = 0;
+static bool espnowRecvInitialized = false;
+// 【诊断计数器】接遥控排查用：
+//   rxPackets = 收到的 ESP-NOW 包数（含任何来源，不限于遥控器）
+//   rxBytes   = 收到的总字节数（与 rxPackets 一起判断是"完全没包"还是"收到但解析不了"）
+//   rxLastMac = 最近一个发包方的 MAC，能直接看出是不是遥控器在发
+// 三个都不写 NVS，纯运行时统计，reboot 清零。
+static volatile uint32_t rxPackets = 0;
+static volatile uint32_t rxBytes = 0;
+static volatile uint8_t rxLastMac[6] = {0, 0, 0, 0, 0, 0};
+
+// 已登记对端 MAC 表（用于"自动学习遥控器"）
+// 【为什么需要它】ESP-NOW 的硬性规则：**只有登记在 peer 表里的 MAC 发来的包才会
+// 触发接收回调**，未登记的来源在驱动层就被丢弃，回调根本不会进来。
+// 耀坤遥控器（2026-04 起的版本）在「对端发现」页点选飞机后会 `connect(mac)`，
+// 之后所有摇杆数据都**单播**给飞机 MAC —— 而飞机端原来只注册了接收回调、
+// 从不 add_peer，于是永远收不到（2026-10-18 台架实测：rxPackets 恒为 0，
+// 而遥控器侧显示已连接，因为反向的飞机广播它能收到，形成单向通）。
+// 解法：① 预登记广播地址（发现阶段的包能进来）；② 收到未知来源时自动登记。
+static const int MAX_LEARNED_PEERS = 4;
+static uint8_t learnedPeers[MAX_LEARNED_PEERS][6];
+static volatile int learnedPeerCount = 0;
+
+static bool addPeerMac(const uint8_t *mac); // 前向声明（initNativeRecv 里要用）
+
+// 判断某 MAC 是否已登记
+static bool isPeerKnown(const uint8_t *mac) {
+	static const uint8_t bcast[6] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
+	bool isBcast = true;
+	for (int i = 0; i < 6; i++) if (mac[i] != bcast[i]) { isBcast = false; break; }
+	if (isBcast) return true;
+	if (esp_now_is_peer_exist(mac)) return true;
+	for (int k = 0; k < learnedPeerCount; k++) {
+		bool same = true;
+		for (int i = 0; i < 6; i++) if (learnedPeers[k][i] != mac[i]) { same = false; break; }
+		if (same) return true;
+	}
+	return false;
+}
+
+// 把一个 MAC 加入 ESP-NOW peer 表（不加密、走 AP 接口）
+// 【必须在主循环上下文调用】esp_now_add_peer 内部会取 Wi-Fi 锁，
+// 在中断/回调里调用有死锁风险，所以回调里只置标志、由 learnPeerIfNeeded() 落地。
+static bool addPeerMac(const uint8_t *mac) {
+	esp_now_peer_info_t peer = {};
+	memcpy(peer.peer_addr, mac, 6);
+	peer.channel = 0;              // 0 = 使用当前信道
+	peer.ifidx = WIFI_IF_AP;       // 与 ESPNOWSerial 一致
+	peer.encrypt = false;
+	return esp_now_add_peer(&peer) == ESP_OK;
+}
+
+// 待学习的 MAC（回调里写，主循环读）
+static volatile bool peerLearnPending = false;
+static volatile uint8_t peerLearnMac[6] = {0, 0, 0, 0, 0, 0};
+
+// 在主循环里落地"自动学习"（由 processMavlink / handleWiFi 周期调用）
+void learnPeerIfNeeded() {
+	if (!peerLearnPending) return;
+	peerLearnPending = false;
+	uint8_t mac[6];
+	for (int i = 0; i < 6; i++) mac[i] = peerLearnMac[i];
+	if (isPeerKnown(mac)) return;
+	if (learnedPeerCount >= MAX_LEARNED_PEERS) return;
+	if (addPeerMac(mac)) {
+		memcpy(learnedPeers[learnedPeerCount], mac, 6);
+		learnedPeerCount++;
+		print(TXT_WIFI_PEER_LEARNED,
+			mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+	}
+}
+
+// ESP-NOW 接收回调（运行在 Wi-Fi 任务上下文，必须放在 IRAM）
+// 【为什么逐字节入队】队列元素是 1 字节，xQueueSendFromISR 一次一个。
+//   队列满时累加 lostPackets 并**丢弃**——宁可丢旧数据也不要阻塞中断，
+//   否则 Wi-Fi 任务被拖住会导致整机卡顿。
+static void IRAM_ATTR onReceive(const esp_now_recv_info_t *info, const uint8_t *data, int len) {
+	if (!espnowRecvInitialized) return;
+	// 统计：即使队列满也要记，这样"收到过"这个事实不会丢
+	rxPackets++;
+	rxBytes += len;
+	if (info != NULL && info->src_addr != NULL) {
+		for (int i = 0; i < 6; i++) rxLastMac[i] = info->src_addr[i];
+		// 记下来源 MAC，交给主循环决定是否登记（回调里不能调 esp_now_add_peer）
+		for (int i = 0; i < 6; i++) peerLearnMac[i] = info->src_addr[i];
+		peerLearnPending = true;
+	}
+	for (int i = 0; i < len; i++) {
+		if (xQueueSendFromISR(recvQueue, &data[i], NULL) != pdTRUE) {
+			lostPackets++;
+		}
+	}
+}
+
+// 注册原生接收回调。
+// 注意：**不重新初始化 ESP-NOW** —— ESPNOWSerial 已经调用过 esp_now_init()，
+// 再调一次会返回 ESP_ERR_ESPNOW_INTERNAL 并把已有 peer 全清掉。
+//
+// 【顺序坑，勿调换】必须先创建队列、再注册回调。
+// 若先注册回调，从注册成功那一刻起回调就可能被触发，而那时 recvQueue 还是 nullptr，
+// xQueueSendFromISR(nullptr, ...) 在中断上下文里是未定义行为 —— 轻则丢包，重则崩溃。
+// 2026-08 验证版就是"先注册后建队列"，本版曾调换顺序，属实现细节回归。
+static bool initNativeRecv() {
+	recvQueue = xQueueCreate(1024, sizeof(uint8_t));
+	if (recvQueue == NULL) {
+		print(TXT_WIFI_QFAIL);
+		return false;
+	}
+	// 【预登记广播 peer】遥控器在"对端发现"阶段的探索包是广播发的；
+	// 未登记广播地址的话连探索包都进不来，自动学习就永远没有触发机会。
+	// 这里失败不致命（ESPNOWSerial 可能已经登记过），打印出来便于排查。
+	{
+		static const uint8_t bcast[6] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
+		if (!esp_now_is_peer_exist(bcast)) addPeerMac(bcast);
+	}
+	if (esp_now_register_recv_cb(onReceive) != ESP_OK) {
+		print(TXT_WIFI_CBFAIL);
+		return false;
+	}
+	espnowRecvInitialized = true;
+	return true;
+}
+
+void setupWiFi() {
+	print(TXT_SETUP_WIFI);
+	WiFi.enableLongRange(wifiLongRange);
+
+	if (wifiMode == W_AP) {
+		WiFi.softAP(storage.getString("WIFI_AP_SSID", "Yaokun_Drone").c_str(),
+			storage.getString("WIFI_AP_PASS", "12345678").c_str());
+		udp.begin(udpLocalPort);
+	}
+
+	if (wifiMode == W_STA) {
+		WiFi.begin(storage.getString("WIFI_STA_SSID", "").c_str(),
+			storage.getString("WIFI_STA_PASS", "").c_str());
+		udp.begin(udpLocalPort);
+	}
+
+	if (wifiMode == W_ESPNOW) {
+		WiFi.mode(WIFI_AP);
+		WiFi.setChannel(espnowChannel);
+		print(TXT_WIFI_CHANNEL, espnowChannel);
+
+		// 初始化 ESPNOWSerial（发送用途）
+		espnow.addr(MacAddress(storage.getString("ESPNOW_PEER_MAC", "FF:FF:FF:FF:FF:FF").c_str()));
+		String key = storage.getString("ESPNOW_PEER_KEY", "");
+		espnow.setKey(key.isEmpty() ? nullptr : (const uint8_t *)key.c_str());
+		espnow.begin();
+		espnowBroadcast.begin();
+
+		// 额外注册原生接收回调（接收遥测/摇杆数据）
+		if (initNativeRecv()) {
+			print(TXT_WIFI_NATIVE_OK);
+		} else {
+			print(TXT_WIFI_NATIVE_FAIL);
+		}
+	}
+
+	WiFi.setSleep(false); // 关闭省电，否则 ESP-NOW 延迟抖动极大
+}
+
+void sendWiFi(const uint8_t *buf, int len) {
+	if (espnow) {
+		espnow.write(buf, len);
+
+		// 定期广播发现包，帮助遥控器/代理找到本机。
+		// 【与上游不同】上游是 `if (espnow.isEncrypted() && discovery)`，不加密就不广播，
+		// 导致未加密的第三方遥控器永远发现不了飞机。这里去掉加密条件。
+		static Rate discovery(2);
+		if (discovery) {
+			espnowBroadcast.write((const uint8_t *)"flix", 4);
+		}
+		return;
+	}
+
+	if (WiFi.softAPgetStationNum() == 0 && !WiFi.isConnected()) return;
+
+	bool broadcast = wifiBroadcast || !(t - mavlinkTime < 5); // 失联时改广播
+	udp.beginPacket(broadcast ? IPAddress(255, 255, 255, 255) : udpRemoteIP, udpRemotePort);
+	udp.write(buf, len);
+	udp.endPacket();
+}
+
+int receiveWiFi(uint8_t *buf, int len) {
+	if (wifiMode == W_ESPNOW) {
+		// 优先走原生队列（这是遥控能不能控的关键路径）
+		if (!espnowRecvInitialized || recvQueue == NULL) return 0;
+		int i = 0;
+		for (; i < len; i++) {
+			if (xQueueReceive(recvQueue, &buf[i], 0) != pdTRUE) break;
+		}
+		return i;
+	}
+
+	// UDP 模式
+	if (WiFi.softAPgetStationNum() == 0 && !WiFi.isConnected()) return 0;
+	udp.parsePacket();
+	if (udp.remoteIP()) udpRemoteIP = udp.remoteIP();
+	return udp.read(buf, len);
+}
+
+void printWiFiInfo() {
+	if (espnow) {
+		print(TXT_WIFI_MODE_ESPNOW);
+		print(TXT_WIFI_VERSION, ESP_NOW.getVersion());
+		print(TXT_WIFI_MAXLEN, ESP_NOW.getMaxDataLen());
+		print(TXT_WIFI_MAC, WiFi.softAPmacAddress().c_str());
+		print(TXT_WIFI_PEER, MacAddress(espnow.addr()).toString().c_str());
+		print(TXT_WIFI_ENCRYPTED, espnow.isEncrypted());
+		print(TXT_WIFI_CHANNEL, espnowChannel);
+		print(TXT_WIFI_LOST, espnow.lost);
+		print(TXT_WIFI_NATIVE, espnowRecvInitialized);
+		if (recvQueue != NULL) {
+			print(TXT_WIFI_QBYTES, uxQueueMessagesWaiting(recvQueue));
+		}
+		// 额外给出"接收丢包"，与发送丢包（espnow.lost）区分开 —— 排查时一看就知道
+		// 是"发不出去"还是"收不过来"
+		print("接收丢弃字节数：%u\n", lostPackets);
+		// 【遥控排查三件套】收包数 / 收字节数 / 最近来源 MAC
+		// 判读方法：
+		//   包数=0            → 物理层根本没收到，查信道、遥控器是否真的在发
+		//   包数>0 但 rc 全 0 → 收到的是别人的包或非 MANUAL_CONTROL，打印 MAC 定位来源
+		//   包数在涨、rc 正常 → 链路健康
+		print(TXT_WIFI_RXPACKETS, rxPackets);
+		print(TXT_WIFI_RXBYTES, rxBytes);
+		print(TXT_WIFI_RXMAC,
+			rxLastMac[0], rxLastMac[1], rxLastMac[2], rxLastMac[3], rxLastMac[4], rxLastMac[5]);
+		// 【MAVLink 解析诊断】遥控排查关键三行：
+		//   帧数=0        → 收到字节但组不成 MAVLink 帧（协议不匹配 / Raw 格式）
+		//   帧数>0 但 id≠69 → 遥控器发的是 HEARTBEAT 之类，没发 MANUAL_CONTROL
+		//   id=69 且 rc 仍 0 → 被 target 过滤挡了，看来源 sysid
+		extern uint32_t rxMsgCount, rxLastMsgId;
+		extern uint8_t rxLastSrcSys;
+		print(TXT_WIFI_MSGS, rxMsgCount);
+		print(TXT_WIFI_LASTMSG, rxLastMsgId);
+		print(TXT_WIFI_LASTSYS, rxLastSrcSys);
+	} else if (WiFi.getMode() == WIFI_MODE_AP) {
+		print(TXT_WIFI_AP);
+		print(TXT_WIFI_MAC, WiFi.softAPmacAddress().c_str());
+		print(TXT_WIFI_SSID, WiFi.softAPSSID().c_str());
+		print(TXT_WIFI_PASS_MASK);
+		print(TXT_WIFI_CHANNEL, WiFi.channel());
+		print(TXT_WIFI_CLIENTS, WiFi.softAPgetStationNum());
+		print(TXT_WIFI_IP, WiFi.softAPIP().toString().c_str());
+		print(TXT_WIFI_REMOTE_IP, udpRemoteIP.toString().c_str());
+	} else if (WiFi.getMode() == WIFI_MODE_STA) {
+		print(TXT_WIFI_STA);
+		print(TXT_WIFI_CONNECTED, WiFi.isConnected());
+		print(TXT_WIFI_MAC, WiFi.macAddress().c_str());
+		print(TXT_WIFI_SSID, WiFi.SSID().c_str());
+		print(TXT_WIFI_PASS_MASK);
+		print(TXT_WIFI_CHANNEL, WiFi.channel());
+		print(TXT_WIFI_RSSI, WiFi.RSSI());
+		print(TXT_WIFI_IP, WiFi.localIP().toString().c_str());
+		print(TXT_WIFI_REMOTE_IP, udpRemoteIP.toString().c_str());
+	} else {
+		print(TXT_WIFI_OFF);
+	}
+	print(TXT_WIFI_MAVLINK, valid(mavlinkTime));
+}
+
+void configWiFi(int mode, const char *first, const char *second) {
+	MacAddress mac;
+	if (mode == W_AP && strlen(first) > 0 && strlen(second) >= 8) {
+		storage.putString("WIFI_AP_SSID", first);
+		storage.putString("WIFI_AP_PASS", second);
+	} else if (mode == W_STA && strlen(first) > 0 && strlen(second) >= 8) {
+		storage.putString("WIFI_STA_SSID", first);
+		storage.putString("WIFI_STA_PASS", second);
+	} else if (mode == W_ESPNOW && mac.fromString(first)) {
+		storage.putString("ESPNOW_PEER_MAC", first);
+		storage.putString("ESPNOW_PEER_KEY", strlen(second) == ESP_NOW_KEY_LEN ? second : "");
+	} else {
+		print(TXT_WIFI_INVALID);
+		return;
+	}
+	print(TXT_WIFI_REBOOT);
+}
+
+void setWiFiMode(const String& mode) {
+	if (mode == "ap") {
+		wifiMode = W_AP;
+	} else if (mode == "sta") {
+		wifiMode = W_STA;
+	} else if (mode == "espnow") {
+		wifiMode = W_ESPNOW;
+	} else if (mode == "off") {
+		wifiMode = W_DISABLED;
+	} else {
+		print(TXT_WIFI_MODE_INVALID);
+		return;
+	}
+	static const char *modes[] = {"关闭", "热点(AP)", "客户端(STA)", "ESP-NOW"};
+	print(TXT_WIFI_MODE_SET, modes[wifiMode]);
+}
+

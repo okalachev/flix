@@ -1,9 +1,14 @@
 *.hex
 *.elf
 build/
-tools/log/
-tools/dist/
+# 英文版的独立构建目录（arduino-cli --output-dir build_en），与 build/ 同为编译产物
+build_en/
+
+# 目录整理后日志与打包输出移入 Tools/（原为 tools/log、tools/dist）
+Tools/log/
+Tools/dist/
 *.egg-info/
+
 .core
 .libs
 .vscode/*
