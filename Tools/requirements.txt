@@ -1,0 +1,4 @@
+pymavlink
+docopt
+matplotlib
+mcap
