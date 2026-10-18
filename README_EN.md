@@ -2,7 +2,7 @@
 
 <div align="center">
 
-# 🚁 Flix Flight Controller · YaoKun Chinese Fork
+# 🚁 Flix Flight Controller · YaoKun Chinese Edition
 
 **An open-source ESP32 quadcopter firmware written from scratch — under 2000 lines of Arduino code, built for education and research**
 
