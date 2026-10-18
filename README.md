@@ -22,9 +22,9 @@
 
 ---
 
-> 📌 **本仓库是 [okalachev/flix](https://github.com/okalachev/flix) 的中文整理版。**  
-> 固件源码 100% 保持上游原样（仅调整了目录位置，未改一行代码逻辑），  
-> 本仓库额外提供：中文说明文档、重新规划的目录结构。  
+> 📌 **本仓库是 [okalachev/flix](https://github.com/okalachev/flix) 的中文整理版 + 耀坤 S3 适配版。**  
+> `master` 分支**保持上游原样**（仅调整目录位置，未改一行代码逻辑）。  
+> `yaokun-organized` 分支在整理版基础上**新增了硬件适配与中文界面**（详见 [耀坤 S3 适配版](#-耀坤-s3-适配版yakun-organized-分支)）。  
 > 上游项目与作者：[Oleg Kalachev](https://github.com/okalachev) · [项目官网 quadcopter.dev](https://quadcopter.dev)
 
 ## 📌 这是什么
@@ -87,7 +87,8 @@ flix/                          # ← 仓库根：说明文档 + 转发用 Makefi
 │   ├── flix/                  #   Arduino sketch —— 飞控全部源码
 │   │   ├── flix.ino           #     主入口：setup / loop
 │   │   ├── config.h           #     引脚定义与飞行参数
-│   │   ├── imu.ino            #     IMU 驱动与校准
+│   │   ├── i18n.h             #     ★ 界面文案表（中英双语，135 条，唯一数据源）
+│   │   ├── imu.ino            #     IMU 驱动、自动识别与校准
 │   │   ├── estimate.ino       #     姿态解算
 │   │   ├── control.ino        #     PID 控制与电机混控
 │   │   ├── motors.ino         #     电机 / MOSFET 驱动
@@ -97,11 +98,16 @@ flix/                          # ← 仓库根：说明文档 + 转发用 Makefi
 │   │   ├── console.ino        #     无线命令行
 │   │   ├── led.ino / power.ino / log.ino / safety.ino / time.ino / parameters.ino
 │   │   └── pid.h / filter.h / quaternion.h / vector.h / util.h
+│   ├── tools/                 #   ★ 发布打包脚本
+│   │   └── pack_flix_release.py   # 合并单文件固件 + 自动生成 SHA-256 指纹说明
+│   ├── release/               #   ★ 发布产物（merged.bin + 指纹与烧录说明）
 │   └── gazebo/                #   Gazebo 仿真器（跑同一份 .ino 源码）
 │       ├── flix.world         #     仿真世界
 │       ├── simulator.cpp      #     仿真主程序
 │       └── models/            #     机架 / 场景模型
 ├── Docs/                      # ★ 文档与教材
+│   ├── 耀坤S3适配说明.md       #   ★ 改动清单 / 根因分析 / 验证记录
+│   ├── flix技术说明书.html     #   ★ 图文版技术说明书
 │   ├── assembly.md            #   组装说明
 │   ├── usage.md               #   编译 / 调试 / 飞行
 │   ├── firmware.md            #   固件架构总览（强烈推荐先读）
@@ -126,6 +132,138 @@ flix/                          # ← 仓库根：说明文档 + 转发用 Makefi
 | `Makefile` | `Firmware/Makefile`（+ 根目录转发器） | 构建脚本跟固件走；根目录留转发器保兼容 |
 | `docs/`    | `Docs/`                       | 文档                  |
 | `tools/`   | `Tools/`                      | 工具脚本                |
+
+## 🛩️ 耀坤 S3 适配版（`yaokun-organized` 分支）
+
+> ⚠️ **只在 `yaokun-organized` 分支上生效。** `master` 始终跟随上游，不包含以下改动。
+
+这一分支把 Flix 跑到了**耀坤 S3 无人机**上，并解决了"换用自研 ESP-NOW 遥控后飞机毫无反应"的问题。  
+改动清单、根因分析与逐条验证记录见 [Docs/耀坤S3适配说明.md](Docs/耀坤S3适配说明.md)。
+
+### 关键改动一览
+
+| 编号      | 改动                                                           | 为什么必须改                                                                                                                                               |
+| ------- | ------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **R1**  | 时间基准改 **64 位微秒累加器**                                          | 上游 `t = micros()/1e6`，而 `micros()` 是 32 位 → **每 71.6 分钟回绕**，`t` 倒退会让全工程 `t - last >= 周期` 的判据集体失效，表现为"上电 71.6 分钟后遥测全停、终端还在回显、reboot 就恢复"              |
+| **R2**  | `COMMAND_LONG` **统一回 ACK**                                   | 解锁被拒/模式非法时若不回 ACK，QGC 会一直卡在"正在执行"直到超时                                                                                                                |
+| **R4**  | ESP-NOW 接收改用 **原生 `esp_now_register_recv_cb` + 字节队列**        | 上游走 `ESPNOWSerial::read()` 的**会话机制**，只交出已登记 peer 的数据；而登记 peer 靠 4 字节 `flix` 发现包，上游还把它门控在 `isEncrypted()` 里 → **不加密就永远建不了会话，遥控器显示已连接但飞机不动**。这是本次改造的核心 |
+| **R5**  | 电机引脚 **15 / 5 / 6 / 16**，PWM 20 kHz                          | 耀坤 S3 实物布线；20 kHz 超出人耳范围，电机不尖叫                                                                                                                       |
+| **R6**  | 电压检测 GPIO **2**，分压系数 **2**                                   | 对应耀坤 S3 分压电阻实测值                                                                                                                                      |
+| **R7**  | IMU **上电自动识别**（I2C 的 MPU6050 / SPI 的 MPU-6500），朝向按总线分档       | 两块板子用的 IMU 不同，型号选错 `IMU::create()` 返回 `nullptr` → 上游会**空指针崩溃**。本版加了 `imuOK` 判据，IMU 不可用时禁止解锁并红灯长鸣告警                                                   |
+| **R8**  | 三色灯（GPIO 41/7/14）+ 蜂鸣器（GPIO 39）灯语系统                          | 现场不看串口也知道状态；**连接判定改用 `controlTime` 而非 `mavlinkTime`** —— 后者任何 MAVLink 帧都会刷新，会"没接遥控也显示已连接"                                                            |
+| **R9**  | **全中文界面**（`i18n.h` 集中管理，135 条文案）                             | help 菜单、IMU 校准、初始化提示、错误信息全中文                                                                                                                         |
+| **R10** | 参数表新增 `IMU_AUTO_DETECT` / `IMU_ROT_LOCK` / `LED_*` / `BUZ_*` | 换 IMU、换板不必重编固件                                                                                                                                       |
+
+### 中文 / 英文双版本
+
+界面文字全部集中在 `Firmware/flix/i18n.h`，**默认中文**：
+
+```cpp
+// 编英文版：在 flix.ino 最顶部（第一条 #include 之前）加这一行
+#define FLIX_LANG_EN
+```
+
+或者编译时传宏，不改任何文件：
+
+```bash
+arduino-cli compile --build-property "compiler.cpp.extra_flags=-DFLIX_LANG_EN" ...
+```
+
+两种版本的中英文案条数严格一致（135 : 135），有脚本可校验，不会出现"改了中文忘了英文"。
+
+### 编译与烧录（耀坤 S3）
+
+```bash
+cd Firmware
+arduino-cli compile \
+  --fqbn "esp32:esp32:esp32s3:UploadSpeed=921600,USBMode=hwcdc,CDCOnBoot=cdc,CPUFreq=240,FlashMode=qio,FlashSize=4M,PartitionScheme=default,PSRAM=disabled" \
+  --libraries "G:\Arduino\libraries" \
+  --export-binaries flix
+```
+
+> 🔴 **必须带 `--export-binaries`**，否则 `build/` 目录不会更新，打包脚本会拿旧固件拼出一个"看起来正常但内容错误"的 bin。
+
+打包单文件固件 + 自动生成指纹说明：
+
+```bash
+python Firmware/tools/pack_flix_release.py --version 1.0
+```
+
+产物在 `Firmware/release/`：`*_merged.bin`（烧 `0x0`）+ `*_指纹与烧录说明.md/.txt`。
+
+### 控制台命令（中文版实际显示）
+
+连上串口（115200，**原生 USB 口**）敲 `help`：
+
+```text
+可用命令：
+
+help - 显示本帮助
+p - 显示全部参数
+p <前缀> - 显示以该前缀开头的参数
+p <参数名> <数值> - 修改参数（自动存盘）
+preset - 恢复出厂参数（会重启）
+time - 显示时间与主循环频率
+imu - 显示惯性测量单元数据
+ca - 校准加速度计（六面校准）
+st - 显示姿态估计结果
+arm / disarm - 解锁 / 上锁
+raw/stab/acro/auto - 切换飞行模式
+rc - 显示遥控（ESP-NOW）数据
+cr - 校准遥控行程
+pw - 显示电源与电压
+wifi - 显示无线连接信息
+wifi ap/sta/espnow/off - 设置无线模式
+ap <热点名> <密码> - 设置飞机热点
+sta <路由名> <密码> - 连接家里的路由器
+espnow <遥控器MAC> [<密钥>] - 设置 ESP-NOW 对端
+ch [<信道>] - 查看或设置 ESP-NOW 信道
+mot - 显示四路电机输出
+log [dump] - 打印日志表头 [以及数据]
+mfr/mfl/mrr/mrl [<油门>] - 单独测试电机（务必拆桨！）
+sys - 显示系统信息
+reset - 复位姿态估计
+reboot - 重启飞机
+```
+
+> 📌 **如果只看到品牌横幅、看不到上面这份命令表**：那是 v1.0 早期构建的截断问题
+> （HWCDC 发送缓冲默认仅 256 B，1.7 KB 的菜单一次写出会被静默丢弃）。
+> 已修复：`setupConsole()` 把 TX 缓冲扩到 4 KB + 命令收尾补推一次。
+> 请按《指纹与烧录说明》核对固件 SHA-256 后重新烧录。
+
+### ESP-NOW 遥控的四个必查项
+
+飞机端和遥控器端**必须**满足以下四点，否则现象一律是"遥控器显示已连接、飞机毫无反应"：
+
+1. **信道一致** —— 飞机端 `ch` 命令查看，默认 **1**。耀坤中文版遥控（`ESP32-DJI-Dev-Yaokun20260815`）**不调用 `esp_wifi_set_channel`**，走 Wi-Fi 默认信道 **1**，所以飞机端也取 1。
+   > ⚠️ 早期版本按英文版遥控的 `esp_wifi_set_channel(6)` 把默认值定成 6，结果飞机听 6、遥控发 1，物理层彻底错开。**这个故障极具迷惑性：遥控器"对端发现"页仍能列出飞机**（扫描是跨信道的），"能看到"≠"能通"。
+2. **飞机已登记遥控器为 ESP-NOW peer** —— ESP-NOW 的接收回调只对**已登记在 peer 表里**的 MAC 触发，未登记的包在驱动层就被丢弃。中文版遥控 `connect(mac)` 后走**单播**，所以必须登记。本版已实现：开机预登记广播地址 + `onReceive` 记录来源 MAC + 主循环 `learnPeerIfNeeded()` 自动学习（**回调里不能直接 `esp_now_add_peer`，会取 Wi-Fi 锁死锁**）。
+3. **遥控器已使能** —— 中文版遥控的 `enabled` 默认是 `false`，此时 `MANUAL_CONTROL` 照发不误，但四轴数值全是中位（≈0.01）。**使能方法 = 按遥控器的「左按钮（辅助按钮）」**，界面上没有这个开关，是纯物理按键。
+   > ⚠️ **飞机每次重启，都要重新走一遍：对端发现 → 点选飞机 → 按左按钮使能。**
+4. **接收链路已注册** —— 开机日志出现 `ESP-NOW 原生接收已启用`；`wifi` 命令里 `接收丢包` 与 `队列字节` 两项可判断是"发不出去"还是"收不过来"。
+
+**用 `wifi` 命令按这个顺序排查：**
+
+| 现象 | 结论 |
+| --- | --- |
+| `接收包数` = 0 | 物理层不通 → 查**信道**（第 1 项） |
+| 包数涨，`已解析 MAVLink 帧数` = 0 | 协议不匹配 |
+| 帧数涨，`最近一帧消息 ID` ≠ 69 | 遥控没发 `MANUAL_CONTROL` |
+| msgid = 69，但 `rc` 四轴全 0.01 | **遥控器未使能** → 按左按钮（第 3 项） |
+| 全对，四轴跟摇杆动 | ✅ 链路正常 |
+
+> ⚠️ 家庭路由器与飞机热点**同信道**时会互相干扰，表现为手机连上就掉、界面假死。  
+> 用 `ch <1-13>` 改飞机端，但**遥控器端必须同步改**，否则物理层直接收不到。
+
+### 飞行能力边界（务必先读）
+
+本固件是**纯姿态自稳 + 手动油门**，没有任何位置/速度传感器（无 GPS / 气压计 / 测距 / 光流）：
+
+- **松杆不会悬停** —— 姿态会稳平，但会保持水平速度继续飘。
+- **松油门就掉高度** —— 没有定高环。
+- **四源全静默会被判失联** —— 遥控、地面站全断 1 秒后自动降油门，10 秒归零并上锁。
+
+首次试飞请在空旷场地、低空、装保护圈的前提下进行。
 
 ## 🚀 快速开始
 
@@ -174,6 +312,7 @@ make upload_proxy
 
 连上飞机的 Wi-Fi（AP 名称见串口日志），即可用浏览器或地面站操控。
 
+
 ## 🔌 硬件清单
 
 | Type             | Part                                                                                                                                                                                                |                                                                         Image                                                                         | Quantity |
@@ -198,10 +337,10 @@ make upload_proxy
 | 导线               | 推荐 28 AWG                                                                                                                                                                                           |                                                     <img src="Docs/img/wire-28awg.jpg" width=100>                                                     |          |
 | 胶带、双面胶           |                                                                                                                                                                                                     |                                                                                                                                                       |          |
 
-*¹ — 目前气压计未使用。*  
-  
-*² — 此机架为 GY-91 板优化，换其它板需修改固定孔位。*  
-  
+*¹ — 目前气压计未使用。*
+
+*² — 此机架为 GY-91 板优化，换其它板需修改固定孔位。*
+
 *³ — 也可用任何 SBUS 接口的发射机 / 接收机组合。*
 
 组装所需工具：3D 打印机、烙铁、助焊焊锡、螺丝刀、万用表。
@@ -238,13 +377,13 @@ make upload_proxy
   | NCS          | GPIO5        |
 - MOSFET 必须焊接下拉电阻。
 - 电机经 MOSFET 接 ESP32 Mini：
-  | 电机      | 位置 | 转向  | 桨型 | 电机线   | GPIO           |
-  | ------- | -- | --- | -- | ----- | -------------- |
-  | Motor 0 | 左后 | 逆时针 | B  | 黑 & 白 | GPIO12 *(TDI)* |
-  | Motor 1 | 右后 | 顺时针 | A  | 蓝 & 红 | GPIO13 *(TCK)* |
-  | Motor 2 | 右前 | 逆时针 | B  | 黑 & 白 | GPIO14 *(TMS)* |
-  | Motor 3 | 左前 | 顺时针 | A  | 蓝 & 红 | GPIO15 *(TD0)* |
-  顺时针电机配蓝红线，对应 A 型桨（桨上有标记）；逆时针电机配黑白线，对应 B 型桨。
+  | 电机                                          | 位置 | 转向  | 桨型 | 电机线   | GPIO           |
+  | ------------------------------------------- | -- | --- | -- | ----- | -------------- |
+  | Motor 0                                     | 左后 | 逆时针 | B  | 黑 & 白 | GPIO12 *(TDI)* |
+  | Motor 1                                     | 右后 | 顺时针 | A  | 蓝 & 红 | GPIO13 *(TCK)* |
+  | Motor 2                                     | 右前 | 逆时针 | B  | 黑 & 白 | GPIO14 *(TMS)* |
+  | Motor 3                                     | 左前 | 顺时针 | A  | 蓝 & 红 | GPIO15 *(TD0)* |
+  | 顺时针电机配蓝红线，对应 A 型桨（桨上有标记）；逆时针电机配黑白线，对应 B 型桨。 |    |     |    |       |                |
 - RC 接收机可选接入 ESP32 的 UART2：
   | 接收机引脚       | ESP32 引脚             |
   | ----------- | -------------------- |
@@ -289,7 +428,6 @@ make upload_proxy
 - **B 站**：<https://space.bilibili.com/3707011699050767>
 
 > ⚠️ **关于许可证的重要说明**：
-
 
 > 上游 [okalachev/flix](https://github.com/okalachev/flix) 仓库**目前未附带任何 LICENSE 文件**，  
 > 也未在 README 中声明具体开源许可证名称。这意味着严格来说，  
