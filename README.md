@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🚁 Flix 飞控 · 耀坤复刻版
+# 🚁 Flix 飞控 · 耀坤整理版
 
 **从零实现的 ESP32 开源四轴飞控 —— 固件不足 2000 行 Arduino 代码，专为教学与研究而生**
 
@@ -22,7 +22,7 @@
 
 ---
 
-> 📌 **本仓库是 [okalachev/flix](https://github.com/okalachev/flix) 的中文复刻整理版。**  
+> 📌 **本仓库是 [okalachev/flix](https://github.com/okalachev/flix) 的中文整理版。**  
 > 固件源码 100% 保持上游原样（仅调整了目录位置，未改一行代码逻辑），  
 > 本仓库额外提供：中文说明文档、重新规划的目录结构。  
 > 上游项目与作者：[Oleg Kalachev](https://github.com/okalachev) · [项目官网 quadcopter.dev](https://quadcopter.dev)
@@ -69,11 +69,11 @@ Version 0 演示视频：<https://youtu.be/8GzzIQ3C6DQ>
 
 <a href="Docs/user.md"><img src="Docs/img/user/user.jpg" width=500></a>
 
-## 📁 目录结构（本复刻版重新整理）
+## 📁 目录结构（本整理版重新整理）
 
 > 🔧 **为什么要重整**：上游仓库把固件、文档、工具脚本平铺在根目录，  
 > 目录里同时存在 `.ino` 源码、Python 脚本、mdBook 教材和 Gazebo 模型，容易看花。  
-> 本复刻版按"**用途**"重新分层，**固件相关的一律收进 `Firmware/`**。  
+> 本整理版按"**用途**"重新分层，**固件相关的一律收进 `Firmware/`**。  
 > 重要的是：`Firmware/` 内部是**一个完整可独立构建的工程**，  
 > 所以在根目录执行 `make` 依然能直接编译，不需要改任何构建参数。
 
@@ -284,7 +284,7 @@ make upload_proxy
 
 - **上游项目**：Flix © [Oleg Kalachev](https://github.com/okalachev) ·  
   源码仓库 <https://github.com/okalachev/flix>
-- **本复刻版**：仅做中文文档与目录整理，**未修改固件逻辑**，固件版权归原作者所有。
+- **本整理版**：仅做中文文档与目录整理，**未修改固件逻辑**，固件版权归原作者所有。
 - **本仓库整理**：耀坤智联 YaoKunSmart · <https://github.com/YaoKunS>
 - **B 站**：<https://space.bilibili.com/3707011699050767>
 
@@ -294,7 +294,7 @@ make upload_proxy
 > 上游 [okalachev/flix](https://github.com/okalachev/flix) 仓库**目前未附带任何 LICENSE 文件**，  
 > 也未在 README 中声明具体开源许可证名称。这意味着严格来说，  
 > **版权默认保留给原作者**（著作权法默认「未授权」）。  
-> 因此本复刻版**不擅自添加** LICENSE 文件，也不会替作者选择许可协议 ——  
+> 因此本整理版**不擅自添加** LICENSE 文件，也不会替作者选择许可协议 ——  
 > 这属于原作者的决定。  
 > 本仓库仅作学习研究与技术交流用途；如需商业使用或再分发，  
 > 请先联系原作者取得明确授权，并遵守所在地法律法规。
@@ -315,6 +315,6 @@ make upload_proxy
 <div align="center">
 
 **🚁 Flix** · 由 [Oleg Kalachev](https://github.com/okalachev) 倾力打造  
-· 本中文复刻整理版由 [耀坤智联](https://github.com/YaoKunS) 维护
+· 本中文整理版由 [耀坤智联](https://github.com/YaoKunS) 维护
 
 </div>
