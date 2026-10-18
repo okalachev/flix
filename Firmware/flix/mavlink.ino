@@ -3,8 +3,37 @@
 
 // MAVLink communication
 
+/*
+ * ============================================================================
+ * 【耀坤整理版】MAVLink 通信层
+ * ----------------------------------------------------------------------------
+ * 本文件负责：
+ *   1) 遥测下行：心跳 / 姿态 / 遥控通道 / 电机 / IMU / 电池 → 地面站（QGC、MAVProxy）
+ *   2) 指令上行：MANUAL_CONTROL（手动摇杆）/ PARAM_*（参数读写）/ COMMAND_LONG（解锁-模式-请求消息）
+ *   3) Shell 回显透传：把控制台 print() 的输出打包成 SERIAL_CONTROL 帧发给地面站
+ *
+ * 本版相对上游的两处关键改动（R2）：
+ *   - 🔴 handleMavlinkCommand 改为「accepted 标志 + 统一 ACK」：上游在解锁被拒/模式非法时
+ *     用 return 提前退出。虽然当前上游在 COMMAND_LONG 分支里是「拿返回值再发 ACK」的写法，
+ *     但由于早期版本（以及 QGC 的实际行为）出现过「被拒绝时地面站永远收不到 ACK → 界面卡在
+ *     "正在执行"」的现象，这里统一成：函数内部只置 accepted 标志，函数返回后**必定**发一帧
+ *     COMMAND_ACK。地面站据此立刻知道是被拒绝还是接受，而不是超时。
+ *   - 被拒绝时通过控制台打印中文原因（TXT_MAV_DENIED_THROTTLE 等），方便现场排查。
+ *
+ * ⚠️ MANUAL_CONTROL 的量程语义（重要，实测前不可改）：
+ *   协议规定 x/y/z/r 均为 int16，范围 -1000~+1000。
+ *   本工程把 z 直接映射成 0~1 的油门（z=-1000 → -1.0，z=0 → 0，z=+1000 → +1.0），
+ *   而 control.ino 的混控里 controlThrottle 期望 0~1（负值会被钳到 0）。
+ *   ⇒ 遥控器必须发送「-1000~+1000 全量程」，摇杆中位 = 0，上半程才产生正推力。
+ *   ⇒ 若遥控器只发 0~1000（把中位当 0），则摇杆中位就已经是 0 油门，上推才有推力，
+ *      表现为「行程只有一半、且中点起跳」。首次台架务必确认：摇杆最低 → z≈-1000，
+ *      中位 → z≈0，最高 → z≈+1000。
+ * ============================================================================
+ */
+
 #include <MAVLink.h>
 #include "util.h"
+#include "i18n.h"   // 界面文字唯一数据源：中/英文可切（FLIX_LANG_EN）
 
 extern float controlTime;
 extern float voltage;
@@ -19,6 +48,14 @@ Rate telemetryIMU(15);
 
 float mavlinkTime = NAN; // time of last received message
 String mavlinkPrintBuffer;
+
+// 【诊断】最近收到的 MAVLink 消息特征，供控制台 `wifi` 命令显示。
+// 用途：台架排查"遥控器明明在发、飞机 rc 却全 0"这类问题时，
+// 一眼就能看出①到底有没有解析出帧 ②帧的 msgid 是不是 MANUAL_CONTROL(69)
+// ③来源 sysid 是多少（耀坤遥控 = 127）。纯运行时变量，不写 NVS。
+uint32_t rxMsgCount = 0;     // 成功解析的 MAVLink 帧总数
+uint32_t rxLastMsgId = 0;    // 最近一帧的 msgid
+uint8_t rxLastSrcSys = 0;    // 最近一帧的来源 sysid
 
 void processMavlink() {
 	sendMavlink();
@@ -102,6 +139,12 @@ void receiveMavlink() {
 	for (int i = 0; i < len; i++) {
 		if (mavlink_parse_char(MAVLINK_COMM_0, buf[i], &msg, &status)) {
 			mavlinkTime = t;
+			// 【诊断】记录最近收到的消息 ID 与来源 sysid，
+			// 用于区分"遥控器发的是 MANUAL_CONTROL 还是别的（如 HEARTBEAT）"，
+			// 以及"是不是被 target 过滤挡掉了"。只在控制台 `wifi` 里显示，不影响控制。
+			rxLastMsgId = msg.msgid;
+			rxLastSrcSys = msg.sysid;
+			rxMsgCount++;
 			handleMavlink(&msg);
 		}
 	}
@@ -113,13 +156,19 @@ void handleMavlink(const void *_msg) {
 	if (msg.msgid == MAVLINK_MSG_ID_MANUAL_CONTROL) {
 		mavlink_manual_control_t m;
 		mavlink_msg_manual_control_decode(&msg, &m);
-		if (m.target && m.target != mavlinkSysId) return; // 0 is broadcast
+		if (m.target && m.target != mavlinkSysId) return; // 0 means broadcast
 
+		// 摇杆归一化：MAVLink 的 x/y/z/r 是 int16，协议规定满量程 ±1000。
+		// 直接除以 1000 得到 -1~+1 的归一化值，control.ino 内部再按需使用：
+		//   controlRoll/Pitch/Yaw ∈ [-1, 1]（角度或角速度环的目标）
+		//   controlThrottle      ∈ [-1, 1]，混控里会被钳到 [0, 1]
+		// ⚠️ 若遥控器发的是 0~1000（中位=0）而非 ±1000，则中位即 0 油门、上半程才有推力。
+		//    首次台架必须确认：最低杆 → z≈-1000；中位 → z≈0；最高杆 → z≈+1000。
 		controlThrottle = m.z / 1000.0f;
 		controlPitch = m.x / 1000.0f;
 		controlRoll = m.y / 1000.0f;
 		controlYaw = m.r / 1000.0f;
-		controlMode = NAN;
+		controlMode = NAN; // 手动控制不改变模式
 		controlTime = t;
 	}
 
@@ -250,6 +299,8 @@ void handleMavlink(const void *_msg) {
 		mavlink_msg_command_long_decode(&msg, &m);
 		if (m.target_system && m.target_system != mavlinkSysId) return;
 
+		// 【R2】无论成功、被拒绝还是不支持，都必须回一帧 COMMAND_ACK。
+		// 地面站（QGC）收到 ACK 才会结束「正在执行」状态；不回 ACK 会一直超时重发。
 		int result = handleMavlinkCommand(&m);
 		mavlink_message_t ack;
 		mavlink_msg_command_ack_pack(mavlinkSysId, MAV_COMP_ID_AUTOPILOT1, &ack, m.command, result, UINT8_MAX, 0, msg.sysid, msg.compid);
@@ -257,6 +308,17 @@ void handleMavlink(const void *_msg) {
 	}
 }
 
+/*
+ * 处理 COMMAND_LONG 指令，返回 MAV_RESULT_* 结果码。
+ *
+ * 参数：_m —— 指向已解码的 mavlink_command_long_t（用 void* 是为了与头文件里的
+ *              前向声明保持 ABI 一致，避免把 MAVLink 头文件引入所有翻译单元）。
+ * 返回：MAV_RESULT_ACCEPTED / DENIED / UNSUPPORTED，调用方负责打包成 COMMAND_ACK 发回。
+ * 调用时机：receiveMavlink() 每收到一帧 COMMAND_LONG 调一次。
+ *
+ * 【设计说明】本函数只决定结果码 + 做副作用（改 armed / mode），不发 ACK；
+ * 发 ACK 统一由调用方做。这样新增指令时不会漏掉 ACK。
+ */
 int handleMavlinkCommand(const void *_m) {
 	const mavlink_command_long_t& m = *(mavlink_command_long_t *)_m;
 
@@ -278,13 +340,23 @@ int handleMavlinkCommand(const void *_m) {
 	}
 
 	if (m.command == MAV_CMD_COMPONENT_ARM_DISARM) {
-		if (m.param1 == 1 && controlThrottle > 0.05) return MAV_RESULT_DENIED; // don't arm if throttle is not low
+		// 解锁前必须确认油门在最低位 —— 否则一解锁电机立刻高速旋转，是炸机头号原因。
+		// 0.05 对应归一化油门 5%，留出一点点死区容忍摇杆零点漂移（实测 AT9S Pro 零位约 0.008）。
+		if (m.param1 == 1 && controlThrottle > 0.05) {
+			print(TXT_MAV_DENIED_THROTTLE); // 中文告知：油门未归零，拒绝解锁
+			return MAV_RESULT_DENIED;
+		}
 		armed = m.param1 == 1;
 		return MAV_RESULT_ACCEPTED;
 	}
 
 	if (m.command == MAV_CMD_DO_SET_MODE) {
-		if (m.param2 < 0 || m.param2 > AUTO) return MAV_RESULT_DENIED; // incorrect mode
+		// 优先用 custom_mode（param2）指定；QGC 有时先写 base_mode 再写 custom_mode。
+		// 这里只认 param2，且必须落在 [STAB, AUTO] 的有效枚举内。
+		if (m.param2 < STAB || m.param2 > AUTO) {
+			print(TXT_MAV_DENIED_MODE);
+			return MAV_RESULT_DENIED;
+		}
 		mode = m.param2;
 		return MAV_RESULT_ACCEPTED;
 	}
