@@ -200,9 +200,44 @@ void setupWiFi() {
 	print(TXT_SETUP_WIFI);
 	WiFi.enableLongRange(wifiLongRange);
 
+	// ------------------------------------------------------------------------
+	// 【热点名统一前缀 YaoKun_】本函数**两条路径**都要设，别只改 W_AP 那条。
+	//
+	// 为什么：ESP-NOW 模式同样要把射频切到 AP 模式（ESP-NOW 只能在 AP/STA 的
+	//   Wi-Fi 接口上跑），`WiFi.mode(WIFI_AP)` 一调用，arduino-esp32 的 core 就会
+	//   **自动起一个默认热点**，SSID 是 `ESP_` + MAC 后三字节、密码空。
+	//   于是"飞机在 ESP-NOW 模式下也在广播热点，但名字是 ESP_xxxxxx"，
+	//   现场既认不出是耀坤的机器，也可能被误连。所以两条路径统一走下面这段命名。
+	//
+	// 取值优先级：
+	//   ① NVS 里用户用 `ap <热点名> <密码>` 设过的名字（WIFI_AP_SSID）；
+	//   ② 都没有时 = 品牌前缀 "YaoKun_" + 芯片 MAC 末两字节，例：YaoKun_F224。
+	//
+	// 为什么取 MAC 末两字节而不是数字 1/2：
+	//   1/2 得靠人工烧不同固件，违反"同一份固件通吃所有板子"的原则；
+	//   MAC 出厂唯一，任何一块板子自动就不同，且打印出来方便肉眼对应。
+	//
+	// ⚠️ 【实测提醒】这里取的是 **AP 模式 MAC**，不等于 `wifi` 命令打印的"本机 MAC"。
+	//   1 号机实测：`wifi` 显示 STA MAC = 80:65:99:DF:F2:24（ESP-NOW 用的是它），
+	//   而 `WiFi.macAddress()` 在 AP 模式下返回的是 AP MAC，末两字节为 62:02
+	//   → 热点名 = **YaoKun_6202**，不是直觉上的 "YaoKun_F224"。
+	//   原因是 ESP32 的 AP MAC 与 STA MAC 差在第一个字节的第 1 位（AP 置 1、STA 清 0），
+	//   末两字节只在该位跨越进位时才变，表现就是"看起来像取反"。
+	//   结论：**别拿 wifi 命令的 MAC 去猜热点名**，开机日志里那行"当前热点名"才是准的。
+	// ------------------------------------------------------------------------
+	String apSsid = storage.getString("WIFI_AP_SSID", "");
+	if (apSsid.isEmpty()) {
+		uint8_t mac[6];
+		WiFi.macAddress(mac); // 用芯片出厂 MAC（STA 基址），不依赖 AP 模式是否已启动
+		char suffix[5];
+		snprintf(suffix, sizeof(suffix), "%02X%02X", mac[4], mac[5]);
+		apSsid = String("YaoKun_") + suffix;
+	}
+	const char *apPass = storage.getString("WIFI_AP_PASS", "12345678").c_str();
+
 	if (wifiMode == W_AP) {
-		WiFi.softAP(storage.getString("WIFI_AP_SSID", "Yaokun_Drone").c_str(),
-			storage.getString("WIFI_AP_PASS", "12345678").c_str());
+		WiFi.softAP(apSsid.c_str(), apPass);
+		print(TXT_WIFI_AP_DEFAULT, apSsid.c_str()); // 把实际生效的热点名打出来，便于现场辨认
 		udp.begin(udpLocalPort);
 	}
 
@@ -213,9 +248,13 @@ void setupWiFi() {
 	}
 
 	if (wifiMode == W_ESPNOW) {
+		// 先切模式（core 会顺手起一个 ESP_ 默认热点），紧接着用软 AP 覆盖成 YaoKun_ 名字。
+		// 顺序不能颠倒：softAP() 必须在 mode(WIFI_AP) 之后，否则会被模式切换重置掉。
 		WiFi.mode(WIFI_AP);
+		WiFi.softAP(apSsid.c_str(), apPass);
 		WiFi.setChannel(espnowChannel);
 		print(TXT_WIFI_CHANNEL, espnowChannel);
+		print(TXT_WIFI_AP_DEFAULT, apSsid.c_str());
 
 		// 初始化 ESPNOWSerial（发送用途）
 		espnow.addr(MacAddress(storage.getString("ESPNOW_PEER_MAC", "FF:FF:FF:FF:FF:FF").c_str()));
