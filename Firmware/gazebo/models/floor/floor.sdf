@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<sdf version="1.5">
+	<model name="floor">
+		<static>true</static>
+		<link name="link">
+			<pose>0 0 -0.02 0 0 0</pose>
+			<collision name="collision">
+				<geometry>
+					<box>
+						<size>200 200 .02</size>
+					</box>
+				</geometry>
+			</collision>
+			<visual name="visual">
+				<cast_shadows>false</cast_shadows>
+				<geometry>
+					<box>
+						<size>200 200 .02</size>
+					</box>
+				</geometry>
+				<material>
+					<script>
+						<uri>model://floor/materials/scripts</uri>
+						<uri>model://floor/materials/textures</uri>
+						<name>parquet</name>
+					</script>
+				</material>
+			</visual>
+		</link>
+	</model>
+</sdf>
