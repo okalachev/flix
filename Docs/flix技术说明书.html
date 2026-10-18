@@ -931,8 +931,56 @@ arduino-cli compile \
 <tr><td>解锁被拒</td><td>油门不在最低位</td><td>串口打印 <code>拒绝解锁：油门不在最低位</code></td></tr>
 <tr><td>手机连上就掉、界面假死</td><td>路由与飞机 AP 同信道</td><td>用 <code>ch</code> 错开，遥控器端同步改</td></tr>
 <tr><td>打包出的固件不对</td><td>编译没带 <code>--export-binaries</code></td><td>对比 build 目录 bin 的修改时间</td></tr>
+<tr><td><b>输入 <code>help</code> 只看到开机横幅，没有命令菜单</b></td><td>HWCDC 发送缓冲只有 256 B，1.7 KB 的 motd 一次写出被截断（见 14.1）</td><td>看输出末尾有没有 <code>reboot - 重启飞机</code>；本版已修（TX 缓冲扩到 4 KB + 收尾补推）</td></tr>
 <tr><td>只插 UART 口看不到日志</td><td>控制台走原生 USB（CDCOnBoot=cdc）</td><td>改用原生 USB 口</td></tr>
 </tbody>
+
+<h3 id="s14-1">14.1 <code>help</code> 菜单只显示前半截（已修）</h3>
+
+<div class="note">
+<b>现象</b>：烧录后敲 <code>help</code>，串口监视器只显示品牌条（耀坤S3 飞控 / 开源地址 / 淘宝），
+下面本该有的"可用命令："标题和 29 行命令<strong>一条都没有</strong>；再敲一次 <code>help</code> 还是只有横幅。
+而 <code>time</code>、<code>rc</code>、<code>pw</code> 这类短输出的命令一切正常。
+</div>
+
+<p><b>根因是三步凑一起才炸</b>，单独看每一步都不像问题：</p>
+
+<table>
+<thead><tr><th>#</th><th>环节</th><th>事实</th></tr></thead>
+<tbody>
+<tr><td>①</td><td><code>motd</code> 是一整条 C 字符串</td><td>品牌条 + 30 行命令表 = <b>1718 字节</b>，<code>print()</code> 里 <code>vsnprintf</code> 后一次 <code>Serial.print(buf)</code> 整体写出</td></tr>
+<tr><td>②</td><td>ESP32-S3 原生 USB 走 HWCDC</td><td>发送环形缓冲<b>默认只有 256 字节</b>（core 的 <code>HWCDC.cpp</code> 里 <code>setTxBufferSize(256)</code>）</td></tr>
+<tr><td>③</td><td>本项目设了 <code>setTxTimeoutMs(0)</code></td><td>写操作"绝不阻塞"——<code>HWCDC::write()</code> 里 <code>xRingbufferSend</code> 以 0 tick 超时，装不下的部分<b>当场 break 静默丢弃</b></td></tr>
+</tbody>
+</table>
+
+<p>
+⇒ 1718 字节一次性塞进 256 字节的缓冲，只有前 ~256 字节能进；USB 中断还没来得及往主机搬，
+其余 1400+ 字节全部丢掉。丢弃点正好落在品牌条末尾，所以看起来像"菜单丢了"，
+<strong>而不是"打印到一半断掉"</strong>——这也是最初误判成"代码里压根没写菜单"的原因。
+</p>
+
+<p><b>两处配合才修好</b>：</p>
+
+<ol>
+<li><b>扩缓冲</b>：<code>setupConsole()</code> 里加 <code>Serial.setTxBufferSize(4096)</code>。
+    整份 motd 一次塞进环形缓冲，由 USB 中断异步搬给主机。主循环依旧零阻塞
+    （<code>setTxTimeoutMs(0)</code> 保持不变），飞行实时性不受影响。代价 4 KB 堆内存。</li>
+<li><b>收尾补推</b>：光扩缓冲不够——"最后一段"输出会滞留在缓冲里等下一次写入才被带走
+    （HWCDC 中断只在 <code>write()</code> 结尾重新使能）。所以 <code>handleConsole()</code>
+    命令收尾要调 <code>consoleFlushTail(150, ' ')</code> 补一刀：补写一个空格
+    （不可见、不拆行）重新使能中断，再等缓冲排空。</li>
+</ol>
+
+<div class="note">
+<b>⚠️ 两个不能踩的坑</b><br>
+① <b>不要用 <code>Serial.flush()</code></b>：本项目 <code>setTxTimeoutMs(0)</code> 时，
+   <code>HWCDC::flush()</code> 的 <code>tries</code> 一上来就是 0 → 直接走
+   <code>flushTXBuffer(NULL, 0)</code>，会把整个发送缓冲<strong>丢弃</strong>并把自己标记成"未连接"。<br>
+② <b>排空判定不要写 <code>&gt;= 4096</code></b>：TX 环形缓冲是 <code>BYTEBUF</code> 类型，
+   可用空间最大值是"容量 − 1"（留 1 字节区分满/空），那个条件<strong>永远不成立</strong>，
+   每次都会白等满超时。改为"连续两拍可用空间不再增长"即判定排空，与容量解耦。
+</div>
 </table>
 
 <!-- ============ 15 ============ -->
