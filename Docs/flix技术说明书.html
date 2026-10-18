@@ -408,6 +408,48 @@ ch 11       → ESP-NOW 信道已设为 11（遥控器必须一致）
 <p>实测通过时的数据：<b>21782 包 / 21782 帧（100% 解析）</b>、msgid=69、sysid=127、
 油门量程 <b>−0.603 ~ +1.000</b>（中位 +0.010，确认是 ±1000 全量程）。</p>
 
+<h3 id="s4-9">4.9 飞机热点命名规则（<code>YaoKun_</code> 前缀）</h3>
+
+<p>耀坤版把飞机热点名统一成品牌前缀，并把生成逻辑同时接在 <strong>AP 模式和 ESP-NOW 模式</strong>两条路径上。</p>
+
+<table>
+<thead><tr><th>项</th><th>规则</th></tr></thead>
+<tbody>
+<tr><td>前缀</td><td><b><code>YaoKun_</code></b>（注意 <code>Y</code>、<code>K</code> 大写）</td></tr>
+<tr><td>后缀</td><td>芯片 <b>AP 模式 MAC</b> 末两字节（4 位大写十六进制）</td></tr>
+<tr><td>默认密码</td><td><code>12345678</code></td></tr>
+<tr><td>实际值</td><td>开机日志 <code>当前热点名：YaoKun_xxxx</code> —— <b>以这一行为准</b></td></tr>
+<tr><td>自定义</td><td><code>ap &lt;热点名&gt; &lt;密码&gt;</code> + <code>reboot</code>；一旦自定义保存进 NVS，前缀不再自动生成</td></tr>
+</tbody>
+</table>
+
+<div class="note">
+<b>为什么必须改 ESP-NOW 那条路径</b><br>
+ESP-NOW 只能跑在 AP/STA 的 Wi-Fi 接口上，所以 <code>wifiMode == W_ESPNOW</code> 里也要调
+<code>WiFi.mode(WIFI_AP)</code>。而 core 一旦切到 AP 模式，就会<b>自动起一个默认热点</b>，
+SSID 是 <code>ESP_</code> + MAC 后三字节、无密码。旧版只改了 <code>W_AP</code> 分支，
+于是"飞机在 ESP-NOW 模式下也在广播热点，但名字是 <code>ESP_xxxxxx</code>"——
+现场既认不出是谁家的机器，也可能被路人误连。<br>
+修法：两条路径都调 <code>WiFi.softAP(apSsid, apPass)</code> 覆盖。顺序不能颠倒——
+<code>softAP()</code> 必须在 <code>mode(WIFI_AP)</code> <b>之后</b>，否则会被模式切换重置掉。
+</div>
+
+<div class="note">
+<b>⚠️ 别拿 <code>wifi</code> 命令的「本机 MAC」去推热点名</b><br>
+1 号机实测：<code>wifi</code> 显示 <code>本机 MAC：80:65:99:DF:F2:24</code>（STA MAC，ESP-NOW 用的是它），
+但热点名是 <b><code>YaoKun_6202</code></b>，不是直觉上的 <code>YaoKun_F224</code>。<br>
+原因：ESP32 的 <b>AP MAC 与 STA MAC 差在第一个字节的第 1 位</b>（AP 置 1、STA 清 0），
+末两字节只在这个位跨越进位时才变化，所以表现上像"取反"。
+<b>结论：认热点名只看开机日志那一行。</b>
+</div>
+
+<div class="note">
+<b>为什么后缀用 MAC 而不是 1 号机 / 2 号机</b><br>
+编号得靠人工烧不同固件，直接违背"同一份固件通吃所有板子"的原则；
+MAC 出厂唯一，任何一块板子自动就不同。反过来也别用固定名（旧版 <code>Yaokun_Drone</code>）——
+两台飞机同时上电会<b>同名互扰</b>，手机只能看到一个、连上去是随机那台，小场地里根本分不清谁是谁。
+</div>
+
 <!-- ============ 5 ============ -->
 <h2 id="s5">五、时间基准修复：71.6 分钟之谜</h2>
 
