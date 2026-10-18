@@ -3,8 +3,38 @@
 
 // Parameters storage in flash memory
 
+/*
+ * ============================================================================
+ * 【耀坤整理版】参数表与参数持久化（NVS / Preferences）
+ * ----------------------------------------------------------------------------
+ * 设计要点：
+ *   - parameters[] 是本固件**唯一**的「可调参数注册表」。控制台 `p` 命令、地面站
+ *     PARAM_REQUEST_LIST / PARAM_SET、以及开机 setDefaults() 全部围绕这张表工作。
+ *   - 每个参数项 = {名称, 变量指针, 变更回调}。变量指针指向真正的全局变量，
+ *     所以 `p CTL_RATE_R_P 0.2` 写入后立刻生效，不需要额外的同步代码。
+ *   - 名称最长 15 字符（MAVLink PARAM_VALUE.param_id 只有 16 字节，含结尾 0）。
+ *   - 带回调的参数（如 MOT_PIN_* → setupMotors）在值改变后会重新初始化对应外设。
+ *
+ * 【R10】本版相较上游新增的参数：
+ *   IMU_AUTO_DETECT  开 / 关 IMU 自动识别（1=开，出厂默认）
+ *   IMU_ROT_LOCK     锁定当前 IMU 朝向，禁止自动识别再改（1=锁，校准后置 1）
+ *   LED_R_PIN / LED_G_PIN / LED_B_PIN   三色指示灯 GPIO（耀坤 S3 板：41/7/14）
+ *   LED_LOW_VOLT     低电告警阈值（伏）
+ *   BUZ_PIN          蜂鸣器 GPIO（耀坤 S3 板：39）
+ *   BUZ_ENABLE       蜂鸣器总开关（0 = 静音，夜间调试用）
+ *
+ * 注：开机指纹串 identityString 定义在 flix.ino，**不放进参数表** —— 它是字符串，
+ *    而参数表的存储是 float/int 联合体，塞字符串需要额外机制。指纹只在开机横幅输出。
+ *
+ * ⚠️ 关于 NVS 的坑：参数值存在 Preferences("flix") 命名空间里。烧写「带 NVS 状态」
+ *    的固件时，如果整片从 0x0 连写会覆盖 0x9000 的 NVS 分区，导致 AP SSID、IMU
+ *    识别结果、遥控标定值全部丢失。必须按 build/<fqbn>/flash_args 的分段偏移烧写。
+ * ============================================================================
+ */
+
 #include <Preferences.h>
 #include "util.h"
+#include "i18n.h"   // 界面文字唯一数据源：中/英文可切（FLIX_LANG_EN）
 
 extern int channelZero[16], channelMax[16];
 extern int rollChannel, pitchChannel, throttleChannel, yawChannel, armedChannel, modeChannel;
@@ -13,6 +43,12 @@ extern int wifiMode, wifiLongRange, wifiBroadcast, udpLocalPort, udpRemotePort, 
 extern float rcLossTimeout, descendTime, disarmTilt;
 extern float voltageScale;
 extern LowPassFilter<float> voltageFilter;
+
+// 耀坤整理版新增的外部变量（定义在 imu.ino / led.ino）
+extern int imuAutoDetect, imuRotLock;
+extern int ledRedPin, ledGreenPin, ledBluePin;
+extern float ledLowVoltage;
+extern int buzzerPin, buzzerEnable;
 
 #include "config.h"
 
@@ -78,6 +114,13 @@ Parameter parameters[] = {
 	{"IMU_ACC_SCALE_Y", &accScale.y},
 	{"IMU_ACC_SCALE_Z", &accScale.z},
 	{"IMU_GYRO_BIAS_A", &gyroBiasFilter.alpha},
+	// 【R10 新增】IMU 自动识别 / 朝向锁定
+	// IMU_AUTO_DETECT=1：开机裸读 WHO_AM_I 判断是 MPU6050(I2C) 还是 MPU6500(SPI)，
+	//   并自动套用对应朝向。换 IMU 不用改代码重编，直接上电即可。
+	// IMU_ROT_LOCK=1：锁定朝向，自动识别不再覆盖。跑完 `cal`（IMU 校准）后应置 1，
+	//   避免下次上电探测失败时把已标定好的朝向改错。
+	{"IMU_AUTO_DETECT", &imuAutoDetect},
+	{"IMU_ROT_LOCK", &imuRotLock},
 	// estimate
 	{"EST_ACC_WEIGHT", &accWeight},
 	{"EST_LVL_WEIGHT", &levelWeight},
@@ -138,10 +181,17 @@ Parameter parameters[] = {
 	{"SF_RC_LOSS_TIME", &rcLossTimeout},
 	{"SF_DESCEND_TIME", &descendTime},
 	{"SF_DISARM_TILT", &disarmTilt},
+	// 【R10 新增】指示灯与蜂鸣器（耀坤 S3 板实测引脚，改板型时只改这里）
+	{"LED_R_PIN", &ledRedPin, setupLED},
+	{"LED_G_PIN", &ledGreenPin, setupLED},
+	{"LED_B_PIN", &ledBluePin, setupLED},
+	{"LED_LOW_VOLT", &ledLowVoltage},
+	{"BUZ_PIN", &buzzerPin, setupLED},
+	{"BUZ_ENABLE", &buzzerEnable},
 };
 
 void setupParameters() {
-	print("Setup parameters\n");
+	print(TXT_SETUP_PARAMS);
 	setDefaults();
 	storage.begin("flix");
 	// Read parameters from storage
@@ -203,7 +253,7 @@ void syncParameters() {
 }
 
 void printParameters(const char *filter) {
-	print("Name             Value          [Default]\n");
+	print(TXT_PARAM_HEADER);
 	for (auto &parameter : parameters) {
 		if (strncasecmp(parameter.name, filter, strlen(filter))) continue;
 
@@ -216,6 +266,7 @@ void printParameters(const char *filter) {
 }
 
 void resetParameters() {
+	print(TXT_PRESET_DONE);
 	storage.clear();
 	ESP.restart();
 }
