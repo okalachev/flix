@@ -134,6 +134,7 @@ Install [arduino-cli](https://arduino.github.io/arduino-cli/latest/installation/
 ```bash
 git clone https://github.com/YaoKunS/flix.git
 cd flix
+git checkout yaokun-organized   # ★ switch to the reorganized branch (default master mirrors upstream)
 
 # First run auto-downloads ESP32 core 3.3.10 and deps (FlixPeriph / MAVLink)
 make                                    # default: ESP32
