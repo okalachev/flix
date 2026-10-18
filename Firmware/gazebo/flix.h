@@ -1,0 +1,86 @@
+// Copyright (c) 2023 Oleg Kalachev <okalachev@gmail.com>
+// Repository: https://github.com/okalachev/flix
+
+// Declarations of some functions and variables in Arduino code
+
+#include <cmath>
+#include <stdio.h>
+#include "vector.h"
+#include "quaternion.h"
+#include "Arduino.h"
+#include "wifi.h"
+#include "filter.h"
+
+extern float t, dt;
+extern float controlRoll, controlPitch, controlYaw, controlThrottle, controlMode;
+extern Vector rates;
+extern Quaternion attitude;
+extern bool landed;
+extern float motors[4];
+
+Vector gyro, acc, imuRotation;
+Vector accBias, gyroBias, accScale(1, 1, 1);
+LowPassFilter<Vector> gyroBiasFilter(0);
+int imuModel = 1, imuBus = 0;
+int imuSckPin = 0, imuMisoPin = 0, imuMosiPin = 0, imuCsPin = -1, imuIntPin = -1;
+int imuSdaPin = 0, imuSclPin = 0;
+
+// declarations
+void step();
+void computeLoopRate();
+void applyGyro();
+void applyAcc();
+void applyLevel();
+void control();
+void interpretControls();
+void controlAttitude();
+void controlRates();
+void controlTorque();
+void desaturate();
+const char* getModeName();
+void sendMotors();
+int getDutyCycle(float value);
+bool motorsActive();
+void testMotor(int, float);
+void print(const char* format, ...);
+void pause(float duration);
+void doCommand(String str, bool echo);
+void handleConsole();
+void setupRC();
+void normalizeRC();
+void calibrateRC();
+void calibrateRCChannel(int*, uint16_t[16], uint16_t[16], const char*);
+void printRCCalibration();
+void printLogHeader();
+void printLogData();
+void processMavlink();
+void sendMavlink();
+void sendMessage(const void *msg);
+void receiveMavlink();
+void handleMavlink(const void *_msg);
+int handleMavlinkCommand(const void *_m);
+void mavlinkPrint(const char* str);
+void sendMavlinkPrint();
+inline Quaternion fluToFrd(const Quaternion &q);
+void setupPower();
+void failsafe();
+void rcLossFailsafe();
+void descend();
+void autoFailsafe();
+void tiltFailsafe();
+int parametersCount();
+const char *getParameterName(int index);
+float getParameter(int index);
+float getParameter(const char *name);
+bool setParameter(const char *name, const float value);
+void printParameters(const char *filter);
+void resetParameters();
+
+// mocks
+void setLED(bool on) {};
+void calibrateAccel() { print("Skip accel calibrating\n"); };
+void printIMUCalibration() { print("cal: N/A\n"); };
+void printIMUInfo() {};
+void printWiFiInfo() {};
+void configWiFi(bool, const char*, const char*) { print("Skip WiFi config\n"); };
+void setWiFiMode(const String& mode) { print("Skip WiFi mode set\n"); };
