@@ -1,0 +1,236 @@
+// Copyright (c) 2023 Oleg Kalachev <okalachev@gmail.com>
+// Repository: https://github.com/okalachev/flix
+
+// Implementation of command line interface
+
+#include "pid.h"
+#include "vector.h"
+#include "util.h"
+#include "filter.h"
+
+extern const int MOT_RL, MOT_RR, MOT_FR, MOT_FL;
+extern const int RAW, ACRO, STAB, AUTO;
+extern const int W_AP, W_STA, W_ESPNOW;
+extern float t, dt, loopRate;
+extern uint16_t channels[16];
+extern float controlTime;
+extern int mode;
+extern bool armed;
+extern LowPassFilter<Vector> gyroBiasFilter;
+extern float voltage;
+
+const char* motd =
+" _______  __       __  ___   ___\n"
+"|   ____||  |     |  | \\  \\ /  /\n"
+"|  |__   |  |     |  |  \\  V  /\n"
+"|   __|  |  |     |  |   >   <\n"
+"|  |     |  `----.|  |  /  .  \\\n"
+"|__|     |_______||__| /__/ \\__\\\n\n"
+"(C) Oleg Kalachev\n"
+"https://github.com/okalachev/flix\n\n"
+"Commands:\n\n"
+"help - show help\n"
+"p - show all parameters\n"
+"p <str> - show parameters starting with str\n"
+"p <name> <value> - set parameter\n"
+"preset - reset parameters\n"
+"time - show time info\n"
+"imu - show IMU data\n"
+"ca - calibrate accel\n"
+"st - show state estimation\n"
+"arm - arm the drone\n"
+"disarm - disarm the drone\n"
+"raw/stab/acro/auto - set mode\n"
+"rc - show RC data\n"
+"cr - calibrate RC\n"
+"pw - show power info\n"
+"wifi - show Wi-Fi info\n"
+"wifi ap/sta/espnow/off - set Wi-Fi mode\n"
+"ap <ssid> <password> - configure Wi-Fi access point\n"
+"sta <ssid> <password> - configure Wi-Fi client mode\n"
+"espnow <mac> [<key>] - configure ESP-NOW peer\n"
+"mot - show motor output\n"
+"log [dump] - print log header [and data]\n"
+"mfr/mfl/mrr/mrl [<thrust>] - test motor (remove props)\n"
+"sys - show system info\n"
+"reset - reset drone's state\n"
+"reboot - reboot the drone\n";
+
+// Always redirect Serial to USB on ESP32-S3/ESP32-C3
+#if SOC_USB_SERIAL_JTAG_SUPPORTED && ARDUINO_USB_MODE
+#if !ARDUINO_USB_CDC_ON_BOOT
+HWCDC HWCDCSerial;
+#endif
+#undef Serial
+#define Serial HWCDCSerial
+#endif
+
+void setupConsole() {
+	Serial.begin(115200);
+#if SOC_USB_SERIAL_JTAG_SUPPORTED
+	Serial.setTxTimeoutMs(0); // never block on usb write
+#endif
+}
+
+void print(const char* format, ...) {
+	char buf[3000];
+	va_list args;
+	va_start(args, format);
+	vsnprintf(buf, sizeof(buf), format, args);
+	va_end(args);
+	Serial.print(buf);
+	mavlinkPrint(buf);
+}
+
+void pause(float duration) {
+	float start = t;
+	while (t - start < duration) {
+		step();
+		handleConsole();
+		processMavlink();
+		delay(50);
+	}
+}
+
+void doCommand(String str, bool echo = false) {
+	// parse command
+	String command, arg0, arg1;
+	splitString(str, command, arg0, arg1);
+	if (command.isEmpty()) return;
+
+	// echo command
+	if (echo) {
+		print("> %s\n", str.c_str());
+	}
+
+	command.toLowerCase();
+
+	// execute command
+	if (command == "help" || command == "motd") {
+		print("%s\n", motd);
+	} else if (command == "p" && arg1 == "") {
+		printParameters(arg0.c_str());
+	} else if (command == "p") {
+		bool success = setParameter(arg0.c_str(), arg1.toFloat());
+		if (success) {
+			print("%s = %g\n", arg0.c_str(), getParameter(arg0.c_str()));
+		} else {
+			print("Parameter not found: %s\n", arg0.c_str());
+		}
+	} else if (command == "preset") {
+		resetParameters();
+	} else if (command == "time") {
+		print("Time: %f\n", t);
+		print("Loop rate: %.0f\n", loopRate);
+		print("dt: %f\n", dt);
+	} else if (command == "imu") {
+		printIMUInfo();
+		printIMUCalibration();
+		print("landed: %d\n", landed);
+	} else if (command == "st") {
+		print("rates: %g %g %g\n", rates.x, rates.y, rates.z);
+		print("attitude: %g %g %g %g\n", attitude.w, attitude.x, attitude.y, attitude.z);
+		print("roll: %g° pitch: %g° yaw: %g°\n", degrees(attitude.getRoll()), degrees(attitude.getPitch()), degrees(attitude.getYaw()));
+		print("landed: %d\n", landed);
+	} else if (command == "arm") {
+		armed = true;
+	} else if (command == "disarm") {
+		armed = false;
+	} else if (command == "raw") {
+		mode = RAW;
+	} else if (command == "stab") {
+		mode = STAB;
+	} else if (command == "acro") {
+		mode = ACRO;
+	} else if (command == "auto") {
+		mode = AUTO;
+	} else if (command == "rc") {
+		print("channels: ");
+		for (int i = 0; i < 16; i++) {
+			print("%u ", channels[i]);
+		}
+		print("\nroll: %g pitch: %g yaw: %g throttle: %g mode: %g\n",
+			controlRoll, controlPitch, controlYaw, controlThrottle, controlMode);
+		print("time: %.1f\n", controlTime);
+		print("mode: %s\n", getModeName());
+		print("armed: %d\n", armed);
+	} else if (command == "pw") {
+		print("Voltage: %.1f V\n", voltage);
+	} else if (command == "wifi" && arg0 == "") {
+		printWiFiInfo();
+	} else if (command == "wifi") {
+		setWiFiMode(arg0);
+	} else if (command == "ap") {
+		configWiFi(W_AP, arg0.c_str(), arg1.c_str());
+	} else if (command == "sta") {
+		configWiFi(W_STA, arg0.c_str(), arg1.c_str());
+	} else if (command == "espnow") {
+		configWiFi(W_ESPNOW, arg0.c_str(), arg1.c_str());
+	} else if (command == "mot") {
+		print("front-right %g front-left %g rear-right %g rear-left %g\n",
+			motors[MOT_FR], motors[MOT_FL], motors[MOT_RR], motors[MOT_RL]);
+	} else if (command == "log") {
+		printLogHeader();
+		if (arg0 == "dump") printLogData();
+	} else if (command == "cr") {
+		calibrateRC();
+	} else if (command == "ca") {
+		calibrateAccel();
+	} else if (command == "mfr") {
+		testMotor(MOT_FR, arg0.isEmpty() ? 0.2 : arg0.toFloat());
+	} else if (command == "mfl") {
+		testMotor(MOT_FL, arg0.isEmpty() ? 0.2 : arg0.toFloat());
+	} else if (command == "mrr") {
+		testMotor(MOT_RR, arg0.isEmpty() ? 0.2 : arg0.toFloat());
+	} else if (command == "mrl") {
+		testMotor(MOT_RL, arg0.isEmpty() ? 0.2 : arg0.toFloat());
+	} else if (command == "sys") {
+#ifdef ESP32
+		print("Chip: %s\n", ESP.getChipModel());
+		print("Temperature: %.1f °C\n", temperatureRead());
+		print("Total RAM: %d KB\n", ESP.getHeapSize() / 1024);
+		print("Free heap: %d KB\n", ESP.getFreeHeap() / 1024);
+		print("Firmware: " __DATE__ " " __TIME__ "\n");
+		// Print tasks table
+		print("Num  Task                MinSt  Prio  Core  CPU%%\n");
+		int taskCount = uxTaskGetNumberOfTasks();
+		TaskStatus_t *systemState = new TaskStatus_t[taskCount];
+		uint32_t totalRunTime;
+		uxTaskGetSystemState(systemState, taskCount, &totalRunTime);
+		for (int i = 0; i < taskCount; i++) {
+			String core = systemState[i].xCoreID == tskNO_AFFINITY ? "*" : String(systemState[i].xCoreID);
+			int cpuPercentage = systemState[i].ulRunTimeCounter / (totalRunTime / 100);
+			print("%-5d%-20s%-7d%-6d%-6s%d\n",systemState[i].xTaskNumber, systemState[i].pcTaskName,
+				systemState[i].usStackHighWaterMark, systemState[i].uxCurrentPriority, core.c_str(), cpuPercentage);
+		}
+		delete[] systemState;
+#endif
+	} else if (command == "reset") {
+		attitude = Quaternion();
+		gyroBiasFilter.reset();
+	} else if (command == "reboot") {
+		ESP.restart();
+	} else {
+		print("Invalid command: %s\n", command.c_str());
+	}
+}
+
+void handleConsole() {
+	static bool showMotd = true;
+	static String input;
+
+	if (showMotd) {
+		print("%s\n", motd);
+		showMotd = false;
+	}
+
+	while (Serial.available()) {
+		char c = Serial.read();
+		if (c == '\n' || c == '\r') {
+			doCommand(input);
+			input.clear();
+		} else {
+			input += c;
+		}
+	}
+}
