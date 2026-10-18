@@ -1,0 +1,18 @@
+*.hex
+*.elf
+build/
+
+# 目录整理后日志与打包输出移入 Tools/（原为 tools/log、tools/dist）
+Tools/log/
+Tools/dist/
+*.egg-info/
+
+.core
+.libs
+.vscode/*
+!.vscode/settings.default.json
+!.vscode/c_cpp_properties.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/intellisense.h
