@@ -1,0 +1,150 @@
+{
+	"configurations": [
+		{
+			"name": "Linux",
+			"includePath": [
+				"${workspaceFolder}/flix",
+				"${workspaceFolder}/gazebo",
+				"${workspaceFolder}/tools/**",
+				"~/.arduino15/packages/esp32/hardware/esp32/3.3.10/cores/esp32",
+				"~/.arduino15/packages/esp32/hardware/esp32/3.3.10/libraries/**",
+				"~/.arduino15/packages/esp32/hardware/esp32/3.3.10/variants/d1_mini32",
+				"~/.arduino15/packages/esp32/tools/esp32-libs/3.3.10/include/**",
+				"~/Arduino/libraries/**",
+				"/usr/include/gazebo-11/",
+				"/usr/include/ignition/math6/"
+			],
+			"forcedInclude": [
+				"${workspaceFolder}/.vscode/intellisense.h",
+				"~/.arduino15/packages/esp32/hardware/esp32/3.3.10/cores/esp32/Arduino.h",
+				"~/.arduino15/packages/esp32/hardware/esp32/3.3.10/variants/d1_mini32/pins_arduino.h",
+				"${workspaceFolder}/flix/console.ino",
+				"${workspaceFolder}/flix/control.ino",
+				"${workspaceFolder}/flix/estimate.ino",
+				"${workspaceFolder}/flix/flix.ino",
+				"${workspaceFolder}/flix/imu.ino",
+				"${workspaceFolder}/flix/led.ino",
+				"${workspaceFolder}/flix/log.ino",
+				"${workspaceFolder}/flix/mavlink.ino",
+				"${workspaceFolder}/flix/motors.ino",
+				"${workspaceFolder}/flix/rc.ino",
+				"${workspaceFolder}/flix/time.ino",
+				"${workspaceFolder}/flix/wifi.ino",
+				"${workspaceFolder}/flix/parameters.ino",
+				"${workspaceFolder}/flix/safety.ino"
+			],
+			"compilerPath": "~/.arduino15/packages/esp32/tools/esp-x32/2601/bin/xtensa-esp32-elf-g++",
+			"cStandard": "c11",
+			"cppStandard": "c++17",
+			"defines": [
+				"F_CPU=240000000L",
+				"ARDUINO=10607",
+				"ARDUINO_D1_MINI32",
+				"ARDUINO_ARCH_ESP32",
+				"ARDUINO_BOARD=D1_MINI32",
+				"ARDUINO_VARIANT=d1_mini32",
+				"ARDUINO_PARTITION_default",
+				"ESP32",
+				"CORE_DEBUG_LEVEL=0",
+				"ARDUINO_USB_CDC_ON_BOOT="
+			]
+		},
+		{
+			"name": "Mac",
+			"includePath": [
+				"${workspaceFolder}/flix",
+				"~/Library/Arduino15/packages/esp32/hardware/esp32/3.3.10/cores/esp32",
+				"~/Library/Arduino15/packages/esp32/hardware/esp32/3.3.10/libraries/**",
+				"~/Library/Arduino15/packages/esp32/hardware/esp32/3.3.10/variants/d1_mini32",
+				"~/Library/Arduino15/packages/esp32/tools/esp32-libs/3.3.10/include/**",
+				"~/Documents/Arduino/libraries/**",
+				"/opt/homebrew/include/gazebo-11/",
+				"/opt/homebrew/include/ignition/math6/"
+			],
+			"forcedInclude": [
+				"${workspaceFolder}/.vscode/intellisense.h",
+				"~/Library/Arduino15/packages/esp32/hardware/esp32/3.3.10/cores/esp32/Arduino.h",
+				"~/Library/Arduino15/packages/esp32/hardware/esp32/3.3.10/variants/d1_mini32/pins_arduino.h",
+				"${workspaceFolder}/flix/flix.ino",
+				"${workspaceFolder}/flix/console.ino",
+				"${workspaceFolder}/flix/control.ino",
+				"${workspaceFolder}/flix/estimate.ino",
+				"${workspaceFolder}/flix/imu.ino",
+				"${workspaceFolder}/flix/led.ino",
+				"${workspaceFolder}/flix/log.ino",
+				"${workspaceFolder}/flix/mavlink.ino",
+				"${workspaceFolder}/flix/motors.ino",
+				"${workspaceFolder}/flix/rc.ino",
+				"${workspaceFolder}/flix/time.ino",
+				"${workspaceFolder}/flix/wifi.ino",
+				"${workspaceFolder}/flix/parameters.ino",
+				"${workspaceFolder}/flix/safety.ino"
+			],
+			"compilerPath": "~/Library/Arduino15/packages/esp32/tools/esp-x32/2601/bin/xtensa-esp32-elf-g++",
+			"cStandard": "c11",
+			"cppStandard": "c++17",
+			"defines": [
+				"F_CPU=240000000L",
+				"ARDUINO=10607",
+				"ARDUINO_D1_MINI32",
+				"ARDUINO_ARCH_ESP32",
+				"ARDUINO_BOARD=D1_MINI32",
+				"ARDUINO_VARIANT=d1_mini32",
+				"ARDUINO_PARTITION_default",
+				"ARDUINO_FQBN=esp32:esp32:d1_mini32",
+				"ESP32",
+				"CORE_DEBUG_LEVEL=0",
+				"ARDUINO_USB_CDC_ON_BOOT="
+			]
+		},
+		{
+			"name": "Win32",
+			"includePath": [
+				"${workspaceFolder}/flix",
+				"${workspaceFolder}/gazebo",
+				"${workspaceFolder}/tools/**",
+				"~/AppData/Local/Arduino15/packages/esp32/hardware/esp32/3.3.10/cores/esp32",
+				"~/AppData/Local/Arduino15/packages/esp32/hardware/esp32/3.3.10/libraries/**",
+				"~/AppData/Local/Arduino15/packages/esp32/hardware/esp32/3.3.10/variants/d1_mini32",
+				"~/AppData/Local/Arduino15/packages/esp32/tools/esp32-libs/3.3.10/include/**",
+				"~/Documents/Arduino/libraries/**"
+			],
+			"forcedInclude": [
+				"${workspaceFolder}/.vscode/intellisense.h",
+				"~/AppData/Local/Arduino15/packages/esp32/hardware/esp32/3.3.10/cores/esp32/Arduino.h",
+				"~/AppData/Local/Arduino15/packages/esp32/hardware/esp32/3.3.10/variants/d1_mini32/pins_arduino.h",
+				"${workspaceFolder}/flix/console.ino",
+				"${workspaceFolder}/flix/control.ino",
+				"${workspaceFolder}/flix/estimate.ino",
+				"${workspaceFolder}/flix/flix.ino",
+				"${workspaceFolder}/flix/imu.ino",
+				"${workspaceFolder}/flix/led.ino",
+				"${workspaceFolder}/flix/log.ino",
+				"${workspaceFolder}/flix/mavlink.ino",
+				"${workspaceFolder}/flix/motors.ino",
+				"${workspaceFolder}/flix/rc.ino",
+				"${workspaceFolder}/flix/time.ino",
+				"${workspaceFolder}/flix/wifi.ino",
+				"${workspaceFolder}/flix/parameters.ino",
+				"${workspaceFolder}/flix/safety.ino"
+			],
+			"compilerPath": "~/AppData/Local/Arduino15/packages/esp32/tools/esp-x32/2601/bin/xtensa-esp32-elf-g++.exe",
+			"cStandard": "c11",
+			"cppStandard": "c++17",
+			"defines": [
+				"F_CPU=240000000L",
+				"ARDUINO=10607",
+				"ARDUINO_D1_MINI32",
+				"ARDUINO_ARCH_ESP32",
+				"ARDUINO_BOARD=D1_MINI32",
+				"ARDUINO_VARIANT=d1_mini32",
+				"ARDUINO_PARTITION_default",
+				"ARDUINO_FQBN=esp32:esp32:d1_mini32",
+				"ESP32",
+				"CORE_DEBUG_LEVEL=0",
+				"ARDUINO_USB_CDC_ON_BOOT="
+			]
+		}
+	],
+	"version": 4
+}
