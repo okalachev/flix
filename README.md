@@ -136,6 +136,7 @@ flix/                          # ← 仓库根：说明文档 + 转发用 Makefi
 ```bash
 git clone https://github.com/YaoKunS/flix.git
 cd flix
+git checkout yaokun-organized   # ★ 切到耀坤整理版分支（默认 master 是上游原版结构）
 
 # 首次运行会自动下载 ESP32 core 3.3.10 与依赖库（FlixPeriph / MAVLink）
 make                                    # 默认编译 ESP32
