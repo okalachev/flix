@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>耀坤S3无人机 · Flix 整理版　技术说明书</title>
+<style>
+  :root{
+    --brand:#c8102e; --brand-dark:#8f0c22; --ink:#0f172a; --ink2:#334155;
+    --ink3:#64748b; --line:#e2e8f0; --bg:#ffffff; --bg2:#f8fafc;
+    --code-bg:#0f172a;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--bg2); color:var(--ink);
+    font-family:"Microsoft YaHei","PingFang SC","Hiragino Sans GB","Source Han Sans SC",sans-serif;
+    font-size:15px; line-height:1.85; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1080px; margin:0 auto; padding:0 24px 80px; background:var(--bg);
+         box-shadow:0 0 40px rgba(15,23,42,.06);}
+
+  /* ── 封面 ── */
+  .cover{padding:64px 24px 48px; background:linear-gradient(135deg,#0f172a 0%,#1e293b 55%,#7f1d1d 130%);
+         color:#fff; margin:0 -24px 40px;}
+  .cover .badge{display:inline-block; background:rgba(255,255,255,.13); border:1px solid rgba(255,255,255,.25);
+         padding:4px 14px; border-radius:20px; font-size:12.5px; letter-spacing:.5px; margin-bottom:20px;}
+  .cover h1{margin:0 0 12px; font-size:40px; font-weight:800; letter-spacing:1px; line-height:1.3;}
+  .cover .sub{font-size:16.5px; color:#cbd5e1; margin-bottom:28px; font-weight:300;}
+  .cover .facts{display:flex; flex-wrap:wrap; gap:10px 30px; font-size:13.5px; color:#e2e8f0;
+         border-top:1px solid rgba(255,255,255,.16); padding-top:20px;}
+  .cover .facts b{color:#fff; font-weight:600;}
+
+  /* ── 目录 ── */
+  .toc{background:var(--bg2); border:1px solid var(--line); border-radius:12px;
+       padding:26px 30px; margin-bottom:48px;}
+  .toc h2{margin:0 0 16px; font-size:17px; color:var(--brand); border:0; padding:0;}
+  .toc ol{columns:2; column-gap:40px; margin:0; padding-left:22px; font-size:14px;}
+  .toc li{margin:5px 0; break-inside:avoid;}
+  .toc a{color:var(--ink2); text-decoration:none;}
+  .toc a:hover{color:var(--brand);}
+  .toc .d{font-size:12px; color:var(--ink3); margin-left:6px;}
+
+  /* ── 标题 ── */
+  h2{font-size:25px; font-weight:700; color:var(--brand); margin:56px 0 20px;
+     padding-bottom:12px; border-bottom:3px solid var(--brand); letter-spacing:.5px;}
+  h3{font-size:19px; font-weight:700; color:var(--ink); margin:36px 0 14px;
+     padding-left:13px; border-left:5px solid var(--brand);}
+  h4{font-size:16px; font-weight:700; color:var(--ink2); margin:24px 0 10px;}
+  p{margin:12px 0;}
+
+  /* ── 元素 ── */
+  code{background:#f1f5f9; color:#b91c1c; padding:2px 7px; border-radius:4px;
+       font-family:"Cascadia Mono","Consolas","Courier New",monospace; font-size:13.5px;}
+  pre{background:var(--code-bg); color:#e2e8f0; padding:18px 22px; border-radius:10px;
+      overflow-x:auto; font-size:13.5px; line-height:1.75;
+      font-family:"Cascadia Mono","Consolas","Courier New",monospace;}
+  pre code{background:none; color:inherit; padding:0; font-size:13.5px;}
+  .note{background:#eff6ff; border-left:5px solid #2563eb; padding:14px 20px; border-radius:0 8px 8px 0; margin:18px 0;}
+  .warn{background:#fff7ed; border-left:5px solid #ea580c; padding:14px 20px; border-radius:0 8px 8px 0; margin:18px 0;}
+  .danger{background:#fef2f2; border-left:5px solid var(--brand); padding:14px 20px; border-radius:0 8px 8px 0; margin:18px 0;}
+  .ok{background:#f0fdf4; border-left:5px solid #16a34a; padding:14px 20px; border-radius:0 8px 8px 0; margin:18px 0;}
+
+  table{width:100%; border-collapse:collapse; margin:18px 0; font-size:14px;}
+  th{background:#f1f5f9; color:var(--ink); font-weight:700; padding:11px 12px;
+     border:1px solid var(--line); text-align:left;}
+  td{padding:10px 12px; border:1px solid var(--line); vertical-align:top;}
+  tbody tr:nth-child(even){background:#fcfdfe;}
+  table.tight td, table.tight th{padding:7px 10px; font-size:13.5px;}
+
+  ul,ol{padding-left:26px;} li{margin:6px 0;}
+
+  .grid2{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:20px 0;}
+  .card{background:var(--bg2); border:1px solid var(--line); border-radius:10px; padding:18px 22px;}
+  .card h5{margin:0 0 8px; font-size:14.5px; color:var(--brand); font-weight:700;}
+  .card p{margin:0; font-size:13.5px; color:var(--ink2); line-height:1.7;}
+
+  .step{display:flex; gap:16px; margin:14px 0; align-items:flex-start;}
+  .step .no{flex:0 0 34px; height:34px; border-radius:50%; background:var(--brand); color:#fff;
+       display:flex; align-items:center; justify-content:center; font-weight:700; font-size:15px;}
+  .step .tx{flex:1;}
+  .step .tx b{display:block; margin-bottom:2px; color:var(--ink);}
+  .step .tx span{font-size:13.5px; color:var(--ink3);}
+
+  /* 流程图（纯 CSS，无外部图片依赖） */
+  .flow{display:flex; flex-direction:column; gap:0; margin:24px 0;}
+  .fnode{background:#fff; border:2px solid var(--line); border-radius:10px; padding:14px 18px;
+         display:flex; align-items:center; gap:14px;}
+  .fnode .tag{flex:0 0 auto; background:var(--brand); color:#fff; font-size:12px; font-weight:700;
+         padding:3px 10px; border-radius:12px;}
+  .fnode .ttl{font-weight:700; font-size:14.5px;}
+  .fnode .desc{font-size:13px; color:var(--ink3); margin-left:auto; text-align:right; max-width:52%;}
+  .farrow{height:22px; display:flex; justify-content:center; align-items:center; color:var(--ink3); font-size:16px;}
+  .fnode.hl{border-color:var(--brand); background:#fef2f2;}
+
+  footer{margin-top:70px; padding-top:26px; border-top:2px solid var(--line);
+         text-align:center; color:var(--ink3); font-size:13px; line-height:2;}
+
+  @media print{
+    body{background:#fff;} .wrap{box-shadow:none; max-width:100%; padding:0;}
+    .toc{page-break-after:always;}
+    h2{page-break-after:avoid;} h3{page-break-after:avoid;}
+    table,pre,.fnode{page-break-inside:avoid;}
+    .cover{-webkit-print-color-adjust:exact; print-color-adjust:exact;}
+    *{-webkit-print-color-adjust:exact; print-color-adjust:exact;}
+  }
+  @media (max-width:760px){
+    .grid2{grid-template-columns:1fr;} .toc ol{columns:1;}
+    .cover h1{font-size:28px;}
+    .fnode{flex-wrap:wrap;} .fnode .desc{max-width:100%; text-align:left; margin-left:0;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="cover">
+  <span class="badge">开源飞控 Flix · 耀坤 S3 硬件适配版 v1.0</span>
+  <h1>耀坤S3无人机 · Flix 整理版</h1>
+  <div class="sub">不足 2000 行的教学级飞控内核　·　ESP-NOW 原生接收改造　·　全中文控制台</div>
+  <div class="facts">
+    <span>主控　<b>ESP32-S3</b>（4MB Flash）</span>
+    <span>内核　<b>Flix</b>（(C) Oleg Kalachev）</span>
+    <span>通信　<b>ESP-NOW / MAVLink v2 / UDP</b></span>
+    <span>控制　<b>串级 PID 500 Hz</b></span>
+    <span>界面　<b>全中文</b>（可切英文）</span>
+    <span>仓库　<b>github.com/YaoKunS/flix</b></span>
+  </div>
+</div>
+
+<div class="toc">
+  <h2>目录</h2>
+  <ol>
+    <li><a href="#s1">项目定位</a><span class="d">它是什么，与上游什么关系</span></li>
+    <li><a href="#s2">硬件规格</a><span class="d">引脚与外围</span></li>
+    <li><a href="#s3">软件架构</a><span class="d">文件职责与主循环</span></li>
+    <li><a href="#s4">ESP-NOW 接收改造</a><span class="d">本次核心，含根因分析</span></li>
+    <li><a href="#s5">时间基准修复</a><span class="d">71.6 分钟回绕之谜</span></li>
+    <li><a href="#s6">IMU 自动识别</a><span class="d">双芯片 + 朝向分档</span></li>
+    <li><a href="#s7">控制回路</a><span class="d">三层环与混控</span></li>
+    <li><a href="#s8">安全机制</a><span class="d">6 道闸门与失联保护</span></li>
+    <li><a href="#s9">灯语与音效</a><span class="d">三色灯 + 非阻塞蜂鸣</span></li>
+    <li><a href="#s10">中文界面体系</a><span class="d">i18n.h 的设计</span></li>
+    <li><a href="#s11">控制台命令</a><span class="d">26 条命令全解</span></li>
+    <li><a href="#s12">编译与烧录</a><span class="d">FQBN、单文件固件、分片写</span></li>
+    <li><a href="#s13">三级验证流程</a><span class="d">静态 / 台架 / 系留</span></li>
+    <li><a href="#s14">故障排查</a><span class="d">按现象反查</span></li>
+    <li><a href="#s15">飞行边界</a><span class="d">能做什么，不能做什么</span></li>
+    <li><a href="#s16">与原版差异</a><span class="d">R1~R10 改动总表</span></li>
+  </ol>
+</div>
+
+<!-- ============ 1 ============ -->
+<h2 id="s1">一、项目定位</h2>
+
+<p>Flix 是一款<strong>专为教育与科研设计</strong>的开源四轴飞控固件，全部用 Arduino C/C++ 写成，<strong>不足 2000 行</strong>。没有 RTOS、没有闭源库、没有黑盒算法 —— 传感器驱动、姿态解算、PID 控制、电机混控、MAVLink 通信全部摊开在源码里。</p>
+
+<p>本项目是 Flix 的<strong>耀坤 S3 硬件适配版</strong>：把上游固件跑到了耀坤自研的四轴机架上，并解决了"换用自研 ESP-NOW 遥控后飞机毫无反应"这一关键问题。</p>
+
+<div class="grid2">
+  <div class="card">
+    <h5>保持上游的结构</h5>
+    <p>文件划分、主循环顺序、PID 结构、MAVLink 实现全部沿用上游。改的是硬件参数、接收链路与界面语言，不是重写内核。</p>
+  </div>
+  <div class="card">
+    <h5>分支说明</h5>
+    <p><code>master</code> 与上游 sha 完全一致，可随时 fast-forward 同步。<code>yaokun-organized</code> 才是带适配的分支。</p>
+  </div>
+</div>
+
+<div class="note">
+<b>GPL 义务：</b>flix 上游<strong>没有独立 LICENSE 文件</strong>，版权归原作者 Oleg Kalachev。本仓库保留其署名与仓库地址，耀坤信息追加在其后。<strong>不要擅自标注其它协议。</strong>
+</div>
+
+<!-- ============ 2 ============ -->
+<h2 id="s2">二、硬件规格</h2>
+
+<h3>2.1 引脚分配（耀坤 S3 实测）</h3>
+
+<table>
+<thead><tr><th>功能</th><th>GPIO</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td>电机 FL（左前）</td><td>16</td><td rowspan="4">四路有刷电机，PWM 20 kHz（超出人耳范围，电机不尖叫）</td></tr>
+<tr><td>电机 FR（右前）</td><td>6</td></tr>
+<tr><td>电机 RL（左后）</td><td>15</td></tr>
+<tr><td>电机 RR（右后）</td><td>5</td></tr>
+<tr><td>IMU SPI SCK / MISO / MOSI / CS</td><td>38 / 21 / 18 / 17</td><td>MPU-6500，片选有自动探测（实际布线可能是 42 / 17）</td></tr>
+<tr><td>IMU I2C SDA / SCL</td><td>9 / 8</td><td>MPU6050 模块（8P 排母）</td></tr>
+<tr><td>电压检测</td><td>2</td><td>ADC2_CH1，分压比 1:2</td></tr>
+<tr><td>SBUS 接收</td><td>1</td><td>出厂默认禁用（走 ESP-NOW）；接 SBUS 才需改 <code>RC_RX_PIN</code></td></tr>
+<tr><td>红灯 / 绿灯 / 蓝灯</td><td>41 / 7 / 14</td><td>低电与失联 / 已连接与解锁 / 初始化</td></tr>
+<tr><td>蜂鸣器</td><td>39</td><td>有源蜂鸣器，高电平触发（S8050 驱动）</td></tr>
+</tbody>
+</table>
+
+<h3>2.2 IMU 两种配置</h3>
+
+<table class="tight">
+<thead><tr><th>机型</th><th>IMU</th><th>总线</th><th>WHO_AM_I</th><th>朝向补偿（绕 Z）</th></tr></thead>
+<tbody>
+<tr><td>1 号机</td><td>国产 MPU6050</td><td>I2C</td><td>0x70</td><td><b>+π/2</b></td></tr>
+<tr><td>2 号机</td><td>MPU-6500</td><td>SPI</td><td>0x70</td><td><b>−π/2</b></td></tr>
+</tbody>
+</table>
+
+<div class="warn">
+<b>朝向的唯一判据：</b>把机身<strong>右侧压低</strong>，<code>st</code> 命令输出的 <code>横滚</code> 必须<strong>为正</strong>。不要用 <code>imu</code> 里的原始加速度判断 —— 原始值还带着安装误差，会把你带偏。
+</div>
+
+<!-- ============ 3 ============ -->
+<h2 id="s3">三、软件架构</h2>
+
+<h3>3.1 文件职责</h3>
+
+<table class="tight">
+<thead><tr><th>文件</th><th>职责</th><th>耀坤改动</th></tr></thead>
+<tbody>
+<tr><td><code>flix.ino</code></td><td>主入口 setup / loop</td><td>指纹横幅、初始化灯音反馈</td></tr>
+<tr><td><code>config.h</code></td><td>板型与编译期常量</td><td>耀坤 S3 板型</td></tr>
+<tr><td><code>i18n.h</code></td><td><b>界面文案唯一数据源</b>（157 条，中英双语）</td><td>★ 新增</td></tr>
+<tr><td><code>imu.ino</code></td><td>IMU 驱动、识别、校准</td><td>自动识别 + 朝向分档 + 空指针防护</td></tr>
+<tr><td><code>estimate.ino</code></td><td>姿态解算（互补滤波）</td><td>—</td></tr>
+<tr><td><code>control.ino</code></td><td>三层控制环 + 混控</td><td>—</td></tr>
+<tr><td><code>motors.ino</code></td><td>电机 PWM 输出</td><td>引脚 + 20 kHz</td></tr>
+<tr><td><code>rc.ino</code></td><td>SBUS 遥控输入</td><td>默认禁用</td></tr>
+<tr><td><code>wifi.ino</code></td><td>Wi-Fi / UDP / ESP-NOW</td><td>★ 原生接收回调</td></tr>
+<tr><td><code>mavlink.ino</code></td><td>MAVLink v2 收发</td><td>统一 ACK</td></tr>
+<tr><td><code>console.ino</code></td><td>命令行控制台</td><td>中文 + <code>ch</code> 命令</td></tr>
+<tr><td><code>led.ino</code></td><td>灯语与蜂鸣器</td><td>★ 新增</td></tr>
+<tr><td><code>power.ino</code></td><td>电压检测</td><td>GPIO2 + 分压 2</td></tr>
+<tr><td><code>safety.ino</code></td><td>失联保护</td><td>—</td></tr>
+<tr><td><code>time.ino</code></td><td>时间基准</td><td>★ 64 位累加器</td></tr>
+<tr><td><code>parameters.ino</code></td><td>参数表与 NVS 持久化</td><td>新增 8 个参数</td></tr>
+<tr><td><code>log.ino</code></td><td>日志缓冲与 CSV dump</td><td>—</td></tr>
+</tbody>
+</table>
+
+<h3>3.2 主循环顺序（不要随意调整）</h3>
+
+<div class="flow">
+  <div class="fnode hl"><span class="tag">1</span><span class="ttl">readIMU()</span><span class="desc">必须最先：所有控制都基于本帧数据</span></div>
+  <div class="farrow">↓</div>
+  <div class="fnode hl"><span class="tag">2</span><span class="ttl">step()</span><span class="desc">更新时间与 dt，紧跟 IMU 让 dt 与数据新鲜度对应</span></div>
+  <div class="farrow">↓</div>
+  <div class="fnode"><span class="tag">3</span><span class="ttl">readRC()</span><span class="desc">SBUS 输入（ESP-NOW 输入在 processMavlink 里）</span></div>
+  <div class="farrow">↓</div>
+  <div class="fnode"><span class="tag">4</span><span class="ttl">estimate()</span><span class="desc">姿态解算（gyro/acc + dt）</span></div>
+  <div class="farrow">↓</div>
+  <div class="fnode"><span class="tag">5</span><span class="ttl">control()</span><span class="desc">三层环 + 失效保护</span></div>
+  <div class="farrow">↓</div>
+  <div class="fnode hl"><span class="tag">6</span><span class="ttl">sendMotors()</span><span class="desc">输出 PWM，越早越好，减少控制延迟</span></div>
+  <div class="farrow">↓</div>
+  <div class="fnode"><span class="tag">7</span><span class="ttl">handleConsole() / processMavlink()</span><span class="desc">通信放控制之后：再忙也不能推迟电机输出</span></div>
+  <div class="farrow">↓</div>
+  <div class="fnode"><span class="tag">8</span><span class="ttl">readVoltage / logData / syncParameters</span><span class="desc">低频事务</span></div>
+  <div class="farrow">↓</div>
+  <div class="fnode"><span class="tag">9</span><span class="ttl">updateLED()</span><span class="desc">非阻塞状态机，放最后不影响时序</span></div>
+</div>
+
+<div class="danger">
+<b>不要把通信挪到 <code>sendMotors()</code> 之前。</b>Wi-Fi / ESP-NOW 的收发在个别时刻会占用几毫秒，一旦排在电机输出之前，PWM 就会抖动，PID 表现为高频抖动甚至诱发振荡。这个顺序是从上游继承的，有其道理。
+</div>
+
+<!-- ============ 4 ============ -->
+<h2 id="s4">四、ESP-NOW 接收改造（本次核心）</h2>
+
+<h3>4.1 现象</h3>
+
+<p>把上游 2026-09 的代码烧到飞机上后，耀坤自研 ESP-NOW 遥控器<strong>怎么连都"没反应"</strong>：</p>
+<ul>
+  <li>遥控器端界面显示<strong>已连接</strong></li>
+  <li>飞机端串口<strong>没有任何报错</strong></li>
+  <li>摇杆推到底，飞机纹丝不动</li>
+  <li>而 2026-08 版的代码一切正常</li>
+</ul>
+
+<h3>4.2 根因（读库源码确认）</h3>
+
+<p>上游接收写的是：</p>
+<pre><code>int len = espnow.read(buf, size);</code></pre>
+
+<p><code>ESPNOWSerial</code> 是<strong>会话式</strong>的封装：它内部维护一张 peer 表，<strong>只把已登记 peer 发来的数据交上来</strong>。登记 peer 的唯一途径，是收到 4 字节内容为 <code>"flix"</code> 的<strong>发现包</strong>（触发 <code>onNewPeer</code> 回调）。</p>
+
+<p>而上游发发现包的代码长这样：</p>
+
+<pre><code>// wifi.ino（上游）
+static Rate discovery(1);
+if (discovery &amp;&amp; espnow.isEncrypted()) {   // ← 关键门控
+    espnowBroadcast.write((const uint8_t *)"flix", 4);
+}</code></pre>
+
+<p><strong>不加密就根本不广播发现包。</strong>耀坤遥控器不加密 → 飞机不发发现包 → 遥控器不知道飞机存在 → 不建立会话 → 飞机 <code>espnow.read()</code> 永远返回 0 → <strong>摇杆数据一个字节都收不到</strong>。</p>
+
+<div class="note">
+<b>为什么"遥控器显示已连接"却不通？</b><br>
+遥控器的"已连接"判据是<strong>收到了飞机的任何 ESP-NOW 帧</strong>（比如飞机的遥测广播），而不是"双向会话已建立"。所以两边的状态显示完全对不上 —— 这也是这个问题最难查的地方。
+</div>
+
+<h3>4.3 修法</h3>
+
+<div class="step"><div class="no">1</div><div class="tx"><b>注册原生接收回调</b><span>绕过会话机制，直接拿每一帧原始字节。</span></div></div>
+<pre><code>static QueueHandle_t recvQueue = nullptr;
+
+static void IRAM_ATTR onReceive(const esp_now_recv_info_t *info,
+                                const uint8_t *data, int len) {
+    if (!espnowRecvInitialized) return;
+    for (int i = 0; i &lt; len; i++) {
+        if (xQueueSendFromISR(recvQueue, &amp;data[i], NULL) != pdTRUE) {
+            lostPackets++;   // 队列满：丢字节并计数，绝不阻塞中断
+        }
+    }
+}</code></pre>
+
+<div class="step"><div class="no">2</div><div class="tx"><b>接收路径改从队列取</b><span>ESP-NOW 模式下优先走队列，队列空才返回 0。</span></div></div>
+<pre><code>int receiveWiFi(uint8_t *buf, int len) {
+    if (wifiMode == W_ESPNOW) {
+        if (!espnowRecvInitialized || recvQueue == NULL) return 0;
+        int i = 0;
+        for (; i &lt; len; i++)
+            if (xQueueReceive(recvQueue, &amp;buf[i], 0) != pdTRUE) break;
+        return i;
+    }
+    ...
+}</code></pre>
+
+<div class="step"><div class="no">3</div><div class="tx"><b>发现包无条件广播</b><span>去掉 <code>isEncrypted()</code> 门控，标准 flix 代理也能发现本机。</span></div></div>
+
+<h3>4.4 三个必须注意的细节</h3>
+
+<table>
+<thead><tr><th>细节</th><th>为什么</th></tr></thead>
+<tbody>
+<tr><td><b>不能重新 <code>esp_now_init()</code></b></td><td><code>ESPNOWSerial</code> 已经初始化过。再调一次返回 <code>ESP_ERR_ESPNOW_INTERNAL</code>，并把已有 peer 全清掉 —— 发送链路也跟着废了。只能调 <code>esp_now_register_recv_cb()</code>。</td></tr>
+<tr><td><b>队列元素是 1 字节，不是整帧</b></td><td>MAVLink 解析器是<strong>流式</strong>的（<code>mavlink_parse_char</code> 逐字节喂）。存字节等于把"网络接收"和"协议解析"解耦，半截帧不会被丢。</td></tr>
+<tr><td><b>队列满必须丢，不能等</b></td><td>回调跑在 Wi-Fi 任务上下文。若在此阻塞等待会把整个 Wi-Fi 任务拖住 → 整机卡顿。宁可丢旧字节。</td></tr>
+</tbody>
+</table>
+
+<h3>4.5 信道：最容易漏的一环</h3>
+
+<p>ESP-NOW 必须两端<strong>同信道</strong>。信道不同时物理层直接收不到，现象是"连着但不动"且没有任何日志。</p>
+
+<p><strong>耀坤整理版默认 <code>espnowChannel = 1</code></strong>，不是 6。这是一次实测纠错的结论：</p>
+
+<div class="warn">
+<b>⚠️ 2026-10-18 台架实测：信道 6 → 1</b><br>
+早期按"耀坤英文版遥控器里 <code>esp_wifi_set_channel(6)</code>"把默认值定成 6，但<strong>中文版遥控
+<code>ESP32-DJI-Dev-Yaokun20260815</code> 完全没有调 <code>esp_wifi_set_channel</code></strong>，
+走的是 Wi-Fi 默认信道 <strong>1</strong>。于是飞机听 6、遥控发 1，物理层彻底错开。<br><br>
+<b>这个故障极具迷惑性：</b>遥控器"对端发现"页<strong>仍能列出飞机</strong>（扫描是跨信道的），
+点选后也显示"已连接"，但飞机 <code>rxPackets</code> 恒为 0。<strong>"能看到" ≠ "能通"。</strong>
+</div>
+
+<pre><code>ch          → ESP-NOW 信道：1
+ch 6        → ESP-NOW 信道已设为 6（遥控器必须一致）
+ch 11       → ESP-NOW 信道已设为 11（遥控器必须一致）
+              以上重启后生效</code></pre>
+
+<h3>4.6 ESP-NOW peer 登记：第二个必踩的坑</h3>
+
+<p>ESP-NOW 的接收回调<strong>只对已登记在 peer 表里的 MAC 触发</strong>，未登记的设备发来的包在驱动层就被丢弃，
+连回调都进不去。</p>
+
+<table>
+<thead><tr><th>遥控器发送方式</th><th>飞机端是否需要预登记 peer</th></tr></thead>
+<tbody>
+<tr><td><b>广播</b>（<code>FF:FF:FF:FF:FF:FF</code>）</td><td>❌ 不需要</td></tr>
+<tr><td><b>单播</b>（指定目标 MAC）</td><td>✅ <b>必须登记</b>，否则全部丢弃</td></tr>
+</tbody>
+</table>
+
+<div class="warn">
+<b>⚠️ 2026-10-18 台架实测：中文版遥控 <code>connect(mac)</code> 后走单播</b><br>
+8 月那版遥控走广播，所以飞机端从不登记 peer 也没事；换中文版遥控后单向不通，<code>rxPackets</code> 恒为 0。<br><br>
+<b>修法（<code>wifi.ino</code>）：</b><br>
+① 初始化时<strong>预登记广播地址</strong>为 peer；<br>
+② <code>onReceive</code> 回调里记录来源 MAC，置 <code>peerLearnPending</code> 标志；<br>
+③ 主循环 <code>learnPeerIfNeeded()</code> 里真正调用 <code>esp_now_add_peer()</code>。<br><br>
+<b>🔴 为什么不在回调里直接 add_peer：</b><code>esp_now_add_peer()</code> 要取 Wi-Fi 锁，
+而回调本身就跑在 Wi-Fi 任务上下文里 —— 直接调用会<strong>自锁死</strong>，整机卡住。
+</div>
+
+<h3>4.7 遥控器侧：enabled 开关（第三个坑）</h3>
+
+<div class="warn">
+<b>⚠️ 中文版遥控 <code>enabled</code> 默认是 <code>false</code></b><br>
+未使能时，遥控器 <code>MANUAL_CONTROL</code> <strong>照发不误</strong>，但四轴数值全是中位（≈0.01）。
+表现为："有包、有帧、msgid=69、sysid=127，<code>rc</code> 就是不动"。<br><br>
+<b>使能方法 = 按遥控器的「左按钮（辅助按钮）」</b>（代码里是 <code>onSecondaryButtonClick</code> →
+<code>enabled(!enabled)</code>）。<strong>界面上没有这个开关，是一个纯物理按键。</strong><br><br>
+<b>⚠️ 飞机每次重启，都必须重新走一遍：对端发现 → 点选飞机 → 按左按钮使能。</b>
+</div>
+
+<h3>4.8 怎么确认修好了</h3>
+
+<p>用 <code>wifi</code> 命令看这几个数，按顺序排查：</p>
+
+<table>
+<thead><tr><th>现象</th><th>结论</th></tr></thead>
+<tbody>
+<tr><td><code>接收包数</code> = 0</td><td>物理层不通 → 查<b>信道</b>（第 4.5 节）</td></tr>
+<tr><td><code>接收包数</code> 涨，但 <code>已解析 MAVLink 帧数</code> = 0</td><td>协议不匹配 → 查波特率/帧头/是否 MAVLink v2</td></tr>
+<tr><td>帧数涨，但 <code>最近一帧消息 ID</code> ≠ 69</td><td>遥控在发别的消息，没发 <code>MANUAL_CONTROL</code></td></tr>
+<tr><td>msgid = 69，但 <code>rc</code> 四轴全是 0.01</td><td><b>遥控器未使能</b> → 按左按钮（第 4.7 节）</td></tr>
+<tr><td>以上全对，四轴跟着摇杆动</td><td>✅ 链路正常</td></tr>
+</tbody>
+</table>
+
+<p>实测通过时的数据：<b>21782 包 / 21782 帧（100% 解析）</b>、msgid=69、sysid=127、
+油门量程 <b>−0.603 ~ +1.000</b>（中位 +0.010，确认是 ±1000 全量程）。</p>
+
+<!-- ============ 5 ============ -->
+<h2 id="s5">五、时间基准修复：71.6 分钟之谜</h2>
+
+<h3>5.1 现象</h3>
+
+<p>上电运行约 <strong>71.6 分钟</strong>后，遥测全部停发、串口终端仍在回显命令、<code>reboot</code> 后恢复正常。换个固件或重新上电就"好了"，所以极难复现、极易被误判为 Wi-Fi 掉线。</p>
+
+<h3>5.2 根因</h3>
+
+<pre><code>// 上游写法
+t = micros() / 1000000.0f;</code></pre>
+
+<p><code>micros()</code> 在 ESP32 Arduino 上返回 <strong>uint32</strong>，最大 4294967295 µs ≈ <strong>4294.97 秒 ≈ 71.58 分钟</strong>，到顶后<strong>回绕到 0</strong>。于是 <code>t</code> 从 4294.97 突变到 0 —— <strong>时间倒退</strong>。</p>
+
+<p>而全工程的门控都是这个形式：</p>
+
+<pre><code>Rate telemetrySlow(2);
+if (telemetrySlow) { ... }   // 内部判 t - lastTime &gt;= 1/rate</code></pre>
+
+<p><code>t - lastTime</code> 变成负数 → 判据永远不成立 → <strong>所有周期性任务集体停摆</strong>：遥测、日志、参数同步、灯语更新全部停。</p>
+
+<div class="warn">
+<b>但 <code>handleConsole()</code> 不受影响</b> —— 它是纯事件驱动（<code>Serial.available()</code>）。所以"终端还能敲命令"这个现象，会把人死死地往"Wi-Fi 问题"上带，这也是本 bug 长期潜伏的原因。
+</div>
+
+<h3>5.3 修法</h3>
+
+<pre><code>static uint64_t timeUs = 0;
+static uint32_t lastMicros = 0;
+
+const uint32_t nowMicros = micros();
+const uint32_t deltaUs = nowMicros - lastMicros;  // 无符号减法：回绕时也得到正确增量
+lastMicros = nowMicros;
+timeUs += deltaUs;
+t = timeUs / 1000000.0f;</code></pre>
+
+<div class="ok">
+<b>关键技巧：</b><code>deltaUs</code> 用<strong>无符号减法</strong>。回绕瞬间（<code>nowMicros</code> 小、<code>lastMicros</code> 大），无符号减法会自动补模，仍然算出正确的正数增量。这就是"64 位累加器免疫回绕"的原理。
+</div>
+
+<p>同时留了两个探针：<code>tRewinds</code>（回绕次数）与 <code>tRewindAt</code>（最近回绕时刻），用 <code>time</code> 命令可看。</p>
+
+<h3>5.4 为什么不用 <code>esp_timer_get_time()</code></h3>
+
+<p>它返回 int64 确实不回绕，但会引入新依赖，且 <strong>Gazebo 仿真环境里没有这个符号</strong>。累加器方案零依赖、仿真也能跑。</p>
+
+<!-- ============ 6 ============ -->
+<h2 id="s6">六、IMU 自动识别</h2>
+
+<h3>6.1 为什么要自动识别</h3>
+
+<p><code>FlixPeriph</code> 的 <code>IMU::create(model, bus)</code> 在型号/总线组合不受支持时返回 <code>nullptr</code>（例如 MPU6050 只能走 I2C）。上游拿到返回值后<strong>不判空</strong>就直接调 <code>imu-&gt;begin()</code>、<code>readIMU()</code> 里直接 <code>imu-&gt;read()</code> —— <strong>空指针解引用</strong>。</p>
+
+<p>表现：把 1 号机（I2C 6050）的固件烧到 2 号机（SPI 6500）上，开机就崩，串口只打出半行。</p>
+
+<h3>6.2 识别流程</h3>
+
+<div class="flow">
+  <div class="fnode"><span class="tag">①</span><span class="ttl">probeI2C(0x68 / 0x69)</span><span class="desc">用 Wire 读 WHO_AM_I（寄存器 0x75）</span></div>
+  <div class="farrow">↓ 命中</div>
+  <div class="fnode"><span class="tag">②</span><span class="ttl">判为 MPU6050 系 → I2C，朝向 +π/2</span><span class="desc">8P 排母物理上插不进 6500</span></div>
+  <div class="farrow">↓ 未命中</div>
+  <div class="fnode"><span class="tag">③</span><span class="ttl">probeSPI(候选 CS: imuCsPin / 42 / 17)</span><span class="desc">不同批次 PCB 片选布线不同，逐个试</span></div>
+  <div class="farrow">↓ 命中</div>
+  <div class="fnode"><span class="tag">④</span><span class="ttl">判为 MPU6500 系 → SPI，朝向 −π/2</span><span class="desc">记住真正可用的 CS</span></div>
+  <div class="farrow">↓ 都未命中</div>
+  <div class="fnode hl"><span class="tag">⑤</span><span class="ttl">imuOK = false</span><span class="desc">禁止解锁 + 红灯常亮 + 长鸣</span></div>
+</div>
+
+<h3>6.3 空指针防护（防崩的关键）</h3>
+
+<pre><code>if (imu == nullptr || imu-&gt;status() != 0) {
+    imuOK = false;
+    print(TXT_IMU_UNUSABLE);   // 惯性测量单元不可用 —— 已禁止解锁
+    return;
+}
+
+void readIMU() {
+    if (!imuOK || imu == nullptr) return;   // ← 首行就挡掉
+    ...
+}</code></pre>
+
+<div class="ok">
+<b>设计取舍：</b>IMU 不可用时<strong>不让整机死掉</strong>，而是"标记不可用 + 禁止解锁"。飞机仍能连上、能看日志、能改参数 —— 现场就能判断是排母松了还是芯片坏了，而不是面对一块"插上就没反应"的板子。
+</div>
+
+<h3>6.4 朝向锁</h3>
+
+<p>参数 <code>IMU_ROT_LOCK</code>：置 1 后自动识别不再覆盖 <code>imuRotation</code>。<strong>跑完 <code>ca</code> 之后建议置 1</strong> —— 因为自动识别是每次上电都探一遍，若某次探测失败或 WHO_AM_I 落在模糊区间，可能把已经标定好的朝向改错。</p>
+
+<pre><code>p IMU_ROT_LOCK 1</code></pre>
+
+<h3>6.5 六面加速度校准（<code>ca</code>）：一个真实的 C++ 陷阱</h3>
+
+<p>六面校准的数学很简单：六个姿态覆盖每轴的 ±1g，于是</p>
+
+<pre><code>accScale = (accMax − accMin) / 2 / G      // 理想值 ≈ 1.0
+accBias  = (accMax + accMin) / 2          // 理想值 ≈ 0</code></pre>
+
+<div class="warn">
+<b>🐛 2026-10-18 台架实测发现的 bug：<code>static</code> 局部变量只初始化一次</b><br><br>
+原写法把极值累加器声明在 <code>calibrateAccelOnce()</code> <b>函数内部</b>：<br>
+<code>static Vector accMax(-INFINITY, ...);</code><br>
+<code>static Vector accMin(INFINITY, ...);</code><br><br>
+<b>C++ 的 <code>static</code> 局部变量只在<u>第一次</u>调用时初始化</b>，之后再进来保留上次的值。
+后果：第二次执行 <code>ca</code> 时，<code>accMax</code>/<code>accMin</code> 还是上一轮（甚至上电以来）的残留，
+<code>accScale</code> 完全失真 —— <b>实测算出 0.000257（应 ≈ 1.0）</b>，
+加速度读数随之变成 <code>−0.86 / 0.19 / 9.19</code>，姿态彻底不准。<br><br>
+<b>修法：</b>提升为文件级全局 <code>accCalMax</code>/<code>accCalMin</code>，
+在 <code>calibrateAccel()</code> 开头<strong>显式重置</strong>为 ±INFINITY。<br><br>
+<b>验证：</b>修复后同样的错误操作下，比例系数从 <code>0.000257</code>（1e-4 量级）变成
+<code>0.0222</code>（1e-2 量级）—— 数量级抬升 100 倍，证明累加器这次是从空集干净起步的。
+</div>
+
+<div class="warn">
+<b>⚠️ <code>ca</code> 的可用性缺陷：48 秒一口气跑完，人手跟不上</b><br><br>
+固件执行顺序是：<code>打印"第 1/6 步"</code> → <code>pause(8)</code> → 采样 →
+<code>打印"第 2/6 步"</code> → <code>pause(8)</code> → 采样 …… <b>全程没有任何等待输入</b>，约 48 秒跑完。<br><br>
+若操作者没能在每个 8 秒窗口内把机身翻到指定姿态，<b>六次采样会落在同一个姿态上</b>，
+<code>accScale</code> 塌到 1e-2 量级。<b>这是设计缺陷，不是操作问题。</b><br><br>
+<b>彻底解法：</b>把 <code>ca</code> 拆成 <code>ca1</code>~<code>ca6</code> 六条单步命令，
+每条只采一个面并等待操作者确认（当前版本尚未实施）。
+</div>
+
+<div class="ok">
+<b>坏校准的救急恢复</b>（不用重刷固件）：<br>
+<code>p IMU_ACC_SCALE_X 1</code>　<code>p IMU_ACC_SCALE_Y 1</code>　<code>p IMU_ACC_SCALE_Z 1</code><br>
+<code>p IMU_ACC_BIAS_X 0</code>　<code>p IMU_ACC_BIAS_Y 0</code>　<code>p IMU_ACC_BIAS_Z 0</code><br><br>
+六条命令执行后姿态立刻归零（实测横滚 0.015° / 俯仰 −0.004°）。
+MPU-6500 出厂精度足够直接使用，<b>不会掉精度</b>。
+</div>
+
+<div class="tip">
+<b>💡 别被"采样频率"误导：</b><code>imu</code> 命令打印的"采样频率"是
+<b><code>loopRate</code>（主循环频率）</b>，<u>不是</u> IMU 的输出速率（ODR）。
+<ul>
+  <li>校准期间 <code>pause()</code> 跑的是 <code>delay(50)</code> 慢循环 → 显示 <b>20 Hz</b></li>
+  <li>空闲时主循环被 <code>waitForData()</code> 卡住 → 显示 <b>1 Hz</b></li>
+  <li>正常飞行时 → <b>1000 Hz</b></li>
+</ul>
+这三个数值都是正常的，<b>不要去改 <code>configureIMU()</code></b>。
+</div>
+
+<!-- ============ 7 ============ -->
+<h2 id="s7">七、控制回路</h2>
+
+<h3>7.1 三层环</h3>
+
+<div class="flow">
+  <div class="fnode"><span class="tag">外环</span><span class="ttl">姿态环（角度 → 角速度目标）</span><span class="desc">P 控制，输入横滚/俯仰角误差</span></div>
+  <div class="farrow">↓ 角速度目标</div>
+  <div class="fnode"><span class="tag">内环</span><span class="ttl">角速度环（PID）</span><span class="desc">含积分限幅（windup）与微分低通</span></div>
+  <div class="farrow">↓ 力矩</div>
+  <div class="fnode"><span class="tag">混控</span><span class="ttl">四轴混控 → 四路油门</span><span class="desc">X 型布局，油门 + 三轴力矩合成</span></div>
+  <div class="farrow">↓</div>
+  <div class="fnode hl"><span class="tag">输出</span><span class="ttl">PWM 20 kHz → 电机</span><span class="desc">含 idle 油门、饱和保护</span></div>
+</div>
+
+<h3>7.2 混控方向验证（不用上机的方法）</h3>
+
+<p>验证混控方向有个绕不过去的坎：<b>一旦某一路电机输出被 <code>desaturate()</code> 削顶</b>
+（截到 0 或 1），四路读数就失去可比性，"前侧大还是后侧大"这种比较<b>彻底失效</b>。</p>
+
+<div class="warn">
+<b>⚠️ 2026-10-18 台架实测撞到的坑：</b><br>
+读 <code>mot</code> 输出时得到<br>
+<code>右前 1.000（削顶） / 左前 0.193 / 右后 0.077 / 左后 −0.393（削底）</code><br><br>
+这种数据<b>既看不出俯仰、也看不出横滚</b>，只能看出"操作者斜着压了机身"。
+<b>靠 <code>mot</code> 读数验证混控方向是不可行的。</b>
+</div>
+
+<p><b>正确做法：离线数学验证。</b>工具脚本 <code>Tools/mixer_sign_check.py</code> 把固件里的
+符号链在 Python 里原样复现，喂已知姿态看输出方向：</p>
+
+<pre><code>control.ino:82   upActual  = rotate(up, attitude)
+control.ino:85   error     = rotationVectorBetween(upTarget, upActual)
+vector.h:113     direction = cross(a, b)          ← a=target, b=actual
+vector.h:128     return direction * angle
+control.ino:87-88 ratesTarget.x/y = PID(error.x/y)   ← 增益为正，符号不变
+control.ino:101-102 torqueTarget.x/y = PID(rateError)
+control.ino:119-122 混控（X 型）：
+    FL = T + tx − ty + tz
+    FR = T − tx − ty − tz
+    RL = T + tx + ty − tz
+    RR = T − tx + ty + tz</code></pre>
+
+<table>
+<thead><tr><th>姿态</th><th>正确预期</th><th>原理</th></tr></thead>
+<tbody>
+<tr><td>机头下压</td><td><b>前侧推力 &gt; 后侧</b></td><td>前侧往上顶 → 产生抬头力矩（跷跷板原理：想在落下那端翘起，就在那端下面顶）</td></tr>
+<tr><td>机头上仰</td><td><b>前侧推力 &lt; 后侧</b></td><td>后侧往上顶 → 产生低头力矩</td></tr>
+<tr><td>右侧压低</td><td><b>右侧推力 &gt; 左侧</b></td><td>右侧往上顶 → 产生左滚力矩</td></tr>
+<tr><td>左侧压低</td><td><b>左侧推力 &gt; 右侧</b></td><td>左侧往上顶 → 产生右滚力矩</td></tr>
+</tbody>
+</table>
+
+<div class="ok">
+<b>✅ 验证结果（2026-10-18）：俯仰与横滚混控方向全部正确。</b><br><br>
+<b>交叉校验：</b>脚本算出的「右侧压低 → 右侧加推力」，与台架实测
+（右倾时 右前 0.205 / 右后 0.257 &gt; 左前 0.088 / 左后 0.134）<b>完全吻合</b>，
+说明推演方法与固件实际行为一致、结论可信。
+</div>
+
+<div class="danger">
+<b>🔴 判据曾写反过一次，记录在此防回退：</b>四轴 X 型的四个电机都在<b>机身平面内</b>，
+靠相对推力差产生力矩。机头下压时是<b>前侧加推力</b>（把机头端顶起来），
+<u>不是</u>后侧加推力。写反会导致验证结论完全颠倒。
+</div>
+
+<h3>7.3 四种飞行模式</h3>
+<table class="tight">
+<thead><tr><th>模式</th><th>枚举</th><th>行为</th></tr></thead>
+<tbody>
+<tr><td>RAW</td><td>0</td><td>纯手动，摇杆直接映射电机（调试用）</td></tr>
+<tr><td>ACRO</td><td>1</td><td>角速度控制，摇杆给角速度目标</td></tr>
+<tr><td><b>STAB</b></td><td>2</td><td><b>自稳（默认）</b>：摇杆给角度目标，松杆回平</td></tr>
+<tr><td>AUTO</td><td>3</td><td>接受 MAVLink 姿态/力矩目标</td></tr>
+</tbody>
+</table>
+
+<h3>7.4 MANUAL_CONTROL 量程语义（重要）</h3>
+
+<p>协议规定 <code>x/y/z/r</code> 是 int16，满量程 <strong>±1000</strong>。本工程：</p>
+
+<pre><code>controlThrottle = m.z / 1000.0f;   // z: -1000 ~ +1000 → -1 ~ +1
+controlPitch    = m.x / 1000.0f;
+controlRoll     = m.y / 1000.0f;
+controlYaw      = m.r / 1000.0f;</code></pre>
+
+<div class="danger">
+<b>台架必查：</b>若遥控器实际发的是 <strong>0 ~ 1000</strong>（把中位当 0），则摇杆中位就已经是 0 油门、上半程才有推力，表现为<strong>"行程只有一半、且中点起跳"</strong>。<br>
+首次台架必须确认：<b>最低杆 → z ≈ -1000，中位 → z ≈ 0，最高杆 → z ≈ +1000</b>。用 <code>rc</code> 命令看归一化后的油门值。
+</div>
+
+<!-- ============ 8 ============ -->
+<h2 id="s8">八、安全机制</h2>
+
+<h3>8.1 失联保护（<code>safety.ino</code>）</h3>
+
+<table>
+<thead><tr><th>条件</th><th>行为</th></tr></thead>
+<tbody>
+<tr><td>遥控 / 地面站全部静默 <b>1 秒</b></td><td>缓慢下降油门</td></tr>
+<tr><td>静默 <b>10 秒</b></td><td>油门归零 + 自动上锁</td></tr>
+<tr><td>倾角超过 <code>SF_DISARM_TILT</code></td><td>判定翻滚，上锁</td></tr>
+</tbody>
+</table>
+
+<div class="warn">
+<b>"四源全静默"的陷阱：</b>本固件靠"是否收到控制输入"判断失联。如果你只是把遥控器放在一边不操作、也没有地面站在发心跳，<strong>1 秒后就会开始降油门</strong>。这是设计行为，不是 bug。台架测试时记得保持摇杆活动或接一个地面站。
+</div>
+
+<h3>8.2 解锁前检查</h3>
+
+<ul>
+  <li>IMU 必须可用（<code>imuOK</code>）</li>
+  <li>油门必须在最低位（归一化 &lt; 0.05），否则拒绝并打印 <code>拒绝解锁：油门不在最低位</code></li>
+  <li>倾角不能超过阈值</li>
+</ul>
+
+<h3>8.3 指令 ACK 统一（R2）</h3>
+
+<p><code>handleMavlinkCommand()</code> 只负责<strong>决定结果码 + 做副作用</strong>，绝不自己发 ACK；发 ACK 统一由调用方在函数返回后无条件执行：</p>
+
+<pre><code>int result = handleMavlinkCommand(&amp;m);
+mavlink_message_t ack;
+mavlink_msg_command_ack_pack(..., m.command, result, ...);
+sendMessage(&amp;ack);   // ← accepted / denied / unsupported 都发</code></pre>
+
+<p>这样新增指令时<strong>结构上不可能漏发 ACK</strong>，QGC 不会卡在"正在执行"。</p>
+
+<!-- ============ 9 ============ -->
+<h2 id="s9">九、灯语与音效</h2>
+
+<h3>9.1 灯语优先级</h3>
+
+<table>
+<thead><tr><th>优先级</th><th>条件</th><th>表现</th></tr></thead>
+<tbody>
+<tr><td>1（最高）</td><td>电压 &lt; 3.5 V</td><td>红灯 100 ms 快闪 + 蜂鸣器连续急鸣</td></tr>
+<tr><td>2</td><td>已连接 且 已解锁</td><td>绿灯 200 ms 快闪</td></tr>
+<tr><td>3</td><td>已连接 且 未解锁</td><td>绿灯常亮</td></tr>
+<tr><td>4</td><td>未连接</td><td>红灯 500 ms 慢闪</td></tr>
+<tr><td>5</td><td>初始化中</td><td>蓝灯常亮</td></tr>
+</tbody>
+</table>
+
+<h3>9.2 音效</h3>
+
+<table class="tight">
+<thead><tr><th>代号</th><th>音效</th><th>触发</th><th>含义</th></tr></thead>
+<tbody>
+<tr><td>'S'</td><td>短鸣</td><td>上电</td><td>开始初始化</td></tr>
+<tr><td>'D'</td><td>双短鸣</td><td>初始化完成 / 遥控连上</td><td>就绪</td></tr>
+<tr><td>'T'</td><td>三短鸣</td><td>解锁成功</td><td>已解锁</td></tr>
+<tr><td>'L'</td><td>长鸣</td><td>失去遥控 / IMU 不可用</td><td>告警</td></tr>
+<tr><td>'C'</td><td>连续急鸣</td><td>低电量</td><td>循环到电压恢复</td></tr>
+</tbody>
+</table>
+
+<p>音效语义与耀坤自研飞控 <strong>YaoKunDrone 保持一致</strong>，"短/双/三/长/急"的手感相同，用户在两套飞控之间不用重新学。</p>
+
+<h3>9.3 为什么蜂鸣器必须非阻塞</h3>
+
+<div class="danger">
+<b>如果在主循环里 <code>delay()</code> 放音，1 kHz 的主循环会被直接打断</b>，姿态解算跟着丢步 ⇒ <strong>解锁瞬间就翻</strong>。这是真实踩过的坑。
+</div>
+
+<p>所以用"状态机 + 由主循环驱动"：</p>
+<ul>
+  <li><code>buzzerPlay(char)</code> 只设参数，立即返回</li>
+  <li><code>buzzerUpdate()</code> 在主循环里推进时序（<code>updateLED()</code> 第一件事就是调它）</li>
+  <li>只有 <code>setup()</code> 里那两次提示音用 <code>runBuzzerFor(ms)</code> 主动跑一小段（此时还没解锁，阻塞无害）</li>
+</ul>
+
+<h3>9.4 连接判据的坑</h3>
+
+<p>上游语义等价写法是用 <code>mavlinkTime</code> 判"地面站在线"，但 <code>mavlinkTime</code> <strong>任何</strong> MAVLink 帧到达都会刷新 —— 包括地面站心跳、参数请求，甚至飞机自己发出的帧被回环计数。结果就是<strong>"没接遥控也显示已连接"</strong>，灯语在骗人。</p>
+
+<p>本版改用 <code>controlTime</code>：</p>
+
+<pre><code>const bool connected = valid(controlTime) &amp;&amp; (t - controlTime &lt; 1.0f);</code></pre>
+
+<p><code>controlTime</code> <strong>只在 MANUAL_CONTROL（遥控摇杆帧）到达时更新</strong>，语义上才是真正的"遥控在线"。若启用了 SBUS，<code>readRC()</code> 也会更新它，两条路径都对。</p>
+
+<!-- ============ 10 ============ -->
+<h2 id="s10">十、中文界面体系</h2>
+
+<h3>10.1 设计</h3>
+
+<p>所有界面文字集中在 <code>Firmware/flix/i18n.h</code>，用 <code>TXT_*</code> 宏，<code>#ifdef FLIX_LANG_EN</code> 分中英两段。<strong>默认中文</strong>。</p>
+
+<h3>10.2 为什么不直接把中文写进各 <code>.ino</code></h3>
+
+<div class="grid2">
+  <div class="card">
+    <h5>保留英文编译路径</h5>
+    <p>GPL 开源仓要给海外用户用。若中文写死在 30 多个 print() 里，切英文得逐行改代码 —— 极易漏改、diff 噪音巨大。</p>
+  </div>
+  <div class="card">
+    <h5>可脚本校验</h5>
+    <p>文案集中后，"检查界面是否还有英文残留"变成可自动化的事：确认所有 print() 都走 TXT_* 即可。</p>
+  </div>
+</div>
+
+<h3>10.3 怎么编英文版</h3>
+
+<pre><code>// 方法一：在 flix.ino 最顶部（第一条 #include 之前）加一行
+#define FLIX_LANG_EN
+
+// 方法二：编译时传宏，不改任何文件
+arduino-cli compile --build-property "compiler.cpp.extra_flags=-DFLIX_LANG_EN" ...</code></pre>
+
+<h3>10.4 约定</h3>
+
+<ul>
+  <li>宏展开后是<strong>字符串字面量</strong>，所以写 <code>print(TXT_XXX)</code>，不要写 <code>print("%s", TXT_XXX)</code></li>
+  <li>带参数的写成"前缀宏 + 格式串"两段拼接，保证中英文各自语序自然：<code>print(TXT_CH_SET, ch)</code></li>
+  <li><strong>本文件必须存为 UTF-8 无 BOM</strong>。若被记事本存成 GBK，中文会变乱码字节直接发到串口</li>
+</ul>
+
+<h3>10.5 校验结果</h3>
+
+<div class="ok">
+中英文段各 <b>157</b> 条宏，脚本比对确认无单边缺失（"仅英文段有"与"仅中文段有"均为空），且无引用未定义的宏。
+</div>
+
+<!-- ============ 11 ============ -->
+<h2 id="s11">十一、控制台命令</h2>
+
+<p>连串口（115200，<strong>原生 USB 口</strong>）敲 <code>help</code>，中文版实际显示：</p>
+
+<pre><code>可用命令：
+help / motd - 显示本帮助
+p - 列出全部参数
+p &lt;前缀&gt; - 显示以该前缀开头的参数
+p &lt;参数名&gt; &lt;数值&gt; - 修改参数（自动存盘）
+preset - 恢复出厂参数（会重启）
+time - 显示时间与主循环频率
+imu - 显示惯性测量单元数据
+ca - 校准加速度计（六面校准）
+st - 显示姿态估计结果
+arm / disarm - 解锁 / 上锁
+raw/stab/acro/auto - 切换飞行模式
+rc - 显示遥控（ESP-NOW）数据
+cr - 校准遥控行程
+pw - 显示电源与电压
+wifi - 显示无线连接信息
+wifi ap/sta/espnow/off - 设置无线模式
+ap &lt;热点名&gt; &lt;密码&gt; - 设置飞机热点
+sta &lt;路由名&gt; &lt;密码&gt; - 连接家里的路由器
+espnow &lt;遥控器MAC&gt; [&lt;密钥&gt;] - 设置 ESP-NOW 对端
+ch [&lt;信道&gt;] - 查看或设置 ESP-NOW 信道
+mot - 显示四路电机输出
+log [dump] - 打印日志表头 [以及数据]
+mfr/mfl/mrr/mrl [&lt;油门&gt;] - 单独测试电机（务必拆桨！）
+sys - 显示系统信息
+reset - 复位姿态估计
+reboot - 重启飞机</code></pre>
+
+<h3>11.1 新增参数（R10）</h3>
+
+<table class="tight">
+<thead><tr><th>参数</th><th>默认</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td><code>IMU_AUTO_DETECT</code></td><td>1</td><td>上电自动识别 IMU（0 = 只用 IMU_MODEL 手动值）</td></tr>
+<tr><td><code>IMU_ROT_LOCK</code></td><td>0</td><td>锁定朝向，自动识别不再覆盖</td></tr>
+<tr><td><code>LED_R_PIN</code> / <code>LED_G_PIN</code> / <code>LED_B_PIN</code></td><td>41 / 7 / 14</td><td>三色灯引脚</td></tr>
+<tr><td><code>LED_LOW_VOLT</code></td><td>3.5</td><td>低电告警阈值（V）</td></tr>
+<tr><td><code>BUZ_PIN</code></td><td>39</td><td>蜂鸣器引脚</td></tr>
+<tr><td><code>BUZ_ENABLE</code></td><td>1</td><td>蜂鸣器总开关（0 = 静音，夜间室内调试）</td></tr>
+</tbody>
+</table>
+
+<!-- ============ 12 ============ -->
+<h2 id="s12">十二、编译与烧录</h2>
+
+<h3>12.1 编译</h3>
+
+<pre><code>cd Firmware
+arduino-cli compile \
+  --fqbn "esp32:esp32:esp32s3:UploadSpeed=921600,USBMode=hwcdc,CDCOnBoot=cdc,CPUFreq=240,FlashMode=qio,FlashSize=4M,PartitionScheme=default,PSRAM=disabled" \
+  --libraries "G:\Arduino\libraries" \
+  --export-binaries flix</code></pre>
+
+<div class="danger">
+<b>必须带 <code>--export-binaries</code>。</b>否则 <code>build/</code> 目录不会更新，打包脚本会拿旧固件拼出一个"看起来正常但内容错误"的 bin —— 这是真实踩过的坑。
+</div>
+
+<h3>12.2 打包单文件固件</h3>
+
+<pre><code>python Firmware/tools/pack_flix_release.py --version 1.0</code></pre>
+
+<p>产物在 <code>Firmware/release/</code>：</p>
+<ul>
+  <li><code>*_merged.bin</code> —— 单文件固件，烧 <code>0x0</code></li>
+  <li><code>*_指纹与烧录说明.md</code> / <code>.txt</code> —— 自动生成，哈希与分段布局现场从 bin 提取</li>
+</ul>
+
+<h3>12.3 合并布局</h3>
+
+<table class="tight">
+<thead><tr><th>地址</th><th>内容</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td><code>0x0</code></td><td>bootloader.bin</td><td>二级引导</td></tr>
+<tr><td><code>0x8000</code></td><td>partitions.bin</td><td>分区表</td></tr>
+<tr><td><code>0x9000</code></td><td><em>nvs（空隙，填 0xFF）</em></td><td><b>单文件刷写会清空这里</b></td></tr>
+<tr><td><code>0xE000</code></td><td>boot_app0.bin</td><td>OTA 数据初值，缺它不启动</td></tr>
+<tr><td><code>0x10000</code></td><td>app.bin</td><td>应用程序</td></tr>
+</tbody>
+</table>
+
+<div class="warn">
+<b>单文件从 0x0 整片刷写 = 清空 NVS。</b>WiFi 热点名/密码、IMU 自动识别结果、遥控端点标定值全部丢失。<br>
+新板无所谓；<b>自己已经标定好的机器请改用分片写</b>，跳过 <code>0x9000</code>。偏移取自 <code>flix/build/&lt;fqbn&gt;/flash_args</code>。
+</div>
+
+<h3>12.4 烧完停在下载模式怎么办</h3>
+
+<p>日志出现 <code>waiting for download</code>：GPIO0 被拉低没放开。先 <code>--after no-reset</code> 连一下确认镜像可读，再执行：</p>
+
+<pre><code>esptool --after watchdog-reset run</code></pre>
+
+<p>或直接拔插 USB / 按 RST。</p>
+
+<!-- ============ 13 ============ -->
+<h2 id="s13">十三、三级验证流程</h2>
+
+<h3>13.1 第一级 · 静态</h3>
+
+<table class="tight">
+<thead><tr><th>检查项</th><th>方法</th><th>通过标准</th></tr></thead>
+<tbody>
+<tr><td>编译通过</td><td><code>arduino-cli compile ... --export-binaries</code></td><td>退出码 0，无 warning</td></tr>
+<tr><td>中英配对</td><td>脚本比对 i18n.h 两段宏数量</td><td>157 : 157，无单边缺失</td></tr>
+<tr><td>英文版可编</td><td>加 <code>-DFLIX_LANG_EN</code> 重编</td><td>退出码 0</td></tr>
+<tr><td>无英文残留</td><td>扫描 <code>print("</code> 非 <code>TXT_</code> 调用</td><td>仅剩纯格式串与 CSV 表头</td></tr>
+<tr><td>资源占用</td><td>编译输出</td><td>Flash &lt; 90%，RAM &lt; 60%</td></tr>
+</tbody>
+</table>
+
+<h3>13.2 第二级 · 台架（<strong>必须拆桨</strong>）</h3>
+
+<table class="tight">
+<thead><tr><th>步骤</th><th>操作</th><th>期望结果</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>上电看首屏</td><td>中文横幅 + 指纹串 + <code>固件版本：v1.0</code></td></tr>
+<tr><td>2</td><td><code>imu</code></td><td>型号/总线/WHO_AM_I/朝向正确，<code>状态：正常</code></td></tr>
+<tr><td>3</td><td><code>ca</code></td><td>六步中文提示，8 秒/步，末行 <code>校准完成！</code></td></tr>
+<tr><td>4</td><td><code>st</code> 倾斜机身</td><td>右侧压低 → <code>横滚</code> 为正（<b>朝向唯一判据</b>）</td></tr>
+<tr><td>5</td><td>遥控开机，<code>rc</code></td><td>原始通道随摇杆变化，时刻持续刷新</td></tr>
+<tr><td>6</td><td><code>ch</code></td><td><code>ESP-NOW 信道：6</code>（须与遥控器一致）</td></tr>
+<tr><td>7</td><td><code>wifi</code></td><td><code>原生接收</code> = 1，丢弃字节几乎不涨</td></tr>
+<tr><td>8</td><td>摇杆到底/中位/到顶</td><td>油门归一化 <b>-1 / 0 / +1</b></td></tr>
+<tr><td>9</td><td><code>mfr 0.1</code> 逐个试</td><td>转向、位置对应正确（拆桨！）</td></tr>
+<tr><td>10</td><td><code>arm</code> / <code>disarm</code></td><td>三短鸣解锁 / 灯语切绿闪</td></tr>
+<tr><td>11</td><td>断开遥控器电源</td><td>1 秒后长鸣 + 红灯慢闪</td></tr>
+</tbody>
+</table>
+
+<h3>13.3 第三级 · 系留低飞</h3>
+
+<div class="step"><div class="no">1</div><div class="tx"><b>准备</b><span>装保护圈，系留绳固定，空旷场地。</span></div></div>
+<div class="step"><div class="no">2</div><div class="tx"><b>起降</b><span><code>arm</code> 解锁，缓慢推油门离地 10~20 cm。</span></div></div>
+<div class="step"><div class="no">3</div><div class="tx"><b>验证修正方向</b><span>轻点横滚/俯仰，确认<strong>修正方向正确</strong>（右倾 → 向右修正）。</span></div></div>
+<div class="step"><div class="no">4</div><div class="tx"><b>松杆</b><span>确认姿态回平（但<strong>会继续水平飘</strong>，这是正常的，无位置传感器）。</span></div></div>
+<div class="step"><div class="no">5</div><div class="tx"><b>确认灯语</b><span>绿闪 = 已解锁，红灯闪 = 失联，红灯快闪 = 低电。</span></div></div>
+
+<!-- ============ 14 ============ -->
+<h2 id="s14">十四、故障排查</h2>
+
+<table>
+<thead><tr><th>现象</th><th>最可能原因</th><th>怎么确认</th></tr></thead>
+<tbody>
+<tr><td>遥控器显示连接、飞机不动</td><td>ESP-NOW 信道不一致 / 原生接收未注册</td><td><code>ch</code> 看信道；<code>wifi</code> 看 <code>原生接收</code> 是否 1</td></tr>
+<tr><td>遥控器显示连接、飞机不动</td><td>遥控器发 0~1000 而非 ±1000</td><td><code>rc</code> 看油门归一化值域</td></tr>
+<tr><td>上电 71.6 分钟后遥测全停</td><td>R1 未生效（烧了旧固件）</td><td><code>time</code> 看 <code>回绕次数</code>；核对 SHA-256</td></tr>
+<tr><td>开机红灯常亮 + 长鸣</td><td>IMU 识别失败</td><td><code>imu</code> 看 <code>识别依据</code> 与引脚</td></tr>
+<tr><td>开机就崩 / 重启循环</td><td>烧错板型固件（IMU 型号不匹配）</td><td>看首屏 <code>识别为 …</code> 是否与实际芯片一致</td></tr>
+<tr><td>姿态反了（右倾显示左倾）</td><td>IMU 朝向档位错</td><td><code>st</code> 倾斜机身，右侧压低应为<strong>正</strong> roll</td></tr>
+<tr><td>解锁被拒</td><td>油门不在最低位</td><td>串口打印 <code>拒绝解锁：油门不在最低位</code></td></tr>
+<tr><td>手机连上就掉、界面假死</td><td>路由与飞机 AP 同信道</td><td>用 <code>ch</code> 错开，遥控器端同步改</td></tr>
+<tr><td>打包出的固件不对</td><td>编译没带 <code>--export-binaries</code></td><td>对比 build 目录 bin 的修改时间</td></tr>
+<tr><td>只插 UART 口看不到日志</td><td>控制台走原生 USB（CDCOnBoot=cdc）</td><td>改用原生 USB 口</td></tr>
+</tbody>
+</table>
+
+<!-- ============ 15 ============ -->
+<h2 id="s15">十五、飞行能力边界</h2>
+
+<div class="danger">
+本固件是 <strong>纯姿态自稳 + 手动油门</strong>，没有任何位置/速度传感器（<b>无 GPS / 气压计 / 测距 / 光流</b>）。<code>control.ino</code> 只有三层环（姿态 → 角速度 → 混控）。
+</div>
+
+<table>
+<thead><tr><th>你想要</th><th>实际情况</th></tr></thead>
+<tbody>
+<tr><td>松杆悬停</td><td><b>不会。</b>姿态会稳平，但会保持水平速度继续飘</td></tr>
+<tr><td>松油门保持高度</td><td><b>不会。</b>直接掉高度（没有定高环）</td></tr>
+<tr><td>低电自动降落</td><td>不会降落，只有低电告警（红灯快闪 + 急鸣）</td></tr>
+<tr><td>失联自动返航</td><td>不会返航，只有 1 秒降油门、10 秒归零上锁</td></tr>
+<tr><td>抗风</td><td>姿态环能抗扰动，但会被风推走位置 —— 这是没有位置传感器的必然结果</td></tr>
+</tbody>
+</table>
+
+<div class="ok">
+<b>正确的心智模型：</b>把它当成"会自动帮你扶平的飞机"，而不是"会自动停在原地的飞机"。飞的时候手要一直在杆上。
+</div>
+
+<!-- ============ 16 ============ -->
+<h2 id="s16">十六、与原版差异总表</h2>
+
+<table>
+<thead><tr><th>编号</th><th>文件</th><th>改动</th><th>类型</th></tr></thead>
+<tbody>
+<tr><td><b>R1</b></td><td><code>time.ino</code></td><td><code>t</code> 改由 64 位微秒累加器生成</td><td>🔴 严重 bug 修复</td></tr>
+<tr><td><b>R2</b></td><td><code>mavlink.ino</code></td><td><code>COMMAND_LONG</code> 统一回 ACK；拒绝时打印中文原因</td><td>🟠 协议健壮性</td></tr>
+<tr><td><b>R4</b></td><td><code>wifi.ino</code></td><td>ESP-NOW 原生回调 + 字节队列；发现包无条件广播；<b>默认信道 1</b>（中文版遥控不调 <code>esp_wifi_set_channel</code>，走 Wi-Fi 默认信道 1）；<b>广播 peer 预登记 + 遥控器 MAC 自动学习</b>（<code>learnPeerIfNeeded()</code>）</td><td>🔴 <b>核心修复</b></td></tr>
+<tr><td><b>R5</b></td><td><code>motors.ino</code></td><td>电机引脚 15/5/6/16，PWM 20 kHz</td><td>🔧 硬件适配</td></tr>
+<tr><td><b>R6</b></td><td><code>power.ino</code></td><td>电压引脚 GPIO 2，分压系数 2</td><td>🔧 硬件适配</td></tr>
+<tr><td><b>R7</b></td><td><code>imu.ino</code></td><td>自动识别 + 朝向分档 + <code>imuOK</code> 防护</td><td>🔴 崩溃修复</td></tr>
+<tr><td><b>R8</b></td><td><code>led.ino</code></td><td>三色灯 + 蜂鸣器非阻塞状态机</td><td>✨ 新增</td></tr>
+<tr><td><b>R9</b></td><td><code>i18n.h</code></td><td>157 条文案，默认中文，可切英文</td><td>✨ 新增</td></tr>
+<tr><td><b>R10</b></td><td><code>parameters.ino</code></td><td>新增 8 个参数</td><td>✨ 新增</td></tr>
+<tr><td>—</td><td><code>flix.ino</code></td><td>开机指纹横幅；初始化灯音反馈</td><td>✨ 新增</td></tr>
+<tr><td>—</td><td><code>console.ino</code></td><td>中文 motd + 品牌横幅 + <code>ch</code> 命令</td><td>✨ 新增</td></tr>
+<tr><td>—</td><td><code>rc.ino</code></td><td>默认禁用 SBUS；中文校准提示</td><td>🔧 硬件适配</td></tr>
+<tr><td>—</td><td><code>tools/pack_flix_release.py</code></td><td>单文件固件 + 指纹说明自动生成</td><td>🛠 发布工具</td></tr>
+</tbody>
+</table>
+
+<div class="note">
+逐条根因分析与验证方法见 <code>Docs/耀坤S3适配说明.md</code>。本文是该文档的图文版。
+</div>
+
+<!-- ============ footer ============ -->
+<footer>
+  <strong>耀坤智联 / YaoKunSmart</strong><br>
+  B站：[耀坤智联] https://space.bilibili.com/3707011699050767 &nbsp;·&nbsp;
+  立创开源：[耀坤无人机] https://oshwhub.com/lindahe<br>
+  GitHub：https://github.com/YaoKunS &nbsp;·&nbsp;
+  淘宝：https://shop35432590.taobao.com/
+  <div style="margin-top:18px; font-size:12px; color:#94a3b8;">
+    内核版权 (C) Oleg Kalachev · https://github.com/okalachev/flix<br>
+    本固件由耀坤智联二次开发（目录整理 / 中文界面 / 硬件适配）· 版本 v1.0
+  </div>
+</footer>
+
+</div>
+</body>
+</html>
