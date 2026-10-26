@@ -5,9 +5,8 @@
 
 #pragma once
 
-// Uncomment this to build for certain target in Arduino IDE
+// Uncomment to build for certain target in Arduino IDE:
 // #define FLIX2
-
 
 #ifdef FLIX2
 #define RGB_BUILTIN 21
@@ -19,11 +18,12 @@
 #endif
 #endif
 
+#if CONFIG_IDF_TARGET_ESP32S3 && !defined(ARDUINO_USB_CDC_ON_BOOT)
+#error "Set Tools -> USB CDC on Boot to Enabled"
+#endif
 extern const int RAW, ACRO, STAB, AUTO;
 
 void setDefaults() {
-	// Set defaults here
-
 	#if defined(CONFIG_IDF_TARGET_ESP32S3) || defined(CONFIG_IDF_TARGET_ESP32C3)
 		pwmFrequency = 38000;
 	#endif

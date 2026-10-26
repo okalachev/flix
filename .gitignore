@@ -1,6 +1,7 @@
 *.hex
 *.elf
 build/
+dist/
 tools/log/
 tools/dist/
 *.egg-info/

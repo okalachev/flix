@@ -73,16 +73,17 @@ jobs:
         repository: ${{ github.repository }}
         run-id: ${{ steps.build_run.outputs.id }}
         name: firmware-binary
-        path: docs/build
+        path: docs/build/dist
     - name: Create shortcuts for firmware binaries
       working-directory: docs/build
       run: |
-        for FQBN in esp32.esp32.*; do
-          zip -r $FQBN.zip $FQBN
-          BOARD="${FQBN#esp32.esp32.}"
-          ln -s "$FQBN/flix.ino.merged.bin" "flix.$BOARD.merged.bin"
-          ln -s "$FQBN/flix.ino.bin" "flix.$BOARD.bin"
-          ln -s "$FQBN/flix.ino.bootloader.bin" "flix.$BOARD.bootloader.bin"
+        for TARGET in dist/*; do
+          TARGET=$(basename $TARGET)
+          mv "dist/$TARGET" "flix.$TARGET"
+          zip -r flix.$TARGET.zip flix.$TARGET
+          ln -s "flix.$TARGET/flix.ino.merged.bin" "flix.$TARGET.merged.bin"
+          ln -s "flix.$TARGET/flix.ino.bin" "flix.$TARGET.bin"
+          ln -s "flix.$TARGET/flix.ino.bootloader.bin" "flix.$TARGET.bootloader.bin"
         done
     - name: Put version file
       run: echo "${{ github.sha }}" > docs/build/version.txt
@@ -91,8 +92,10 @@ jobs:
       working-directory: docs/build
       run: |
         tree -a -I .git
-        ls index.html gyro.html geometry.html firmware.html flix.esp32.merged.bin flix.esp32c3.merged.bin \
-        flix.esp32s3.merged.bin flix.esp32s3.opi.merged.bin flix.esp32s3.qspi.merged.bin flix.flix2.merged.bin \
+        ls index.html gyro.html geometry.html firmware.html \
+        flix.esp32.merged.bin flix.esp32c3.merged.bin flix.esp32s3.merged.bin flix.esp32s3.opi.merged.bin flix.esp32s3.qspi.merged.bin flix.flix2.merged.bin \
+        flix.esp32.zip flix.esp32c3.zip flix.esp32s3.zip flix.esp32s3.opi.zip flix.esp32s3.qspi.zip flix.flix2.zip \
+        flix.esp32/ flix.esp32c3/ flix.esp32s3/ flix.esp32s3.opi/ flix.esp32s3.qspi/ flix.flix2/ \
         meta/general.json meta/parameters.json version.txt
         grep ${GITHUB_SHA:0:7} flix.esp32.bin
     - name: Upload artifact

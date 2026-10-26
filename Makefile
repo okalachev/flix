@@ -1,21 +1,33 @@
-BOARD = esp32:esp32:esp32
+FQBN = esp32:esp32:esp32
 PORT = $(strip $(wildcard /dev/serial/by-id/usb-Silicon_Labs_CP21* /dev/serial/by-id/usb-1a86_USB_Single_Serial_* /dev/cu.usbserial-* /dev/cu.usbmodem*))
 VERSION = $(shell git describe --always --dirty)
+FLAGS = -DVERSION=$(VERSION)
+
+esp32 = esp32:esp32:esp32:DebugLevel=error
+esp32c3 = esp32:esp32:esp32c3:DebugLevel=error,CDCOnBoot=cdc
+esp32s3 = esp32:esp32:esp32s3:DebugLevel=error,CDCOnBoot=cdc
+esp32s3.qspi = esp32:esp32:esp32s3:DebugLevel=error,CDCOnBoot=cdc,PSRAM=enabled
+esp32s3.opi = esp32:esp32:esp32s3:DebugLevel=error,CDCOnBoot=cdc,PSRAM=opi
+flix2 = esp32:esp32:esp32s3:DebugLevel=error,CDCOnBoot=cdc,PSRAM=opi
+
+ifdef TARGET
+FQBN = $($(TARGET))
+FLAGS += -D$(shell echo $(TARGET) | tr 'a-z.' 'A-Z_')
+EXTRA += --output-dir=flix/dist/$(TARGET)
+endif
 
 export ARDUINO_NETWORK_CONNECTION_TIMEOUT = 1h
 export ARDUINO_SKETCH_ALWAYS_EXPORT_BINARIES = 1
 
 build: .core .libs
-	arduino-cli compile flix \
-		--fqbn $(BOARD) \
-		--build-property "build.core_debug_level=1" \
-		--build-property "compiler.cpp.extra_flags=-DVERSION=$(VERSION) $(FLAGS)" $(EXTRA)
+	arduino-cli compile flix --fqbn $(FQBN) \
+		--build-property "compiler.cpp.extra_flags=$(FLAGS)" $(EXTRA)
 
 upload: build
-	arduino-cli upload flix --fqbn $(BOARD) -p "$(PORT)"
+	arduino-cli upload flix --fqbn $(FQBN) -p "$(PORT)"
 
 erase:
-	arduino-cli burn-bootloader --fqbn $(BOARD) -p "$(PORT)" -P esptool
+	arduino-cli burn-bootloader --fqbn $(FQBN) -p "$(PORT)" -P esptool
 
 monitor:
 	arduino-cli monitor -p "$(PORT)" -c baudrate=115200
@@ -32,8 +44,8 @@ libs .libs:
 	touch .libs
 
 upload_proxy: .core .libs
-	arduino-cli compile tools/espnow-proxy --fqbn $(BOARD)
-	arduino-cli upload tools/espnow-proxy --fqbn $(BOARD) -p "$(PORT)"
+	arduino-cli compile tools/espnow-proxy --fqbn $(FQBN)
+	arduino-cli upload tools/espnow-proxy --fqbn $(FQBN) -p "$(PORT)"
 
 gazebo/build cmake: gazebo/CMakeLists.txt
 	mkdir -p gazebo/build
