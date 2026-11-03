@@ -20,8 +20,10 @@ export ARDUINO_NETWORK_CONNECTION_TIMEOUT = 1h
 export ARDUINO_SKETCH_ALWAYS_EXPORT_BINARIES = 1
 
 build: .core .libs
-	arduino-cli compile flix --fqbn $(FQBN) \
-		--build-property "compiler.cpp.extra_flags=$(FLAGS)" $(EXTRA)
+	arduino-cli compile flix \
+		--fqbn $(FQBN) \
+		$(EXTRA) \
+		--build-property "compiler.cpp.extra_flags=$(FLAGS)"
 
 upload: build
 	arduino-cli upload flix --fqbn $(FQBN) -p "$(PORT)"
