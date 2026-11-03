@@ -390,13 +390,3 @@ To setup ESP-NOW communication:
 
 > [!TIP]
 > Make sure Arduino IDE is not running when using ESP-NOW proxy board, as it may block the serial port.
-
-## Flight log
-
-After the flight, you can download the flight log wirelessly for analysis. Use the following command on your computer for that:
-
-```bash
-make log
-```
-
-See more details about log analysis in the [log analysis](log.md) article.

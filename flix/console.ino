@@ -54,13 +54,11 @@ const char* motd =
 "mot - show motor output\n"
 "mfr/mfl/mrr/mrl [<thrust>] - test motor (remove props)\n"
 "led off/fill/blink/rainbow/<number> [<r> <g> <b>] - set LED\n"
-"log [dump] - print log header [and data]\n"
-"log - show log info\n"
-"log header - show log header\n"
+"log [header] - show log info or header\n"
 "log reset - reset log\n"
+"log expose <name> - expose log value to telemetry\n"
 "log <name> <rate> - setup log topic rate\n"
-"l <str> - show log values starting with str\n"
-"l expose <name> - expose log value to telemetry\n"
+"l <str> - show logging values\n"
 "sys - show system info\n"
 "reset - reset drone's state\n"
 "reboot - reboot the drone\n";
@@ -171,13 +169,11 @@ void doCommand(String str, bool echo = false) {
 			motors[MOT_FR], motors[MOT_FL], motors[MOT_RR], motors[MOT_RL]);
 	} else if (command == "log" && arg0 == "") {
 		printLogInfo();
-	} else if (command == "log" && arg1 != "") {
-		configLogThrottle(arg0.c_str(), arg1.toFloat());
 	} else if (command == "log" && arg0 == "header") {
 		printLogHeader();
 	} else if (command == "log" && arg0 == "reset") {
 		resetLog();
-	} else if (command == "l" && arg0 == "expose" && arg1 != "") {
+	} else if (command == "log" && arg0 == "expose" && arg1 != "") {
 		exposeLogValue(arg1.c_str());
 	} else if (command == "l") {
 		printLogValues(arg0.c_str());

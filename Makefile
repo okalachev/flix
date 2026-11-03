@@ -59,12 +59,6 @@ simulator: build_simulator
 	GAZEBO_PLUGIN_PATH=$$GAZEBO_PLUGIN_PATH:${CURDIR}/gazebo/build \
 	gazebo --verbose ${CURDIR}/gazebo/flix.world
 
-log:
-	tools/log.py
-
-plot:
-	plotjuggler -d $(shell ls -t tools/log/*.csv | head -n1)
-
 clean:
 	rm -rf gazebo/build flix/build flix/cache .core .libs
 

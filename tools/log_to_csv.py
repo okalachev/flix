@@ -29,7 +29,8 @@ topics = []
 for line in header.splitlines():
     if not line.startswith('  '):
         topics.append([])
-    elif 'not logged' not in line:
+    else:
+        line = line.split(' (')[0]
         topics[-1].append(line.strip())
 
 # Read log file

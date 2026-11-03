@@ -97,10 +97,14 @@ void sendMavlink() {
 		sendMessage(&msg);
 	}
 
-	if (telemetryTopic && logExposed != nullptr) {
-		mavlink_msg_named_value_float_pack(mavlinkSysId, MAV_COMP_ID_AUTOPILOT1, &msg,
-			time, logExposed->name, logExposed->value.get());
-		sendMessage(&msg);
+	if (telemetryTopic) {
+		for (LogValue& value : logValues) {
+			if (value.exposed) {
+				mavlink_msg_named_value_float_pack(mavlinkSysId, MAV_COMP_ID_AUTOPILOT1, &msg,
+					time, value.name, value.value.get());
+				sendMessage(&msg);
+			}
+		}
 	}
 }
 
