@@ -180,7 +180,7 @@ void setupParameters() {
 }
 
 int parametersCount() {
-	return sizeof(parameters) / sizeof(parameters[0]);
+	return ARRAY_SIZE(parameters);
 }
 
 const char *getParameterName(int index) {
