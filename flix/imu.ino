@@ -77,6 +77,8 @@ void calibrateGyroOnce() {
 }
 
 void calibrateAccel() {
+	if (armed) return; // don't calibrate in flight
+
 	print("Calibrating accelerometer\n");
 	imu->setAccelRange(IMU::ACCEL_RANGE_2G); // the most sensitive mode
 
