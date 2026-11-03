@@ -45,11 +45,12 @@ void setDefaults() {
 		imuModel = 4; // ICM-40609-D
 		imuIntPin = 10;
 		imuCsPin = 14;
+		imuRotation = Vector(0, 0, -PI / 2);
 		voltagePin = 3;
-		motorPins[MOT_RL] = 41;
-		motorPins[MOT_RR] = 7;
-		motorPins[MOT_FR] = 18;
-		motorPins[MOT_FL] = 38;
+		motorPins[MOT_RL] = 18;
+		motorPins[MOT_RR] = 38;
+		motorPins[MOT_FR] = 41;
+		motorPins[MOT_FL] = 7;
 	#endif
 
 	if (ledType == 1) {
