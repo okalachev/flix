@@ -3,7 +3,7 @@
 
 // MAVLink communication
 
-#include <MAVLink.h>
+#include <MAVLink.h> // if seeing 'No such file or directory', search and install MAVLink in Tools -> Manage Libraries
 #include "util.h"
 
 extern float controlTime;

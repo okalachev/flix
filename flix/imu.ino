@@ -5,7 +5,7 @@
 
 #include <SPI.h>
 #include <Wire.h>
-#include <FlixPeriph.h>
+#include <FlixPeriph.h> // if seeing 'No such file or directory', search and install FlixPeriph in Tools -> Manage Libraries
 #include "vector.h"
 #include "filter.h"
 #include "util.h"
