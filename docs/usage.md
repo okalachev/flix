@@ -176,7 +176,7 @@ Before flight you need to calibrate the accelerometer:
 
 ### Setup motors
 
-If using non-default motor pins, set the pin numbers using the parameters: `MOTOR_PIN_FL`, `MOTOR_PIN_FR`, `MOTOR_PIN_RL`, `MOTOR_PIN_RR` (front-left, front-right, rear-left, rear-right respectively).
+If using non-default motor pins, set the pin numbers using the parameters: `MOT_PIN_FL`, `MOT_PIN_FR`, `MOT_PIN_RL`, `MOT_PIN_RR` (front-left, front-right, rear-left, rear-right respectively).
 
 #### Brushless motors
 
