@@ -54,7 +54,7 @@ Beginners can [download the sources as a ZIP archive](https://github.com/okalach
    * `MAVLink`, version 2.0.33.
 5. Open the `flix/flix.ino` sketch from downloaded firmware sources in Arduino IDE.
 6. Connect your ESP32 board to the computer and choose correct board type in Arduino IDE (*WEMOS D1 MINI ESP32* for ESP32 Mini, *ESP32S3 Dev Module* for ESP32-S3 Super Mini) and the port.
-7. Set *Tools* ⇒ *Core Debug Level* to *Error* to see the errors in the serial console.
+7. Set *Tools* ⇒ *Core Debug Level* to *Error* to see the errors in the serial console. Set *Tools* ⇒ *USB CDC on Boot* to *Enabled* for ESP32-S3/ESP32-C3 boards.
 8. [Build and upload](https://docs.arduino.cc/software/ide-v2/tutorials/getting-started/ide-v2-uploading-a-sketch) the firmware using Arduino IDE.
 
 #### Command line (Windows, Linux, macOS)
@@ -86,13 +86,17 @@ Beginners can [download the sources as a ZIP archive](https://github.com/okalach
    make upload monitor
    ```
 
-   For ESP32-S3/ESP32-C3 boards, set the appropriate [FQBN](https://docs.arduino.cc/arduino-cli/FAQ/#whats-the-fqbn-string) using `BOARD` parameter:
+   Specify the [target board](../Makefile) using the `TARGET` variable, for example:
 
    ```bash
-   make BOARD=esp32:esp32:esp32s3 upload
+   make TARGET=esp32s3
    ```
 
-See other available Make commands in [Makefile](../Makefile).
+   You can build the firmware with a custom [FQBN string](https://docs.arduino.cc/arduino-cli/FAQ/#whats-the-fqbn-string) like this:
+
+   ```bash
+   make FQBN=esp32:esp32:esp32s3:DebugLevel=error,CDCOnBoot=cdc
+   ```
 
 > [!TIP]
 > You can test the firmware on a bare ESP32 board without connecting IMU and other peripherals. The Wi-Fi network `flix` should appear and all the basic functionality including console and QGroundControl connection should work.

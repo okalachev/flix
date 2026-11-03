@@ -1,13 +1,28 @@
 // Copyright (c) 2026 Oleg Kalachev <okalachev@gmail.com>
 // Repository: https://github.com/okalachev/flix
 
-// Parameter defaults
+// Board config and parameter defaults
 
 #pragma once
 
-void setDefaults() {
-	// Set defaults here
+// Uncomment to build for certain target in Arduino IDE:
+// #define FLIX2
 
+#ifdef FLIX2
+#define RGB_BUILTIN 21
+#ifndef CONFIG_IDF_TARGET_ESP32S3
+#error "Set Tools -> Board to ESP32S3 Dev Module for Flix2 board"
+#endif
+#ifndef CONFIG_SPIRAM_MODE_OCT
+#error "Set Tools -> PSRAM to OPI for Flix2 board"
+#endif
+#endif
+
+#if CONFIG_IDF_TARGET_ESP32S3 && !defined(ARDUINO_USB_CDC_ON_BOOT)
+#error "Set Tools -> USB CDC on Boot to Enabled"
+#endif
+
+void setDefaults() {
 	#if defined(CONFIG_IDF_TARGET_ESP32S3) || defined(CONFIG_IDF_TARGET_ESP32C3)
 		pwmFrequency = 38000;
 	#endif

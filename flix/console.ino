@@ -56,15 +56,6 @@ const char* motd =
 "reset - reset drone's state\n"
 "reboot - reboot the drone\n";
 
-// Always redirect Serial to USB on ESP32-S3/ESP32-C3
-#if SOC_USB_SERIAL_JTAG_SUPPORTED && ARDUINO_USB_MODE
-#if !ARDUINO_USB_CDC_ON_BOOT
-HWCDC HWCDCSerial;
-#endif
-#undef Serial
-#define Serial HWCDCSerial
-#endif
-
 void setupConsole() {
 	Serial.begin(115200);
 #if SOC_USB_SERIAL_JTAG_SUPPORTED
@@ -190,7 +181,10 @@ void doCommand(String str, bool echo = false) {
 		print("Temperature: %.1f °C\n", temperatureRead());
 		print("Total RAM: %d KB\n", ESP.getHeapSize() / 1024);
 		print("Free heap: %d KB\n", ESP.getFreeHeap() / 1024);
-		print("Firmware: " __DATE__ " " __TIME__ "\n");
+#ifdef VERSION
+		print("Version: %s\n", STRINGIFY(VERSION));
+#endif
+		print("Build date: " __DATE__ " " __TIME__ "\n");
 		// Print tasks table
 		print("Num  Task                MinSt  Prio  Core  CPU%%\n");
 		int taskCount = uxTaskGetNumberOfTasks();
