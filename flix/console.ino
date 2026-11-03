@@ -68,7 +68,7 @@ HWCDC HWCDCSerial;
 void setupConsole() {
 	Serial.begin(115200);
 #if SOC_USB_SERIAL_JTAG_SUPPORTED
-	Serial.setTxTimeoutMs(0); // never block on usb write
+	Serial.setTxTimeoutMs(1); // never block on usb write
 #endif
 }
 
