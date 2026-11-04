@@ -18,7 +18,7 @@ void setupPower() {
 	if (digitalPinToAnalogChannel(voltagePin) == -1) voltagePin = -1; // test ADC pin
 }
 
-void readVoltage() {
+void loopPower() {
 	if (voltagePin < 0) return;
 
 	static Rate rate(10);

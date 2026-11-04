@@ -38,9 +38,9 @@ void loop() {
 	estimate();
 	control();
 	sendMotors();
-	handleConsole();
-	processMavlink();
-	readVoltage();
-	logData();
+	loopConsole();
+	loopMavlink();
+	loopPower();
+	loopLog();
 	syncParameters();
 }

@@ -43,7 +43,7 @@ void prepareLogData() {
 	attitudeTargetEuler = attitudeTarget.toEuler();
 }
 
-void logData() {
+void loopLog() {
 	if (!armed) return;
 	static int logPointer = 0;
 	static Rate period(LOG_RATE);

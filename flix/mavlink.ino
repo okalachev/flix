@@ -20,7 +20,7 @@ Rate telemetryIMU(15);
 float mavlinkTime = NAN; // time of last received message
 String mavlinkPrintBuffer;
 
-void processMavlink() {
+void loopMavlink() {
 	sendMavlink();
 	receiveMavlink();
 }

@@ -83,12 +83,12 @@ public:
 		attitude.setYaw(this->model->WorldPose().Yaw());
 
 		control();
-		handleConsole();
-		processMavlink();
+		loopConsole();
+		loopMavlink();
 
 		applyMotorForces();
 		publishTopics();
-		logData();
+		loopLog();
 		syncParameters();
 	}
 

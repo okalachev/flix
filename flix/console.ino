@@ -77,8 +77,8 @@ void pause(float duration) {
 	float start = t;
 	while (t - start < duration) {
 		step();
-		handleConsole();
-		processMavlink();
+		loopConsole();
+		loopMavlink();
 		delay(50);
 	}
 }
@@ -209,7 +209,7 @@ void doCommand(String str, bool echo = false) {
 	}
 }
 
-void handleConsole() {
+void loopConsole() {
 	static String input;
 
 	while (Serial.available()) {
