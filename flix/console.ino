@@ -19,7 +19,7 @@ extern bool armed;
 extern LowPassFilter<Vector> gyroBiasFilter;
 extern float voltage;
 
-const char* motd =
+const char* help =
 " _______  __       __  ___   ___\n"
 "|   ____||  |     |  | \\  \\ /  /\n"
 "|  |__   |  |     |  |  \\  V  /\n"
@@ -97,8 +97,8 @@ void doCommand(String str, bool echo = false) {
 	command.toLowerCase();
 
 	// execute command
-	if (command == "help" || command == "motd") {
-		print("%s\n", motd);
+	if (command == "help") {
+		printHelp();
 	} else if (command == "p" && arg1 == "") {
 		printParameters(arg0.c_str());
 	} else if (command == "p") {
@@ -210,13 +210,7 @@ void doCommand(String str, bool echo = false) {
 }
 
 void handleConsole() {
-	static bool showMotd = true;
 	static String input;
-
-	if (showMotd) {
-		print("%s\n", motd);
-		showMotd = false;
-	}
 
 	while (Serial.available()) {
 		char c = Serial.read();
@@ -227,4 +221,8 @@ void handleConsole() {
 			input += c;
 		}
 	}
+}
+
+void printHelp() {
+	print("%s\n", help);
 }

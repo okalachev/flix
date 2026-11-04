@@ -28,6 +28,7 @@ void setup() {
 	setupRC();
 	setLED(false);
 	print("Initializing complete\n");
+	printHelp();
 }
 
 void loop() {
