@@ -57,7 +57,6 @@ const char* help =
 "log [header] - show log info or header\n"
 "log reset - reset log\n"
 "log expose <name> - expose log value to telemetry\n"
-"log <name> <rate> - setup log topic rate\n"
 "l <str> - show logging values\n"
 "sys - show system info\n"
 "reset - reset drone's state\n"
