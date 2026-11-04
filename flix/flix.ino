@@ -28,6 +28,7 @@ void setup() {
 	setupEstimate();
 	setupLog();
 	print("Initializing complete\n");
+	printHelp();
 }
 
 void loop() {

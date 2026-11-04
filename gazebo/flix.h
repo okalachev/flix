@@ -46,6 +46,7 @@ void print(const char* format, ...);
 void pause(float duration);
 void doCommand(String str, bool echo);
 void handleConsole();
+void printHelp();
 void setupRC();
 void normalizeRC();
 void calibrateRC();
