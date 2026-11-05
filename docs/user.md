@@ -2,6 +2,17 @@
 
 This page contains user-built drones based on the Flix project. Publish your projects into the official Telegram-chat: [@opensourcequadcopterchat](https://t.me/opensourcequadcopterchat) or send materials as a pull request.
 
+---
+
+Author: [@Vitaly499](https://t.me/Vitaly499).<br>
+Description: ESP32-S3-N16R8 Dual Type-C Development Board, GY-521 IMU (MPU-6050), 65 mm propellers.
+
+<img src="img/user/vitaly499/1.jpg" height=200>
+
+[Flight validation](https://drive.google.com/file/d/1fkgnUMEnWH_wIdnw9oH1smhrel3jCodM/view?usp=sharing).
+
+---
+
 ## RoboCamp 2026
 
 <p align=center>
