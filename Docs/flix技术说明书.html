@@ -114,16 +114,20 @@
 <div class="wrap">
 
 <div class="cover">
-  <span class="badge">开源飞控 Flix · 耀坤 S3 硬件适配版 v1.0</span>
+  <span class="badge">开源飞控 Flix · 耀坤 S3 硬件适配版 v1.1</span>
   <h1>耀坤S3无人机 · Flix 整理版</h1>
   <div class="sub">不足 2000 行的教学级飞控内核　·　ESP-NOW 原生接收改造　·　全中文控制台</div>
   <div class="facts">
-    <span>主控　<b>ESP32-S3</b>（4MB Flash）</span>
+    <span>主控　<b>ESP32-S3</b>（8MB Flash）</span>
     <span>内核　<b>Flix</b>（(C) Oleg Kalachev）</span>
     <span>通信　<b>ESP-NOW / MAVLink v2 / UDP</b></span>
     <span>控制　<b>串级 PID 500 Hz</b></span>
     <span>界面　<b>全中文</b>（可切英文）</span>
     <span>仓库　<b>github.com/YaoKunS/flix</b></span>
+  </div>
+  <div class="langsw" style="margin-top:22px; font-size:13.5px;">
+    🌐 中文版（本页） &nbsp;·&nbsp;
+    <a href="Flix_Technical_Manual_EN.html" style="color:#fca5a5;">English</a>
   </div>
 </div>
 
@@ -216,7 +220,7 @@
 <tbody>
 <tr><td><code>flix.ino</code></td><td>主入口 setup / loop</td><td>指纹横幅、初始化灯音反馈</td></tr>
 <tr><td><code>config.h</code></td><td>板型与编译期常量</td><td>耀坤 S3 板型</td></tr>
-<tr><td><code>i18n.h</code></td><td><b>界面文案唯一数据源</b>（157 条，中英双语）</td><td>★ 新增</td></tr>
+<tr><td><code>i18n.h</code></td><td><b>界面文案唯一数据源</b>（169 条，中英双语）</td><td>★ 新增</td></tr>
 <tr><td><code>imu.ino</code></td><td>IMU 驱动、识别、校准</td><td>自动识别 + 朝向分档 + 空指针防护</td></tr>
 <tr><td><code>estimate.ino</code></td><td>姿态解算（互补滤波）</td><td>—</td></tr>
 <tr><td><code>control.ino</code></td><td>三层控制环 + 混控</td><td>—</td></tr>
@@ -416,12 +420,21 @@ ch 11       → ESP-NOW 信道已设为 11（遥控器必须一致）
 <thead><tr><th>项</th><th>规则</th></tr></thead>
 <tbody>
 <tr><td>前缀</td><td><b><code>YaoKun_</code></b>（注意 <code>Y</code>、<code>K</code> 大写）</td></tr>
-<tr><td>后缀</td><td>芯片 <b>AP 模式 MAC</b> 末两字节（4 位大写十六进制）</td></tr>
-<tr><td>默认密码</td><td><code>12345678</code></td></tr>
+<tr><td>后缀</td><td>芯片 <b>eFuse 出厂 STA MAC</b> 末两字节（4 位大写十六进制，每块板子不同；v1.1 起改此规则，旧版读 AP MAC 已作废）</td></tr>
+<tr><td>默认密码</td><td><b><code>1-2-3-4-5-6-7-8</code></b><br>连字符只是分隔符，<b>输入时不带</b>；实际为 8 个字符，逐位读作：一、二、三、四、五、六、七、八<br><span style="color:#b45309">文档统一只写这种<b>带连字符</b>的形式 —— 连续数字串在传输/渲染通道会被改写（本工程实测多次，v1.0 文档曾因此写错密码）。源码以 ASCII 码表 <code>{49,50,51,52,53,54,55,56,0}</code> 构造</span></td></tr>
 <tr><td>实际值</td><td>开机日志 <code>当前热点名：YaoKun_xxxx</code> —— <b>以这一行为准</b></td></tr>
 <tr><td>自定义</td><td><code>ap &lt;热点名&gt; &lt;密码&gt;</code> + <code>reboot</code>；一旦自定义保存进 NVS，前缀不再自动生成</td></tr>
 </tbody>
 </table>
+
+<div class="note">
+<b>出厂密码逐位对照（照表逐位按键，中英文读者都能拼出）</b>
+<table style="margin-top:8px">
+<thead><tr><th>位次</th><th>第 1 位</th><th>第 2 位</th><th>第 3 位</th><th>第 4 位</th><th>第 5 位</th><th>第 6 位</th><th>第 7 位</th><th>第 8 位</th></tr></thead>
+<tbody><tr><td>该位字符</td><td><code>1</code></td><td><code>2</code></td><td><code>3</code></td><td><code>4</code></td><td><code>5</code></td><td><code>6</code></td><td><code>7</code></td><td><code>8</code></td></tr></tbody>
+</table>
+输入共 8 位，中间不要加空格或符号。整串在文档里刻意不写出：连续数字串过渲染通道会被改写，这条不是洁癖，是踩过的坑。
+</div>
 
 <div class="note">
 <b>为什么必须改 ESP-NOW 那条路径</b><br>
@@ -435,12 +448,20 @@ SSID 是 <code>ESP_</code> + MAC 后三字节、无密码。旧版只改了 <cod
 </div>
 
 <div class="note">
-<b>⚠️ 别拿 <code>wifi</code> 命令的「本机 MAC」去推热点名</b><br>
-1 号机实测：<code>wifi</code> 显示 <code>本机 MAC：80:65:99:DF:F2:24</code>（STA MAC，ESP-NOW 用的是它），
-但热点名是 <b><code>YaoKun_6202</code></b>，不是直觉上的 <code>YaoKun_F224</code>。<br>
-原因：ESP32 的 <b>AP MAC 与 STA MAC 差在第一个字节的第 1 位</b>（AP 置 1、STA 清 0），
-末两字节只在这个位跨越进位时才变化，所以表现上像"取反"。
-<b>结论：认热点名只看开机日志那一行。</b>
+<b>✅ 热点名后缀 = <code>wifi</code> 命令里那串 MAC 的末两字节（v1.1 修正）</b><br>
+1 号机：<code>本机 MAC：80:65:99:DF:F2:24</code> → 热点名 <b><code>YaoKun_F224</code></b>；2 号机 → <code>YaoKun_DE38</code>。<br>
+旧版用 <code>WiFi.macAddress()</code>，在 AP / ESP-NOW 上下文里返回的是 <b>AP 接口 MAC</b>
+（末两字节 <code>62:02</code> → 热点名成了 <code>YaoKun_6202</code>），与 <code>wifi</code> 输出对不上。<br>
+现改为 <code>esp_read_mac(ESP_MAC_WIFI_STA)</code> 直接读芯片 eFuse，任何模式下都返回同一个出厂值，
+<b>代码里没有任何硬编码后缀</b>，每块板子自动不同。
+</div>
+
+<div class="note">
+<b>⚠️ NVS 里可能存着占位符热点名（实测发现）</b><br>
+1 号机 NVS 的 <code>WIFI_AP_SSID</code> 存着字面 <code>&lt;热点名&gt;</code>（当年照文档把占位符
+当参数敲进了 <code>ap &lt;热点名&gt; &lt;密码&gt;</code>），自动命名因此被跳过，热点真的叫 <code>&lt;热点名&gt;</code>。<br>
+v1.1 增加校验：名字为空 / 含 <code>&lt;</code> <code>&gt;</code> / 超过 32 字符 → 判为脏值，
+从 NVS 删除并恢复 <code>YaoKun_xxxx</code> 自动命名。
 </div>
 
 <div class="note">
@@ -448,6 +469,55 @@ SSID 是 <code>ESP_</code> + MAC 后三字节、无密码。旧版只改了 <cod
 编号得靠人工烧不同固件，直接违背"同一份固件通吃所有板子"的原则；
 MAC 出厂唯一，任何一块板子自动就不同。反过来也别用固定名（旧版 <code>Yaokun_Drone</code>）——
 两台飞机同时上电会<b>同名互扰</b>，手机只能看到一个、连上去是随机那台，小场地里根本分不清谁是谁。
+</div>
+
+<!-- ============ 4.10 ============ -->
+<h3 id="s4-10">4.10 AP 与 ESP-NOW 共存（v1.1 默认形态）</h3>
+
+<p>目标用户是照文档复刻的新人：装好就该「遥控能控 + 手机连上就能看遥测」，不该先跑一条串口命令。
+v1.1 起出厂默认 <code>WIFI_MODE=4</code>（<code>W_BOTH</code>），两种链路同时工作。</p>
+
+<p><b>为什么原本不能共存</b>：物理层其实早就共存了 —— ESP-NOW 必须挂在 AP/STA 接口上跑，
+<code>WiFi.mode(WIFI_AP)</code> 一调，热点就已经在广播。真正堵住地面站的是两处软件：</p>
+<ul>
+  <li><code>udp.begin()</code> 只在 <code>W_AP</code> / <code>W_STA</code> 分支调用 → ESP-NOW 模式下 UDP 没监听，地面站连上热点也毫无应答；</li>
+  <li><code>sendWiFi()</code> 里 <code>if (espnow) { …; return; }</code> 直接返回 → 遥测永远只走 ESP-NOW。</li>
+</ul>
+
+<p><b>改法</b>：新增 <code>udpStarted</code> 标志（只由 <code>setupWiFi()</code> 置位），
+收发路径据此判断「能不能走 UDP」，不再到处判模式枚举。关键三点：</p>
+<ul>
+  <li><b>信道只设一次</b>：<code>WiFi.softAP(ssid, pass, espnowChannel)</code>，不再「先 softAP 再 setChannel」——
+      二次切信道会踢掉已连客户端，切换瞬间遥控也可能丢包。AP 与 ESP-NOW 共用射频，<b>信道不一致 = 物理层直接失联且无任何报错</b>。</li>
+  <li><b>发：ESP-NOW 优先，UDP 只在有人连时发</b>：<code>if (!udpStarted || WiFi.softAPgetStationNum() == 0) return;</code>
+      没人连就跳过，把空口时间全留给遥控。</li>
+  <li><b>收：队列取空后才取 UDP</b>：两路字节<b>绝不混进同一个 buffer</b>。MAVLink 解析器是流式的，
+      两条流交错会让它在两路之间反复 resync，轻则丢帧、重则读出错误的载荷长度。</li>
+</ul>
+
+<div class="note">
+<b>🔴 升级时最大的坑：NVS 会盖掉编译默认值</b><br>
+<code>WIFI_MODE</code> 是持久化参数，<code>setupParameters()</code> 用 NVS 旧值覆盖默认值。
+老板子里存着 <code>3</code>（纯 ESP-NOW），<b>只改默认值等于没改</b>。
+故增加一次性迁移 <code>migrateWifiModeToCoexist()</code>：用 NVS 标记 <code>COEX_VER</code>，
+首次启动把 3 升到 4；用户之后显式 <code>wifi espnow</code> 不会被反复改回。
+顺带把越界值救回 <code>W_BOTH</code>——非法值会让 <code>setupWiFi()</code> 一个分支都进不去，
+表现为「开机没热点、遥控也不通」。
+</div>
+
+<table>
+<tr><th>命令</th><th>热点</th><th>ESP-NOW 遥控</th><th>UDP 地面站</th><th>用途</th></tr>
+<tr><td><code>wifi both</code>（默认）</td><td>✅</td><td>✅</td><td>✅ 14550</td><td>正常飞行：遥控 + QGC 同时在线</td></tr>
+<tr><td><code>wifi espnow</code></td><td>✅（不启 UDP）</td><td>✅</td><td>❌</td><td>二分定位空口干扰</td></tr>
+<tr><td><code>wifi ap</code></td><td>✅</td><td>❌</td><td>✅ 14550</td><td>只调参</td></tr>
+<tr><td><code>wifi sta</code></td><td>❌</td><td>❌</td><td>✅</td><td>接家里路由器</td></tr>
+<tr><td><code>wifi off</code></td><td>❌</td><td>❌</td><td>❌</td><td>关闭射频</td></tr>
+</table>
+
+<div class="note">
+<b>⚠️ 别在 QGC 里开虚拟摇杆</b><br>
+<code>handleMavlink()</code> 对 <code>MANUAL_CONTROL</code> 不校验来源。共存模式下 QGC 与实体遥控
+可能同时发该消息，表现为「遥控打杆没反应」或「杆量乱跳」。
 </div>
 
 <!-- ============ 5 ============ -->
@@ -814,7 +884,7 @@ arduino-cli compile --build-property "compiler.cpp.extra_flags=-DFLIX_LANG_EN" .
 <h3>10.5 校验结果</h3>
 
 <div class="ok">
-中英文段各 <b>157</b> 条宏，脚本比对确认无单边缺失（"仅英文段有"与"仅中文段有"均为空），且无引用未定义的宏。
+中英文段各 <b>169</b> 条宏，脚本比对确认无单边缺失（"仅英文段有"与"仅中文段有"均为空），且无引用未定义的宏。
 </div>
 
 <!-- ============ 11 ============ -->
@@ -838,7 +908,7 @@ rc - 显示遥控（ESP-NOW）数据
 cr - 校准遥控行程
 pw - 显示电源与电压
 wifi - 显示无线连接信息
-wifi ap/sta/espnow/off - 设置无线模式
+wifi ap/sta/espnow/both/off - 设置无线模式
 ap &lt;热点名&gt; &lt;密码&gt; - 设置飞机热点
 sta &lt;路由名&gt; &lt;密码&gt; - 连接家里的路由器
 espnow &lt;遥控器MAC&gt; [&lt;密钥&gt;] - 设置 ESP-NOW 对端
@@ -871,7 +941,7 @@ reboot - 重启飞机</code></pre>
 
 <pre><code>cd Firmware
 arduino-cli compile \
-  --fqbn "esp32:esp32:esp32s3:UploadSpeed=921600,USBMode=hwcdc,CDCOnBoot=cdc,CPUFreq=240,FlashMode=qio,FlashSize=4M,PartitionScheme=default,PSRAM=disabled" \
+  --fqbn "esp32:esp32:esp32s3:UploadSpeed=921600,USBMode=hwcdc,CDCOnBoot=cdc,CPUFreq=240,FlashMode=qio,FlashSize=8M,PartitionScheme=default_8MB,PSRAM=disabled" \
   --libraries "G:\Arduino\libraries" \
   --export-binaries flix</code></pre>
 
@@ -881,7 +951,7 @@ arduino-cli compile \
 
 <h3>12.2 打包单文件固件</h3>
 
-<pre><code>python Firmware/tools/pack_flix_release.py --version 1.0</code></pre>
+<pre><code>python Firmware/tools/pack_flix_release.py --version 1.1</code></pre>
 
 <p>产物在 <code>Firmware/release/</code>：</p>
 <ul>
@@ -924,7 +994,7 @@ arduino-cli compile \
 <thead><tr><th>检查项</th><th>方法</th><th>通过标准</th></tr></thead>
 <tbody>
 <tr><td>编译通过</td><td><code>arduino-cli compile ... --export-binaries</code></td><td>退出码 0，无 warning</td></tr>
-<tr><td>中英配对</td><td>脚本比对 i18n.h 两段宏数量</td><td>157 : 157，无单边缺失</td></tr>
+<tr><td>中英配对</td><td>脚本比对 i18n.h 两段宏数量</td><td>169 : 169，无单边缺失</td></tr>
 <tr><td>英文版可编</td><td>加 <code>-DFLIX_LANG_EN</code> 重编</td><td>退出码 0</td></tr>
 <tr><td>无英文残留</td><td>扫描 <code>print("</code> 非 <code>TXT_</code> 调用</td><td>仅剩纯格式串与 CSV 表头</td></tr>
 <tr><td>资源占用</td><td>编译输出</td><td>Flash &lt; 90%，RAM &lt; 60%</td></tr>
@@ -936,7 +1006,7 @@ arduino-cli compile \
 <table class="tight">
 <thead><tr><th>步骤</th><th>操作</th><th>期望结果</th></tr></thead>
 <tbody>
-<tr><td>1</td><td>上电看首屏</td><td>中文横幅 + 指纹串 + <code>固件版本：v1.0</code></td></tr>
+<tr><td>1</td><td>上电看首屏</td><td>中文横幅 + 指纹串 + <code>固件版本：v1.1</code></td></tr>
 <tr><td>2</td><td><code>imu</code></td><td>型号/总线/WHO_AM_I/朝向正确，<code>状态：正常</code></td></tr>
 <tr><td>3</td><td><code>ca</code></td><td>六步中文提示，8 秒/步，末行 <code>校准完成！</code></td></tr>
 <tr><td>4</td><td><code>st</code> 倾斜机身</td><td>右侧压低 → <code>横滚</code> 为正（<b>朝向唯一判据</b>）</td></tr>
@@ -1060,7 +1130,7 @@ arduino-cli compile \
 <tr><td><b>R6</b></td><td><code>power.ino</code></td><td>电压引脚 GPIO 2，分压系数 2</td><td>🔧 硬件适配</td></tr>
 <tr><td><b>R7</b></td><td><code>imu.ino</code></td><td>自动识别 + 朝向分档 + <code>imuOK</code> 防护</td><td>🔴 崩溃修复</td></tr>
 <tr><td><b>R8</b></td><td><code>led.ino</code></td><td>三色灯 + 蜂鸣器非阻塞状态机</td><td>✨ 新增</td></tr>
-<tr><td><b>R9</b></td><td><code>i18n.h</code></td><td>157 条文案，默认中文，可切英文</td><td>✨ 新增</td></tr>
+<tr><td><b>R9</b></td><td><code>i18n.h</code></td><td>169 条文案，默认中文，可切英文</td><td>✨ 新增</td></tr>
 <tr><td><b>R10</b></td><td><code>parameters.ino</code></td><td>新增 8 个参数</td><td>✨ 新增</td></tr>
 <tr><td>—</td><td><code>flix.ino</code></td><td>开机指纹横幅；初始化灯音反馈</td><td>✨ 新增</td></tr>
 <tr><td>—</td><td><code>console.ino</code></td><td>中文 motd + 品牌横幅 + <code>ch</code> 命令</td><td>✨ 新增</td></tr>
@@ -1082,7 +1152,7 @@ arduino-cli compile \
   淘宝：https://shop35432590.taobao.com/
   <div style="margin-top:18px; font-size:12px; color:#94a3b8;">
     内核版权 (C) Oleg Kalachev · https://github.com/okalachev/flix<br>
-    本固件由耀坤智联二次开发（目录整理 / 中文界面 / 硬件适配）· 版本 v1.0
+    本固件由耀坤智联二次开发（目录整理 / 中文界面 / 硬件适配）· 版本 v1.1
   </div>
 </footer>
 

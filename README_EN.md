@@ -102,6 +102,10 @@ flix/                          # ← repo root: docs + forwarding Makefile
 │       ├── simulator.cpp      #     Simulator main program
 │       └── models/            #     Frame / scene models
 ├── Docs/                      # ★ Documentation
+│   ├── YaoKunS3_Adaptation_Notes_EN.md  # ★ Change list / root causes / verification
+│   ├── Flix_Technical_Manual_EN.html    # ★ Illustrated technical manual
+│   ├── Bench_Test_Checklist_EN.md       # ★ Bench test checklist (20 boxes, props off)
+│   ├── 台架实测清单_v1.1.md             #   same, Chinese
 │   ├── assembly.md            #   Assembly instructions
 │   ├── usage.md               #   Build, debug, fly
 │   ├── firmware.md            #   Firmware architecture (read this first)
@@ -134,7 +138,11 @@ flix/                          # ← repo root: docs + forwarding Makefile
 
 This branch runs Flix on the **YaoKun S3 quadcopter** and fixes the "aircraft does nothing after  
 switching to our custom ESP-NOW remote" problem. The full change list, root-cause analysis and  
-verification records are in [Docs/耀坤S3适配说明.md](Docs/耀坤S3适配说明.md) (Chinese).
+verification records are in [Docs/YaoKunS3_Adaptation_Notes_EN.md](Docs/YaoKunS3_Adaptation_Notes_EN.md)
+(illustrated version: [Docs/Flix_Technical_Manual_EN.html](Docs/Flix_Technical_Manual_EN.html);
+bench test checklist: [Docs/Bench_Test_Checklist_EN.md](Docs/Bench_Test_Checklist_EN.md);
+Chinese originals: [`耀坤S3适配说明.md`](Docs/耀坤S3适配说明.md) / [`flix技术说明书.html`](Docs/flix技术说明书.html) /
+[`台架实测清单_v1.1.md`](Docs/台架实测清单_v1.1.md)).
 
 ### Key changes
 
@@ -149,6 +157,7 @@ verification records are in [Docs/耀坤S3适配说明.md](Docs/耀坤S3适配�
 | **R8**  | RGB LED (GPIO 41/7/14) + buzzer (GPIO 39) status system                        | Status visible without a serial console. **Connectivity is judged from `controlTime`, not `mavlinkTime`** — the latter is refreshed by *any* MAVLink frame, so it would claim "connected" with no remote at all                                                                                                                                                                   |
 | **R9**  | **Fully Chinese UI** (`i18n.h`, 157 strings)                                   | Help menu, IMU calibration, init messages and errors are all Chinese                                                                                                                                                                                                                                                                                                              |
 | **R10** | New parameters `IMU_AUTO_DETECT` / `IMU_ROT_LOCK` / `LED_*` / `BUZ_*`          | Changing IMU or board no longer requires recompiling                                                                                                                                                                                                                                                                                                                              |
+| **R11** | **ESP-NOW + AP coexistence by default** (`wifi both`); AP-name suffix read from eFuse STA MAC | Upstream's three modes are mutually exclusive and the ESP-NOW branch never calls `udp.begin()`, so a ground station can join the AP and still get no MAVLink reply. Coexistence runs the remote and QGC at the same time; `wifi both` is also an explicit mode |
 
 ### Bilingual UI (Chinese default, English optional)
 
@@ -189,6 +198,43 @@ python Firmware/tools/pack_flix_release.py --version 1.0
 ```
 
 Output goes to `Firmware/release/`: `*_merged.bin` (flash at `0x0`) plus `*_指纹与烧录说明.md/.txt`.
+
+### Wireless modes: ESP-NOW + AP by default
+
+Out of the box the aircraft runs **ESP-NOW (remote) and Wi-Fi AP + UDP (ground station) at the same time** — no serial command required.
+
+| Command | AP | ESP-NOW RC | UDP GCS | Typical use |
+| --- | --- | --- | --- | --- |
+| `wifi both` (**default**) | ✅ | ✅ | ✅ 14550 | Normal flight: remote + QGC online together |
+| `wifi espnow` | ✅ (no UDP) | ✅ | ❌ | Isolate airtime interference, bisect the link |
+| `wifi ap` | ✅ | ❌ | ✅ 14550 | Tuning only |
+| `wifi sta` | ❌ (joins router) | ❌ | ✅ | Connect through a home router |
+| `wifi off` | ❌ | ❌ | ❌ | Radio off |
+
+> **Why it works**: ESP-NOW always runs on top of the Wi-Fi AP interface and shares the same radio. `WiFi.mode(WIFI_AP)` already brings the AP up — the only missing pieces were that UDP was never opened and telemetry always left via ESP-NOW.
+>
+> **Two constraints**: (1) the AP channel equals the ESP-NOW channel (default 1) — they share the radio, so a mismatch means silent link loss; (2) **never enable the virtual joystick in QGC** — `MANUAL_CONTROL` is not source-checked, so it fights the physical remote.
+>
+> **Upgrading from v1.0**: older boards still store `WIFI_MODE=3` (pure ESP-NOW) in NVS, which overrides the new compile-time default. This build migrates once on first boot and prints a notice; a later explicit `wifi espnow` is respected.
+
+### Aircraft hotspot: SSID and passphrase
+
+| Item | Rule |
+| --- | --- |
+| SSID prefix | **`YaoKun_`** (capital `Y` and `K`) |
+| SSID suffix | last two bytes of the chip's factory **STA MAC** — unique per board, nothing hard-coded |
+| Default passphrase | **`1-2-3-4-5-6-7-8`** — the hyphens are **separators only, do not type them**; the key is 8 characters, read digit by digit as 一、二、三、四、五、六、七、八 |
+| Real SSID | the boot log line **`当前热点名：YaoKun_xxxx`** is authoritative |
+
+> 🔑 **Passphrase, digit by digit** — type one character per column, 8 in total, no spaces or symbols added:
+>
+> | Position | 1st | 2nd | 3rd | 4th | 5th | 6th | 7th | 8th |
+> | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+> | Character | `1` | `2` | `3` | `4` | `5` | `6` | `7` | `8` |
+>
+> ⚠️ **Why the passphrase is always written with hyphens (`1-2-3-4-5-6-7-8`), and why you must not type them**: a contiguous 8-digit run gets silently rewritten both in transit and in rendered document/chat channels — we have hit this repeatedly on this project, and it once put a wrong passphrase into the v1.0 docs, which cost a full afternoon of "wrong password" debugging. The hyphenated form survives intact because no 8-digit run ever appears. The firmware builds the default from the ASCII table `{49,50,51,52,53,54,55,56,0}`; any NVS value that is too short, non-printable, or contains `<` `>` is rejected or sanitised at boot.
+>
+> 📌 The AP serves **MAVLink over UDP 14550 only** — there is **no web page**, so a browser pointed at `192.168.4.1` returning nothing is expected behaviour, not a fault.
 
 ### Four things to check for ESP-NOW
 

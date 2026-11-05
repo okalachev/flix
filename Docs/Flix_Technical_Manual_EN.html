@@ -1,0 +1,1152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YaoKun S3 Drone · Flix Organized Edition — Technical Manual</title>
+<style>
+  :root{
+    --brand:#c8102e; --brand-dark:#8f0c22; --ink:#0f172a; --ink2:#334155;
+    --ink3:#64748b; --line:#e2e8f0; --bg:#ffffff; --bg2:#f8fafc;
+    --code-bg:#0f172a;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--bg2); color:var(--ink);
+    font-family:"Segoe UI","Helvetica Neue",Arial,"Microsoft YaHei","PingFang SC","Source Han Sans SC",sans-serif;
+    font-size:15px; line-height:1.85; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1080px; margin:0 auto; padding:0 24px 80px; background:var(--bg);
+         box-shadow:0 0 40px rgba(15,23,42,.06);}
+
+  /* ── 封面 ── */
+  .cover{padding:64px 24px 48px; background:linear-gradient(135deg,#0f172a 0%,#1e293b 55%,#7f1d1d 130%);
+         color:#fff; margin:0 -24px 40px;}
+  .cover .badge{display:inline-block; background:rgba(255,255,255,.13); border:1px solid rgba(255,255,255,.25);
+         padding:4px 14px; border-radius:20px; font-size:12.5px; letter-spacing:.5px; margin-bottom:20px;}
+  .cover h1{margin:0 0 12px; font-size:40px; font-weight:800; letter-spacing:1px; line-height:1.3;}
+  .cover .sub{font-size:16.5px; color:#cbd5e1; margin-bottom:28px; font-weight:300;}
+  .cover .facts{display:flex; flex-wrap:wrap; gap:10px 30px; font-size:13.5px; color:#e2e8f0;
+         border-top:1px solid rgba(255,255,255,.16); padding-top:20px;}
+  .cover .facts b{color:#fff; font-weight:600;}
+
+  /* ── 目录 ── */
+  .toc{background:var(--bg2); border:1px solid var(--line); border-radius:12px;
+       padding:26px 30px; margin-bottom:48px;}
+  .toc h2{margin:0 0 16px; font-size:17px; color:var(--brand); border:0; padding:0;}
+  .toc ol{columns:2; column-gap:40px; margin:0; padding-left:22px; font-size:14px;}
+  .toc li{margin:5px 0; break-inside:avoid;}
+  .toc a{color:var(--ink2); text-decoration:none;}
+  .toc a:hover{color:var(--brand);}
+  .toc .d{font-size:12px; color:var(--ink3); margin-left:6px;}
+
+  /* ── 标题 ── */
+  h2{font-size:25px; font-weight:700; color:var(--brand); margin:56px 0 20px;
+     padding-bottom:12px; border-bottom:3px solid var(--brand); letter-spacing:.5px;}
+  h3{font-size:19px; font-weight:700; color:var(--ink); margin:36px 0 14px;
+     padding-left:13px; border-left:5px solid var(--brand);}
+  h4{font-size:16px; font-weight:700; color:var(--ink2); margin:24px 0 10px;}
+  p{margin:12px 0;}
+
+  /* ── 元素 ── */
+  code{background:#f1f5f9; color:#b91c1c; padding:2px 7px; border-radius:4px;
+       font-family:"Cascadia Mono","Consolas","Courier New",monospace; font-size:13.5px;}
+  pre{background:var(--code-bg); color:#e2e8f0; padding:18px 22px; border-radius:10px;
+      overflow-x:auto; font-size:13.5px; line-height:1.75;
+      font-family:"Cascadia Mono","Consolas","Courier New",monospace;}
+  pre code{background:none; color:inherit; padding:0; font-size:13.5px;}
+  .note{background:#eff6ff; border-left:5px solid #2563eb; padding:14px 20px; border-radius:0 8px 8px 0; margin:18px 0;}
+  .warn{background:#fff7ed; border-left:5px solid #ea580c; padding:14px 20px; border-radius:0 8px 8px 0; margin:18px 0;}
+  .danger{background:#fef2f2; border-left:5px solid var(--brand); padding:14px 20px; border-radius:0 8px 8px 0; margin:18px 0;}
+  .ok{background:#f0fdf4; border-left:5px solid #16a34a; padding:14px 20px; border-radius:0 8px 8px 0; margin:18px 0;}
+
+  table{width:100%; border-collapse:collapse; margin:18px 0; font-size:14px;}
+  th{background:#f1f5f9; color:var(--ink); font-weight:700; padding:11px 12px;
+     border:1px solid var(--line); text-align:left;}
+  td{padding:10px 12px; border:1px solid var(--line); vertical-align:top;}
+  tbody tr:nth-child(even){background:#fcfdfe;}
+  table.tight td, table.tight th{padding:7px 10px; font-size:13.5px;}
+
+  ul,ol{padding-left:26px;} li{margin:6px 0;}
+
+  .grid2{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:20px 0;}
+  .card{background:var(--bg2); border:1px solid var(--line); border-radius:10px; padding:18px 22px;}
+  .card h5{margin:0 0 8px; font-size:14.5px; color:var(--brand); font-weight:700;}
+  .card p{margin:0; font-size:13.5px; color:var(--ink2); line-height:1.7;}
+
+  .step{display:flex; gap:16px; margin:14px 0; align-items:flex-start;}
+  .step .no{flex:0 0 34px; height:34px; border-radius:50%; background:var(--brand); color:#fff;
+       display:flex; align-items:center; justify-content:center; font-weight:700; font-size:15px;}
+  .step .tx{flex:1;}
+  .step .tx b{display:block; margin-bottom:2px; color:var(--ink);}
+  .step .tx span{font-size:13.5px; color:var(--ink3);}
+
+  /* 流程图（纯 CSS，无外部图片依赖） */
+  .flow{display:flex; flex-direction:column; gap:0; margin:24px 0;}
+  .fnode{background:#fff; border:2px solid var(--line); border-radius:10px; padding:14px 18px;
+         display:flex; align-items:center; gap:14px;}
+  .fnode .tag{flex:0 0 auto; background:var(--brand); color:#fff; font-size:12px; font-weight:700;
+         padding:3px 10px; border-radius:12px;}
+  .fnode .ttl{font-weight:700; font-size:14.5px;}
+  .fnode .desc{font-size:13px; color:var(--ink3); margin-left:auto; text-align:right; max-width:52%;}
+  .farrow{height:22px; display:flex; justify-content:center; align-items:center; color:var(--ink3); font-size:16px;}
+  .fnode.hl{border-color:var(--brand); background:#fef2f2;}
+
+  footer{margin-top:70px; padding-top:26px; border-top:2px solid var(--line);
+         text-align:center; color:var(--ink3); font-size:13px; line-height:2;}
+
+  @media print{
+    body{background:#fff;} .wrap{box-shadow:none; max-width:100%; padding:0;}
+    .toc{page-break-after:always;}
+    h2{page-break-after:avoid;} h3{page-break-after:avoid;}
+    table,pre,.fnode{page-break-inside:avoid;}
+    .cover{-webkit-print-color-adjust:exact; print-color-adjust:exact;}
+    *{-webkit-print-color-adjust:exact; print-color-adjust:exact;}
+  }
+  @media (max-width:760px){
+    .grid2{grid-template-columns:1fr;} .toc ol{columns:1;}
+    .cover h1{font-size:28px;}
+    .fnode{flex-wrap:wrap;} .fnode .desc{max-width:100%; text-align:left; margin-left:0;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="cover">
+  <span class="badge">Open-source flight controller Flix · YaoKun S3 hardware adaptation, v1.1</span>
+  <h1>YaoKun S3 Drone · Flix Organized Edition</h1>
+  <div class="sub">A teaching-grade flight controller kernel in under 2000 lines　·　native ESP-NOW receive rework　·　fully Chinese console</div>
+  <div class="facts">
+    <span>MCU　<b>ESP32-S3</b> (8 MB flash)</span>
+    <span>Kernel　<b>Flix</b> ((C) Oleg Kalachev)</span>
+    <span>Links　<b>ESP-NOW / MAVLink v2 / UDP</b></span>
+    <span>Control　<b>cascaded PID @ 500 Hz</b></span>
+    <span>UI　<b>Chinese</b> by default (English build available)</span>
+    <span>Repo　<b>github.com/YaoKunS/flix</b></span>
+  </div>
+  <div class="langsw" style="margin-top:22px; font-size:13.5px;">
+    🌐 <a href="flix技术说明书.html" style="color:#fca5a5;">中文版</a> &nbsp;·&nbsp;
+    <span style="color:#94a3b8;">English (this page)</span>
+  </div>
+</div>
+
+<div class="toc">
+  <h2>Contents</h2>
+  <ol>
+    <li><a href="#s1">What this project is</a><span class="d">What it is, and how it relates to upstream</span></li>
+    <li><a href="#s2">Hardware</a><span class="d">Pinout and peripherals</span></li>
+    <li><a href="#s3">Software architecture</a><span class="d">File responsibilities and the main loop</span></li>
+    <li><a href="#s4">ESP-NOW receive rework</a><span class="d">The core change, with root-cause analysis</span></li>
+    <li><a href="#s5">Time base fix</a><span class="d">The 71.6-minute wraparound mystery</span></li>
+    <li><a href="#s6">IMU auto-detection</a><span class="d">Two chips, two orientation brackets</span></li>
+    <li><a href="#s7">Control loops</a><span class="d">Three cascaded loops and the mixer</span></li>
+    <li><a href="#s8">Safety mechanisms</a><span class="d">Six gates and the link-loss failsafe</span></li>
+    <li><a href="#s9">LEDs and buzzer</a><span class="d">RGB signalling, non-blocking beeps</span></li>
+    <li><a href="#s10">The i18n system</a><span class="d">How i18n.h is designed</span></li>
+    <li><a href="#s11">Console commands</a><span class="d">All 26 commands explained</span></li>
+    <li><a href="#s12">Building and flashing</a><span class="d">FQBN, single-file image, segmented writes</span></li>
+    <li><a href="#s13">Three-level verification</a><span class="d">Static / bench / tethered</span></li>
+    <li><a href="#s14">Troubleshooting</a><span class="d">Work backwards from the symptom</span></li>
+    <li><a href="#s15">Flight envelope</a><span class="d">What it can and cannot do</span></li>
+    <li><a href="#s16">Differences from upstream</a><span class="d">R1~R12 change summary</span></li>
+  </ol>
+</div>
+
+<!-- ============ 1 ============ -->
+<h2 id="s1">1. What this project is</h2>
+
+<p>Flix is an open-source quadcopter flight controller firmware <strong>designed for teaching and research</strong>, written entirely in Arduino C/C++ and <strong>under 2000 lines</strong>. No RTOS, no closed-source libraries, no black boxes — sensor drivers, attitude estimation, PID control, motor mixing and MAVLink communication are all laid out in the source.</p>
+
+<p>This project is the <strong>YaoKun S3 hardware adaptation</strong> of Flix: it runs upstream firmware on YaoKun's own quad frame, and it solves the key problem of "the aircraft does nothing after switching to our own ESP-NOW remote".</p>
+
+<div class="grid2">
+  <div class="card">
+    <h5>Upstream structure preserved</h5>
+    <p>File layout, main-loop order, PID structure and the MAVLink implementation are all inherited. What changed is hardware parameters, the receive path and the UI language — not a rewritten kernel.</p>
+  </div>
+  <div class="card">
+    <h5>About the branches</h5>
+    <p><code>master</code> is byte-identical to upstream and can be fast-forwarded at any time. <code>yaokun-organized</code> is the branch that carries the adaptation.</p>
+  </div>
+</div>
+
+<div class="note">
+<b>GPL obligations:</b> flix upstream <strong>ships no separate LICENSE file</strong>; copyright remains with the original author Oleg Kalachev. This repository keeps that attribution and repository URL, with the YaoKun information appended after it. <strong>Do not declare any other licence.</strong>
+</div>
+
+<!-- ============ 2 ============ -->
+<h2 id="s2">2. Hardware</h2>
+
+<h3>2.1 Pin assignment (measured on the YaoKun S3)</h3>
+
+<table>
+<thead><tr><th>Function</th><th>GPIO</th><th>Notes</th></tr></thead>
+<tbody>
+<tr><td>Motor FL (front left)</td><td>16</td><td rowspan="4">Four brushed motors, PWM at 20 kHz (above the audible range, so the motors do not scream)</td></tr>
+<tr><td>Motor FR (front right)</td><td>6</td></tr>
+<tr><td>Motor RL (rear left)</td><td>15</td></tr>
+<tr><td>Motor RR (rear right)</td><td>5</td></tr>
+<tr><td>IMU SPI SCK / MISO / MOSI / CS</td><td>38 / 21 / 18 / 17</td><td>MPU-6500; the chip select is auto-probed (actual wiring may be 42 or 17)</td></tr>
+<tr><td>IMU I2C SDA / SCL</td><td>9 / 8</td><td>MPU6050 module (8-pin socket)</td></tr>
+<tr><td>Voltage sense</td><td>2</td><td>ADC2_CH1, divider ratio 1:2</td></tr>
+<tr><td>SBUS input</td><td>1</td><td>Disabled by default (ESP-NOW is used); change <code>RC_RX_PIN</code> only if you wire an SBUS receiver</td></tr>
+<tr><td>Red / green / blue LED</td><td>41 / 7 / 14</td><td>low battery and link loss / connected and armed / initialising</td></tr>
+<tr><td>Buzzer</td><td>39</td><td>Active buzzer, high-level trigger (driven through an S8050)</td></tr>
+</tbody>
+</table>
+
+<h3>2.2 Two IMU configurations</h3>
+
+<table class="tight">
+<thead><tr><th>Aircraft</th><th>IMU</th><th>Bus</th><th>WHO_AM_I</th><th>Orientation (about Z)</th></tr></thead>
+<tbody>
+<tr><td>#1</td><td>Domestic MPU6050</td><td>I2C</td><td>0x70</td><td><b>+π/2</b></td></tr>
+<tr><td>#2</td><td>MPU-6500</td><td>SPI</td><td>0x70</td><td><b>−π/2</b></td></tr>
+</tbody>
+</table>
+
+<div class="warn">
+<b>The only orientation criterion:</b> <strong>press the right side of the airframe down</strong>; the <code>横滚</code> (roll) value printed by <code>st</code> must be <strong>positive</strong>. Do not judge from raw accelerometer values in <code>imu</code> — they still carry mounting error and will mislead you.
+</div>
+
+<!-- ============ 3 ============ -->
+<h2 id="s3">3. Software architecture</h2>
+
+<h3>3.1 File responsibilities</h3>
+
+<table class="tight">
+<thead><tr><th>File</th><th>Responsibility</th><th>YaoKun change</th></tr></thead>
+<tbody>
+<tr><td><code>flix.ino</code></td><td>Main entry: setup / loop</td><td>Fingerprint banner, LED/buzzer init feedback</td></tr>
+<tr><td><code>config.h</code></td><td>Board type and compile-time constants</td><td>YaoKun S3 board type</td></tr>
+<tr><td><code>i18n.h</code></td><td><b>Single source of UI strings</b> (169 entries, Chinese + English)</td><td>★ new</td></tr>
+<tr><td><code>imu.ino</code></td><td>IMU driver, detection, calibration</td><td>auto-detect + per-bus orientation + null guard</td></tr>
+<tr><td><code>estimate.ino</code></td><td>Attitude estimation (complementary filter)</td><td>—</td></tr>
+<tr><td><code>control.ino</code></td><td>Three cascaded loops + mixer</td><td>—</td></tr>
+<tr><td><code>motors.ino</code></td><td>Motor PWM output</td><td>pins + 20 kHz</td></tr>
+<tr><td><code>rc.ino</code></td><td>SBUS RC input</td><td>disabled by default</td></tr>
+<tr><td><code>wifi.ino</code></td><td>Wi-Fi / UDP / ESP-NOW</td><td>★ native receive callback</td></tr>
+<tr><td><code>mavlink.ino</code></td><td>MAVLink v2 send/receive</td><td>unconditional ACK</td></tr>
+<tr><td><code>console.ino</code></td><td>Command-line console</td><td>Chinese + the <code>ch</code> command</td></tr>
+<tr><td><code>led.ino</code></td><td>LED and buzzer signalling</td><td>★ new</td></tr>
+<tr><td><code>power.ino</code></td><td>Voltage measurement</td><td>GPIO2 + divider 2</td></tr>
+<tr><td><code>safety.ino</code></td><td>Link-loss failsafe</td><td>—</td></tr>
+<tr><td><code>time.ino</code></td><td>Time base</td><td>★ 64-bit accumulator</td></tr>
+<tr><td><code>parameters.ino</code></td><td>Parameter table and NVS persistence</td><td>8 new parameters</td></tr>
+<tr><td><code>log.ino</code></td><td>Log buffer and CSV dump</td><td>—</td></tr>
+</tbody>
+</table>
+
+<h3>3.2 Main loop order (do not reshuffle)</h3>
+
+<div class="flow">
+  <div class="fnode hl"><span class="tag">1</span><span class="ttl">readIMU()</span><span class="desc">Must be first: every control decision uses this frame's data</span></div>
+  <div class="farrow">↓</div>
+  <div class="fnode hl"><span class="tag">2</span><span class="ttl">step()</span><span class="desc">Updates time and dt; keep it next to the IMU read so dt matches data freshness</span></div>
+  <div class="farrow">↓</div>
+  <div class="fnode"><span class="tag">3</span><span class="ttl">readRC()</span><span class="desc">SBUS input (ESP-NOW input arrives via processMavlink)</span></div>
+  <div class="farrow">↓</div>
+  <div class="fnode"><span class="tag">4</span><span class="ttl">estimate()</span><span class="desc">Attitude estimation (gyro/acc + dt)</span></div>
+  <div class="farrow">↓</div>
+  <div class="fnode"><span class="tag">5</span><span class="ttl">control()</span><span class="desc">Three loops + failsafe</span></div>
+  <div class="farrow">↓</div>
+  <div class="fnode hl"><span class="tag">6</span><span class="ttl">sendMotors()</span><span class="desc">Output PWM as early as possible to cut control latency</span></div>
+  <div class="farrow">↓</div>
+  <div class="fnode"><span class="tag">7</span><span class="ttl">handleConsole() / processMavlink()</span><span class="desc">Comms go after control: no workload may delay motor output</span></div>
+  <div class="farrow">↓</div>
+  <div class="fnode"><span class="tag">8</span><span class="ttl">readVoltage / logData / syncParameters</span><span class="desc">Low-rate housekeeping</span></div>
+  <div class="farrow">↓</div>
+  <div class="fnode"><span class="tag">9</span><span class="ttl">updateLED()</span><span class="desc">Non-blocking state machine; last so it cannot disturb timing</span></div>
+</div>
+
+<div class="danger">
+<b>Never move communication ahead of <code>sendMotors()</code>.</b> Wi-Fi / ESP-NOW transfers occasionally take a few milliseconds; if that happens before the motor output, the PWM jitters and the PID shows high-frequency wobble or even oscillation. This order is inherited from upstream and it exists for a reason.
+</div>
+
+<!-- ============ 4 ============ -->
+<h2 id="s4">4. ESP-NOW receive rework (the core change)</h2>
+
+<h3>4.1 Symptom</h3>
+
+<p>After flashing upstream 2026-09 onto the aircraft, the YaoKun ESP-NOW remote <strong>did nothing, however it was connected</strong>:</p>
+<ul>
+  <li>the remote's UI showed <strong>connected</strong></li>
+  <li>the aircraft's console showed <strong>no error at all</strong></li>
+  <li>sticks pushed to the stops, the aircraft did not move</li>
+  <li>while the 2026-08 build worked perfectly</li>
+</ul>
+
+<h3>4.2 Root cause (confirmed in the library source)</h3>
+
+<p>Upstream receives with:</p>
+<pre><code>int len = espnow.read(buf, size);</code></pre>
+
+<p><code>ESPNOWSerial</code> is a <strong>session-based</strong> wrapper: it maintains a peer table internally and <strong>only hands up data from registered peers</strong>. The only way to register a peer is to receive a 4-byte <strong>discovery packet</strong> containing <code>"flix"</code> (which fires <code>onNewPeer</code>).</p>
+
+<p>And upstream only sends discovery packets here:</p>
+
+<pre><code>// wifi.ino (upstream)
+static Rate discovery(1);
+if (discovery &amp;&amp; espnow.isEncrypted()) {   // ← the gate
+    espnowBroadcast.write((const uint8_t *)"flix", 4);
+}</code></pre>
+
+<p><strong>Without encryption, no discovery packet is broadcast at all.</strong> The YaoKun remote does not encrypt → the aircraft never advertises itself → the remote never learns the aircraft exists → no session → the aircraft's <code>espnow.read()</code> always returns 0 → <strong>not one byte of stick data arrives</strong>.</p>
+
+<div class="note">
+<b>Why does the remote say "connected" while nothing works?</b><br>
+The remote's criterion is <strong>having received any ESP-NOW frame from the aircraft</strong> (the telemetry broadcast), not "a bidirectional session exists". The two status displays therefore never agree — which is exactly what makes this bug so hard to find.
+</div>
+
+<h3>4.3 The fix</h3>
+
+<div class="step"><div class="no">1</div><div class="tx"><b>Register a native receive callback</b><span>Bypass the session machinery and take every raw byte.</span></div></div>
+<pre><code>static QueueHandle_t recvQueue = nullptr;
+
+static void IRAM_ATTR onReceive(const esp_now_recv_info_t *info,
+                                const uint8_t *data, int len) {
+    if (!espnowRecvInitialized) return;
+    for (int i = 0; i &lt; len; i++) {
+        if (xQueueSendFromISR(recvQueue, &amp;data[i], NULL) != pdTRUE) {
+            lostPackets++;   // queue full: drop the byte and count it, never block the ISR
+        }
+    }
+}</code></pre>
+
+<div class="step"><div class="no">2</div><div class="tx"><b>Read the receive path from the queue</b><span>In ESP-NOW mode the queue is tried first; an empty queue returns 0.</span></div></div>
+<pre><code>int receiveWiFi(uint8_t *buf, int len) {
+    if (wifiMode == W_ESPNOW || wifiMode == W_BOTH) {
+        if (!espnowRecvInitialized || recvQueue == NULL) return 0;
+        int i = 0;
+        for (; i &lt; len; i++)
+            if (xQueueReceive(recvQueue, &amp;buf[i], 0) != pdTRUE) break;
+        if (i &gt; 0 || !udpStarted) return i;   // UDP only once the queue is drained
+    }
+    ...
+}</code></pre>
+
+<div class="step"><div class="no">3</div><div class="tx"><b>Broadcast discovery unconditionally</b><span>The <code>isEncrypted()</code> gate is gone, so standard flix agents can discover this aircraft too.</span></div></div>
+
+<h3>4.4 Three details you must not get wrong</h3>
+
+<table>
+<thead><tr><th>Detail</th><th>Why</th></tr></thead>
+<tbody>
+<tr><td><b>Never call <code>esp_now_init()</code> again</b></td><td><code>ESPNOWSerial</code> has already initialised it. A second call returns <code>ESP_ERR_ESPNOW_INTERNAL</code> and wipes every existing peer — killing the transmit path too. Only call <code>esp_now_register_recv_cb()</code>.</td></tr>
+<tr><td><b>Queue elements are 1 byte, not whole frames</b></td><td>The MAVLink parser is <strong>streaming</strong> (<code>mavlink_parse_char</code> is fed byte by byte). Storing bytes decouples "network reception" from "protocol parsing", so a partially received frame is never lost.</td></tr>
+<tr><td><b>When the queue is full you must drop, not wait</b></td><td>The callback runs in the Wi-Fi task context. Blocking here stalls the whole Wi-Fi task → the aircraft stutters. Dropping the oldest bytes is the right trade.</td></tr>
+</tbody>
+</table>
+
+<h3>4.5 Channel: the easiest link to forget</h3>
+
+<p>ESP-NOW requires both ends on the <strong>same channel</strong>. On different channels the physical layer simply never meets: the symptom is "connected but dead", with no log output at all.</p>
+
+<p><strong>The YaoKun organized edition defaults to <code>espnowChannel = 1</code></strong>, not 6. That came out of a bench-test correction:</p>
+
+<div class="warn">
+<b>⚠️ Bench test 2026-10-18: channel 6 → 1</b><br>
+The default was originally set to 6 after finding <code>esp_wifi_set_channel(6)</code> in the <strong>English</strong> remote firmware, but the <strong>Chinese remote actually in use, <code>ESP32-DJI-Dev-Yaokun20260815</code>, never calls <code>esp_wifi_set_channel</code></strong> and stays on the Wi-Fi default channel <strong>1</strong>. The aircraft listened on 6 while the remote transmitted on 1 — a complete physical-layer mismatch.<br><br>
+<b>What makes this failure so deceptive:</b> the remote's peer-discovery page <strong>still lists the aircraft</strong> (scanning crosses channels) and shows "connected" once selected, yet the aircraft's <code>rxPackets</code> stays at 0. <strong>"Can see" ≠ "can talk".</strong>
+</div>
+
+<pre><code>ch          → 信道：1
+ch 6        → ESP-NOW 信道已设为 6（遥控器必须一致）
+ch 11       → ESP-NOW 信道已设为 11（遥控器必须一致）
+              以上重启后生效     (takes effect after reboot)</code></pre>
+
+<h3>4.6 ESP-NOW peer registration: the second trap</h3>
+
+<p>The ESP-NOW receive callback <strong>only fires for MACs registered in the peer table</strong>; packets from unregistered devices are dropped in the driver and never reach the callback at all.</p>
+
+<table>
+<thead><tr><th>How the remote transmits</th><th>Does the aircraft need a pre-registered peer?</th></tr></thead>
+<tbody>
+<tr><td><b>Broadcast</b> (<code>FF:FF:FF:FF:FF:FF</code>)</td><td>❌ no</td></tr>
+<tr><td><b>Unicast</b> (specific target MAC)</td><td>✅ <b>required</b>, otherwise everything is dropped</td></tr>
+</tbody>
+</table>
+
+<div class="warn">
+<b>⚠️ Bench test 2026-10-18: the Chinese remote unicasts after <code>connect(mac)</code></b><br>
+The August remote broadcast, so the aircraft never needed to register a peer; with the Chinese remote the link became one-way and <code>rxPackets</code> stayed at 0.<br><br>
+<b>Fix (in <code>wifi.ino</code>):</b><br>
+① <strong>pre-register the broadcast address</strong> as a peer during init;<br>
+② record the source MAC in the <code>onReceive</code> callback and set a <code>peerLearnPending</code> flag;<br>
+③ actually call <code>esp_now_add_peer()</code> from <code>learnPeerIfNeeded()</code> in the main loop.<br><br>
+<b>🔴 Why not call add_peer directly in the callback:</b> <code>esp_now_add_peer()</code> takes the Wi-Fi lock, and the callback already runs in the Wi-Fi task context — calling it there <strong>self-deadlocks</strong> and freezes the aircraft.
+</div>
+
+<h3>4.7 Remote side: the enabled switch (third trap)</h3>
+
+<div class="warn">
+<b>⚠️ The Chinese remote defaults to <code>enabled = false</code></b><br>
+While disabled the remote <strong>still sends</strong> <code>MANUAL_CONTROL</code>, but all four axes sit at centre (≈0.01). The symptom is: "packets arrive, frames parse, msgid=69, sysid=127, yet <code>rc</code> never moves".<br><br>
+<b>To enable it: press the remote's "left button" (secondary button)</b> (in code, <code>onSecondaryButtonClick</code> → <code>enabled(!enabled)</code>). <strong>There is no such switch in the UI; it is a physical button only.</strong><br><br>
+<b>⚠️ After every aircraft reboot you must repeat: peer discovery → select the aircraft → press the left button to enable.</b>
+</div>
+
+<h3>4.8 How to confirm the fix</h3>
+
+<p>Read these numbers from the <code>wifi</code> command, in this order:</p>
+
+<table>
+<thead><tr><th>Observation</th><th>Conclusion</th></tr></thead>
+<tbody>
+<tr><td><code>接收包数</code> (packets) = 0</td><td>physical layer down → check the <b>channel</b> (§4.5)</td></tr>
+<tr><td>packets rise but <code>已解析 MAVLink 帧数</code> (frames) = 0</td><td>protocol mismatch → check baud rate / frame header / MAVLink v2</td></tr>
+<tr><td>frames rise but <code>最近一帧消息 ID</code> ≠ 69</td><td>the remote is sending something else, not <code>MANUAL_CONTROL</code></td></tr>
+<tr><td>msgid = 69 but all four <code>rc</code> axes sit at 0.01</td><td><b>remote not enabled</b> → press the left button (§4.7)</td></tr>
+<tr><td>everything above and the axes follow the sticks</td><td>✅ the link is healthy</td></tr>
+</tbody>
+</table>
+
+<p>Measured while passing: <b>21782 packets / 21782 frames (100 % parsed)</b>, msgid=69, sysid=127, throttle range <b>−0.603 ~ +1.000</b> (centre +0.010, confirming the full ±1000 range).</p>
+
+<h3 id="s4-9">4.9 Hotspot naming rule (<code>YaoKun_</code> prefix)</h3>
+
+<p>The YaoKun edition unifies the aircraft hotspot name behind a brand prefix, and hooks the generation logic into <strong>both the AP mode and ESP-NOW mode</strong> paths.</p>
+
+<table>
+<thead><tr><th>Item</th><th>Rule</th></tr></thead>
+<tbody>
+<tr><td>Prefix</td><td><b><code>YaoKun_</code></b> (note the capital <code>Y</code> and <code>K</code>)</td></tr>
+<tr><td>Suffix</td><td>the last two bytes of the chip's <b>eFuse factory STA MAC</b> (4 uppercase hex digits, different per board; this rule starts with v1.1 — the old AP-MAC behaviour is obsolete)</td></tr>
+<tr><td>Default passphrase</td><td><b><code>1-2-3-4-5-6-7-8</code></b><br>the hyphens are separators and <b>are not typed</b>; the real passphrase is 8 characters, i.e. eight digits, position <i>n</i> holds digit <i>n</i><br><span style="color:#b45309">All documentation writes only this <b>hyphenated</b> form — contiguous digit runs get rewritten by some transfer/render paths (hit repeatedly on this project; it is how the v1.0 docs published a wrong passphrase). The source builds it from the ASCII byte table <code>{49,50,51,52,53,54,55,56,0}</code></span></td></tr>
+<tr><td>Actual value</td><td>the boot log line <code>当前热点名：YaoKun_xxxx</code> — <b>that line is authoritative</b></td></tr>
+<tr><td>Custom name</td><td><code>ap &lt;ssid&gt; &lt;passphrase&gt;</code> + <code>reboot</code>; once a custom value is stored in NVS the prefix is no longer auto-generated</td></tr>
+</tbody>
+</table>
+
+<div class="note">
+<b>Factory passphrase, digit by digit (type it key by key; readable in any language)</b>
+<table style="margin-top:8px">
+<thead><tr><th>Position</th><th>1st</th><th>2nd</th><th>3rd</th><th>4th</th><th>5th</th><th>6th</th><th>7th</th><th>8th</th></tr></thead>
+<tbody><tr><td>Character</td><td><code>1</code></td><td><code>2</code></td><td><code>3</code></td><td><code>4</code></td><td><code>5</code></td><td><code>6</code></td><td><code>7</code></td><td><code>8</code></td></tr></tbody>
+</table>
+Enter 8 characters with no spaces or symbols in between. The full string is deliberately never printed here: contiguous digit runs get rewritten as they pass through rendering paths. That is not fussiness, it is a bug we already paid for.
+</div>
+
+<div class="note">
+<b>Why the ESP-NOW path had to change too</b><br>
+ESP-NOW can only run on an AP/STA Wi-Fi interface, so <code>WiFi.mode(WIFI_AP)</code> is required in <code>wifiMode == W_ESPNOW</code> as well. But as soon as the core switches to AP mode it <b>spins up a default hotspot</b> with SSID <code>ESP_</code> plus the last three MAC bytes and no passphrase. The old build only overrode the <code>W_AP</code> branch, so "in ESP-NOW mode the aircraft still broadcasts a hotspot, but it is called <code>ESP_xxxxxx</code>" — impossible to identify in the field, and passers-by could join it.<br>
+Fix: call <code>WiFi.softAP(apSsid, apPass)</code> on both paths. The order matters — <code>softAP()</code> must come <b>after</b> <code>mode(WIFI_AP)</code>, otherwise the mode switch resets it.
+</div>
+
+<div class="note">
+<b>✅ The suffix equals the last two bytes of the MAC printed by <code>wifi</code> (corrected in v1.1)</b><br>
+Aircraft #1: <code>本机 MAC：80:65:99:DF:F2:24</code> → hotspot <b><code>YaoKun_F224</code></b>; aircraft #2 → <code>YaoKun_DE38</code>.<br>
+The old build used <code>WiFi.macAddress()</code>, which in AP / ESP-NOW context returns the <b>AP interface MAC</b> (last two bytes <code>62:02</code> → hotspot name <code>YaoKun_6202</code>), which did not match the <code>wifi</code> output.<br>
+It now uses <code>esp_read_mac(ESP_MAC_WIFI_STA)</code> to read the chip's eFuse directly, which returns the same factory value in every mode. <b>There is no hard-coded suffix in the code</b>, so each board differs automatically.
+</div>
+
+<div class="note">
+<b>⚠️ NVS may hold a placeholder hotspot name (found in testing)</b><br>
+Aircraft #1 had the literal <code>&lt;ssid&gt;</code> stored in <code>WIFI_AP_SSID</code> (someone once typed the documentation placeholder into <code>ap &lt;ssid&gt; &lt;passphrase&gt;</code>), so auto-naming was skipped and the hotspot really was called <code>&lt;ssid&gt;</code>.<br>
+v1.1 adds validation: empty name / contains <code>&lt;</code> <code>&gt;</code> / longer than 32 characters → treated as dirty, removed from NVS and auto-naming restored to <code>YaoKun_xxxx</code>.
+</div>
+
+<div class="note">
+<b>Why the suffix is the MAC rather than "aircraft 1 / aircraft 2"</b><br>
+Numbering would require flashing a different firmware per aircraft, which directly contradicts "one firmware for every board". The MAC is unique at manufacture, so every board differs automatically. A fixed name (the old <code>Yaokun_Drone</code>) is equally bad the other way round — two aircraft powered at once <b>collide on the same SSID</b>; the phone sees only one, connects to whichever it likes, and in a small field you cannot tell which is which.
+</div>
+
+<!-- ============ 4.10 ============ -->
+<h3 id="s4-10">4.10 AP and ESP-NOW coexistence (the v1.1 default)</h3>
+
+<p>The target user is a newcomer following the docs: assemble it and you should get "the remote flies it and the phone shows telemetry", without running a console command first.
+From v1.1 the factory default is <code>WIFI_MODE=4</code> (<code>W_BOTH</code>), with both links active at once.</p>
+
+<p><b>Why coexistence was impossible before</b>: the physical layer already coexisted — ESP-NOW must run on an AP/STA interface, so the moment <code>WiFi.mode(WIFI_AP)</code> is called the hotspot is broadcasting. What actually blocked the ground station was two pieces of software:</p>
+<ul>
+  <li><code>udp.begin()</code> was only called in the <code>W_AP</code> / <code>W_STA</code> branches → in ESP-NOW mode nothing was listening on UDP, so a ground station that joined the hotspot got no reply at all;</li>
+  <li><code>sendWiFi()</code> did <code>if (espnow) { …; return; }</code> → telemetry only ever left over ESP-NOW.</li>
+</ul>
+
+<p><b>The change</b>: a new <code>udpStarted</code> flag (set only by <code>setupWiFi()</code>), and the TX/RX paths use it to decide "can we use UDP" instead of testing the mode enum everywhere. Three key points:</p>
+<ul>
+  <li><b>Set the channel exactly once</b>: <code>WiFi.softAP(ssid, pass, espnowChannel)</code>, instead of "softAP then setChannel" — a second channel switch kicks already-connected clients, and the remote may drop packets during the switch. AP and ESP-NOW share one radio, so <b>a channel mismatch means immediate physical-layer loss with no error message</b>.</li>
+  <li><b>TX: ESP-NOW first, UDP only when someone is connected</b>: <code>if (!udpStarted || WiFi.softAPgetStationNum() == 0) return;</code> — with no client attached, all airtime goes to the remote.</li>
+  <li><b>RX: only read UDP once the queue is empty</b>: the two byte streams <b>never share a buffer</b>. The MAVLink parser is streaming, and interleaving two streams makes it resync constantly — losing frames at best, decoding a wrong payload length at worst.</li>
+</ul>
+
+<div class="note">
+<b>🔴 The biggest trap when upgrading: NVS overrides the compiled default</b><br>
+<code>WIFI_MODE</code> is a persisted parameter, and <code>setupParameters()</code> overwrites the default with the NVS value. Old boards store <code>3</code> (ESP-NOW only), so <b>changing only the default changes nothing</b>.
+Hence the one-shot migration <code>migrateWifiModeToCoexist()</code>: an NVS marker <code>COEX_VER</code> upgrades 3 to 4 on first boot; a later explicit <code>wifi espnow</code> is not switched back.
+Out-of-range values are rescued to <code>W_BOTH</code> as well — an illegal value makes <code>setupWiFi()</code> match no branch, which shows up as "no hotspot after boot and the remote dead too".
+</div>
+
+<table>
+<tr><th>Command</th><th>Hotspot</th><th>ESP-NOW remote</th><th>UDP ground station</th><th>Use</th></tr>
+<tr><td><code>wifi both</code> (default)</td><td>✅</td><td>✅</td><td>✅ 14550</td><td>Normal flying: remote and QGC online together</td></tr>
+<tr><td><code>wifi espnow</code></td><td>✅ (no UDP)</td><td>✅</td><td>❌</td><td>Bisecting airtime interference</td></tr>
+<tr><td><code>wifi ap</code></td><td>✅</td><td>❌</td><td>✅ 14550</td><td>Parameter tuning only</td></tr>
+<tr><td><code>wifi sta</code></td><td>❌</td><td>❌</td><td>✅</td><td>Join a home router</td></tr>
+<tr><td><code>wifi off</code></td><td>❌</td><td>❌</td><td>❌</td><td>Radio off</td></tr>
+</table>
+
+<div class="note">
+<b>⚠️ Do not enable QGC's virtual joystick</b><br>
+<code>handleMavlink()</code> does not validate the source of <code>MANUAL_CONTROL</code>. In coexistence mode QGC and the physical remote can both send it, which shows up as "the sticks do nothing" or "the sticks jump around".
+</div>
+
+<!-- ============ 5 ============ -->
+<h2 id="s5">5. Time base fix: the 71.6-minute mystery</h2>
+
+<h3>5.1 Symptom</h3>
+
+<p>After roughly <strong>71.6 minutes</strong> of uptime all telemetry stops, the console still echoes commands, and <code>reboot</code> restores normal operation. A different build or a power cycle "fixes" it, so it is extremely hard to reproduce and very easy to blame on Wi-Fi.</p>
+
+<h3>5.2 Root cause</h3>
+
+<pre><code>// upstream
+t = micros() / 1000000.0f;</code></pre>
+
+<p>On ESP32 Arduino, <code>micros()</code> returns <strong>uint32</strong>, maxing out at 4294967295 µs ≈ <strong>4294.97 s ≈ 71.58 min</strong>, after which it <strong>wraps to 0</strong>. So <code>t</code> jumps from 4294.97 to 0 — <strong>time runs backwards</strong>.</p>
+
+<p>Every rate gate in the project has this shape:</p>
+
+<pre><code>Rate telemetrySlow(2);
+if (telemetrySlow) { ... }   // internally tests t - lastTime &gt;= 1/rate</code></pre>
+
+<p><code>t - lastTime</code> becomes negative → the condition never succeeds → <strong>every periodic task stalls at once</strong>: telemetry, logging, parameter sync, LED updates.</p>
+
+<div class="warn">
+<b>But <code>handleConsole()</code> is unaffected</b> — it is purely event driven (<code>Serial.available()</code>). That "the console still works" observation is precisely what sends people down the "Wi-Fi problem" path, and it is why this bug stayed hidden for so long.
+</div>
+
+<h3>5.3 The fix</h3>
+
+<pre><code>static uint64_t timeUs = 0;
+static uint32_t lastMicros = 0;
+
+const uint32_t nowMicros = micros();
+const uint32_t deltaUs = nowMicros - lastMicros;  // unsigned: correct delta even across a wrap
+lastMicros = nowMicros;
+timeUs += deltaUs;
+t = timeUs / 1000000.0f;</code></pre>
+
+<div class="ok">
+<b>The key trick:</b> <code>deltaUs</code> uses <strong>unsigned subtraction</strong>. At the wrap instant (<code>nowMicros</code> small, <code>lastMicros</code> large) the unsigned result wraps around automatically and still yields the correct positive delta. That is why a 64-bit accumulator is immune to wraparound.
+</div>
+
+<p>Two probes were added: <code>tRewinds</code> (wrap count) and <code>tRewindAt</code> (last wrap timestamp), both visible in the <code>time</code> command.</p>
+
+<h3>5.4 Why not <code>esp_timer_get_time()</code></h3>
+
+<p>It returns int64 and indeed never wraps, but it adds a new dependency and <strong>the symbol does not exist in the Gazebo simulation environment</strong>. The accumulator needs nothing and also runs in simulation.</p>
+
+<!-- ============ 6 ============ -->
+<h2 id="s6">6. IMU auto-detection</h2>
+
+<h3>6.1 Why auto-detection</h3>
+
+<p><code>FlixPeriph</code>'s <code>IMU::create(model, bus)</code> returns <code>nullptr</code> for unsupported model/bus combinations (MPU6050 can only run on I2C). Upstream <strong>does not check for null</strong> before calling <code>imu-&gt;begin()</code>, and <code>readIMU()</code> calls <code>imu-&gt;read()</code> directly — <strong>null-pointer dereference</strong>.</p>
+
+<p>Symptom: flash aircraft #1's firmware (I2C 6050) onto aircraft #2 (SPI 6500) and it crashes at boot, the console printing half a line.</p>
+
+<h3>6.2 Detection flow</h3>
+
+<div class="flow">
+  <div class="fnode"><span class="tag">①</span><span class="ttl">probeI2C(0x08~0x77)</span><span class="desc">read WHO_AM_I (register 0x75) over Wire</span></div>
+  <div class="farrow">↓ hit</div>
+  <div class="fnode"><span class="tag">②</span><span class="ttl">MPU6050 family → I2C, orientation +π/2</span><span class="desc">the 8-pin socket physically rejects a 6500 module</span></div>
+  <div class="farrow">↓ no hit</div>
+  <div class="fnode"><span class="tag">③</span><span class="ttl">probeSPI(candidate CS: imuCsPin / 42 / 17)</span><span class="desc">CS wiring differs between PCB batches, so try each</span></div>
+  <div class="farrow">↓ hit</div>
+  <div class="fnode"><span class="tag">④</span><span class="ttl">MPU6500 family → SPI, orientation −π/2</span><span class="desc">remember which CS actually worked</span></div>
+  <div class="farrow">↓ nothing found</div>
+  <div class="fnode hl"><span class="tag">⑤</span><span class="ttl">imuOK = false</span><span class="desc">arming blocked + red LED solid + long beep</span></div>
+</div>
+
+<h3>6.3 Null guard (what actually prevents the crash)</h3>
+
+<pre><code>if (imu == nullptr || imu-&gt;status() != 0) {
+    imuOK = false;
+    print(TXT_IMU_UNUSABLE);   // IMU unusable — arming disabled
+    return;
+}
+
+void readIMU() {
+    if (!imuOK || imu == nullptr) return;   // ← first line
+    ...
+}</code></pre>
+
+<div class="ok">
+<b>Design trade-off:</b> when the IMU is unavailable the aircraft is <strong>not</strong> allowed to die — it is "marked unusable and arming is blocked". It can still connect, show logs and accept parameter changes, so in the field you can tell whether the socket is loose or the chip is dead instead of facing a board that "does nothing when plugged in".
+</div>
+
+<h3>6.4 Orientation lock</h3>
+
+<p>Parameter <code>IMU_ROT_LOCK</code>: once set to 1, auto-detection no longer overwrites <code>imuRotation</code>. <strong>Set it to 1 after running <code>ca</code></strong> — detection probes on every boot, and if one probe fails or WHO_AM_I lands in an ambiguous range, an already-calibrated orientation can be overwritten with the wrong value.</p>
+
+<pre><code>p IMU_ROT_LOCK 1</code></pre>
+
+<h3>6.5 Six-face accelerometer calibration (<code>ca</code>): a real C++ trap</h3>
+
+<p>The maths of six-face calibration is simple: six orientations cover ±1 g on each axis, so</p>
+
+<pre><code>accScale = (accMax − accMin) / 2 / G      // ideal ≈ 1.0
+accBias  = (accMax + accMin) / 2          // ideal ≈ 0</code></pre>
+
+<div class="warn">
+<b>🐛 Bug found on the bench 2026-10-18: a <code>static</code> local is initialised only once</b><br><br>
+The original code declared the extreme-value accumulators <b>inside</b> <code>calibrateAccelOnce()</code>:<br>
+<code>static Vector accMax(-INFINITY, ...);</code><br>
+<code>static Vector accMin(INFINITY, ...);</code><br><br>
+<b>A C++ <code>static</code> local is initialised only on the <u>first</u> call</b>; afterwards it keeps the previous values.
+So the second time <code>ca</code> ran, <code>accMax</code>/<code>accMin</code> still held leftovers from the previous run (or from power-up), and <code>accScale</code> was completely wrong — <b>measured 0.000257 instead of ≈ 1.0</b>, with accelerometer readings becoming <code>−0.86 / 0.19 / 9.19</code> and the attitude badly off.<br><br>
+<b>Fix:</b> promote them to file-scope globals <code>accCalMax</code>/<code>accCalMin</code> and <strong>reset them explicitly</strong> to ±INFINITY at the top of <code>calibrateAccel()</code>.<br><br>
+<b>Verification:</b> with the same (mis)operation, the scale went from <code>0.000257</code> (1e-4 range) to <code>0.0222</code> (1e-2 range) — a 100× improvement in magnitude, proving the accumulator now started clean instead of inheriting data.
+</div>
+
+<div class="warn">
+<b>⚠️ Usability flaw in <code>ca</code>: it runs 48 seconds straight, and human hands cannot keep up</b><br><br>
+The sequence is: <code>print "step 1/6"</code> → <code>pause(8)</code> → sample → <code>print "step 2/6"</code> → <code>pause(8)</code> → sample …… <b>it never waits for input</b> and finishes in about 48 seconds.<br><br>
+If the operator fails to get the airframe into the required orientation inside each 8-second window, <b>all six samples land in the same orientation</b> and <code>accScale</code> collapses to the 1e-2 range. <b>This is a design flaw, not an operator error.</b><br><br>
+<b>Proper fix:</b> split <code>ca</code> into six single-step commands <code>ca1</code>~<code>ca6</code>, each sampling one face and waiting for confirmation (not implemented in the current version).
+</div>
+
+<div class="ok">
+<b>Recovering from a bad calibration</b> (no reflashing required):<br>
+<code>p IMU_ACC_SCALE_X 1</code>　<code>p IMU_ACC_SCALE_Y 1</code>　<code>p IMU_ACC_SCALE_Z 1</code><br>
+<code>p IMU_ACC_BIAS_X 0</code>　<code>p IMU_ACC_BIAS_Y 0</code>　<code>p IMU_ACC_BIAS_Z 0</code><br><br>
+After these six commands the attitude returns to zero immediately (measured roll 0.015° / pitch −0.004°). The MPU-6500's factory accuracy is good enough to use directly — <b>you lose no precision</b>.
+</div>
+
+<div class="note">
+<b>💡 Do not be misled by "采样频率" (sampling frequency):</b> the value printed by <code>imu</code> is
+<b><code>loopRate</code> (the main-loop frequency)</b>, <u>not</u> the IMU output data rate (ODR).
+<ul>
+  <li>while calibrating, <code>pause()</code> runs a slow <code>delay(50)</code> loop → shows <b>20 Hz</b></li>
+  <li>when idle the main loop blocks in <code>waitForData()</code> → shows <b>1 Hz</b></li>
+  <li>during normal flight → <b>1000 Hz</b></li>
+</ul>
+All three values are normal; <b>do not go and change <code>configureIMU()</code></b>.
+</div>
+
+<!-- ============ 7 ============ -->
+<h2 id="s7">7. Control loops</h2>
+
+<h3>7.1 Three cascaded loops</h3>
+
+<div class="flow">
+  <div class="fnode"><span class="tag">outer</span><span class="ttl">Attitude loop (angle → rate target)</span><span class="desc">P control on roll/pitch angle error</span></div>
+  <div class="farrow">↓ rate target</div>
+  <div class="fnode"><span class="tag">inner</span><span class="ttl">Rate loop (PID)</span><span class="desc">with integral clamping (windup) and derivative low-pass</span></div>
+  <div class="farrow">↓ torque</div>
+  <div class="fnode"><span class="tag">mixer</span><span class="ttl">Quad mixer → four throttle outputs</span><span class="desc">X layout: throttle plus three-axis torque</span></div>
+  <div class="farrow">↓</div>
+  <div class="fnode hl"><span class="tag">output</span><span class="ttl">PWM 20 kHz → motors</span><span class="desc">with idle throttle and saturation protection</span></div>
+</div>
+
+<h3>7.2 Verifying mixer direction (without flying)</h3>
+
+<p>There is an unavoidable obstacle: <b>once any motor output is clipped by <code>desaturate()</code></b> (clamped to 0 or 1), the four readings are no longer comparable, and comparisons like "is the front higher than the rear" <b>become meaningless</b>.</p>
+
+<div class="warn">
+<b>⚠️ Trap hit on the bench 2026-10-18:</b><br>
+reading <code>mot</code> gave<br>
+<code>FR 1.000 (clipped high) / FL 0.193 / RR 0.077 / RL −0.393 (clipped low)</code><br><br>
+That data shows <b>neither pitch nor roll</b> — only that the operator tilted the airframe diagonally. <b>Verifying mixer direction from <code>mot</code> readings does not work.</b>
+</div>
+
+<p><b>The right approach: offline mathematical verification.</b> The tool <code>Firmware/tools/mixer_sign_check.py</code> reproduces the firmware's sign chain in Python exactly and feeds it known attitudes:</p>
+
+<pre><code>control.ino:82   upActual  = rotate(up, attitude)
+control.ino:85   error     = rotationVectorBetween(upTarget, upActual)
+vector.h:113     direction = cross(a, b)          ← a=target, b=actual
+vector.h:128     return direction * angle
+control.ino:87-88 ratesTarget.x/y = PID(error.x/y)   ← positive gains, sign preserved
+control.ino:101-102 torqueTarget.x/y = PID(rateError)
+control.ino:119-122 mixer (X layout):
+    FL = T + tx − ty + tz
+    FR = T − tx − ty − tz
+    RL = T + tx + ty − tz
+    RR = T − tx + ty + tz</code></pre>
+
+<table>
+<thead><tr><th>Attitude</th><th>Correct expectation</th><th>Reasoning</th></tr></thead>
+<tbody>
+<tr><td>nose pushed down</td><td><b>front thrust &gt; rear</b></td><td>push the front up → nose-up torque (seesaw: to lift the dropping end, push under that end)</td></tr>
+<tr><td>nose pitched up</td><td><b>front thrust &lt; rear</b></td><td>push the rear up → nose-down torque</td></tr>
+<tr><td>right side pushed down</td><td><b>right thrust &gt; left</b></td><td>push the right up → roll-left torque</td></tr>
+<tr><td>left side pushed down</td><td><b>left thrust &gt; right</b></td><td>push the left up → roll-right torque</td></tr>
+</tbody>
+</table>
+
+<div class="ok">
+<b>✅ Result (2026-10-18): pitch and roll mixer directions are both correct.</b><br><br>
+<b>Cross-check:</b> the script's "right side down → more thrust on the right" matches the bench measurement exactly (tilted right: FR 0.205 / RR 0.257 &gt; FL 0.088 / RL 0.134), which means the reasoning and the firmware behaviour agree and the conclusion is trustworthy.
+</div>
+
+<div class="danger">
+<b>🔴 This criterion was once written backwards — recorded here to prevent a regression:</b> on a quad-X all four motors sit <b>in the airframe plane</b> and torque comes from thrust differences. Pushing the nose down means <b>adding thrust at the front</b> (lifting the nose end), <u>not</u> adding thrust at the rear. Getting this backwards inverts the whole verification conclusion.
+</div>
+
+<h3>7.3 Four flight modes</h3>
+<table class="tight">
+<thead><tr><th>Mode</th><th>Enum</th><th>Behaviour</th></tr></thead>
+<tbody>
+<tr><td>RAW</td><td>0</td><td>Fully manual; sticks map straight to the motors (debugging)</td></tr>
+<tr><td>ACRO</td><td>1</td><td>Rate control; the sticks command angular rates</td></tr>
+<tr><td><b>STAB</b></td><td>2</td><td><b>Self-levelling (default)</b>: the sticks command angles, releasing them re-levels</td></tr>
+<tr><td>AUTO</td><td>3</td><td>Accepts MAVLink attitude/torque targets</td></tr>
+</tbody>
+</table>
+
+<h3>7.4 MANUAL_CONTROL range semantics (important)</h3>
+
+<p>The protocol defines <code>x/y/z/r</code> as int16 with a full range of <strong>±1000</strong>. This project:</p>
+
+<pre><code>controlThrottle = m.z / 1000.0f;   // z: -1000 ~ +1000 → -1 ~ +1
+controlPitch    = m.x / 1000.0f;
+controlRoll     = m.y / 1000.0f;
+controlYaw      = m.r / 1000.0f;</code></pre>
+
+<div class="danger">
+<b>Must check on the bench:</b> if the remote actually sends <strong>0 ~ 1000</strong> (treating centre as 0), the stick centre is already 0 throttle and thrust only appears in the upper half — which feels like <strong>"only half the travel, and it jumps at mid-stick"</strong>.<br>
+On the first bench session confirm: <b>stick at minimum → z ≈ -1000, centre → z ≈ 0, maximum → z ≈ +1000</b>. Use the <code>rc</code> command to read the normalised throttle.
+</div>
+
+<!-- ============ 8 ============ -->
+<h2 id="s8">8. Safety mechanisms</h2>
+
+<h3>8.1 Link-loss failsafe (<code>safety.ino</code>)</h3>
+
+<table>
+<thead><tr><th>Condition</th><th>Behaviour</th></tr></thead>
+<tbody>
+<tr><td>remote / ground station all silent for <b>1 s</b></td><td>throttle ramps down</td></tr>
+<tr><td>silent for <b>10 s</b></td><td>throttle to zero + automatic disarm</td></tr>
+<tr><td>tilt beyond <code>SF_DISARM_TILT</code></td><td>treated as a tumble, disarm</td></tr>
+</tbody>
+</table>
+
+<div class="warn">
+<b>The "all four sources silent" trap:</b> this firmware detects link loss by "no control input received". If you simply put the remote down and no ground station is sending heartbeats, <strong>it starts ramping the throttle down after 1 second</strong>. That is designed behaviour, not a bug. During bench testing, keep exercising a stick or attach a ground station.
+</div>
+
+<h3>8.2 Pre-arm checks</h3>
+
+<ul>
+  <li>the IMU must be usable (<code>imuOK</code>)</li>
+  <li>the throttle must be at minimum (normalised &lt; 0.05), otherwise arming is refused with <code>拒绝解锁：油门不在最低位</code></li>
+  <li>the tilt must be within the threshold</li>
+</ul>
+
+<h3>8.3 Unconditional command ACK (R2)</h3>
+
+<p><code>handleMavlinkCommand()</code> only <strong>decides the result code and performs side effects</strong>; it never sends an ACK itself. The caller sends it unconditionally after the call returns:</p>
+
+<pre><code>int result = handleMavlinkCommand(&amp;m);
+mavlink_message_t ack;
+mavlink_msg_command_ack_pack(..., m.command, result, ...);
+sendMessage(&amp;ack);   // ← sent for accepted / denied / unsupported alike</code></pre>
+
+<p>This makes it <strong>structurally impossible</strong> to forget the ACK when adding a command, so QGC never hangs on "executing".</p>
+
+<!-- ============ 9 ============ -->
+<h2 id="s9">9. LEDs and buzzer</h2>
+
+<h3>9.1 LED priority</h3>
+
+<table>
+<thead><tr><th>Priority</th><th>Condition</th><th>Behaviour</th></tr></thead>
+<tbody>
+<tr><td>1 (highest)</td><td>voltage &lt; 3.5 V</td><td>red LED flashing at 100 ms + continuous fast beeping</td></tr>
+<tr><td>2</td><td>connected and armed</td><td>green LED flashing at 200 ms</td></tr>
+<tr><td>3</td><td>connected, not armed</td><td>green LED solid</td></tr>
+<tr><td>4</td><td>not connected</td><td>red LED flashing at 500 ms</td></tr>
+<tr><td>5</td><td>initialising</td><td>blue LED solid</td></tr>
+</tbody>
+</table>
+
+<h3>9.2 Buzzer patterns</h3>
+
+<table class="tight">
+<thead><tr><th>Code</th><th>Sound</th><th>Trigger</th><th>Meaning</th></tr></thead>
+<tbody>
+<tr><td>'S'</td><td>single short</td><td>power-up</td><td>initialisation started</td></tr>
+<tr><td>'D'</td><td>double short</td><td>init done / remote connected</td><td>ready</td></tr>
+<tr><td>'T'</td><td>triple short</td><td>arming succeeded</td><td>armed</td></tr>
+<tr><td>'L'</td><td>long</td><td>RC lost / IMU unusable</td><td>alarm</td></tr>
+<tr><td>'C'</td><td>continuous fast</td><td>low battery</td><td>loops until voltage recovers</td></tr>
+</tbody>
+</table>
+
+<p>The semantics match the YaoKun in-house controller <strong>YaoKunDrone</strong> — "short / double / triple / long / continuous" feel identical, so users do not have to relearn anything when moving between the two systems.</p>
+
+<h3>9.3 Why the buzzer must be non-blocking</h3>
+
+<div class="danger">
+<b>Calling <code>delay()</code> in the main loop to play a tone breaks the 1 kHz loop immediately</b>, the attitude estimate misses steps, and ⇒ <strong>the aircraft flips the instant you arm</strong>. This is a pitfall we actually hit.
+</div>
+
+<p>So the design is "state machine driven by the main loop":</p>
+<ul>
+  <li><code>buzzerPlay(char)</code> only sets parameters and returns immediately</li>
+  <li><code>buzzerUpdate()</code> advances the timing from the main loop (the first thing <code>updateLED()</code> does)</li>
+  <li>only the two tones in <code>setup()</code> use <code>runBuzzerFor(ms)</code> to block briefly (arming is impossible then, so blocking is harmless)</li>
+</ul>
+
+<h3>9.4 The connection-criterion trap</h3>
+
+<p>The semantically equivalent upstream code decides "ground station online" from <code>mavlinkTime</code>, but <code>mavlinkTime</code> is refreshed by <strong>any</strong> MAVLink frame — ground-station heartbeats, parameter requests, even the aircraft's own frames counted via loopback. The result is <strong>"connected even with no remote attached"</strong> — the LEDs lie.</p>
+
+<p>This edition uses <code>controlTime</code>:</p>
+
+<pre><code>const bool connected = valid(controlTime) &amp;&amp; (t - controlTime &lt; 1.0f);</code></pre>
+
+<p><code>controlTime</code> is <strong>only updated when MANUAL_CONTROL (a stick frame) arrives</strong>, which is the true meaning of "remote online". If SBUS is enabled, <code>readRC()</code> updates it as well, so both paths are correct.</p>
+
+<!-- ============ 10 ============ -->
+<h2 id="s10">10. The i18n system</h2>
+
+<h3>10.1 Design</h3>
+
+<p>All UI text lives in <code>Firmware/flix/i18n.h</code> behind <code>TXT_*</code> macros, with <code>#ifdef FLIX_LANG_EN</code> selecting a Chinese or English block. <strong>Chinese is the default.</strong></p>
+
+<h3>10.2 Why not write Chinese straight into the <code>.ino</code> files</h3>
+
+<div class="grid2">
+  <div class="card">
+    <h5>Keeps the English build path alive</h5>
+    <p>A GPL repository has to serve overseas users. With Chinese hard-coded in 30-plus print() calls, switching languages means editing line by line — easy to miss one, and the diff becomes enormous.</p>
+  </div>
+  <div class="card">
+    <h5>Scriptable verification</h5>
+    <p>Once strings are centralised, "is any English left in the UI" becomes automatable: just confirm every print() goes through TXT_*.</p>
+  </div>
+</div>
+
+<h3>10.3 Building the English version</h3>
+
+<pre><code>// Option 1: add one line at the very top of flix.ino (before the first #include)
+#define FLIX_LANG_EN
+
+// Option 2: pass the macro at build time, no file edits
+arduino-cli compile --build-property "compiler.cpp.extra_flags=-DFLIX_LANG_EN" ...</code></pre>
+
+<h3>10.4 Conventions</h3>
+
+<ul>
+  <li>macros expand to <strong>string literals</strong>, so write <code>print(TXT_XXX)</code>, never <code>print("%s", TXT_XXX)</code></li>
+  <li>parameterised messages are "prefix macro + format string" so each language reads naturally: <code>print(TXT_CH_SET, ch)</code></li>
+  <li><strong>this file must be saved as UTF-8 without BOM</strong>. If Notepad saves it as GBK, the Chinese becomes mojibake bytes sent straight to the serial port</li>
+</ul>
+
+<h3>10.5 Verification result</h3>
+
+<div class="ok">
+<b>169</b> macros in each of the Chinese and English blocks; the script confirms no one-sided entries ("English only" and "Chinese only" are both empty) and no references to undefined macros. Two macros are defined but unreferenced (<code>TXT_NO</code> / <code>TXT_YES</code>), which the checker reports explicitly.
+</div>
+
+<!-- ============ 11 ============ -->
+<h2 id="s11">11. Console commands</h2>
+
+<p>Connect over serial (115200, <strong>native USB port</strong>) and type <code>help</code>. The Chinese build (the default) prints:</p>
+
+<pre><code>可用命令：
+help / motd - 显示本帮助
+p - 列出全部参数
+p &lt;前缀&gt; - 显示以该前缀开头的参数
+p &lt;参数名&gt; &lt;数值&gt; - 修改参数（自动存盘）
+preset - 恢复出厂参数（会重启）
+time - 显示时间与主循环频率
+imu - 显示惯性测量单元数据
+ca - 校准加速度计（六面校准）
+st - 显示姿态估计结果
+arm / disarm - 解锁 / 上锁
+raw/stab/acro/auto - 切换飞行模式
+rc - 显示遥控（ESP-NOW）数据
+cr - 校准遥控行程
+pw - 显示电源与电压
+wifi - 显示无线连接信息
+wifi ap/sta/espnow/both/off - 设置无线模式
+ap &lt;热点名&gt; &lt;密码&gt; - 设置飞机热点
+sta &lt;路由名&gt; &lt;密码&gt; - 连接家里的路由器
+espnow &lt;遥控器MAC&gt; [&lt;密钥&gt;] - 设置 ESP-NOW 对端
+ch [&lt;信道&gt;] - 查看或设置 ESP-NOW 信道
+mot - 显示四路电机输出
+log [dump] - 打印日志表头 [以及数据]
+mfr/mfl/mrr/mrl [&lt;油门&gt;] - 单独测试电机（务必拆桨！）
+sys - 显示系统信息
+reset - 复位姿态估计
+reboot - 重启飞机</code></pre>
+
+<p>English gloss (the English build prints this directly):</p>
+
+<pre><code>help / motd              show this help
+p                        list all parameters
+p &lt;prefix&gt;               list parameters starting with the prefix
+p &lt;name&gt; &lt;value&gt;         set a parameter (saved automatically)
+preset                   restore factory parameters (reboots)
+time                     show time base and main-loop rate
+imu                      show IMU data
+ca                       calibrate the accelerometer (six-face)
+st                       show the attitude estimate
+arm / disarm             arm / disarm
+raw/stab/acro/auto       select flight mode
+rc                       show RC (ESP-NOW) data
+cr                       calibrate the RC travel
+pw                       show power and voltage
+wifi                     show wireless link info
+wifi ap/sta/espnow/both/off   set the wireless mode
+ap &lt;ssid&gt; &lt;pass&gt;         set the aircraft hotspot
+sta &lt;ssid&gt; &lt;pass&gt;        join a home router
+espnow &lt;remote MAC&gt; [&lt;key&gt;]   set the ESP-NOW peer
+ch [&lt;channel&gt;]           show or set the ESP-NOW channel
+mot                      show the four motor outputs
+log [dump]               print the log header [and data]
+mfr/mfl/mrr/mrl [&lt;thr&gt;]  test one motor (REMOVE PROPELLERS!)
+sys                      show system info
+reset                    reset the attitude estimate
+reboot                   reboot the aircraft</code></pre>
+
+<h3>11.1 New parameters (R10)</h3>
+
+<table class="tight">
+<thead><tr><th>Parameter</th><th>Default</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td><code>IMU_AUTO_DETECT</code></td><td>1</td><td>auto-detect the IMU at boot (0 = use the manual IMU_MODEL value)</td></tr>
+<tr><td><code>IMU_ROT_LOCK</code></td><td>0</td><td>freeze the orientation so detection stops overwriting it</td></tr>
+<tr><td><code>LED_R_PIN</code> / <code>LED_G_PIN</code> / <code>LED_B_PIN</code></td><td>41 / 7 / 14</td><td>RGB LED pins</td></tr>
+<tr><td><code>LED_LOW_VOLT</code></td><td>3.5</td><td>low-battery warning threshold (V)</td></tr>
+<tr><td><code>BUZ_PIN</code></td><td>39</td><td>buzzer pin</td></tr>
+<tr><td><code>BUZ_ENABLE</code></td><td>1</td><td>buzzer master switch (0 = silent, for indoor debugging at night)</td></tr>
+</tbody>
+</table>
+
+<!-- ============ 12 ============ -->
+<h2 id="s12">12. Building and flashing</h2>
+
+<h3>12.1 Build</h3>
+
+<pre><code>cd Firmware
+arduino-cli compile \
+  --fqbn "esp32:esp32:esp32s3:UploadSpeed=921600,USBMode=hwcdc,CDCOnBoot=cdc,CPUFreq=240,FlashMode=qio,FlashSize=8M,PartitionScheme=default_8MB,PSRAM=disabled" \
+  --libraries "G:\Arduino\libraries" \
+  --export-binaries flix</code></pre>
+
+<div class="danger">
+<b><code>--export-binaries</code> is mandatory.</b> Without it the <code>build/</code> directory is not refreshed, and the packaging script happily assembles a bin that "looks fine but contains the wrong firmware" — a pitfall we have actually hit.
+</div>
+
+<h3>12.2 Packaging the single-file image</h3>
+
+<pre><code>python Firmware/tools/pack_flix_release.py --version 1.1</code></pre>
+
+<p>Output lands in <code>Firmware/release/</code>:</p>
+<ul>
+  <li><code>*_merged.bin</code> — the single-file firmware, flash at <code>0x0</code></li>
+  <li><code>*_指纹与烧录说明.md</code> / <code>.txt</code> — generated automatically; hashes and segment layout are extracted from the bin at that moment</li>
+  <li><code>*_Fingerprint_and_Flashing_Guide_EN.md</code> / <code>.txt</code> — the English edition of the same document, built from the same data</li>
+</ul>
+
+<h3>12.3 Merge layout</h3>
+
+<table class="tight">
+<thead><tr><th>Address</th><th>Content</th><th>Notes</th></tr></thead>
+<tbody>
+<tr><td><code>0x0</code></td><td>bootloader.bin</td><td>second-stage bootloader</td></tr>
+<tr><td><code>0x8000</code></td><td>partitions.bin</td><td>partition table</td></tr>
+<tr><td><code>0x9000</code></td><td><em>nvs (gap, filled with 0xFF)</em></td><td><b>a whole-chip write erases this</b></td></tr>
+<tr><td><code>0xE000</code></td><td>boot_app0.bin</td><td>initial OTA data; without it the chip will not boot</td></tr>
+<tr><td><code>0x10000</code></td><td>app.bin</td><td>the application</td></tr>
+</tbody>
+</table>
+
+<div class="warn">
+<b>Flashing the single file from 0x0 = erasing NVS.</b> The Wi-Fi hotspot name/passphrase, the auto-detected IMU result and the RC endpoint calibration are all lost.<br>
+On a new board that is fine; <b>on a machine you have already calibrated, flash in segments</b> and skip <code>0x9000</code>. The offsets come from <code>flix/build/&lt;fqbn&gt;/flash_args</code>.
+</div>
+
+<h3>12.4 Stuck in download mode after flashing</h3>
+
+<p>If the log shows <code>waiting for download</code>, GPIO0 is being held low. Connect once with <code>--after no-reset</code> to confirm the image is readable, then run:</p>
+
+<pre><code>esptool --after watchdog-reset run</code></pre>
+
+<p>Or simply replug USB / press RST.</p>
+
+<!-- ============ 13 ============ -->
+<h2 id="s13">13. Three-level verification</h2>
+
+<h3>13.1 Level 1 · static</h3>
+
+<table class="tight">
+<thead><tr><th>Check</th><th>Method</th><th>Pass criterion</th></tr></thead>
+<tbody>
+<tr><td>compiles</td><td><code>arduino-cli compile ... --export-binaries</code></td><td>exit code 0, no warnings</td></tr>
+<tr><td>zh/en pairing</td><td>script compares macro counts in both i18n.h blocks</td><td>169 : 169, no one-sided entries</td></tr>
+<tr><td>English build works</td><td>rebuild with <code>-DFLIX_LANG_EN</code></td><td>exit code 0</td></tr>
+<tr><td>no English leftovers</td><td>scan <code>print("</code> calls not using <code>TXT_</code></td><td>only pure format strings and CSV headers remain</td></tr>
+<tr><td>footprint</td><td>compiler output</td><td>Flash &lt; 90 %, RAM &lt; 60 %</td></tr>
+</tbody>
+</table>
+
+<h3>13.2 Level 2 · bench (<strong>propellers must be removed</strong>)</h3>
+
+<table class="tight">
+<thead><tr><th>Step</th><th>Action</th><th>Expected result</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>power up, read the first screen</td><td>Chinese banner + fingerprint string + <code>固件版本：v1.1</code></td></tr>
+<tr><td>2</td><td><code>imu</code></td><td>model / bus / WHO_AM_I / orientation correct, <code>状态：正常</code></td></tr>
+<tr><td>3</td><td><code>ca</code></td><td>six Chinese prompts, 8 s each, last line <code>校准完成！</code></td></tr>
+<tr><td>4</td><td><code>st</code> while tilting</td><td>right side down → <code>横滚</code> positive (<b>the only orientation criterion</b>)</td></tr>
+<tr><td>5</td><td>power the remote, <code>rc</code></td><td>raw channels follow the sticks, the timestamp keeps refreshing</td></tr>
+<tr><td>6</td><td><code>ch</code></td><td><code>ESP-NOW 信道：1</code> (must match the remote)</td></tr>
+<tr><td>7</td><td><code>wifi</code></td><td><code>原生接收</code> = 1, dropped bytes barely move</td></tr>
+<tr><td>8</td><td>stick at min / centre / max</td><td>normalised throttle <b>-1 / 0 / +1</b></td></tr>
+<tr><td>9</td><td><code>mfr 0.1</code> motor by motor</td><td>direction and position correct (propellers off!)</td></tr>
+<tr><td>10</td><td><code>arm</code> / <code>disarm</code></td><td>triple beep on arm / LED switches to green flashing</td></tr>
+<tr><td>11</td><td>cut power to the remote</td><td>long beep + slow red flashing after 1 s</td></tr>
+</tbody>
+</table>
+
+<h3>13.3 Level 3 · tethered low hover</h3>
+
+<div class="step"><div class="no">1</div><div class="tx"><b>Prepare</b><span>Fit propeller guards, tether the aircraft, use open space.</span></div></div>
+<div class="step"><div class="no">2</div><div class="tx"><b>Take off</b><span><code>arm</code>, then raise the throttle slowly until it lifts 10~20 cm.</span></div></div>
+<div class="step"><div class="no">3</div><div class="tx"><b>Verify the correction direction</b><span>Tap roll/pitch and confirm the <strong>correction goes the right way</strong> (tilt right → corrects right).</span></div></div>
+<div class="step"><div class="no">4</div><div class="tx"><b>Release the sticks</b><span>Confirm the attitude re-levels (but <strong>it keeps drifting horizontally</strong> — expected, there is no position sensor).</span></div></div>
+<div class="step"><div class="no">5</div><div class="tx"><b>Watch the LEDs</b><span>green flashing = armed, red flashing = link lost, fast red = low battery.</span></div></div>
+
+<!-- ============ 14 ============ -->
+<h2 id="s14">14. Troubleshooting</h2>
+
+<table>
+<thead><tr><th>Symptom</th><th>Most likely cause</th><th>How to confirm</th></tr></thead>
+<tbody>
+<tr><td>remote says connected, aircraft does not move</td><td>ESP-NOW channel mismatch / native receive not registered</td><td><code>ch</code> for the channel; <code>wifi</code> for whether <code>原生接收</code> is 1</td></tr>
+<tr><td>remote says connected, aircraft does not move</td><td>remote sends 0~1000 instead of ±1000</td><td><code>rc</code> for the normalised throttle range</td></tr>
+<tr><td>all telemetry stops 71.6 min after power-up</td><td>R1 not in effect (old firmware flashed)</td><td><code>time</code> for <code>回绕次数</code>; verify the SHA-256</td></tr>
+<tr><td>red LED solid + long beep at boot</td><td>IMU detection failed</td><td><code>imu</code> for <code>识别依据</code> and the pins</td></tr>
+<tr><td>crashes / reboot loop at boot</td><td>wrong board firmware (IMU model mismatch)</td><td>check the first screen's <code>识别为 …</code> against the actual chip</td></tr>
+<tr><td>attitude inverted (tilting right shows left)</td><td>wrong IMU orientation bracket</td><td><code>st</code> while tilting: right side down must give <strong>positive</strong> roll</td></tr>
+<tr><td>arming rejected</td><td>throttle not at minimum</td><td>console prints <code>拒绝解锁：油门不在最低位</code></td></tr>
+<tr><td>phone disconnects, UI freezes</td><td>router and aircraft AP on the same channel</td><td>separate them with <code>ch</code>, change the remote to match</td></tr>
+<tr><td>packaged firmware is wrong</td><td>compiled without <code>--export-binaries</code></td><td>compare the modification time of the bin in the build directory</td></tr>
+<tr><td><b><code>help</code> shows only the banner, no command list</b></td><td>the HWCDC transmit buffer is only 256 B, so the 1.7 KB motd is truncated on write (see 14.1)</td><td>check whether the output ends with <code>reboot - 重启飞机</code>; fixed in this version (TX buffer raised to 4 KB + tail flush)</td></tr>
+<tr><td>no log when only the UART header is connected</td><td>the console runs over native USB (CDCOnBoot=cdc)</td><td>use the native USB port</td></tr>
+</tbody>
+</table>
+
+<h3 id="s14-1">14.1 The <code>help</code> menu printed only half of itself (fixed)</h3>
+
+<div class="note">
+<b>Symptom</b>: after flashing, typing <code>help</code> shows only the brand banner (YaoKunS3 flight controller / repo / Taobao), and the "available commands:" heading plus the 29 command lines <strong>never appear</strong>; typing <code>help</code> again shows only the banner. Short-output commands like <code>time</code>, <code>rc</code> and <code>pw</code> all behave normally.
+</div>
+
+<p><b>Three things had to line up before it broke</b>; individually none of them looks like a problem:</p>
+
+<table>
+<thead><tr><th>#</th><th>Factor</th><th>Fact</th></tr></thead>
+<tbody>
+<tr><td>①</td><td><code>motd</code> is one long C string</td><td>banner + 30 command lines = <b>1718 bytes</b>, written in a single <code>Serial.print(buf)</code> after <code>vsnprintf</code></td></tr>
+<tr><td>②</td><td>The ESP32-S3 native USB path is HWCDC</td><td>its transmit ring buffer is <b>only 256 bytes by default</b> (<code>setTxBufferSize(256)</code> in the core's <code>HWCDC.cpp</code>)</td></tr>
+<tr><td>③</td><td>This project sets <code>setTxTimeoutMs(0)</code></td><td>writes never block — <code>HWCDC::write()</code> calls <code>xRingbufferSend</code> with a 0-tick timeout, so whatever does not fit <b>breaks out silently and is dropped</b></td></tr>
+</tbody>
+</table>
+
+<p>
+⇒ 1718 bytes pushed into a 256-byte buffer: only the first ~256 bytes get in; before the USB interrupt can move them to
+the host, the remaining 1400+ bytes are dropped. The drop point falls exactly after the banner, so it looks like
+"the menu was never written" rather than "output stopped mid-way" — which is why the first diagnosis was
+"the menu is not in the code at all".
+</p>
+
+<p><b>Two changes were needed together</b>:</p>
+
+<ol>
+<li><b>Enlarge the buffer</b>: <code>Serial.setTxBufferSize(4096)</code> in <code>setupConsole()</code>.
+    The whole motd fits into the ring buffer in one go and the USB interrupt moves it to the host asynchronously. The
+    main loop stays fully non-blocking (<code>setTxTimeoutMs(0)</code> is unchanged), so flight timing is unaffected.
+    Cost: 4 KB of heap.</li>
+<li><b>Flush the tail</b>: enlarging alone is not enough — the "last chunk" lingers in the buffer until the next write
+    carries it out (the HWCDC interrupt is only re-armed at the end of <code>write()</code>). So the command handler in
+    <code>handleConsole()</code> calls <code>consoleFlushTail(150, ' ')</code> at the end: it appends one space
+    (invisible, does not split the line) to re-arm the interrupt, then waits for the buffer to drain.</li>
+</ol>
+
+<div class="note">
+<b>⚠️ Two traps</b><br>
+① <b>Do not use <code>Serial.flush()</code></b>: with <code>setTxTimeoutMs(0)</code> in this project,
+   <code>HWCDC::flush()</code> enters with <code>tries = 0</code> → goes straight to
+   <code>flushTXBuffer(NULL, 0)</code>, which <strong>discards</strong> the whole transmit buffer and marks the port as
+   disconnected.<br>
+② <b>Do not test for drain with <code>&gt;= 4096</code></b>: the TX ring buffer is a <code>BYTEBUF</code>, so the
+   maximum available space is "capacity − 1" (one byte distinguishes full from empty); that condition is
+   <strong>never true</strong> and every call would burn the full timeout. Instead treat "available space has stopped
+   growing over two consecutive polls" as drained, which is independent of capacity.
+</div>
+
+<!-- ============ 15 ============ -->
+<h2 id="s15">15. Flight envelope</h2>
+
+<div class="danger">
+This firmware is <strong>attitude stabilization plus a manual throttle</strong>, with no position or velocity sensor at all (<b>no GPS / barometer / rangefinder / optical flow</b>). <code>control.ino</code> has three loops only (attitude → rate → mixer).
+</div>
+
+<table>
+<thead><tr><th>What you might want</th><th>What actually happens</th></tr></thead>
+<tbody>
+<tr><td>Release the sticks and hover</td><td><b>No.</b> The attitude levels out, but the aircraft keeps drifting at its current horizontal velocity</td></tr>
+<tr><td>Release the throttle and hold altitude</td><td><b>No.</b> It descends immediately (there is no altitude loop)</td></tr>
+<tr><td>Automatic landing on low battery</td><td>No landing; only a low-battery warning (fast red flashing + beeping)</td></tr>
+<tr><td>Return to home on link loss</td><td>No RTH; only 1 s of throttle ramp-down and a zero-and-disarm at 10 s</td></tr>
+<tr><td>Wind resistance</td><td>The attitude loop rejects disturbances, but the wind still pushes the aircraft off position — an unavoidable consequence of having no position sensor</td></tr>
+</tbody>
+</table>
+
+<div class="ok">
+<b>The right mental model:</b> treat it as "an aircraft that will level itself for you", not "an aircraft that will stay put by itself". Your hand should be on the stick the whole time.
+</div>
+
+<!-- ============ 16 ============ -->
+<h2 id="s16">16. Differences from upstream</h2>
+
+<table>
+<thead><tr><th>ID</th><th>Files</th><th>Change</th><th>Type</th></tr></thead>
+<tbody>
+<tr><td><b>R1</b></td><td><code>time.ino</code></td><td><code>t</code> produced by a 64-bit microsecond accumulator</td><td>🔴 critical bug fix</td></tr>
+<tr><td><b>R2</b></td><td><code>mavlink.ino</code></td><td><code>COMMAND_LONG</code> always ACKed; rejection reason printed</td><td>🟠 protocol robustness</td></tr>
+<tr><td><b>R4</b></td><td><code>wifi.ino</code></td><td>native ESP-NOW callback + byte queue; discovery broadcast unconditionally; <b>default channel 1</b> (the Chinese remote never calls <code>esp_wifi_set_channel</code>, so it stays on the Wi-Fi default of 1); <b>broadcast peer pre-registration + remote MAC auto-learning</b> (<code>learnPeerIfNeeded()</code>)</td><td>🔴 <b>core fix</b></td></tr>
+<tr><td><b>R5</b></td><td><code>motors.ino</code></td><td>motor pins 15/5/6/16, PWM 20 kHz</td><td>🔧 hardware adaptation</td></tr>
+<tr><td><b>R6</b></td><td><code>power.ino</code></td><td>voltage on GPIO 2, divider ratio 2</td><td>🔧 hardware adaptation</td></tr>
+<tr><td><b>R7</b></td><td><code>imu.ino</code></td><td>auto-detect + per-bus orientation + <code>imuOK</code> guard</td><td>🔴 crash fix</td></tr>
+<tr><td><b>R8</b></td><td><code>led.ino</code></td><td>RGB LED + non-blocking buzzer state machine</td><td>✨ new</td></tr>
+<tr><td><b>R9</b></td><td><code>i18n.h</code></td><td>169 strings, Chinese default, English build available</td><td>✨ new</td></tr>
+<tr><td><b>R10</b></td><td><code>parameters.ino</code></td><td>8 new parameters</td><td>✨ new</td></tr>
+<tr><td><b>R11</b></td><td><code>wifi.ino</code> / <code>i18n.h</code></td><td>ESP-NOW + hotspot coexistence by default (<code>W_BOTH</code>); SSID suffix from eFuse STA MAC</td><td>✨ new</td></tr>
+<tr><td><b>R12</b></td><td><code>wifi.ino</code> / <code>i18n.h</code></td><td>three-layer passphrase validation (sanitise NVS / reject bad writes / byte-table factory value)</td><td>🐞 bug fix</td></tr>
+<tr><td>—</td><td><code>flix.ino</code></td><td>boot fingerprint banner; LED/buzzer init feedback</td><td>✨ new</td></tr>
+<tr><td>—</td><td><code>console.ino</code></td><td>Chinese motd + brand banner + <code>ch</code> command</td><td>✨ new</td></tr>
+<tr><td>—</td><td><code>rc.ino</code></td><td>SBUS disabled by default; Chinese calibration prompts</td><td>🔧 hardware adaptation</td></tr>
+<tr><td>—</td><td><code>tools/pack_flix_release.py</code></td><td>single-file firmware + automatic fingerprint documents (Chinese and English)</td><td>🛠 release tooling</td></tr>
+</tbody>
+</table>
+
+<div class="note">
+The item-by-item root-cause analysis and verification methods are in <a href="YaoKunS3_Adaptation_Notes_EN.md"><code>Docs/YaoKunS3_Adaptation_Notes_EN.md</code></a> (Chinese original: <code>Docs/耀坤S3适配说明.md</code>). This page is the illustrated version of that document.
+</div>
+
+<!-- ============ footer ============ -->
+<footer>
+  <strong>YaoKunSmart / 耀坤智联</strong><br>
+  Bilibili: https://space.bilibili.com/3707011699050767 &nbsp;·&nbsp;
+  OSHWHub: https://oshwhub.com/lindahe<br>
+  GitHub: https://github.com/YaoKunS &nbsp;·&nbsp;
+  Taobao: https://shop35432590.taobao.com/
+  <div style="margin-top:18px; font-size:12px; color:#94a3b8;">
+    Kernel copyright (C) Oleg Kalachev · https://github.com/okalachev/flix<br>
+    Second-stage development by YaoKunSmart (directory organisation / Chinese UI / hardware adaptation) · version v1.1
+  </div>
+</footer>
+
+</div>
+</body>
+</html>

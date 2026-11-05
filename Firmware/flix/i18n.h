@@ -40,7 +40,7 @@
 
 // ---- 开机 / 通用 ----
 #define TXT_BOOT_START          "Initializing Flix\n"
-#define TXT_BOOT_VERSION        "Firmware version: v1.0 (YaoKun organized edition)\n"
+#define TXT_BOOT_VERSION        "Firmware version: v1.1 (YaoKun organized edition)\n"
 #define TXT_BOOT_DONE           "Initializing complete\n"
 #define TXT_SETUP_PARAMS        "Setup parameters\n"
 #define TXT_SETUP_POWER         "Setup power\n"
@@ -75,9 +75,9 @@
 #define TXT_HELP_CR             "cr - calibrate RC\n"
 #define TXT_HELP_PW             "pw - show power info\n"
 #define TXT_HELP_WIFI           "wifi - show Wi-Fi info\n"
-#define TXT_HELP_WIFI_SET       "wifi ap/sta/espnow/off - set Wi-Fi mode\n"
-#define TXT_HELP_AP             "ap <ssid> <password> - configure access point\n"
-#define TXT_HELP_STA            "sta <ssid> <password> - configure Wi-Fi client\n"
+#define TXT_HELP_WIFI_SET       "wifi ap/sta/espnow/both/off - set Wi-Fi mode\n"
+#define TXT_HELP_AP             "ap <ssid> <password> - configure access point (angle brackets are placeholders)\n"
+#define TXT_HELP_STA            "sta <ssid> <password> - configure Wi-Fi client (same, do not copy the brackets)\n"
 #define TXT_HELP_ESPNOW         "espnow <mac> [<key>] - configure ESP-NOW peer\n"
 #define TXT_HELP_CH             "ch [<n>] - show or set ESP-NOW channel\n"
 #define TXT_HELP_MOT            "mot - show motor output\n"
@@ -167,6 +167,8 @@
 
 // ---- wifi ----
 #define TXT_WIFI_MODE_ESPNOW    "Mode: ESP-NOW\n"
+#define TXT_WIFI_MODE_BOTH      "Mode: ESP-NOW + AP (coexist)\n"
+#define TXT_WIFI_COEX_MIGRATED  "Wi-Fi mode upgraded to ESP-NOW + AP (coexist)\n"
 #define TXT_WIFI_VERSION        "ESP-NOW version: %d\n"
 #define TXT_WIFI_MAXLEN         "Max packet size: %d\n"
 #define TXT_WIFI_MAC            "MAC: %s\n"
@@ -189,6 +191,9 @@
 #define TXT_WIFI_LASTSYS        "Last MAVLink source sysid: %u\n"
 #define TXT_WIFI_AP             "Mode: Access Point (AP)\n"
 #define TXT_WIFI_AP_DEFAULT     "SSID in use: %s (default prefix YaoKun_ + MAC tail)\n"
+#define TXT_WIFI_AP_NAME_DROPPED "Stored AP name looked like a placeholder, cleared and restored auto naming\n"
+#define TXT_WIFI_AP_PASS_DROPPED "Stored AP password was unusable (placeholder / wrong length / non-ASCII), restored factory default\n"
+#define TXT_WIFI_ARG_INVALID    "Rejected: name must be plain ASCII without '<' '>'; password must be 8-63 printable ASCII chars\n"
 #define TXT_WIFI_SSID           "SSID: %s\n"
 #define TXT_WIFI_PASS_MASK      "Password: ***\n"
 #define TXT_WIFI_CLIENTS        "Clients: %d\n"
@@ -233,7 +238,7 @@
 
 // ---- 开机 / 通用 ----
 #define TXT_BOOT_START          "耀坤S3 飞控（Flix 整理版）启动中…\n"
-#define TXT_BOOT_VERSION        "固件版本：v1.0（耀坤整理版）\n"
+#define TXT_BOOT_VERSION        "固件版本：v1.1（耀坤整理版）\n"
 #define TXT_BOOT_DONE           "初始化完成\n"
 #define TXT_SETUP_PARAMS        "初始化参数存储\n"
 #define TXT_SETUP_POWER         "初始化电源检测\n"
@@ -268,9 +273,9 @@
 #define TXT_HELP_CR             "cr - 校准遥控行程\n"
 #define TXT_HELP_PW             "pw - 显示电源与电压\n"
 #define TXT_HELP_WIFI           "wifi - 显示无线连接信息\n"
-#define TXT_HELP_WIFI_SET       "wifi ap/sta/espnow/off - 设置无线模式\n"
-#define TXT_HELP_AP             "ap <热点名> <密码> - 设置飞机热点\n"
-#define TXT_HELP_STA            "sta <路由名> <密码> - 连接家里的路由器\n"
+#define TXT_HELP_WIFI_SET       "wifi ap/sta/espnow/both/off - 设置无线模式\n"
+#define TXT_HELP_AP             "ap <热点名> <密码> - 设置飞机热点（⚠ 尖括号只是占位符，要换成真实值，别照抄）\n"
+#define TXT_HELP_STA            "sta <路由名> <密码> - 连接家里的路由器（同上，尖括号别照抄）\n"
 #define TXT_HELP_ESPNOW         "espnow <遥控器MAC> [<密钥>] - 设置 ESP-NOW 对端\n"
 #define TXT_HELP_CH             "ch [<信道>] - 查看或设置 ESP-NOW 信道\n"
 #define TXT_HELP_MOT            "mot - 显示四路电机输出\n"
@@ -360,6 +365,8 @@
 
 // ---- wifi ----
 #define TXT_WIFI_MODE_ESPNOW    "无线模式：ESP-NOW\n"
+#define TXT_WIFI_MODE_BOTH      "无线模式：ESP-NOW + 热点（共存）\n"
+#define TXT_WIFI_COEX_MIGRATED  "无线模式已升级为 ESP-NOW + 热点（共存）\n"
 #define TXT_WIFI_VERSION        "ESP-NOW 版本：%d\n"
 #define TXT_WIFI_MAXLEN         "单包最大长度：%d 字节\n"
 #define TXT_WIFI_MAC            "本机 MAC：%s\n"
@@ -382,6 +389,9 @@
 #define TXT_WIFI_LASTSYS        "最近一帧来源 sysid：%u\n"
 #define TXT_WIFI_AP             "无线模式：热点（AP）\n"
 #define TXT_WIFI_AP_DEFAULT     "当前热点名：%s（默认前缀 YaoKun_ + MAC 末两字节）\n"
+#define TXT_WIFI_AP_NAME_DROPPED "NVS 里的热点名像占位符，已清除并恢复自动命名\n"
+#define TXT_WIFI_AP_PASS_DROPPED "NVS 里的热点密码不可用（占位符／长度不对／含非 ASCII），已恢复出厂默认\n"
+#define TXT_WIFI_ARG_INVALID    "已拒绝：热点名须为不含 < > 的 ASCII；密码须为 8~63 个可打印 ASCII 字符\n"
 #define TXT_WIFI_SSID           "热点名称：%s\n"
 #define TXT_WIFI_PASS_MASK      "热点密码：***\n"
 #define TXT_WIFI_CLIENTS        "已连设备数：%d\n"
