@@ -239,8 +239,9 @@ void doCommand(String str, bool echo = false) {
 	}
 }
 
-	static String input;
 void loopConsole() {
+
+	static String input;
 
 	while (Serial.available()) {
 		char c = Serial.read();
