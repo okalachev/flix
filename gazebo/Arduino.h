@@ -74,6 +74,10 @@ public:
 		std::transform(this->begin(), this->end(), this->begin(),
 			[](unsigned char c) { return std::toupper(c); });
 	}
+	bool concat(const uint8_t *cstr, unsigned int length) {
+		this->append(reinterpret_cast<const char*>(cstr), length);
+		return true;
+	}
 };
 
 class Print;
