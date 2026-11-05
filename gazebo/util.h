@@ -1,5 +1,7 @@
 #include <filesystem>
 
+#pragma once
+
 std::filesystem::path getPluginPath() {
 	Dl_info dl_info;
 	if (dladdr((void*)&getPluginPath, &dl_info) == 0) {
