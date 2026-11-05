@@ -113,22 +113,6 @@ void sendMavlink() {
 	}
 }
 
-void sendMessage(const mavlink_message_t& msg) {
-	batchMessage(msg);
-	sendMessages();
-}
-
-void batchMessage(const mavlink_message_t& msg) {
-	uint8_t buf[MAVLINK_MAX_PACKET_LEN];
-	int len = mavlink_msg_to_send_buffer(buf, &msg);
-	mavlinkBuffer.concat(buf, len);
-}
-
-void sendMessages() {
-	sendWiFi((const uint8_t *)mavlinkBuffer.c_str(), mavlinkBuffer.length());
-	mavlinkBuffer.clear();
-}
-
 void receiveMavlink() {
 	uint8_t buf[MAVLINK_MAX_PACKET_LEN];
 	int len = receiveWiFi(buf, MAVLINK_MAX_PACKET_LEN);
@@ -365,7 +349,22 @@ int handleCommand(const mavlink_command_long_t& m) {
 	return MAV_RESULT_UNSUPPORTED;
 }
 
-// Send shell output to GCS
+void sendMessage(const mavlink_message_t& msg) {
+	batchMessage(msg);
+	sendMessages();
+}
+
+void batchMessage(const mavlink_message_t& msg) {
+	uint8_t buf[MAVLINK_MAX_PACKET_LEN];
+	int len = mavlink_msg_to_send_buffer(buf, &msg);
+	mavlinkBuffer.concat(buf, len);
+}
+
+void sendMessages() {
+	sendWiFi((const uint8_t *)mavlinkBuffer.c_str(), mavlinkBuffer.length());
+	mavlinkBuffer.clear();
+}
+
 void mavlinkPrint(const char* str) {
 	mavlinkPrintBuffer += str;
 }
