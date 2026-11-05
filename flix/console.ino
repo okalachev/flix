@@ -50,8 +50,12 @@ const char* help =
 "sta <ssid> <password> - configure Wi-Fi client mode\n"
 "espnow <mac> [<key>] - configure ESP-NOW peer\n"
 "mot - show motor output\n"
-"log [dump] - print log header [and data]\n"
 "mfr/mfl/mrr/mrl [<thrust>] - test motor (remove props)\n"
+"led off/fill/blink/rainbow/<number> [<r> <g> <b>] - set LED\n"
+"log [header] - show log info or header\n"
+"log reset - reset log\n"
+"log expose <name> - expose log value to telemetry\n"
+"l <str> - show logging values\n"
 "sys - show system info\n"
 "reset - reset drone's state\n"
 "reboot - reboot the drone\n";
@@ -106,7 +110,7 @@ void doCommand(String str, bool echo = false) {
 		if (success) {
 			print("%s = %g\n", arg0.c_str(), getParameter(arg0.c_str()));
 		} else {
-			print("Parameter not found: %s\n", arg0.c_str());
+			print("Cannot set parameter: %s\n", arg0.c_str());
 		}
 	} else if (command == "preset") {
 		resetParameters();
@@ -160,9 +164,16 @@ void doCommand(String str, bool echo = false) {
 	} else if (command == "mot") {
 		print("front-right %g front-left %g rear-right %g rear-left %g\n",
 			motors[MOT_FR], motors[MOT_FL], motors[MOT_RR], motors[MOT_RL]);
-	} else if (command == "log") {
+	} else if (command == "log" && arg0 == "") {
+		printLogInfo();
+	} else if (command == "log" && arg0 == "header") {
 		printLogHeader();
-		if (arg0 == "dump") printLogData();
+	} else if (command == "log" && arg0 == "reset") {
+		resetLog();
+	} else if (command == "log" && arg0 == "expose" && arg1 != "") {
+		exposeLogValue(arg1.c_str());
+	} else if (command == "l") {
+		printLogValues(arg0.c_str());
 	} else if (command == "cr") {
 		calibrateRC();
 	} else if (command == "ca") {
@@ -181,6 +192,8 @@ void doCommand(String str, bool echo = false) {
 		print("Temperature: %.1f °C\n", temperatureRead());
 		print("Total RAM: %d KB\n", ESP.getHeapSize() / 1024);
 		print("Free heap: %d KB\n", ESP.getFreeHeap() / 1024);
+		print("PSRAM: %d KB\n", ESP.getPsramSize() / 1024);
+		print("Free PSRAM: %d KB\n", ESP.getFreePsram() / 1024);
 #ifdef VERSION
 		print("Version: %s\n", STRINGIFY(VERSION));
 #endif

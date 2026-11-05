@@ -52,14 +52,19 @@ void normalizeRC();
 void calibrateRC();
 void calibrateRCChannel(int*, uint16_t[16], uint16_t[16], const char*);
 void printRCCalibration();
+void loopLog();
+void resetLog();
+void writeLog(const void *data, size_t size);
+void readLog(void *data, size_t position, size_t size);
+void printLogInfo();
+int estimateLogDuration();
 void printLogHeader();
-void printLogData();
+void printLogValues(const char *filter);
+void exposeLogValue(const char *name);
 void loopMavlink();
 void sendMavlink();
-void sendMessage(const void *msg);
+void sendMessages();
 void receiveMavlink();
-void handleMavlink(const void *_msg);
-int handleMavlinkCommand(const void *_m);
 void mavlinkPrint(const char* str);
 void sendMavlinkPrint();
 inline Quaternion fluToFrd(const Quaternion &q);
@@ -85,3 +90,8 @@ void printIMUInfo() {};
 void printWiFiInfo() {};
 void configWiFi(bool, const char*, const char*) { print("Skip WiFi config\n"); };
 void setWiFiMode(const String& mode) { print("Skip WiFi mode set\n"); };
+
+class IMU {
+public:
+	float getTemp() { return 0; }
+} *imu;

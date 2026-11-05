@@ -3,6 +3,8 @@
 
 // Partial implementation of the ESP32 Preferences library for the simulation
 
+#pragma once
+
 #include <map>
 #include <fstream>
 #include "util.h"

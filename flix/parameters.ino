@@ -20,15 +20,11 @@ Preferences storage;
 
 struct Parameter {
 	const char *name; // max length is 15
-	bool integer;
-	union { float *f; int *i; }; // pointer to the variable
+	Value value; // pointer to the variable
 	float initial; // default value
 	float cache; // what's stored in flash
 	void (*callback)(); // called after parameter change
-	Parameter(const char *name, float *variable, void (*callback)() = nullptr) : name(name), integer(false), f(variable), callback(callback) {};
-	Parameter(const char *name, int *variable, void (*callback)() = nullptr) : name(name), integer(true), i(variable), callback(callback) {};
-	float getValue() const { return integer ? *i : *f; };
-	void setValue(const float value) { if (integer) *i = value; else *f = value; };
+	Parameter(const char *name, Value value, void (*callback)() = nullptr) : name(name), value(value), callback(callback) {};
 };
 
 Parameter parameters[] = {
@@ -130,6 +126,22 @@ Parameter parameters[] = {
 	{"MAV_RATE_RC", &telemetryRC.rate},
 	{"MAV_RATE_MOT", &telemetryMotors.rate},
 	{"MAV_RATE_IMU", &telemetryIMU.rate},
+	{"MAV_RATE_TOPIC", &telemetryTopic.rate},
+	// log
+	{"LOG_MEMORY", &logMemory, setupLog},
+	{"LOG_USAGE", &logUsage, setupLog},
+	{"LOG_RATE_000", &logTopics[0].rate},
+	{"LOG_RATE_001", &logTopics[1].rate},
+	{"LOG_RATE_002", &logTopics[2].rate},
+	{"LOG_RATE_003", &logTopics[3].rate},
+	{"LOG_RATE_004", &logTopics[4].rate},
+	{"LOG_RATE_005", &logTopics[5].rate},
+	{"LOG_RATE_006", &logTopics[6].rate},
+	{"LOG_RATE_007", &logTopics[7].rate},
+	{"LOG_RATE_008", &logTopics[8].rate},
+	{"LOG_RATE_009", &logTopics[9].rate},
+	{"LOG_RATE_010", &logTopics[10].rate},
+	{"LOG_RATE_011", &logTopics[11].rate},
 	// power
 	{"PWR_VOLT_PIN", &voltagePin, setupPower},
 	{"PWR_VOLT_SCALE", &voltageScale},
@@ -146,11 +158,11 @@ void setupParameters() {
 	storage.begin("flix");
 	// Read parameters from storage
 	for (auto &parameter : parameters) {
-		parameter.initial = parameter.getValue();
+		parameter.initial = parameter.value.get();
 		if (storage.isKey(parameter.name)) {
-			parameter.setValue(storage.getFloat(parameter.name));
+			parameter.value.set(storage.getFloat(parameter.name));
 		}
-		parameter.cache = parameter.getValue();
+		parameter.cache = parameter.value.get();
 	}
 }
 
@@ -165,13 +177,13 @@ const char *getParameterName(int index) {
 
 float getParameter(int index) {
 	if (index < 0 || index >= parametersCount()) return NAN;
-	return parameters[index].getValue();
+	return parameters[index].value.get();
 }
 
 float getParameter(const char *name) {
 	for (auto &parameter : parameters) {
 		if (strcasecmp(parameter.name, name) == 0) {
-			return parameter.getValue();
+			return parameter.value.get();
 		}
 	}
 	return NAN;
@@ -180,10 +192,9 @@ float getParameter(const char *name) {
 bool setParameter(const char *name, const float value) {
 	for (auto &parameter : parameters) {
 		if (strcasecmp(parameter.name, name) == 0) {
-			if (parameter.integer && !isfinite(value)) return false; // can't set integer to NaN or Inf
-			parameter.setValue(value);
+			bool success = parameter.value.set(value);
 			if (parameter.callback) parameter.callback();
-			return true;
+			return success;
 		}
 	}
 	return false;
@@ -195,10 +206,10 @@ void syncParameters() {
 	if (motorsActive()) return; // don't use flash while flying, it may cause a delay
 
 	for (auto &parameter : parameters) {
-		if (floatEquals(parameter.getValue(), parameter.cache)) continue; // no change
+		if (floatEquals(parameter.value.get(), parameter.cache)) continue; // no change
 
-		storage.putFloat(parameter.name, parameter.getValue());
-		parameter.cache = parameter.getValue(); // update cache
+		storage.putFloat(parameter.name, parameter.value.get());
+		parameter.cache = parameter.value.get(); // update cache
 	}
 }
 
@@ -207,10 +218,10 @@ void printParameters(const char *filter) {
 	for (auto &parameter : parameters) {
 		if (strncasecmp(parameter.name, filter, strlen(filter))) continue;
 
-		if (floatEquals(parameter.getValue(), parameter.initial)) { // parameter changed
-			print("%-15s  %-13g\n", parameter.name, parameter.getValue());
+		if (floatEquals(parameter.value.get(), parameter.initial)) { // parameter changed
+			print("%-15s  %-13g\n", parameter.name, parameter.value.get());
 		} else {
-			print("%-15s  %-13g  [%g]\n", parameter.name, parameter.getValue(), parameter.initial);
+			print("%-15s  %-13g  [%g]\n", parameter.name, parameter.value.get(), parameter.initial);
 		}
 	}
 }

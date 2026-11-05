@@ -73,7 +73,7 @@ Parameters subsystem (`parameters.ino`) uses standard [Preferences.h](https://do
 
 To add a new parameter:
 
-1. Define a global variable for the parameter, two types are supported: `float` and `int`.
+1. Define a global variable for the parameter, three types are supported: `float`, `int`, and `bool`.
 2. Add an entry to the `parameters` array, with the parameter name, a pointer to the variable, and optionally a callback function to call when the parameter is changed.
 3. Everything else will be handled automatically.
 

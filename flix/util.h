@@ -67,6 +67,50 @@ public:
 	}
 };
 
+// Variant type for logging and parameters
+struct Value {
+	enum { EMPTY, FLOAT, INT, BOOL, FLOAT_FN, INT_FN, BOOL_FN } type;
+	union {
+		void *pointer;
+		float *float_;
+		int *int_;
+		bool *bool_;
+		float (*floatFn)();
+		int (*intFn)();
+		bool (*boolFn)();
+	};
+
+	Value() : type(EMPTY), pointer(nullptr) {};
+	Value(float *pt) : type(FLOAT), float_(pt) {};
+	Value(int *pt) : type(INT), int_(pt) {};
+	Value(bool *pt) : type(BOOL), bool_(pt) {};
+	Value(float (*fn)()) : type(FLOAT_FN), floatFn(fn) {};
+	Value(int (*fn)()) : type(INT_FN), intFn(fn) {};
+	Value(bool (*fn)()) : type(BOOL_FN), boolFn(fn) {};
+
+	float get() const {
+		switch (type) {
+			case FLOAT: return *float_;
+			case INT: return *int_;
+			case BOOL: return *bool_ ? 1 : 0;
+			case FLOAT_FN: return floatFn();
+			case INT_FN: return intFn();
+			case BOOL_FN: return boolFn() ? 1 : 0;
+			default: return NAN;
+		}
+	};
+
+	bool set(float value) const {
+		switch (type) {
+			case FLOAT: *float_ = value; break;
+			case INT: if (!isfinite(value)) return false; *int_ = value; break;
+			case BOOL: *bool_ = (value != 0); break;
+			default: return false;
+		}
+		return true;
+	}
+};
+
 // Rate limiter
 class Rate {
 public:
