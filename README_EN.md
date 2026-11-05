@@ -103,7 +103,8 @@ flix/                          # ← repo root: docs + forwarding Makefile
 │       └── models/            #     Frame / scene models
 ├── Docs/                      # ★ Documentation
 │   ├── YaoKunS3_Adaptation_Notes_EN.md  # ★ Change list / root causes / verification
-│   ├── Flix_Technical_Manual_EN.html    # ★ Illustrated technical manual
+│   ├── Flix_Technical_Manual_EN.html    # ★ Illustrated technical manual (styled, open in a browser)
+│   ├── Flix_Technical_Manual_EN.md      # ★ Same content in Markdown (readable directly on GitHub)
 │   ├── Bench_Test_Checklist_EN.md       # ★ Bench test checklist (20 boxes, props off)
 │   ├── 台架实测清单_v1.1.md             #   same, Chinese
 │   ├── assembly.md            #   Assembly instructions
@@ -139,9 +140,11 @@ flix/                          # ← repo root: docs + forwarding Makefile
 This branch runs Flix on the **YaoKun S3 quadcopter** and fixes the "aircraft does nothing after  
 switching to our custom ESP-NOW remote" problem. The full change list, root-cause analysis and  
 verification records are in [Docs/YaoKunS3_Adaptation_Notes_EN.md](Docs/YaoKunS3_Adaptation_Notes_EN.md)
-(illustrated version: [Docs/Flix_Technical_Manual_EN.html](Docs/Flix_Technical_Manual_EN.html);
+(technical manual: [Markdown](Docs/Flix_Technical_Manual_EN.md) — readable on GitHub — or
+[illustrated HTML](Docs/Flix_Technical_Manual_EN.html);
 bench test checklist: [Docs/Bench_Test_Checklist_EN.md](Docs/Bench_Test_Checklist_EN.md);
-Chinese originals: [`耀坤S3适配说明.md`](Docs/耀坤S3适配说明.md) / [`flix技术说明书.html`](Docs/flix技术说明书.html) /
+Chinese originals: [`耀坤S3适配说明.md`](Docs/耀坤S3适配说明.md) /
+[`flix技术说明书.md`](Docs/flix技术说明书.md) /
 [`台架实测清单_v1.1.md`](Docs/台架实测清单_v1.1.md)).
 
 ### Key changes

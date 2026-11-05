@@ -1046,6 +1046,7 @@ arduino-cli compile \
 <tr><td><b>输入 <code>help</code> 只看到开机横幅，没有命令菜单</b></td><td>HWCDC 发送缓冲只有 256 B，1.7 KB 的 motd 一次写出被截断（见 14.1）</td><td>看输出末尾有没有 <code>reboot - 重启飞机</code>；本版已修（TX 缓冲扩到 4 KB + 收尾补推）</td></tr>
 <tr><td>只插 UART 口看不到日志</td><td>控制台走原生 USB（CDCOnBoot=cdc）</td><td>改用原生 USB 口</td></tr>
 </tbody>
+</table>
 
 <h3 id="s14-1">14.1 <code>help</code> 菜单只显示前半截（已修）</h3>
 
@@ -1093,7 +1094,6 @@ arduino-cli compile \
    可用空间最大值是"容量 − 1"（留 1 字节区分满/空），那个条件<strong>永远不成立</strong>，
    每次都会白等满超时。改为"连续两拍可用空间不再增长"即判定排空，与容量解耦。
 </div>
-</table>
 
 <!-- ============ 15 ============ -->
 <h2 id="s15">十五、飞行能力边界</h2>

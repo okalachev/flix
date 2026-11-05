@@ -87,7 +87,7 @@ flix/                          # ← 仓库根：说明文档 + 转发用 Makefi
 │   ├── flix/                  #   Arduino sketch —— 飞控全部源码
 │   │   ├── flix.ino           #     主入口：setup / loop
 │   │   ├── config.h           #     引脚定义与飞行参数
-│   │   ├── i18n.h             #     ★ 界面文案表（中英双语，135 条，唯一数据源）
+│   │   ├── i18n.h             #     ★ 界面文案表（中英双语，169 条，唯一数据源）
 │   │   ├── imu.ino            #     IMU 驱动、自动识别与校准
 │   │   ├── estimate.ino       #     姿态解算
 │   │   ├── control.ino        #     PID 控制与电机混控
@@ -108,8 +108,10 @@ flix/                          # ← 仓库根：说明文档 + 转发用 Makefi
 ├── Docs/                      # ★ 文档与教材
 │   ├── 耀坤S3适配说明.md       #   ★ 改动清单 / 根因分析 / 验证记录
 │   ├── YaoKunS3_Adaptation_Notes_EN.md  #   同上，英文版（供海外复刻用户）
-│   ├── flix技术说明书.html     #   ★ 图文版技术说明书
-│   ├── Flix_Technical_Manual_EN.html    #   同上，英文版
+│   ├── flix技术说明书.html     #   ★ 图文版技术说明书（浏览器打开，排版精美）
+│   ├── flix技术说明书.md       #   ★ 同内容 Markdown 版（GitHub 上可直接在线阅读）
+│   ├── Flix_Technical_Manual_EN.html    #   同上，英文版（图文）
+│   ├── Flix_Technical_Manual_EN.md      #   同上，英文版（Markdown）
 │   ├── 台架实测清单_v1.1.md    #   ★ 接板后照着做（20 个勾选项，全程拆桨）
 │   ├── Bench_Test_Checklist_EN.md       #   同上，英文版
 │   ├── assembly.md            #   组装说明
@@ -144,8 +146,12 @@ flix/                          # ← 仓库根：说明文档 + 转发用 Makefi
 这一分支把 Flix 跑到了**耀坤 S3 无人机**上，并解决了"换用自研 ESP-NOW 遥控后飞机毫无反应"的问题。  
 改动清单、根因分析与逐条验证记录见 [Docs/耀坤S3适配说明.md](Docs/耀坤S3适配说明.md)。
 
+> 📘 **技术说明书**：[中文 Markdown 版](Docs/flix技术说明书.md)（GitHub 可直接阅读）·
+> [中文图文版](Docs/flix技术说明书.html)（浏览器打开，带封面与配色）·
+> [English Markdown](Docs/Flix_Technical_Manual_EN.md) · [English illustrated](Docs/Flix_Technical_Manual_EN.html)
+>
 > 🌐 **English docs** (for overseas builders): [YaoKunS3_Adaptation_Notes_EN.md](Docs/YaoKunS3_Adaptation_Notes_EN.md) ·
-> [Flix_Technical_Manual_EN.html](Docs/Flix_Technical_Manual_EN.html) ·
+> [Flix_Technical_Manual_EN.md](Docs/Flix_Technical_Manual_EN.md) ·
 > [Bench_Test_Checklist_EN.md](Docs/Bench_Test_Checklist_EN.md)
 
 ### 关键改动一览
@@ -159,7 +165,7 @@ flix/                          # ← 仓库根：说明文档 + 转发用 Makefi
 | **R6**  | 电压检测 GPIO **2**，分压系数 **2**                                   | 对应耀坤 S3 分压电阻实测值                                                                                                                                      |
 | **R7**  | IMU **上电自动识别**（I2C 的 MPU6050 / SPI 的 MPU-6500），朝向按总线分档       | 两块板子用的 IMU 不同，型号选错 `IMU::create()` 返回 `nullptr` → 上游会**空指针崩溃**。本版加了 `imuOK` 判据，IMU 不可用时禁止解锁并红灯长鸣告警                                                   |
 | **R8**  | 三色灯（GPIO 41/7/14）+ 蜂鸣器（GPIO 39）灯语系统                          | 现场不看串口也知道状态；**连接判定改用 `controlTime` 而非 `mavlinkTime`** —— 后者任何 MAVLink 帧都会刷新，会"没接遥控也显示已连接"                                                            |
-| **R9**  | **全中文界面**（`i18n.h` 集中管理，135 条文案）                             | help 菜单、IMU 校准、初始化提示、错误信息全中文                                                                                                                         |
+| **R9**  | **全中文界面**（`i18n.h` 集中管理，169 条文案）                             | help 菜单、IMU 校准、初始化提示、错误信息全中文                                                                                                                         |
 | **R10** | 参数表新增 `IMU_AUTO_DETECT` / `IMU_ROT_LOCK` / `LED_*` / `BUZ_*` | 换 IMU、换板不必重编固件                                                                                                                                       |
 | **R11** | 默认 **ESP-NOW + 热点共存**（`wifi both`）；热点名后缀改读 eFuse STA MAC          | 原版三种模式互斥，ESP-NOW 分支不开 UDP → 地面站连上热点也没应答；复刻用户开箱还得先跑命令。共存后遥控与 QGC 同时在线，`wifi both` 也成为可显式切换的模式 |
 | **R12** | 热点密码**三层校验**：读取端清洗 NVS 脏值 + 写入端拒绝非法参数 + 出厂密码改码表构造 | 脏值事故：占位符 `<密码>` 的 UTF-8 恰 8 字节混过 `strlen>=8` 校验进了 NVS → 出厂密码被覆盖，怎么输都连不上。三层防线后此类脏值自动清除/拒绝 |
@@ -179,7 +185,7 @@ flix/                          # ← 仓库根：说明文档 + 转发用 Makefi
 arduino-cli compile --build-property "compiler.cpp.extra_flags=-DFLIX_LANG_EN" ...
 ```
 
-两种版本的中英文案条数严格一致（135 : 135），有脚本可校验，不会出现"改了中文忘了英文"。
+两种版本的中英文案条数严格一致（169 : 169），有脚本可校验，不会出现"改了中文忘了英文"。
 
 ### 编译与烧录（耀坤 S3）
 
