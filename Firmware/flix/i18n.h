@@ -462,22 +462,48 @@
 // ---- 默认（耀坤 S3 / 上游通用 ESP32）：V1.1 原文，勿改 ----
 // 指纹串沿用「组织 | 产品名 | 固件家族 | 品牌」四段式，与 YaoKunDrone / ESP-Drone
 // 整理版保持同一套语义，现场看串口第一屏就能判断这是哪条产品线。
+// 【2026-11-06 补英文分支】此前英文版（FLIX_LANG_EN）没有独立指纹串，直接复用下面这行
+//   中文串 —— 海外用户串口第一屏看到的是中文；tools/check_i18n.py 也因此报
+//   「仅中文段有定义（英文段缺失 1 条）：TXT_IDENTITY」。
+//   补上 #ifdef 之后：中文版展开的字符串常量与 V1.1 原文**完全相同**（同一字面量），
+//   因此 S3 中文固件无需重出；只有编英文版时文本才变化。
+#ifdef FLIX_LANG_EN
+#define TXT_IDENTITY  "YaoKunS | YaoKun S3 Drone | Flix | YaoKunSmart"
+#else
 #define TXT_IDENTITY  "YaoKunS | 耀坤S3无人机 | Flix | 耀坤智联"
+#endif
 
-#define MOTD_BANNER \
-	"\n" \
-	"==============================================================\n" \
-	"  耀坤S3 飞控（Flix 整理版）   YaoKunS Flight Controller\n" \
-	"  硬件：立创 ESP32-S3 + MPU6500/MPU6050   遥控：ESP-NOW\n" \
-	"--------------------------------------------------------------\n" \
-	"  开源：https://github.com/YaoKunS/flix\n" \
-	"  淘宝：耀坤智联  https://shop35432590.taobao.com/\n" \
-	"  B 站：耀坤智联  https://space.bilibili.com/3707011699050767/\n" \
-	"--------------------------------------------------------------\n" \
-	"  内核 (C) Oleg Kalachev   https://github.com/okalachev/flix\n" \
-	"  本固件由耀坤智联二次开发（目录整理 / 中文界面 / 硬件适配）\n" \
-	"==============================================================\n" \
-	"\n"
+#ifdef FLIX_LANG_EN
+	#define MOTD_BANNER \
+		"\n" \
+		"==============================================================\n" \
+		"  YaoKun S3 Flight Controller (Flix YaoKun Edition)\n" \
+		"  Hardware: ESP32-S3 + MPU6500/MPU6050   RC: ESP-NOW\n" \
+		"--------------------------------------------------------------\n" \
+		"  Source: https://github.com/YaoKunS/flix\n" \
+		"  Taobao: YaoKunSmart  https://shop35432590.taobao.com/\n" \
+		"  Bilibili: YaoKunSmart  https://space.bilibili.com/3707011699050767/\n" \
+		"--------------------------------------------------------------\n" \
+		"  Kernel (C) Oleg Kalachev   https://github.com/okalachev/flix\n" \
+		"  Firmware adapted by YaoKunSmart (organized / Chinese UI / board port)\n" \
+		"==============================================================\n" \
+		"\n"
+#else
+	#define MOTD_BANNER \
+		"\n" \
+		"==============================================================\n" \
+		"  耀坤S3 飞控（Flix 整理版）   YaoKunS Flight Controller\n" \
+		"  硬件：立创 ESP32-S3 + MPU6500/MPU6050   遥控：ESP-NOW\n" \
+		"--------------------------------------------------------------\n" \
+		"  开源：https://github.com/YaoKunS/flix\n" \
+		"  淘宝：耀坤智联  https://shop35432590.taobao.com/\n" \
+		"  B 站：耀坤智联  https://space.bilibili.com/3707011699050767/\n" \
+		"--------------------------------------------------------------\n" \
+		"  内核 (C) Oleg Kalachev   https://github.com/okalachev/flix\n" \
+		"  本固件由耀坤智联二次开发（目录整理 / 中文界面 / 硬件适配）\n" \
+		"==============================================================\n" \
+		"\n"
+#endif
 
 // ---- 微辣火龙果 2.0（BOARD_HLG_V2）：覆盖成火龙果的身份 ----
 // 【归属关系】耀坤智联是「替火龙果作者（MildlySpicyDragon/malagis）做固件适配与维护」，

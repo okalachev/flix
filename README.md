@@ -22,9 +22,10 @@
 
 ---
 
-> 📌 **本仓库是 [okalachev/flix](https://github.com/okalachev/flix) 的中文整理版 + 耀坤 S3 适配版。**  
+> 📌 **本仓库是 [okalachev/flix](https://github.com/okalachev/flix) 的中文整理版 + 双板硬件适配版。**  
 > `master` 分支**保持上游原样**（仅调整目录位置，未改一行代码逻辑）。  
-> `yaokun-organized` 分支在整理版基础上**新增了硬件适配与中文界面**（详见 [耀坤 S3 适配版](#-耀坤-s3-适配版yakun-organized-分支)）。  
+> `yaokun-organized` 分支在整理版基础上**新增了硬件适配与中文界面**：同一份源码支持两块 PCB ——
+> **耀坤 S3 无人机**（默认板型）与 **微辣火龙果 2.0**「ESP32 迷你无人机」（编译期 `-DFLIX_BOARD=2` 切换）。  
 > 上游项目与作者：[Oleg Kalachev](https://github.com/okalachev) · [项目官网 quadcopter.dev](https://quadcopter.dev)
 
 ## 📌 这是什么
@@ -99,8 +100,10 @@ flix/                          # ← 仓库根：说明文档 + 转发用 Makefi
 │   │   ├── led.ino / power.ino / log.ino / safety.ino / time.ino / parameters.ino
 │   │   └── pid.h / filter.h / quaternion.h / vector.h / util.h
 │   ├── tools/                 #   ★ 发布打包脚本
-│   │   └── pack_flix_release.py   # 合并单文件固件 + 自动生成 SHA-256 指纹说明
-│   ├── release/               #   ★ 发布产物（merged.bin + 指纹与烧录说明）
+│   │   ├── pack_flix_release.py   # 耀坤S3：合并四段 + 脱敏 + 重算校验字节与 SHA-256 + 生成中英说明
+│   │   ├── gen_hlg_note.py        # 火龙果：只读整片 bin，现场生成中英说明（哈希/大小/编译时间现测）
+│   │   └── check_i18n.py          # 中英文案配对自检（含板型横幅块的双语分支）
+│   ├── release固件v1.1/        #   ★ 发布产物（双板整片 bin + 中英指纹与烧录说明 + 发布说明）
 │   └── gazebo/                #   Gazebo 仿真器（跑同一份 .ino 源码）
 │       ├── flix.world         #     仿真世界
 │       ├── simulator.cpp      #     仿真主程序
@@ -139,12 +142,17 @@ flix/                          # ← 仓库根：说明文档 + 转发用 Makefi
 | `docs/`    | `Docs/`                       | 文档                  |
 | `tools/`   | `Tools/`                      | 工具脚本                |
 
-## 🛩️ 耀坤 S3 适配版（`yaokun-organized` 分支）
+## 🛩️ 耀坤 S3 / 微辣火龙果 2.0 双板适配（`yaokun-organized` 分支）
 
 > ⚠️ **只在 `yaokun-organized` 分支上生效。** `master` 始终跟随上游，不包含以下改动。
 
-这一分支把 Flix 跑到了**耀坤 S3 无人机**上，并解决了"换用自研 ESP-NOW 遥控后飞机毫无反应"的问题。  
+这一分支把 Flix 跑到了**耀坤 S3 无人机**上，并解决了"换用自研 ESP-NOW 遥控后飞机毫无反应"的问题；  
+自 **v1.1** 起，又通过**编译期板型宏**（`Firmware/flix/board.h`，一个板型 = 一组 `PIN_*` 宏）把同一套源码
+跑到了**微辣火龙果 2.0**「ESP32 迷你无人机」上 —— **一个代码库，两块 PCB，编出来是两份固件**。  
 改动清单、根因分析与逐条验证记录见 [Docs/耀坤S3适配说明.md](Docs/耀坤S3适配说明.md)。
+
+> 🔴 **为什么不自动认板**：电机引脚在硬件上没有身份标识，运行时"猜"板型一旦猜错，
+> 上电瞬间四个电机就会按错误顺序起转。所以板型只由**编译期宏**决定，绝不运行时探测。
 
 > 📘 **技术说明书**：[中文 Markdown 版](Docs/flix技术说明书.md)（GitHub 可直接阅读）·
 > [中文图文版](Docs/flix技术说明书.html)（浏览器打开，带封面与配色）·
@@ -165,7 +173,7 @@ flix/                          # ← 仓库根：说明文档 + 转发用 Makefi
 | **R6**  | 电压检测 GPIO **2**，分压系数 **2**                                   | 对应耀坤 S3 分压电阻实测值                                                                                                                                      |
 | **R7**  | IMU **上电自动识别**（I2C 的 MPU6050 / SPI 的 MPU-6500），朝向按总线分档       | 两块板子用的 IMU 不同，型号选错 `IMU::create()` 返回 `nullptr` → 上游会**空指针崩溃**。本版加了 `imuOK` 判据，IMU 不可用时禁止解锁并红灯长鸣告警                                                   |
 | **R8**  | 三色灯（GPIO 41/7/14）+ 蜂鸣器（GPIO 39）灯语系统                          | 现场不看串口也知道状态；**连接判定改用 `controlTime` 而非 `mavlinkTime`** —— 后者任何 MAVLink 帧都会刷新，会"没接遥控也显示已连接"                                                            |
-| **R9**  | **全中文界面**（`i18n.h` 集中管理，169 条文案）                             | help 菜单、IMU 校准、初始化提示、错误信息全中文                                                                                                                         |
+| **R9**  | **全中文界面**（`i18n.h` 集中管理，170 条文案）                             | help 菜单、IMU 校准、初始化提示、错误信息全中文                                                                                                                         |
 | **R10** | 参数表新增 `IMU_AUTO_DETECT` / `IMU_ROT_LOCK` / `LED_*` / `BUZ_*` | 换 IMU、换板不必重编固件                                                                                                                                       |
 | **R11** | 默认 **ESP-NOW + 热点共存**（`wifi both`）；热点名后缀改读 eFuse STA MAC          | 原版三种模式互斥，ESP-NOW 分支不开 UDP → 地面站连上热点也没应答；复刻用户开箱还得先跑命令。共存后遥控与 QGC 同时在线，`wifi both` 也成为可显式切换的模式 |
 | **R12** | 热点密码**三层校验**：读取端清洗 NVS 脏值 + 写入端拒绝非法参数 + 出厂密码改码表构造 | 脏值事故：占位符 `<密码>` 的 UTF-8 恰 8 字节混过 `strlen>=8` 校验进了 NVS → 出厂密码被覆盖，怎么输都连不上。三层防线后此类脏值自动清除/拒绝 |
@@ -185,27 +193,61 @@ flix/                          # ← 仓库根：说明文档 + 转发用 Makefi
 arduino-cli compile --build-property "compiler.cpp.extra_flags=-DFLIX_LANG_EN" ...
 ```
 
-两种版本的中英文案条数严格一致（169 : 169），有脚本可校验，不会出现"改了中文忘了英文"。
+两种版本的中英文案条数严格一致（170 : 170），有脚本可校验，不会出现"改了中文忘了英文"。
 
-### 编译与烧录（耀坤 S3）
+### 编译与烧录（耀坤 S3，默认板型）
 
 ```bash
 cd Firmware
 arduino-cli compile \
-  --fqbn "esp32:esp32:esp32s3:UploadSpeed=921600,USBMode=hwcdc,CDCOnBoot=cdc,CPUFreq=240,FlashMode=qio,FlashSize=4M,PartitionScheme=default,PSRAM=disabled" \
-  --libraries "G:\Arduino\libraries" \
+  --fqbn "esp32:esp32:esp32s3:FlashSize=8M,PartitionScheme=default_8MB" \
   --export-binaries flix
 ```
 
+> USB 走原生口（HWCDC）：另需 `USBMode=hwcdc,CDCOnBoot=cdc`；串口监视器打开时 **DTR=1、RTS=0**。
 > 🔴 **必须带 `--export-binaries`**，否则 `build/` 目录不会更新，打包脚本会拿旧固件拼出一个"看起来正常但内容错误"的 bin。
 
-打包单文件固件 + 自动生成指纹说明：
+### 编译与烧录（微辣火龙果 2.0，编译期选板）
 
 ```bash
-python Firmware/tools/pack_flix_release.py --version 1.0
+cd Firmware
+arduino-cli compile \
+  --fqbn "esp32:esp32:esp32:FlashSize=4M,PartitionScheme=default" \
+  --build-property "compiler.cpp.extra_flags=-DFLIX_BOARD=2" \
+  --export-binaries flix
 ```
 
-产物在 `Firmware/release/`：`*_merged.bin`（烧 `0x0`）+ `*_指纹与烧录说明.md/.txt`。
+> 🔴 **`-DFLIX_BOARD=2` 不能省**：省了就按耀坤 S3 的引脚编，烧到火龙果上电机顺序全错。
+> 芯片是 **ESP32 经典片**（不是 S3），Flash 4MB，`default` 分区表。
+
+**火龙果 2.0 引脚（21 脚，`board.h` 的 `BOARD_HLG_V2` 分支）**
+
+| 外设 | 引脚 |
+| --- | --- |
+| 电机 M1 右前 / M2 右后 / M3 左后 / M4 左前 | GPIO 33 / 27 / 26 / 32 |
+| IMU（SPI，MPU6500） | SCK 18 / MOSI 23 / MISO 19 / CS 5 |
+| I2C 总线（MPU6050、MS5611 等） | SDA 21 / SCL 22 |
+| 电池电压 ADC | GPIO 35（分压 100K+100K 或 10K+10K） |
+| 蜂鸣器 / 板载 LED | GPIO 25 / GPIO 2（单灯，状态用闪烁频率表达） |
+| SBus 接收机 | GPIO 4 |
+| 光流（预留，PMW3901） | MOS 13 / CLK 14 / MIS 12 / CS 15 |
+| 激光测距（预留，VL53L1X，I2C1） | SCL 16 / SDA 17 |
+
+> ⚠️ MPU6500 与 MPU6050 **不会同时插在排母上**，固件按总线自动识别。
+> ⚠️ 单独烧 bootloader 时地址是 **`0x1000`**（ESP32 经典片规则），不是 S3 的 `0x0`；整片烧 `0x0` 即可。
+
+### 打包发布件
+
+```bash
+# 耀坤 S3（合并四段 + 脱敏 + 重算校验字节与 SHA-256 + 生成中英说明）
+python Firmware/tools/pack_flix_release.py --version 1.1 --date-tag 20261106
+
+# 火龙果 2.0（只读整片 bin，现场生成中英说明）
+python Firmware/tools/gen_hlg_note.py --bin "release固件v1.1/xxx_整片4MB.bin" --version 1.1 --date-tag 20261106
+```
+
+产物在 `release固件v1.1/`：`*_merged.bin` / `*_整片*.bin`（烧 `0x0`）+ 中英双语《指纹与烧录说明》。  
+🔴 打包前务必确认 `build/` 就是**本次**编译产物 —— 拿旧构建目录打包会生成"版本号对、内容却是旧固件"的错件（v1.1 发布时就踩过）。
 
 ### 控制台命令（中文版实际显示）
 
@@ -320,6 +362,10 @@ make BOARD=esp32:esp32:esp32c3          # 编译 ESP32-C3
 
 > 💡 `make` 在根目录可用 —— 根目录的 `Makefile` 会自动转发到 `Firmware/`。  
 > 也可以 `cd Firmware && make`，效果完全一样。
+>
+> 🔴 **本整理版有两块目标板，编译参数不同**：耀坤 S3 用 `esp32:esp32:esp32s3:FlashSize=8M,PartitionScheme=default_8MB`；
+> 微辣火龙果 2.0 用 `esp32:esp32:esp32:FlashSize=4M,PartitionScheme=default` **并必须加 `-DFLIX_BOARD=2`**
+> （详见上文《编译与烧录（微辣火龙果 2.0，编译期选板）》，用错板型电机顺序会全错）。
 
 ### 2. 烧录与调试
 
@@ -410,6 +456,7 @@ make upload_proxy
 | Type             | Part                                                                                                                                                                                                |                                                                         Image                                                                         | Quantity |
 | ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------: | :------: |
 | 主控板              | ESP32 Mini<br />也支持 ESP32-S3 / ESP32-C3                                                                                                                                                             |                                                        <img src="Docs/img/esp32.jpg" width=100>                                                       |     1    |
+| 主控板<br />（微辣火龙果 2.0） | **ESP32 DevKit V1（30 针）**<br />微辣火龙果 2.0 PCB，[立创开源硬件](https://oshwhub.com/malagis/esp32-mini-plane)                                                                                                    |                                                                           —                                                                           |     1    |
 | IMU¹             | GY-91、MPU-9265（或其它 MPU-9250 / MPU-6500）<br />ICM20948V2<br />GY-521（MPU-6050）                                                                                                                       | <img src="Docs/img/gy-91.jpg" width=90 align=center><br /><img src="Docs/img/icm-20948.jpg" width=100><br /><img src="Docs/img/gy-521.jpg" width=100> |     1    |
 | *升压模块（可选，供电更稳）*  | *5V 输出*                                                                                                                                                                                             |                                                     <img src="Docs/img/buck-boost.jpg" width=100>                                                     |     1    |
 | 电机               | 8520 3.7V 有刷电机<br />**必须是标称 3.7V，不能是工作电压区间（3.7V–6V）**<br />确认电机轴径与桨孔径匹配！                                                                                                                            |                                                       <img src="Docs/img/motor.jpeg" width=100>                                                       |     4    |

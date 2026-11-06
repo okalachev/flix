@@ -116,6 +116,25 @@ def check():
     else:
         en = set(re.findall(r'#define\s+(TXT_\w+)', text[:idx]))
         zh = set(re.findall(r'#define\s+(TXT_\w+)', text[idx:]))
+        # ---- 板型横幅块里的「第二次语言分支」----
+        # 【为什么需要这一段】文件末尾的板型横幅块（`#include "board.h"` 之后）是这样的结构：
+        #     #if FLIX_BOARD == BOARD_HLG_V2
+        #         #ifdef FLIX_LANG_EN   ← 板型内的语言分支（物理位置在**主中文段**里）
+        #             #define TXT_IDENTITY "..."
+        #         #else
+        #             #define TXT_IDENTITY "..."
+        #         #endif
+        # 只按「第一个 #else」切分时，这批定义会全部落进中文段，
+        # 于是英文段看起来缺宏（实测踩坑：TXT_IDENTITY 被误报为「英文段缺失」，
+        # 而实际上 S3 英文版从 465 行起就漏了英文串，报得对、原因找错了）。
+        # 这里把「板型块内 #ifdef FLIX_LANG_EN ... #else ... #endif」的两支分别计入 en/zh。
+        board_idx = text.find('#if FLIX_BOARD')
+        if board_idx > 0:
+            board_txt = text[board_idx:]
+            for m in re.finditer(r'#\s*ifdef\s+FLIX_LANG_EN(.*?)#\s*else(.*?)#\s*endif',
+                                 board_txt, re.S):
+                en |= set(re.findall(r'#define\s+(TXT_\w+)', m.group(1)))
+                zh |= set(re.findall(r'#define\s+(TXT_\w+)', m.group(2)))
         only_en = sorted(en - zh)
         only_zh = sorted(zh - en)
         if only_en:

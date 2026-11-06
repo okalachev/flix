@@ -20,10 +20,11 @@
 
 ---
 
-> 📌 **This repository is a Chinese-documented fork of [okalachev/flix](https://github.com/okalachev/flix), plus a YaoKun S3 hardware port.**  
+> 📌 **This repository is a Chinese-documented fork of [okalachev/flix](https://github.com/okalachev/flix), plus a dual-board hardware port.**  
 > The `master` branch is kept **identical to upstream** (only the directory layout changed,  
 > not a single line of logic). The `yaokun-organized` branch adds **hardware adaptation and a  
-> Chinese UI** on top of that — see [YaoKun S3 Edition](#-yaokun-s3-edition-yaokun-organized-branch).  
+> Chinese UI** on top of that — one source tree drives two PCBs: the **YaoKun S3 quadcopter**
+> (default board) and the **MildlySpicyDragon 2.0** "ESP32 mini drone" (build with `-DFLIX_BOARD=2`).  
 > Upstream author: [Oleg Kalachev](https://github.com/okalachev) · Project site: [quadcopter.dev](https://quadcopter.dev)
 
 ## 📌 What is it
@@ -132,13 +133,16 @@ flix/                          # ← repo root: docs + forwarding Makefile
 | `docs/`       | `Docs/`                                | Documentation                                                              |
 | `tools/`      | `Tools/`                               | Tooling scripts                                                            |
 
-## 🛩️ YaoKun S3 Edition (`yaokun-organized` branch)
+## 🛩️ YaoKun S3 / MildlySpicyDragon 2.0 dual-board port (`yaokun-organized` branch)
 
 > ⚠️ **This only applies to the `yaokun-organized` branch.** `master` always tracks upstream and  
 > contains none of the changes below.
 
 This branch runs Flix on the **YaoKun S3 quadcopter** and fixes the "aircraft does nothing after  
-switching to our custom ESP-NOW remote" problem. The full change list, root-cause analysis and  
+switching to our custom ESP-NOW remote" problem. Since **v1.1** the same source also runs on the
+**MildlySpicyDragon 2.0** "ESP32 mini drone" through a **compile-time board macro**
+(`Firmware/flix/board.h`, one board = one set of `PIN_*` macros) — **one codebase, two PCBs, two binaries.**
+The full change list, root-cause analysis and
 verification records are in [Docs/YaoKunS3_Adaptation_Notes_EN.md](Docs/YaoKunS3_Adaptation_Notes_EN.md)
 (technical manual: [Markdown](Docs/Flix_Technical_Manual_EN.md) — readable on GitHub — or
 [illustrated HTML](Docs/Flix_Technical_Manual_EN.html);
@@ -146,6 +150,10 @@ bench test checklist: [Docs/Bench_Test_Checklist_EN.md](Docs/Bench_Test_Checklis
 Chinese originals: [`耀坤S3适配说明.md`](Docs/耀坤S3适配说明.md) /
 [`flix技术说明书.md`](Docs/flix技术说明书.md) /
 [`台架实测清单_v1.1.md`](Docs/台架实测清单_v1.1.md)).
+
+> 🔴 **Why the board is never auto-detected:** motor pins carry no identity on the hardware.
+> A runtime guess that lands on the wrong board spins all four motors in the wrong order the
+> instant power is applied. The board is therefore selected **only at compile time**, never probed.
 
 ### Key changes
 
@@ -158,7 +166,7 @@ Chinese originals: [`耀坤S3适配说明.md`](Docs/耀坤S3适配说明.md) /
 | **R6**  | Voltage sense GPIO **2**, divider **2**                                        | Measured on the YaoKun S3 board                                                                                                                                                                                                                                                                                                                                                   |
 | **R7**  | IMU **autodetection** (MPU6050 on I2C / MPU-6500 on SPI) with per-bus rotation | The two boards use different IMUs. Picking the wrong model makes `IMU::create()` return `nullptr` → upstream **dereferences it and crashes**. This version adds an `imuOK` guard: arming is blocked and the LED/buzzer alarm when the IMU is unavailable                                                                                                                          |
 | **R8**  | RGB LED (GPIO 41/7/14) + buzzer (GPIO 39) status system                        | Status visible without a serial console. **Connectivity is judged from `controlTime`, not `mavlinkTime`** — the latter is refreshed by *any* MAVLink frame, so it would claim "connected" with no remote at all                                                                                                                                                                   |
-| **R9**  | **Fully Chinese UI** (`i18n.h`, 157 strings)                                   | Help menu, IMU calibration, init messages and errors are all Chinese                                                                                                                                                                                                                                                                                                              |
+| **R9**  | **Fully Chinese UI** (`i18n.h`, 170 strings)                                   | Help menu, IMU calibration, init messages and errors are all Chinese                                                                                                                                                                                                                                                                                                              |
 | **R10** | New parameters `IMU_AUTO_DETECT` / `IMU_ROT_LOCK` / `LED_*` / `BUZ_*`          | Changing IMU or board no longer requires recompiling                                                                                                                                                                                                                                                                                                                              |
 | **R11** | **ESP-NOW + AP coexistence by default** (`wifi both`); AP-name suffix read from eFuse STA MAC | Upstream's three modes are mutually exclusive and the ESP-NOW branch never calls `udp.begin()`, so a ground station can join the AP and still get no MAVLink reply. Coexistence runs the remote and QGC at the same time; `wifi both` is also an explicit mode |
 
@@ -180,27 +188,65 @@ arduino-cli compile --build-property "compiler.cpp.extra_flags=-DFLIX_LANG_EN" .
 Both language sections contain exactly the same number of strings (157:157), verified by script,  
 so a string can never be added to one language only.
 
-### Build and flash (YaoKun S3)
+### Build and flash (YaoKun S3, default board)
 
 ```bash
 cd Firmware
 arduino-cli compile \
-  --fqbn "esp32:esp32:esp32s3:UploadSpeed=921600,USBMode=hwcdc,CDCOnBoot=cdc,CPUFreq=240,FlashMode=qio,FlashSize=4M,PartitionScheme=default,PSRAM=disabled" \
-  --libraries "G:\Arduino\libraries" \
+  --fqbn "esp32:esp32:esp32s3:FlashSize=8M,PartitionScheme=default_8MB" \
   --export-binaries flix
 ```
 
+> The USB console runs over the native port (HWCDC): add `USBMode=hwcdc,CDCOnBoot=cdc`, and open the
+> serial monitor with **DTR=1, RTS=0**.
 > 🔴 **`--export-binaries` is mandatory.** Without it the `build/` directory is not refreshed and  
 > the packing script will assemble a binary that looks fine but contains stale code.
 
-
-Package a single-file firmware (auto-generates the fingerprint/flashing notes):
+### Build and flash (MildlySpicyDragon 2.0, compile-time board select)
 
 ```bash
-python Firmware/tools/pack_flix_release.py --version 1.0
+cd Firmware
+arduino-cli compile \
+  --fqbn "esp32:esp32:esp32:FlashSize=4M,PartitionScheme=default" \
+  --build-property "compiler.cpp.extra_flags=-DFLIX_BOARD=2" \
+  --export-binaries flix
 ```
 
-Output goes to `Firmware/release/`: `*_merged.bin` (flash at `0x0`) plus `*_指纹与烧录说明.md/.txt`.
+> 🔴 **`-DFLIX_BOARD=2` is not optional.** Without it the firmware is built with the YaoKun S3 pinout
+> and the motor order will be completely wrong on the dragon-fruit board.
+> The chip is the **classic ESP32** (not S3), 4 MB flash, `default` partition layout.
+
+**MildlySpicyDragon 2.0 pinout (21 pins, `BOARD_HLG_V2` branch of `board.h`)**
+
+| Peripheral | Pin |
+| --- | --- |
+| Motors M1 front-right / M2 rear-right / M3 rear-left / M4 front-left | GPIO 33 / 27 / 26 / 32 |
+| IMU (SPI, MPU6500) | SCK 18 / MOSI 23 / MISO 19 / CS 5 |
+| I2C bus (MPU6050, MS5611, …) | SDA 21 / SCL 22 |
+| Battery voltage ADC | GPIO 35 (divider 100K+100K or 10K+10K) |
+| Buzzer / onboard LED | GPIO 25 / GPIO 2 (single LED, status shown by blink rate) |
+| SBus receiver | GPIO 4 |
+| Optical flow (reserved, PMW3901) | MOS 13 / CLK 14 / MIS 12 / CS 15 |
+| Laser rangefinder (reserved, VL53L1X, I2C1) | SCL 16 / SDA 17 |
+
+> ⚠️ MPU6500 and MPU6050 are **never plugged in at the same time**; the firmware detects the bus automatically.
+> ⚠️ When flashing the bootloader alone the address is **`0x1000`** (classic ESP32 rule), not `0x0` like the S3;
+> flashing the full image at `0x0` is the easy path.
+
+### Packaging a release
+
+```bash
+# YaoKun S3 (merges 4 segments, sanitizes paths, recomputes checksum byte + SHA-256, emits CN/EN notes)
+python Firmware/tools/pack_flix_release.py --version 1.1 --date-tag 20261106
+
+# MildlySpicyDragon 2.0 (reads the full-image bin, emits CN/EN notes from live values)
+python Firmware/tools/gen_hlg_note.py --bin "release固件v1.1/xxx_4MB.bin" --version 1.1 --date-tag 20261106
+```
+
+Output goes to `release固件v1.1/`: `*_merged.bin` / `*_整片*.bin` (flash at `0x0`) plus the bilingual
+fingerprint & flashing guide.  
+🔴 Always confirm `build/` holds **this** build before packaging — packing from a stale build directory
+produces a binary with the right version string but the wrong firmware (this happened in the v1.1 release).
 
 ### Wireless modes: ESP-NOW + AP by default
 
@@ -326,6 +372,7 @@ browser or a ground station.
 | Type                                                 | Part                                                                                                                                                                                                                                              |                                                                         Image                                                                         | Quantity |
 | ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------: | :------: |
 | MCU board                                            | ESP32 Mini.<br />ESP32-S3 / ESP32-C3 boards also supported.                                                                                                                                                                                       |                                                        <img src="Docs/img/esp32.jpg" width=100>                                                       |     1    |
+| MCU board<br />(MildlySpicyDragon 2.0)               | **ESP32 DevKit V1 (30-pin)**<br />MildlySpicyDragon 2.0 PCB, [open hardware on OSHWHub](https://oshwhub.com/malagis/esp32-mini-plane)                                                                                                              |                                                                             —                                                                             |     1    |
 | IMU (and barometer¹)                                 | GY-91, MPU-9265 (or other MPU-9250 / MPU-6500)<br />ICM20948V2<br />GY-521 (MPU-6050)                                                                                                                                                             | <img src="Docs/img/gy-91.jpg" width=90 align=center><br /><img src="Docs/img/icm-20948.jpg" width=100><br /><img src="Docs/img/gy-521.jpg" width=100> |     1    |
 | *Boost converter (optional, more stable power)*      | *5V output*                                                                                                                                                                                                                                       |                                                     <img src="Docs/img/buck-boost.jpg" width=100>                                                     |     1    |
 | Motor                                                | 8520 3.7V brushed motor.<br />Exact 3.7V rated motor is needed, not ranged voltage (3.7V — 6V).<br />Match motor shaft and propeller hole diameters!                                                                                              |                                                       <img src="Docs/img/motor.jpeg" width=100>                                                       |     4    |
