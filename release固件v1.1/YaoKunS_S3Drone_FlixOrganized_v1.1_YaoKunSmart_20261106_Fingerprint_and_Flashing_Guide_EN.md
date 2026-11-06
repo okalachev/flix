@@ -26,11 +26,11 @@ This is the **YaoKun organized edition** of the open-source flight controller **
 | --- | --- |
 | Firmware version | **v1.1** (YaoKun organized edition) |
 | Brand | YaoKunS / YaoKunSmart / YaoKun Drone |
-| Build time | Oct 18 2026 18:40:11 |
+| Build time | Nov  6 2026 15:29:27 |
 | Toolchain | arduino-cli 1.5.1 + esp32 core 3.3.8 |
 | Build flags | `esp32:esp32:esp32s3:FlashSize=8M,PartitionScheme=default_8MB` (USB CDC on by default) |
 | Third-party libs | FlixPeriph, ESP32_NOW_Serial (ships with esp32 core), MAVLink |
-| Footprint | application 1058992 B (0x1028B0) |
+| Footprint | application 1054368 B (0x1016A0) |
 
 > ⚠️ **How to read the version number**: the `esp_app_desc_t` at `0x10020` inside an Arduino-built image is written by the precompiled ESP32 core library, so its `version` field identifies the *core*, not this project. The authoritative version is the one printed on the **boot banner**: `Firmware version: v1.1 (YaoKun organized edition)`.
 
@@ -39,7 +39,7 @@ This is the **YaoKun organized edition** of the open-source flight controller **
 ### Option A: Flash Download Tool (GUI)
 
 1. Open Flash Download Tool, select chip **ESP32-S3**, work mode **Develop**.
-2. Add only this one file at address **`0x0`**: `YaoKunS_耀坤S3无人机_Flix整理版_v1.1_耀坤智联_20261105_merged.bin`
+2. Add only this one file at address **`0x0`**: `YaoKunS_耀坤S3无人机_Flix整理版_v1.1_耀坤智联_20261106_merged.bin`
 3. Settings: **SPI SPEED = 80 MHz, SPI MODE = DIO, FLASH SIZE = 8 MB**; pick the COM port; BAUD 921600 (drop to 115200 if unstable).
 4. ⚠️ **Tick DoNotChgBin.** The image header already declares SPI mode / speed / size and the trailing SHA-256; if the tool rewrites the header the checksum breaks and the board will not boot.
 5. Press START, then RST or power-cycle when it finishes.
@@ -47,7 +47,7 @@ This is the **YaoKun organized edition** of the open-source flight controller **
 ### Option B: one esptool command
 
 ```bash
-esptool --chip esp32s3 --port COMx --baud 921600 write_flash 0x0 "YaoKunS_耀坤S3无人机_Flix整理版_v1.1_耀坤智联_20261105_merged.bin"
+esptool --chip esp32s3 --port COMx --baud 921600 write_flash 0x0 "YaoKunS_耀坤S3无人机_Flix整理版_v1.1_耀坤智联_20261106_merged.bin"
 ```
 
 If the board stays in download mode afterwards (log shows `waiting for download`), GPIO0 is still held low. Connect once with `--after no-reset` to confirm the image is readable, then run `esptool --after watchdog-reset run`, or simply replug USB / press RST.
@@ -57,10 +57,10 @@ If the board stays in download mode afterwards (log shows `waiting for download`
 **1) Compare the file hash** (most reliable, no power-up needed):
 
 ```bat
-certutil -hashfile "YaoKunS_耀坤S3无人机_Flix整理版_v1.1_耀坤智联_20261105_merged.bin" SHA256
+certutil -hashfile "YaoKunS_耀坤S3无人机_Flix整理版_v1.1_耀坤智联_20261106_merged.bin" SHA256
 ```
 
-→ should be `7f8dafa31547670431049fc962e8d8b145b9fd7e88736607818a88ec4d4d2845`
+→ should be `66597368599ec05ed60bf53e5c49a11d3a0a2070e4df4add762ed5a911b4fc33`
 
 **2) Serial boot banner** (115200 baud, over the **native USB-CDC port**). The first screen should read:
 
@@ -99,14 +99,14 @@ esptool --chip esp32s3 --port COMx read_flash 0x10000 0x200 app_hdr.bin
 
 | Artifact | Flash address | SHA-256 | Size |
 | --- | --- | --- | --- |
-| **merged single-file firmware** | `0x0` (whole chip) | `7f8dafa31547670431049fc962e8d8b145b9fd7e88736607818a88ec4d4d2845` | 1124528 B (0x1128B0) |
+| **merged single-file firmware** | `0x0` (whole chip) | `66597368599ec05ed60bf53e5c49a11d3a0a2070e4df4add762ed5a911b4fc33` | 1119904 B (0x1116A0) |
 | Bootloader | `0x0` | `6f232c4aafe7d21239a1c59404723ca2cfdca063ef73501a21126a8cef39f432` | 19984 B (0x4E10) |
-| Partition table | `0x8000` | `6a88d59601a83a16a19a08114b59d338324b8dec267d8b43e5d61ad56ec92102` | 3072 B (0xC00) |
+| Partition table | `0x8000` | `1d9cca96de0fe07ad7fc0648b9878ddecd9ce565e38b589ad20fea698ed4c80c` | 3072 B (0xC00) |
 | boot_app0 | `0xE000` | provided by esp32 core 3.3.8 (points otadata at app0; without it the board will not boot) | 8192 B (0x2000) |
-| Application | `0x10000` | `ad61033964935de7092b2b75b09b12829a6ebee115f0fe5d766faf72f216f54a` | 1058992 B (0x1028B0) |
+| Application | `0x10000` | `2b386c4ca7de9994c3e9865efae06bfd8f2871df1d5c89e0704afffeb86df1d6` | 1054368 B (0x1016A0) |
 
 - Merge layout: `0x0 bootloader + 0x8000 partition table + 0xE000 boot_app0 + 0x10000 application` (gaps are filled with 0xFF)
-- Application image header: `E9 06 02 3F` → SPI mode **DIO**, speed **80MHz**, flash size **8MB**, segments **6**, entry **0x40379F5C**
+- Application image header: `E9 06 02 3F` → SPI mode **DIO**, speed **80MHz**, flash size **8MB**, segments **6**, entry **0x40379E20**
 - ⚠️ This package is built for **8MB flash** (`PartitionScheme=default_8MB`). **It will not fit a 4 MB board** — rebuild from source with `FlashSize=4M,PartitionScheme=default`
 - Flash size: **8MB**, taken from the high nibble of header byte 3 (low nibble is the SPI speed). Cross-check with `esptool image-info <bin>` if you like
 - Bootloader image header: `E9 03 02 3F` → SPI mode **DIO**, speed **80MHz**, flash size **8MB**

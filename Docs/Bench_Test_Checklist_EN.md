@@ -123,7 +123,7 @@ Afterwards `st` should show roll ≈ 0° / pitch ≈ 0° (measured 0.015° / −
 
 | Item | Detail |
 | --- | --- |
-| Firmware | `Firmware/release/YaoKunS_耀坤S3无人机_Flix整理版_v1.1_耀坤智联_20261105_merged.bin` |
+| Firmware | `release固件v1.1/YaoKunS_耀坤S3无人机_Flix整理版_v1.1_耀坤智联_20261106_merged.bin` (2026-11-06 revision; SHA-256 in the release notes) |
 | Flash address | `0x0` (whole image in one go) |
 | Serial port | **Native USB-CDC port** (`CDCOnBoot=cdc`), 115200, assert DTR when opening |
 | Remote | YaoKun **Chinese** remote (`ESP32-DJI-Dev-Yaokun20260815`) |

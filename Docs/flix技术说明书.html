@@ -150,6 +150,7 @@
     <li><a href="#s14">故障排查</a><span class="d">按现象反查</span></li>
     <li><a href="#s15">飞行边界</a><span class="d">能做什么，不能做什么</span></li>
     <li><a href="#s16">与原版差异</a><span class="d">R1~R10 改动总表</span></li>
+    <li><a href="#s17">火龙果 2.0 板型适配</a><span class="d">第二块 PCB 与维护声明</span></li>
   </ol>
 </div>
 
@@ -1141,6 +1142,32 @@ arduino-cli compile \
 
 <div class="note">
 逐条根因分析与验证方法见 <code>Docs/耀坤S3适配说明.md</code>。本文是该文档的图文版。
+</div>
+
+<!-- ============ 十七、火龙果 2.0 板型适配 ============ -->
+<h2 id="s17">十七、微辣火龙果 2.0 板型适配</h2>
+
+<p>自 v1.1 起，同一套源码通过<b>编译期板型宏</b>（<code>board.h</code>，一个板型 = 一组 <code>PIN_*</code> 宏）支持两块 PCB：<b>耀坤 S3</b>（默认）与<b>微辣火龙果 2.0</b>「ESP32 迷你无人机」（ESP32 DevKit V1，30 针）。编译火龙果版必须显式指定 <code>-DFLIX_BOARD=2</code>——电机引脚无身份标识，猜错板型会上电乱序起转，因此<b>不做运行时自动认板</b>。</p>
+
+<h3>17.1 火龙果 2.0 引脚分配</h3>
+
+<table>
+<thead><tr><th>外设</th><th>引脚</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td>电机 M1 右前 / M2 右后 / M3 左后 / M4 左前</td><td>GPIO 33 / 27 / 26 / 32</td><td>LEDC PWM，38 kHz</td></tr>
+<tr><td>IMU（SPI）</td><td>SCK 18 / MOSI 23 / MISO 19 / CS 5</td><td>MPU6500 / MPU6050 排母插拔，二者不同时插</td></tr>
+<tr><td>I2C 总线</td><td>SDA 21 / SCL 22</td><td>第 1 组（I2C0）</td></tr>
+<tr><td>电池电压 ADC</td><td>GPIO 35</td><td>分压比 2.0（与耀坤一致）</td></tr>
+<tr><td>蜂鸣器</td><td>GPIO 25</td><td>有源，电平驱动</td></tr>
+<tr><td>LED 指示灯</td><td>GPIO 2（板载单灯）</td><td>三色灯语义不变，由 <code>led_map.h</code> 把三路 OR 到一个灯，改用<b>闪烁频率</b>表达状态</td></tr>
+<tr><td>SBUS 接收机</td><td>GPIO 4</td><td>串口 2</td></tr>
+<tr><td>光流（预留）</td><td>MOS 13 / CLK 14 / MIS 12 / CS 15</td><td>PMW3901，乐鑫 ESP-Drone 方案</td></tr>
+<tr><td>激光（预留）</td><td>SCL1 16 / SDA1 17</td><td>VL53L1X，第 2 组 I2C（I2C1）</td></tr>
+</tbody>
+</table>
+
+<div class="note">
+<b>归属与维护声明</b>：微辣火龙果版「ESP32 迷你无人机」的硬件由 <b>微辣火龙果（MildlySpicyDragon / malagis）</b>设计并开源（<a href="https://oshwhub.com/malagis/esp32-mini-plane">立创硬件开源平台</a>）；<b>该板的固件（Flix 耀坤整理版的板型适配与维护）由耀坤智联（YaoKunSmart）负责维护及适配</b>。内核版权归 (C) Oleg Kalachev 所有（GPL 开源义务）。耀坤 S3 板与微辣火龙果板是两块独立的硬件产品，火龙果板的开机横幅展示火龙果品牌，耀坤 S3 板不含火龙果的相关信息。
 </div>
 
 <!-- ============ footer ============ -->

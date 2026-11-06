@@ -31,6 +31,7 @@
 14. [Troubleshooting](#14-troubleshooting) —— Work backwards from the symptom
 15. [Flight envelope](#15-flight-envelope) —— What it can and cannot do
 16. [Differences from upstream](#16-differences-from-upstream) —— R1~R12 change summary
+17. [MildlySpicyDragon 2.0 board](#17-mildlyspicydragon-20-board-support) —— second PCB & maintenance statement
 
 ## 1. What this project is
 
@@ -933,6 +934,28 @@ green flashing = armed, red flashing = link lost, fast red = low battery.
 > **💡 说明**
 >
 > The item-by-item root-cause analysis and verification methods are in [`Docs/YaoKunS3_Adaptation_Notes_EN.md`](YaoKunS3_Adaptation_Notes_EN.md) (Chinese original: `Docs/耀坤S3适配说明.md`). This page is the illustrated version of that document.
+
+## 17. MildlySpicyDragon 2.0 board support
+
+Since v1.1, a single source tree supports two PCBs through a **compile-time board macro** (`board.h`, one board = one set of `PIN_*` macros): **YaoKun S3** (default) and the **MildlySpicyDragon 2.0** “ESP32 mini drone”(ESP32 DevKit V1, 30-pin). Building the MildlySpicyDragon variant requires an explicit `-DFLIX_BOARD=2` — the motor pins carry no self-identifying signal, and a wrong guess makes motors spin up out of order at power-on, so there is **no runtime board auto-detection**.
+
+### 17.1 MildlySpicyDragon 2.0 pin assignment
+
+| Peripheral | Pins | Notes |
+|---|---|---|
+| Motors M1 FR / M2 RR / M3 RL / M4 FL | GPIO 33 / 27 / 26 / 32 | LEDC PWM, 38 kHz |
+| IMU (SPI) | SCK 18 / MOSI 23 / MISO 19 / CS 5 | MPU6500 / MPU6050 on socket headers, never both at once |
+| I2C bus | SDA 21 / SCL 22 | first bus (I2C0) |
+| Battery voltage ADC | GPIO 35 | divider ratio 2.0 (same as YaoKun S3) |
+| Buzzer | GPIO 25 | active type, level-driven |
+| LED indicator | GPIO 2 (on-board, single) | RGB semantics unchanged — `led_map.h` ORs the three channels into one LED; state is expressed by **blink frequency** |
+| SBUS receiver | GPIO 4 | Serial 2 |
+| Optical flow (reserved) | MOS 13 / CLK 14 / MIS 12 / CS 15 | PMW3901, Espressif ESP-Drone scheme |
+| Laser (reserved) | SCL1 16 / SDA1 17 | VL53L1X, second bus (I2C1) |
+
+> **💡 说明**
+>
+> **Attribution & maintenance statement**: the MildlySpicyDragon 2.0 “ESP32 mini drone”hardware was designed and open-sourced by **MildlySpicyDragon (malagis)** ([OSHWHub](https://oshwhub.com/malagis/esp32-mini-plane)). **The firmware for that board — the board support and maintenance of the Flix YaoKun organized edition — is maintained and adapted by YaoKunSmart (耀坤智联)**. Kernel copyright (C) Oleg Kalachev (GPL obligation). The YaoKun S3 board and the MildlySpicyDragon board are two independent hardware products: the MildlySpicyDragon boot banner shows the MildlySpicyDragon branding, while the YaoKun S3 banner contains no MildlySpicyDragon information.
 
 **YaoKunSmart / 耀坤智联**  
 Bilibili: https://space.bilibili.com/3707011699050767 · OSHWHub: https://oshwhub.com/lindahe  

@@ -167,12 +167,58 @@ def human(n):
 #       C:\Users\<用户名>\AppData\Local\Arduino15\packages\esp32\hardware\...
 #   这是 Arduino 构建系统用绝对路径编译 core 源码的必然结果，v1.0 就带着发布过。
 # 【做法】把整条路径替换为 '<esp32-core>\文件名'，再用 \0 补齐到原长度——
-#   镜像内所有偏移保持不变；段是 ESP 镜像（0xE9 头）且自带 appended SHA-256 时
-#   还必须重算哈希，否则 bootloader 校验失败无法启动。
-# 【验证】esptool image-info 应显示 Validation Hash valid；并全量扫描零用户名。
+#   镜像内所有偏移保持不变。
+# 【⚠️ 2026-11-06 重大修复】改了段数据后，ESP app 镜像尾部有**两处**完整性数据：
+#   ① XOR 校验字节（各段数据逐字节 XOR，初始 0xEF，位于 16 对齐处、SHA 前 1 字节）
+#   ② appended SHA-256（末 32 字节，覆盖其前全部内容）
+#   旧版只重算了 ② 没重算 ① ⇒ 所有脱敏过的发布件 bootloader 报
+#   "Checksum failed" 拒绝启动（20261105 v1.1 S3 发布件与 20261106 两件全部中招）。
+#   现在 fix_app_image_trailer() 把两处都重算。
+# 【验证】esptool image-info 应显示 Validation Hash valid；并全量扫描零用户名；
+#   发布前再用 parse/fix 的自检（fix 后再解析一次，存储=重算）兜底。
 # ----------------------------------------------------------------------------
 LOCAL_PATH_RE = re.compile(
     rb'C:\\Users\\[^\\]+\\AppData\\Local\\Arduino15\\packages\\esp32\\[^\x00]+')
+
+
+def fix_app_image_trailer(data):
+    """重算 ESP app 镜像尾部的 XOR 校验字节与 appended SHA-256。
+
+    【为什么需要】bootloader 启动 app 前做两道校验：
+      ① XOR 校验字节：各段段数据（不含 8+16 字节头）逐字节异或，初始 0xEF，
+         写在最后一个段之后 16 字节对齐的位置（SHA 前 1 字节）；
+      ② appended SHA-256：末 32 字节，覆盖镜像从 0 到校验字节（含）的全部内容。
+    改段内容（哪怕 1 字节）后两处都必须重算，否则 bootloader 报
+    "Checksum failed" / 哈希不匹配而拒绝启动（2026-11-06 火龙果实机踩坑实证）。
+
+    参数 data: bytes —— app 镜像原始内容（0xE9 头）
+    返回 (修复后的 bytes, 是否为 app 镜像 bool)
+    纯 struct 实现，不依赖 esptool（本机 pip 网络不可达，靠的是逐字节推导实证）。
+    """
+    import struct
+    if len(data) < 64 or data[0] != 0xE9:
+        return data, False
+    nseg = data[1]                       # ESP 镜像头第 2 字节 = 段数
+    pos = 8 + 16                         # 8B 公共头 + 16B 扩展头（esp32 app 自 IDF v4 起都有）
+    total = 0xEF                         # ESP_CHECKSUM_MAGIC
+    for _ in range(nseg):
+        _load, ln = struct.unpack_from('<II', data, pos)
+        for b in data[pos + 8:pos + 8 + ln]:
+            total ^= b
+        pos += 8 + ln
+    # 校验字节位置：esptool 的 align_file_position(f,16) 把它对齐到
+    # 「下一个 ≡15 (mod 16)」的偏移（即 16 字节块的最后一个字节），
+    # 这样其后跟的 32 字节 SHA 末尾正好让镜像长度为 16 的倍数。
+    # ⚠️ 2026-11-06 实证：写成「向上取整到 16 对齐」会让 bootloader 读错位报
+    #    Checksum failed（0xce vs 0x25，实机两次踩坑后从 bootloader 报错值反推定位）。
+    cs_off = pos + ((15 - pos % 16) % 16)
+    out = bytearray(data)
+    out[cs_off] = total                  # ① 重算 XOR 校验字节
+    # ② 重算 appended SHA-256（覆盖 0 ~ 校验字节含）
+    fixed = bytes(out[:cs_off + 1]) + hashlib.sha256(bytes(out[:cs_off + 1])).digest()
+    pad = (-(cs_off + 33)) % 16          # 原镜像长度为 16 的倍数，SHA 后补零对齐
+    fixed += b'\x00' * pad
+    return fixed, True
 
 
 def sanitize_local_paths(data):
@@ -197,24 +243,21 @@ def sanitize_local_paths(data):
 
 
 def sanitize_segment(path, tag):
-    """读取段文件 → 脱敏 → 必要时重算 appended SHA-256 → 写回原路径。
+    """读取段文件 → 脱敏 → 重算镜像尾部（XOR 校验 + SHA-256）→ 写回原路径。
 
-    只有真正的 ESP 镜像（0xE9 头、末 32 字节为自洽 SHA-256）才动哈希；
-    partitions.bin / boot_app0.bin 不是 ESP 镜像，等长替换后无需重算。
+    只有真正的 ESP app 镜像（0xE9 头）才动尾部；partitions.bin / boot_app0.bin
+    不是 app 镜像，等长替换后无需重算（它们也没有 appended 校验结构）。
     返回 (处理后的数据, 处理后的哈希, 替换处数)。
     """
     with open(path, "rb") as f:
         data = f.read()
-    is_esp_image = len(data) > 64 and data[0] == 0xE9 \
-        and hashlib.sha256(data[:-32]).digest() == data[-32:]
     data, n = sanitize_local_paths(data)
-    if n and is_esp_image:
-        # 末 32 字节 = SHA256(其余全部)，改了内容必须重算，否则 bootloader 校验失败
-        data = data[:-32] + hashlib.sha256(data[:-32]).digest()
     if n:
+        # 改了段数据 ⇒ XOR 校验字节与 appended SHA-256 都必须重算（缺一即拒启）
+        data, is_app = fix_app_image_trailer(data)
         with open(path, "wb") as f:
             f.write(data)
-        print("  [脱敏] %-12s 替换 %d 处本机路径%s" % (tag, n, "（已重算镜像哈希）" if is_esp_image else ""))
+        print("  [脱敏] %-12s 替换 %d 处本机路径%s" % (tag, n, "（已重算校验字节+SHA）" if is_app else ""))
     return data, hashlib.sha256(data).hexdigest(), n
 
 

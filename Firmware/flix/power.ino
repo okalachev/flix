@@ -17,10 +17,17 @@
 #include "filter.h"
 #include "util.h"
 #include "i18n.h"
+#include "board.h"   // 板型引脚表：PIN_VOLTAGE
 
 float voltage = NAN;
 LowPassFilter<float> voltageFilter(1);
-int voltagePin = 2;        // 【耀坤设置】GPIO2 = 电池电压分压输入
+// 【引脚来自 board.h】S3 板 = GPIO2，火龙果 2.0 = GPIO35。
+// 🔴 换板型时这个脚必须落在 **ADC1**：
+//    - ESP32-S3：GPIO2 = ADC1_CH1（S3 板的 2 号脚本来就在 ADC1，安全）
+//    - 经典 ESP32：GPIO35 = ADC1_CH7（火龙果板，安全）
+//    经典 ESP32 的 ADC2（0/2/4/12~15/25~27）与 Wi-Fi 互斥，而本固件热点常开
+//    ⇒ ADC2 读数恒 0 ⇒ 判定低电 ⇒ 蜂鸣器无限急鸣。加新板型前务必先查 ADC 分组。
+int voltagePin = PIN_VOLTAGE;   // 电池电压分压输入
 float voltageScale = 2;    // 分压比 1:2 ⇒ 读数乘 2
 
 void setupPower() {

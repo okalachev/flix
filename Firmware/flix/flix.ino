@@ -42,7 +42,11 @@ extern float motors[4];
 // 排查时只需看串口第一屏，无需查 SHA-256。
 // 参数表里也暴露同名项的读取入口（只读语义，见 parameters.ino 注释）。
 // ============================================================================
-const char *identityString = "YaoKunS | 耀坤S3无人机 | Flix | 耀坤智联";
+// 🔴 2026-11-05：指纹串的内容改由 i18n.h 的 TXT_IDENTITY 宏决定（按板型选择）：
+//   耀坤 S3 / 通用 ESP32 → "YaoKunS | 耀坤S3无人机 | Flix | 耀坤智联"（与 v1.1 一字不差）
+//   微辣火龙果 2.0       → "MildlySpicyDragon | 微辣火龙果 | 2025星火计划获奖项目 ESP32迷你无人机 | Flix"
+// 这里只留一个宏引用，是为了让"改文案"和"改逻辑"彻底分开：以后调身份串只动 i18n.h。
+const char *identityString = TXT_IDENTITY;
 
 void setup() {
 	setupConsole();

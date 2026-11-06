@@ -432,3 +432,113 @@
 #define TXT_SYS_TASKS           "序号 任务名              最小栈  优先级 核心 CPU%%\n"
 
 #endif // FLIX_LANG_EN
+
+// ============================================================================
+// 开机横幅与固件指纹（按「板型」选择，与上面的「语言」维度正交）
+// ============================================================================
+// 【为什么放在文件末尾、用 #undef 覆盖，而不是把上面两个语言段改成嵌套 #if】
+//   文案有两个维度：语言（中/英）× 板型（S3/火龙果）。若在语言段里直接嵌板型，
+//   上面 400 行会被切碎，以后加一个语言要改多处。这里把"板型相关"的少量文案
+//   集中在末尾覆盖，语言段保持原样，加板型只动这一块。
+//
+// 【🔴 硬性要求：耀坤 S3 的这几条字符串一个字节都不能变】
+//   S3 板 v1.1 已在飞，开机首屏是现场判断"烧的哪个固件"的依据。下面的默认值
+//   是从 V1.1 的 console.ino / flix.ino 里**原样搬运**过来的（连换行位置都没改），
+//   火龙果只在 #if 分支里覆盖。改完必须用 .flash.rodata 段逐字节比对来证明。
+//
+// 【为什么需要 include board.h】
+//   FLIX_BOARD / BOARD_HLG_V2 定义在 board.h（带 #pragma once，重复包含无副作用）。
+//   board.h 不依赖任何其它头文件，放在这里安全。
+//
+// 【MOTD_BANNER 与 motd 的关系】
+//   MOTD_BANNER 只含「品牌条」（首尾各一个空行 + 分隔线内的 9 行），
+//   命令表部分（TXT_HELP_*）在这里之外 —— 那样命令表增减不用碰本文件。
+//   在 console.ino 里靠 C 语言的**字面量拼接**合成一整条 motd：
+//       const char* motd = MOTD_BANNER TXT_HELP_TITLE ... ;
+//   拼接在编译期完成，结果与手写一整条字符串**逐字节相同**（这是零变化的前提）。
+// ============================================================================
+#include "board.h"
+
+// ---- 默认（耀坤 S3 / 上游通用 ESP32）：V1.1 原文，勿改 ----
+// 指纹串沿用「组织 | 产品名 | 固件家族 | 品牌」四段式，与 YaoKunDrone / ESP-Drone
+// 整理版保持同一套语义，现场看串口第一屏就能判断这是哪条产品线。
+#define TXT_IDENTITY  "YaoKunS | 耀坤S3无人机 | Flix | 耀坤智联"
+
+#define MOTD_BANNER \
+	"\n" \
+	"==============================================================\n" \
+	"  耀坤S3 飞控（Flix 整理版）   YaoKunS Flight Controller\n" \
+	"  硬件：立创 ESP32-S3 + MPU6500/MPU6050   遥控：ESP-NOW\n" \
+	"--------------------------------------------------------------\n" \
+	"  开源：https://github.com/YaoKunS/flix\n" \
+	"  淘宝：耀坤智联  https://shop35432590.taobao.com/\n" \
+	"  B 站：耀坤智联  https://space.bilibili.com/3707011699050767/\n" \
+	"--------------------------------------------------------------\n" \
+	"  内核 (C) Oleg Kalachev   https://github.com/okalachev/flix\n" \
+	"  本固件由耀坤智联二次开发（目录整理 / 中文界面 / 硬件适配）\n" \
+	"==============================================================\n" \
+	"\n"
+
+// ---- 微辣火龙果 2.0（BOARD_HLG_V2）：覆盖成火龙果的身份 ----
+// 【归属关系】耀坤智联是「替火龙果作者（MildlySpicyDragon/malagis）做固件适配与维护」，
+// 不是火龙果本人 —— 所以火龙果横幅宣传火龙果的品牌与链接，末尾附耀坤的淘宝；
+// 而 S3（耀坤自家产品）的横幅【严禁】出现火龙果的立创开源页 / B站链接。
+// 依据用户 2026-11-05 指定：品牌「微辣火龙果」、项目「2025 星火计划获奖项目
+// ESP32 迷你无人机」、硬件开源页 https://oshwhub.com/malagis/esp32-mini-plane；
+// 2026-11-06 追加：淘宝行（耀坤智联）加在「本固件由耀坤智联二次开发」之后。
+// 版权行不能删（GPL 义务）：Oleg 的内核署名与耀坤的二次开发说明都保留。
+#if FLIX_BOARD == BOARD_HLG_V2
+	#undef TXT_BOOT_START
+	#undef TXT_BOOT_VERSION
+	#undef TXT_IDENTITY
+	#undef MOTD_BANNER
+
+	#ifdef FLIX_LANG_EN
+		// ---- 英文版：给海外用户看 ----
+		// 品牌名按作者本人的定义用 MildlySpicyDragon（"a slightly spicy dragon fruit"，
+		// 是作者的用户名，不是真实水果名）——不要意译成 Hylocereus。
+		#define TXT_BOOT_START   "MildlySpicyDragon 2.0 (based on Flix YaoKun edition) booting...\n"
+		#define TXT_BOOT_VERSION "Firmware version: v1.1 (YaoKun organized edition, MildlySpicyDragon 2.0)\n"
+		#define TXT_IDENTITY     "MildlySpicyDragon | 微辣火龙果 | 2025 Spark Program Award ESP32 mini drone | Flix"
+		#define MOTD_BANNER \
+			"\n" \
+			"==============================================================\n" \
+			"  MildlySpicyDragon 2.0 (based on Flix YaoKun edition)\n" \
+			"  2025 Spark Program Award project · ESP32 mini drone · ESP32 DevKit V1\n" \
+			"  Open hardware: https://oshwhub.com/malagis/esp32-mini-plane\n" \
+			"  Bilibili: https://space.bilibili.com/544479100\n" \
+			"--------------------------------------------------------------\n" \
+			"  Firmware: https://github.com/YaoKunS/flix\n" \
+			"--------------------------------------------------------------\n" \
+			"  Kernel (C) Oleg Kalachev   https://github.com/okalachev/flix\n" \
+			"  Hardware design: MildlySpicyDragon (malagis) on OSHWHub\n" \
+			"  Firmware adapted by YaoKunSmart (organized / Chinese UI / board port)\n" \
+			"  Taobao (YaoKunSmart): https://shop35432590.taobao.com/\n" \
+			"==============================================================\n" \
+			"\n"
+	#else
+		// ---- 中文版（默认）----
+		// 横幅前 4 行由作者 2026-11-06 逐行给定，不要自行改写措辞；
+		// 淘宝行是同日追加的耀坤署名行（用户明确指定位置）。
+		#define TXT_BOOT_START   "微辣火龙果 2.0 飞控（基于 Flix 耀坤版）启动中…\n"
+		#define TXT_BOOT_VERSION "固件版本：v1.1（耀坤整理版 · 微辣火龙果 2.0）\n"
+		#define TXT_IDENTITY     "MildlySpicyDragon | 微辣火龙果 | 2025星火计划获奖项目 ESP32迷你无人机 | Flix"
+		#define MOTD_BANNER \
+			"\n" \
+			"==============================================================\n" \
+			"  微辣火龙果 2.0 飞控（基于Flix耀坤版） MildlySpicyDragon\n" \
+			"  2025 星火计划获奖项目 · ESP32 迷你无人机 · ESP32 DevKit V1\n" \
+			"  立创硬件开源：https://oshwhub.com/malagis/esp32-mini-plane\n" \
+			"  B站微辣火龙果：https://space.bilibili.com/544479100\n" \
+			"--------------------------------------------------------------\n" \
+			"  固件开源：https://github.com/YaoKunS/flix\n" \
+			"--------------------------------------------------------------\n" \
+			"  内核 (C) Oleg Kalachev   https://github.com/okalachev/flix\n" \
+			"  硬件设计：微辣火龙果（malagis）· 立创开源硬件平台\n" \
+			"  本固件由耀坤智联二次开发（目录整理 / 中文界面 / 硬件适配）\n" \
+			"  淘宝：耀坤智联  https://shop35432590.taobao.com/\n" \
+			"==============================================================\n" \
+			"\n"
+	#endif
+#endif // FLIX_BOARD == BOARD_HLG_V2
+

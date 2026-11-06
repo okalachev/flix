@@ -1,0 +1,43 @@
+# Arduino CLI 编译配置（Sketch Profiles）
+# ============================================================================
+# 【用途】一套源码，两条命令，产出两块板的固件。
+#
+#   耀坤 S3 板：  arduino-cli compile --profile yaokun_s3
+#   火龙果 2.0：  arduino-cli compile --profile hlg_v2
+#
+# 【为什么必须分开写 profile】
+#   1. 两块板是**两颗不同的芯片**（ESP32-S3 / 经典 ESP32），FQBN 不同：
+#      - S3：8MB Flash，default_8MB 分区（app 有 3.19MB 可用）
+#      - ESP32：4MB Flash，default 分区（app 只有 1.31MB，固件已占 ~81%）
+#   2. 板型靠编译期宏 FLIX_BOARD 选择（见 board.h）：
+#      - 不传时按芯片自动选（S3→耀坤板，ESP32→上游通用板）
+#      - 火龙果必须显式传 -DFLIX_BOARD=2，绝不自动推断
+#        （电机引脚没有身份标识，猜错板型 = 上电四轴乱序起转）
+#
+# 【🔴 必须用独立的 --build-path】
+#   两块板共用同一个 build 目录会互相覆盖，典型症状是"明明改了代码，
+#   编出来还是老板的固件"。命令行里请分别指定：
+#     --build-path build/s3    /    --build-path build/hlg
+#
+# 【依赖】esp32 core 3.3.8（本项目实测版本）
+# ============================================================================
+
+profiles:
+  # ---- 耀坤 S3 无人机 PCB v2 ----
+  yaokun_s3:
+    fqbn: esp32:esp32:esp32s3:FlashSize=8M,PartitionScheme=default_8MB
+    platforms:
+      - platform: esp32:esp32 (3.3.8)
+
+  # ---- 微辣火龙果 ESP32 迷你无人机 2.0 ----
+  hlg_v2:
+    fqbn: esp32:esp32:esp32:FlashSize=4M,PartitionScheme=default
+    platforms:
+      - platform: esp32:esp32 (3.3.8)
+    build_properties:
+      # 板型编号见 board.h：BOARD_HLG_V2 = 2
+      # 用数字而不是 BOARD_HLG_V2 宏名，是因为 build_properties 只做纯文本
+      # 传递给编译器，写宏名会得到 "未定义标识符" 而不是期望的值。
+      compiler.cpp.extra_flags: -DFLIX_BOARD=2
+
+default_profile: yaokun_s3

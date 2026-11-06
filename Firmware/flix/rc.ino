@@ -18,11 +18,14 @@
 #include <SBUS.h>
 #include "util.h"
 #include "i18n.h"
+#include "board.h"   // 板型引脚表：PIN_RC_RX
 
 SBUS rc(Serial1);
 
-// 【耀坤设置】-1 = 不启用 SBUS（默认，走 ESP-NOW）；GPIO1 = 板上 EXT01 的 SBUS 输入
-int rcRxPin = -1;
+// 【引脚来自 board.h】-1 = 不启用 SBUS（走 ESP-NOW）；S3 板出厂 -1，
+// 板上 EXT01 的 SBUS 输入是 GPIO1，现场用 `p RC_RX_PIN 1` 打开。
+// 火龙果 2.0 默认 GPIO4（SBus 接到 4 号脚）。
+int rcRxPin = PIN_RC_RX;
 
 uint16_t channels[16]; // 原始通道值
 int channelZero[16];   // 通道零位（校准值）

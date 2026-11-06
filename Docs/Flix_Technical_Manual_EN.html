@@ -150,6 +150,7 @@
     <li><a href="#s14">Troubleshooting</a><span class="d">Work backwards from the symptom</span></li>
     <li><a href="#s15">Flight envelope</a><span class="d">What it can and cannot do</span></li>
     <li><a href="#s16">Differences from upstream</a><span class="d">R1~R12 change summary</span></li>
+    <li><a href="#s17">MildlySpicyDragon 2.0 board</a><span class="d">second PCB &amp; maintenance statement</span></li>
   </ol>
 </div>
 
@@ -1132,6 +1133,32 @@ This firmware is <strong>attitude stabilization plus a manual throttle</strong>,
 
 <div class="note">
 The item-by-item root-cause analysis and verification methods are in <a href="YaoKunS3_Adaptation_Notes_EN.md"><code>Docs/YaoKunS3_Adaptation_Notes_EN.md</code></a> (Chinese original: <code>Docs/耀坤S3适配说明.md</code>). This page is the illustrated version of that document.
+</div>
+
+<!-- ============ 17. MildlySpicyDragon 2.0 board ============ -->
+<h2 id="s17">17. MildlySpicyDragon 2.0 board support</h2>
+
+<p>Since v1.1, a single source tree supports two PCBs through a <b>compile-time board macro</b> (<code>board.h</code>, one board = one set of <code>PIN_*</code> macros): <b>YaoKun S3</b> (default) and the <b>MildlySpicyDragon 2.0</b> “ESP32 mini drone” (ESP32 DevKit V1, 30-pin). Building the MildlySpicyDragon variant requires an explicit <code>-DFLIX_BOARD=2</code> — the motor pins carry no self-identifying signal, and a wrong guess makes motors spin up out of order at power-on, so there is <b>no runtime board auto-detection</b>.</p>
+
+<h3>17.1 MildlySpicyDragon 2.0 pin assignment</h3>
+
+<table>
+<thead><tr><th>Peripheral</th><th>Pins</th><th>Notes</th></tr></thead>
+<tbody>
+<tr><td>Motors M1 FR / M2 RR / M3 RL / M4 FL</td><td>GPIO 33 / 27 / 26 / 32</td><td>LEDC PWM, 38 kHz</td></tr>
+<tr><td>IMU (SPI)</td><td>SCK 18 / MOSI 23 / MISO 19 / CS 5</td><td>MPU6500 / MPU6050 on socket headers, never both at once</td></tr>
+<tr><td>I2C bus</td><td>SDA 21 / SCL 22</td><td>first bus (I2C0)</td></tr>
+<tr><td>Battery voltage ADC</td><td>GPIO 35</td><td>divider ratio 2.0 (same as YaoKun S3)</td></tr>
+<tr><td>Buzzer</td><td>GPIO 25</td><td>active type, level-driven</td></tr>
+<tr><td>LED indicator</td><td>GPIO 2 (on-board, single)</td><td>RGB semantics unchanged — <code>led_map.h</code> ORs the three channels into one LED; state is expressed by <b>blink frequency</b></td></tr>
+<tr><td>SBUS receiver</td><td>GPIO 4</td><td>Serial 2</td></tr>
+<tr><td>Optical flow (reserved)</td><td>MOS 13 / CLK 14 / MIS 12 / CS 15</td><td>PMW3901, Espressif ESP-Drone scheme</td></tr>
+<tr><td>Laser (reserved)</td><td>SCL1 16 / SDA1 17</td><td>VL53L1X, second bus (I2C1)</td></tr>
+</tbody>
+</table>
+
+<div class="note">
+<b>Attribution &amp; maintenance statement</b>: the MildlySpicyDragon 2.0 “ESP32 mini drone” hardware was designed and open-sourced by <b>MildlySpicyDragon (malagis)</b> (<a href="https://oshwhub.com/malagis/esp32-mini-plane">OSHWHub</a>). <b>The firmware for that board — the board support and maintenance of the Flix YaoKun organized edition — is maintained and adapted by YaoKunSmart (耀坤智联)</b>. Kernel copyright (C) Oleg Kalachev (GPL obligation). The YaoKun S3 board and the MildlySpicyDragon board are two independent hardware products: the MildlySpicyDragon boot banner shows the MildlySpicyDragon branding, while the YaoKun S3 banner contains no MildlySpicyDragon information.
 </div>
 
 <!-- ============ footer ============ -->

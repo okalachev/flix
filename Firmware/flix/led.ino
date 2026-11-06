@@ -40,6 +40,7 @@
 
 #include "util.h"
 #include "i18n.h"   // 界面文字唯一数据源：中/英文可切（FLIX_LANG_EN）
+#include "board.h"  // 板型引脚表：PIN_LED_* / PIN_BUZZER / BOARD_LED_COUNT
 
 extern float t;
 extern float mavlinkTime;   // 安全层：最后收到遥控的时刻
@@ -47,43 +48,36 @@ extern bool armed;
 extern float voltage;
 extern float controlTime;   // MANUAL_CONTROL 的时间戳（见下方 connected 判定说明）
 
-// ---- 引脚与阈值（耀坤 S3 实测；已接入参数表，可用 `p LED_R_PIN ...` 现场改）----
+// ---- 引脚与阈值（取值来自 board.h；已接入参数表，可用 `p LED_R_PIN ...` 现场改）----
 // 【为什么用变量而不是 #define】参数表 parameters[] 需要变量指针才能读写；
 // 用宏就没有地址。这里定义成全局变量后，LED_* / BUZ_* 参数可直接映射到它们，
 // 改引脚不必重编固件（换板/飞线调试时非常有用）。
-int ledRedPin = 41;        // 红灯：低电报警 / 失联慢闪
-int ledGreenPin = 7;       // 绿灯：已连接常亮 / 已解锁快闪
-int ledBluePin = 14;       // 蓝灯：初始化过程指示
-int buzzerPin = 39;        // 有源蜂鸣器，高电平触发（S8050 三极管驱动）
+// 【注意】宏只在"初始化"这一刻起作用；运行期以变量为准（NVS 会覆盖初值）。
+int ledRedPin = PIN_LED_R;     // 红：低电报警 / 失联慢闪（单灯板就是那颗唯一的灯）
+int ledGreenPin = PIN_LED_G;   // 绿：已连接常亮 / 已解锁快闪（单灯板为 -1）
+int ledBluePin = PIN_LED_B;    // 蓝：初始化过程指示（单灯板为 -1）
+int buzzerPin = PIN_BUZZER;    // 有源蜂鸣器，高电平触发（S8050 三极管驱动）
 int buzzerEnable = 1;      // 蜂鸣器总开关：0 = 全程静音（夜间室内调试用）
 float ledLowVoltage = 3.5f; // 低电告警阈值（1S 锂电，与自研飞控 YaoKunDrone 一致）
 
-// ---- LED 状态缓存（避免重复写 IO）----
+// ---- LED 语义状态缓存（red/green/blue 三路的"逻辑亮灭"）----
 static bool redState = false, greenState = false, blueState = false;
 
-// ============================================================================
-// LED 独立控制（带状态缓存）
-// ============================================================================
-void setRed(bool on) {
-	if (on != redState) {
-		digitalWrite(ledRedPin, on ? HIGH : LOW);
-		redState = on;
-	}
-}
+// ---------------------------------------------------------------------------
+// 板型相关的宏（LED_COMMIT_* / LED_SETUP_PINS / SET_BUZZER_LEVEL）全部定义在
+// led_map.h 里 —— .h 文件不参与 Arduino 的 ctags 函数原型扫描，可以安全地使用
+// #if 包住整段宏定义。本文件里刻意保持"零 #if"，原因见 led_map.h 顶部的踩坑说明。
+// ---------------------------------------------------------------------------
+#include "led_map.h"
 
-void setGreen(bool on) {
-	if (on != greenState) {
-		digitalWrite(ledGreenPin, on ? HIGH : LOW);
-		greenState = on;
-	}
-}
-
-void setBlue(bool on) {
-	if (on != blueState) {
-		digitalWrite(ledBluePin, on ? HIGH : LOW);
-		blueState = on;
-	}
-}
+// ============================================================================
+// LED 独立控制（语义层：只改"逻辑亮灭"）
+// ============================================================================
+// 对外语义：调用后对应的 xxxState 一定等于 on。
+// 怎么落到硬件由上面的宏决定（三色板直写三路 / 单灯板 OR 合成到一路）。
+void setRed(bool on)   { LED_COMMIT_RED(on); }
+void setGreen(bool on) { LED_COMMIT_GREEN(on); }
+void setBlue(bool on)  { LED_COMMIT_BLUE(on); }
 
 // 兼容上游代码（只控制蓝灯）
 void setLED(bool on) {
@@ -142,13 +136,13 @@ void buzzerPlay(char pattern) {
 		case 'X': // 停止
 		default:
 			buzzerPhase = 0;
-			digitalWrite(buzzerPin, LOW);
+			SET_BUZZER_LEVEL(false);
 			return;
 	}
 	// 立即开始发声
 	buzzerPhase = 1;
 	buzzerStartTime = millis();
-	digitalWrite(buzzerPin, HIGH);
+	SET_BUZZER_LEVEL(true);
 }
 
 /**
@@ -161,7 +155,7 @@ static void buzzerUpdate() {
 	const unsigned long now = millis();
 	if (buzzerPhase == 1) { // 正在发声
 		if (now - buzzerStartTime >= (unsigned long)buzzerDurationOn) {
-			digitalWrite(buzzerPin, LOW);
+			SET_BUZZER_LEVEL(false);
 			buzzerPhase = 2;
 			buzzerStartTime = now;
 			// 有限音效且已是最后一次 → 直接结束
@@ -175,17 +169,17 @@ static void buzzerUpdate() {
 			if (buzzerInfinite) {
 				buzzerPhase = 1;
 				buzzerStartTime = now;
-				digitalWrite(buzzerPin, HIGH);
+				SET_BUZZER_LEVEL(true);
 				return;
 			}
 			if (buzzerRepeatCount > 0) buzzerRepeatCount--;
 			if (buzzerRepeatCount == 0) {
 				buzzerPhase = 0;
-				digitalWrite(buzzerPin, LOW);
+				SET_BUZZER_LEVEL(false);
 			} else {
 				buzzerPhase = 1;
 				buzzerStartTime = now;
-				digitalWrite(buzzerPin, HIGH);
+				SET_BUZZER_LEVEL(true);
 			}
 		}
 	}
@@ -210,16 +204,10 @@ void runBuzzerFor(unsigned long ms) {
 // 初始化
 // ============================================================================
 void setupLED() {
-	pinMode(ledRedPin, OUTPUT);
-	pinMode(ledGreenPin, OUTPUT);
-	pinMode(ledBluePin, OUTPUT);
-	pinMode(buzzerPin, OUTPUT);
-	digitalWrite(ledRedPin, LOW);
-	digitalWrite(ledGreenPin, LOW);
-	digitalWrite(ledBluePin, LOW);
-	digitalWrite(buzzerPin, LOW);
-	// 同步缓存，避免首次 setXxx(true) 被"状态未变"逻辑吞掉
-	redState = greenState = blueState = false;
+	// 具体引脚配置由 LED_SETUP_PINS() 宏按板型展开：
+	//   三色板 —— 四路引脚全部无条件 pinMode + 拉低（与改造前逐字符相同）
+	//   单灯板 —— 逐路判空，跳过 -1 的绿/蓝
+	LED_SETUP_PINS();
 }
 
 // ============================================================================

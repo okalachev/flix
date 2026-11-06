@@ -19,6 +19,7 @@
 #include "filter.h"
 #include "util.h"
 #include "i18n.h"
+#include "board.h"   // 板型引脚表：PIN_IMU_*
 
 IMU *imu;
 int imuAutoDetect = 1; // 1 - 上电自动识别（默认）；0 - 只用下面的 IMU_MODEL 手动值
@@ -28,13 +29,17 @@ int imuRotLock = 0;    // 1 - 自动识别不覆盖 IMU_ROT_YAW（现场锁定�
 bool imuOK = false;    // IMU 是否就绪；false 时禁止解锁，且主循环不阻塞
 const char *imuDetectNote = "manual"; // 自动识别的依据（I2C id / SPI id / manual），供 imu 命令回显
 
-// 耀坤 S3 实测引脚（以《耀坤S3无人机引脚定义.xlsx》V2 版为准，V1 老板靠自动扫描兼容）：
-//   MPU6500 走 SPI：SCK=38 / MISO=21 / MOSI=18；CS 新板=42、老板实测=17（探测候选表两者都试）
-//   MPU6050 走 I2C0：SDA=9 / SCL=8（表格与实物一致，2026-10-18 用户确认"按表格没错"）
-int imuSckPin = 38, imuMisoPin = 21, imuMosiPin = 18, imuCsPin = 17, imuIntPin = -1;
-// 【坑】这里曾按错误记忆写成 SDA=8 / SCL=9（与表格相反），导致 2 号机 I2C 模块探不到。
-// 引脚表与实际布线冲突时以实测为准，但本次实测证明表格是对的 —— 恢复 SDA=9 / SCL=8。
-int imuSdaPin = 9, imuSclPin = 8;
+// 【引脚现在由 board.h 提供】下面注释里列的是「耀坤 S3 板」的实际值，作为历史记录保留；
+// 真正生效的是 board.h 的 PIN_IMU_*，换板型只改 board.h，本文件不动。
+//   耀坤 S3：MPU6500 走 SPI：SCK=38 / MISO=21 / MOSI=18；CS 新板=42、老板实测=17
+//            MPU6050 走 I2C0：SDA=9 / SCL=8
+//   火龙果 2.0：MPU6500 走 SPI：SCK=18 / MISO=19 / MOSI=23 / CS=5
+//               MPU6050 走 I2C0：SDA=21 / SCL=22
+int imuSckPin = PIN_IMU_SCK, imuMisoPin = PIN_IMU_MISO, imuMosiPin = PIN_IMU_MOSI,
+    imuCsPin = PIN_IMU_CS, imuIntPin = PIN_IMU_INT;
+// 【坑】S3 板这里曾按错误记忆写成 SDA=8 / SCL=9（与引脚表相反），导致 2 号机 I2C 模块探不到。
+// 引脚表与实际布线冲突时以实测为准，但本次实测证明表格是对的（SDA=9 / SCL=8）。
+int imuSdaPin = PIN_IMU_SDA, imuSclPin = PIN_IMU_SCL;
 
 // 默认朝向（SPI 档）。识别成功后 applyIMUProfile() 会按总线覆盖。
 Vector imuRotation(0, 0, -PI / 2);
@@ -170,11 +175,16 @@ static bool detectIMU() {
 	}
 
 	// ② SPI —— MPU6500 / MPU9250 / MPU9255
-	// 【兼容新旧 PCB，无需重编】V1 老板 MPU6500 片选实测接 GPIO17（INT 也在 17）；
-	// V2 新板按《耀坤S3无人机引脚定义.xlsx》：MPU6500_CS=GPIO42、MPU6500_INT=GPIO40（INT 本工程不用，定时器采样）。
-	// 所以按候选表 {17, 42} 依次探测，谁读到合法 WHO_AM_I 就用谁 —— 两个版本的板子都能自动适配。
+	// 【兼容新旧 PCB，无需重编】S3 板：V1 老板 MPU6500 片选实测接 GPIO17（INT 也在 17）；
+	// V2 新板按《耀坤S3无人机引脚定义.xlsx》：MPU6500_CS=GPIO42（INT 本工程不用，定时器采样）。
+	// 所以按候选表 {17, 42} 依次探测，谁读到合法 WHO_AM_I 就用谁 —— 两版板子都能自动适配。
+	// 【候选表改为由 board.h 提供】S3 = {17, 42, 17}（与改造前完全一致）；
+	// 火龙果 = {5, -1, -1}，即只有一个片选、不探测候选。
+	// 🔴 火龙果这类经典 ESP32 板上绝不能沿用 42：ESP32 只有 GPIO0~39，
+	//    对 42 号脚 digitalWrite 会越界写寄存器（未定义行为，可能破坏其它外设状态）。
+	//    下面第 185 行的 `if (cs < 0) continue;` 会把 -1 安全跳过。
 	int foundCs = -1, foundWho = -1, looseCs = -1, looseWho = -1;
-	const int csCandidates[3] = { imuCsPin, 42, 17 };
+	const int csCandidates[3] = { imuCsPin, PIN_IMU_CS_ALT1, PIN_IMU_CS_ALT2 };
 	for (int k = 0; k < 3; k++) {
 		const int cs = csCandidates[k];
 		if (cs < 0) continue;

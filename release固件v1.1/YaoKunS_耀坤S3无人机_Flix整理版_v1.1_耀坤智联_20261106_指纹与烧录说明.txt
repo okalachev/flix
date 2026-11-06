@@ -28,11 +28,11 @@
 | --- | --- |
 | 固件版本 | **v1.1**（耀坤整理版） |
 | 品牌 | YaoKunS / 耀坤智联 / 耀坤无人机 |
-| 编译时间 | Oct 18 2026 18:40:11 |
+| 编译时间 | Nov  6 2026 15:29:27 |
 | 工具链 | arduino-cli 1.5.1 + esp32 core 3.3.8 |
 | 编译参数 | `esp32:esp32:esp32s3:FlashSize=8M,PartitionScheme=default_8MB`（USB CDC 默认开启） |
 | 第三方库 | FlixPeriph、ESP32_NOW_Serial（随 esp32 core）、MAVLink |
-| 资源占用 | 应用程序 1058992 B (0x1028B0) |
+| 资源占用 | 应用程序 1054368 B (0x1016A0) |
 
 > ⚠️ **读版本号的方式**：Arduino 构建的镜像里 `0x10020` 处的 `esp_app_desc_t`
 > 由 ESP32 核心预编译库写入，`version` 字段是核心库标识，不代表本工程版本。
@@ -43,7 +43,7 @@
 ### 方式 A：Flash Download Tool（图形界面）
 
 1. 打开 Flash Download Tool，芯片选 **ESP32-S3**，工作模式 **Develop**。
-2. 只添加这一个文件，地址填 **`0x0`**：`YaoKunS_耀坤S3无人机_Flix整理版_v1.1_耀坤智联_20261105_merged.bin`
+2. 只添加这一个文件，地址填 **`0x0`**：`YaoKunS_耀坤S3无人机_Flix整理版_v1.1_耀坤智联_20261106_merged.bin`
 3. 设置：**SPI SPEED = 80MHz，SPI MODE = DIO，FLASH SIZE = 8MB**，选好 COM 口，BAUD 用 921600（不稳降到 115200）。
 4. ⚠️ **务必勾选 DoNotChgBin**。镜像头里已写好 SPI 模式/频率/容量与尾部 SHA-256，工具若改写头部会破坏校验导致无法开机。
 5. 点 START，完成后按 RST 或重新上电。
@@ -51,7 +51,7 @@
 ### 方式 B：esptool 一条命令
 
 
-esptool --chip esp32s3 --port COMx --baud 921600 write_flash 0x0 "YaoKunS_耀坤S3无人机_Flix整理版_v1.1_耀坤智联_20261105_merged.bin"
+esptool --chip esp32s3 --port COMx --baud 921600 write_flash 0x0 "YaoKunS_耀坤S3无人机_Flix整理版_v1.1_耀坤智联_20261106_merged.bin"
 
 
 烧完若「不跑、停在下载模式」（日志出现 `waiting for download`）：GPIO0 被拉低没放开。
@@ -62,10 +62,10 @@ esptool --chip esp32s3 --port COMx --baud 921600 write_flash 0x0 "YaoKunS_耀坤
 **① 直接比文件哈希**（最可靠，不用上电）：
 
 
-certutil -hashfile "YaoKunS_耀坤S3无人机_Flix整理版_v1.1_耀坤智联_20261105_merged.bin" SHA256
+certutil -hashfile "YaoKunS_耀坤S3无人机_Flix整理版_v1.1_耀坤智联_20261106_merged.bin" SHA256
 
 
-→ 应为 `7f8dafa31547670431049fc962e8d8b145b9fd7e88736607818a88ec4d4d2845`
+→ 应为 `66597368599ec05ed60bf53e5c49a11d3a0a2070e4df4add762ed5a911b4fc33`
 
 **② 串口开机横幅**（115200，走**原生 USB-CDC 口**）。开机第一屏应为：
 
@@ -101,14 +101,14 @@ esptool --chip esp32s3 --port COMx read_flash 0x10000 0x200 app_hdr.bin
 ## 五、产物与校验（SHA-256）
 
 | 产物 | 烧写地址 | SHA-256 | 大小 |
-| **merged 单文件固件** | `0x0` 整体刷 | `7f8dafa31547670431049fc962e8d8b145b9fd7e88736607818a88ec4d4d2845` | 1124528 B (0x1128B0) |
+| **merged 单文件固件** | `0x0` 整体刷 | `66597368599ec05ed60bf53e5c49a11d3a0a2070e4df4add762ed5a911b4fc33` | 1119904 B (0x1116A0) |
 | 二级引导程序 | `0x0` | `6f232c4aafe7d21239a1c59404723ca2cfdca063ef73501a21126a8cef39f432` | 19984 B (0x4E10) |
-| 分区表 | `0x8000` | `6a88d59601a83a16a19a08114b59d338324b8dec267d8b43e5d61ad56ec92102` | 3072 B (0xC00) |
+| 分区表 | `0x8000` | `1d9cca96de0fe07ad7fc0648b9878ddecd9ce565e38b589ad20fea698ed4c80c` | 3072 B (0xC00) |
 | boot_app0 | `0xE000` | 由 esp32 core 3.3.8 提供（把 otadata 选到 app0，缺它不启动） | 8192 B (0x2000) |
-| 应用程序 | `0x10000` | `ad61033964935de7092b2b75b09b12829a6ebee115f0fe5d766faf72f216f54a` | 1058992 B (0x1028B0) |
+| 应用程序 | `0x10000` | `2b386c4ca7de9994c3e9865efae06bfd8f2871df1d5c89e0704afffeb86df1d6` | 1054368 B (0x1016A0) |
 
 - 合并布局：`0x0 bootloader + 0x8000 分区表 + 0xE000 boot_app0 + 0x10000 应用程序`（段间空隙填 0xFF）
-- 应用程序镜像头：`E9 06 02 3F` → SPI 模式 **DIO**、频率 **80MHz**、Flash 容量 **8MB**、段数 **6**、入口 **0x40379F5C**
+- 应用程序镜像头：`E9 06 02 3F` → SPI 模式 **DIO**、频率 **80MHz**、Flash 容量 **8MB**、段数 **6**、入口 **0x40379E20**
 - ⚠️ 本包按 **8MB Flash** 编译（分区表 default_8MB），**4MB 板不可烧写本包**，请用源码改 `FlashSize=4M,PartitionScheme=default` 重编
 - Flash 容量：**8MB**（编译参数 `FlashSize=8M`；如需二次确认可执行 `esptool image-info <bin>`，其 `Flash size` 一栏应为 8MB。容量指纹取自镜像头 offset 3 高半字节，见上方镜像头行）
 - bootloader 镜像头：`E9 03 02 3F` → SPI 模式 **DIO**、频率 **80MHz**、Flash 容量 **8MB**
