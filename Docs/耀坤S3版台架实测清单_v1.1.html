@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>耀坤 S3 · Flix 整理版 v1.1 —— 台架实测清单（接板后照着做）</title>
+<style>
+  :root{
+    --brand:#c8102e; --brand-dark:#8f0c22; --ink:#0f172a; --ink2:#334155;
+    --ink3:#64748b; --line:#e2e8f0; --bg:#ffffff; --bg2:#f8fafc; --code-bg:#0f172a;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0; background:var(--bg2); color:var(--ink); font-size:15px; line-height:1.85;
+       font-family:"Microsoft YaHei","PingFang SC","Hiragino Sans GB","Source Han Sans SC",
+                   -apple-system,"Segoe UI",sans-serif; -webkit-font-smoothing:antialiased;}
+  .wrap{max-width:1000px; margin:0 auto; padding:0 26px 70px; background:var(--bg);
+        box-shadow:0 0 40px rgba(15,23,42,.06);}
+
+  /* 顶部品牌条 */
+  .topbar{display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap;
+          margin:0 -26px; padding:12px 26px; background:linear-gradient(90deg,#0f172a,#7f1d1d 130%);
+          color:#e2e8f0; font-size:12.5px; letter-spacing:.4px;}
+  .topbar b{color:#fff;}
+  .topbar .tag{background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.22);
+               padding:2px 10px; border-radius:12px;}
+
+  h1{font-size:29px; font-weight:800; line-height:1.35; margin:34px 0 6px; color:var(--ink);
+     padding-bottom:16px; border-bottom:4px solid var(--brand); letter-spacing:.3px;}
+  h2{font-size:22px; font-weight:700; color:var(--brand); margin:46px 0 16px;
+     padding-bottom:10px; border-bottom:2px solid var(--brand);}
+  h3{font-size:17.5px; font-weight:700; color:var(--ink); margin:30px 0 12px;
+     padding-left:12px; border-left:5px solid var(--brand);}
+  p{margin:11px 0;}
+  hr{border:0; border-top:1px dashed var(--line); margin:34px 0;}
+
+  code{background:#f1f5f9; color:#b91c1c; padding:2px 6px; border-radius:4px; font-size:13.5px;
+       font-family:"Cascadia Mono","Consolas","Courier New",monospace;}
+  pre{background:var(--code-bg); color:#e2e8f0; padding:16px 20px; border-radius:10px;
+      overflow-x:auto; font-size:13px; line-height:1.7; margin:16px 0;
+      font-family:"Cascadia Mono","Consolas","Courier New",monospace;}
+  pre code{background:none; color:inherit; padding:0; font-size:13px;}
+
+  table{border-collapse:collapse; width:100%; margin:18px 0; font-size:13.8px;
+        background:#fff; border:1px solid var(--line); border-radius:8px; overflow:hidden;}
+  th,td{border:1px solid var(--line); padding:9px 12px; text-align:left; vertical-align:top;}
+  th{background:var(--bg2); color:var(--ink2); font-weight:700; white-space:nowrap;}
+  tr:nth-child(even) td{background:#fcfdff;}
+
+  ul,ol{margin:12px 0; padding-left:26px;}
+  li{margin:5px 0;}
+  ul.check{list-style:none; padding-left:6px;}
+  ul.check li{position:relative; padding-left:28px; margin:7px 0;}
+  ul.check li .box{position:absolute; left:2px; top:1px; width:16px; height:16px;
+        border:1.6px solid var(--ink3); border-radius:3px; display:inline-block;
+        text-align:center; line-height:14px; font-size:12px; color:#fff;}
+  ul.check li.done .box{background:#16a34a; border-color:#16a34a;}
+  ul.check li.done{color:var(--ink3);}
+
+  blockquote{margin:16px 0; padding:13px 18px; border-radius:0 8px 8px 0;
+             background:#eff6ff; border-left:5px solid #2563eb; color:var(--ink2);}
+  blockquote p{margin:6px 0;}
+  blockquote.warn{background:#fff7ed; border-left-color:#ea580c;}
+  blockquote.danger{background:#fef2f2; border-left-color:var(--brand);}
+  blockquote.ok{background:#f0fdf4; border-left-color:#16a34a;}
+
+  .foot{margin-top:56px; padding-top:18px; border-top:1px solid var(--line);
+        font-size:12.5px; color:var(--ink3);}
+  .foot a{color:var(--brand); text-decoration:none;}
+  @media print{
+    body{background:#fff;} .wrap{box-shadow:none; max-width:none;}
+    .topbar{background:none; color:var(--ink3);}
+    h2{page-break-after:avoid;} pre,table,blockquote{page-break-inside:avoid;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="topbar"><span><b>耀坤智联 / YaoKunSmart</b> · Flix 整理版 v1.1</span><span class="tag">台架实测清单 · Bench Checklist</span></div>
+<h1>耀坤 S3 · Flix 整理版 v1.1 —— 台架实测清单（接板后照着做）</h1>
+<blockquote><p>目的：验证「ESP-NOW 遥控能用」「时间基准不回绕」「IMU 识别正确」「中文界面完整」四项。</p><p><strong>全程必须拆桨。</strong> 本清单通过 = 放行推送到 <code>yaokun-organized</code> 分支。</p><p>🌐 English version: <a href="Bench_Test_Checklist_EN.md">Bench_Test_Checklist_EN.md</a></p><p>🛩️ 微辣火龙果 2.0 板的对应清单：<a href="火龙果版台架实测清单V1.1.md">火龙果版台架实测清单V1.1.md</a>（烧录地址、引脚、IMU 总线均不同，<strong>两份清单不能混用</strong>）</p><p>🖨️ 图文版（浏览器直接打开 / 可打印）：<a href="耀坤S3版台架实测清单_v1.1.html">耀坤S3版台架实测清单_v1.1.html</a></p></blockquote>
+<hr>
+<h2>✅ 实测进度（2026-10-18）</h2>
+<table><thead><tr><th>项</th><th>状态</th><th>结果</th></tr></thead><tbody><tr><td>烧录（单文件固件）</td><td>✅</td><td>两台均 <code>Hash of data verified</code></td></tr><tr><td>开机中文横幅</td><td>✅</td><td>三行指纹齐全</td></tr><tr><td>IMU 识别 · 1 号机</td><td>✅</td><td>MPU-6500 / SPI / WHO=0x70 / CS=17 / 朝向 −π/2</td></tr><tr><td>IMU 识别 · 2 号机</td><td>✅</td><td>MPU6050 / I2C0 / WHO=0x68 / SDA=9 SCL=8 / 朝向 +π/2</td></tr><tr><td>新旧 PCB 自动兼容</td><td>✅</td><td>同一份固件，CS 候选表自动命中 17</td></tr><tr><td>ESP-NOW 收包</td><td>✅</td><td>7674 包 / 7674 帧，100% 解析</td></tr><tr><td>消息类型</td><td>✅</td><td>msgid=69 (MANUAL_CONTROL) / sysid=127</td></tr><tr><td>油门量程</td><td>✅</td><td><strong>−0.603 ~ +1.000</strong>（中位 +0.010）</td></tr><tr><td>解锁</td><td>✅</td><td>油门低位时 0 → 1 成功</td></tr><tr><td>摇杆响应</td><td>✅</td><td>0.010 → 0.207 → −0.603 → +1.000 连续跟随</td></tr><tr><td>电池电压</td><td>✅</td><td>4.15 V</td></tr><tr><td>主循环频率</td><td>✅</td><td>1000 Hz</td></tr><tr><td>电机输出（未推油门）</td><td>✅</td><td>四路全 0</td></tr><tr><td>时间基准</td><td>✅</td><td>运行 3371 s，回绕次数 0</td></tr><tr><td><strong>电机位置对应</strong></td><td>✅</td><td><code>mfr</code>→2、<code>mfl</code>→3、<code>mrr</code>→1、<code>mrl</code>→0，四个都能转，编号一一对应</td></tr><tr><td><strong>横滚混控方向</strong></td><td>✅</td><td>右倾时 右前 0.205 / 右后 0.257 &gt; 左前 0.088 / 左后 0.134</td></tr><tr><td><strong>俯仰混控方向</strong></td><td>✅</td><td>数学验证通过（<code>Tools/mixer_sign_check.py</code>）；<code>mot</code> 读数因 desaturate 削顶不可用</td></tr><tr><td><strong><code>ca</code> static bug 修复</strong></td><td>✅</td><td>比例系数从 1e-4 抬到 1e-2 量级，证明累加器从空集起步</td></tr><tr><td><strong><code>help</code> 菜单完整显示</strong></td><td>✅</td><td>修复后串口收到 <strong>1720 字节</strong>，品牌条 + 29 行命令全部到位（原先只有 ~700 字节，菜单被截）</td></tr><tr><td><strong>开机横幅完整显示</strong></td><td>✅</td><td>2441 字节，初始化日志 + 完整 motd 一次到齐</td></tr><tr><td><strong>热点名 <code>YaoKun_</code> 前缀</strong></td><td>✅</td><td>1 号机实测 <code>当前热点名：YaoKun_F224</code>；AP 模式与 ESP-NOW 模式两条路径均生效，不再出现 core 默认的 <code>ESP_xxxxxx</code>。<strong>v1.1 起后缀改读 eFuse STA MAC</strong>（旧版读 AP MAC → <code>YaoKun_6202</code>）</td></tr><tr><td><strong>默认共存（v1.1）</strong></td><td>✅</td><td>2026-11-05 实测：<code>WIFI_MODE=4</code>、<code>热点名称：YaoKun_F224</code>、<code>本机 IP：192.168.4.1</code>；PC 扫到 <code>SSID YaoKun_F224 / BSSID 82:65:99:df:f2:24</code>；<code>wifi espnow</code> 切换后重启保持纯模式（迁移只做一次）</td></tr><tr><td><strong>发布版单文件固件</strong></td><td>✅</td><td>1,124,528 B / SHA-256 <code>7f8dafa3…4d4d2845</code>，烧录 <code>Hash of data verified</code></td></tr><tr><td>失联保护</td><td>⬜ 待测</td><td>拔遥控器电源</td></tr><tr><td>长跑回绕验证</td><td>⬜ 待测</td><td>需连续运行 &gt; 71.6 分钟</td></tr><tr><td>六面加速度校准</td><td>⚠️ 不推荐</td><td><code>ca</code> 是 48 秒连跑、无输入等待，人手跟不上；当前零偏已归零，可用</td></tr></tbody></table>
+<hr>
+<h2>⚠️ 实测中踩到的「假 bug」（别重复排查）</h2>
+<table><thead><tr><th>现象</th><th>真相</th></tr></thead><tbody><tr><td><code>采样频率</code> 显示 20 Hz / 1 Hz</td><td>它是 <strong><code>loopRate</code>（主循环频率）</strong>，不是 IMU ODR。校准期、空闲期都正常，<strong>不要改 <code>configureIMU()</code></strong></td></tr><tr><td><code>mot</code> 读数左右不对称、有 0 和 1</td><td>是 <code>desaturate()</code> <strong>削顶</strong>，四路失去可比性。验混控方向请用 <code>Tools/mixer_sign_check.py</code> 离线算</td></tr><tr><td>执行 <code>ca</code> 后姿态彻底失真</td><td>六面没翻到位（48 秒跑完，人手跟不上）。救急：<code>p IMU_ACC_SCALE_X/Y/Z 1</code> + <code>p IMU_ACC_BIAS_X/Y/Z 0</code></td></tr></tbody></table>
+<h3>✅ 热点名统一 <code>YaoKun_</code> 前缀（AP 模式 + ESP-NOW 模式）</h3>
+<table><thead><tr><th>项</th><th>值</th></tr></thead><tbody><tr><td>前缀</td><td><code>YaoKun_</code>（Y、K 大写）</td></tr><tr><td>后缀</td><td>芯片出厂 <strong>STA MAC</strong> 末两字节，例 1 号机 = <code>YaoKun_F224</code>（v1.1 修正）</td></tr><tr><td>默认密码</td><td><strong><code>1-2-3-4-5-6-7-8</code></strong>（连字符只是分隔，输入时不带；逐位：一、二、三、四、五、六、七、八）。源码以 ASCII 码表 <code>{49,50,…,56,0}</code> 构造；文档只写带连字符形式，不写连续数字串（过通道会被改写）</td></tr><tr><td>认名字</td><td>只看开机日志 <code>当前热点名：YaoKun_xxxx</code></td></tr><tr><td>改名字</td><td><code>ap &lt;热点名&gt; &lt;密码&gt;</code> + <code>reboot</code></td></tr></tbody></table>
+<p><strong>关键坑 1：ESP-NOW 模式也会起热点。</strong> ESP-NOW 只能跑在 AP/STA 接口上，<code>WiFi.mode(WIFI_AP)</code> 一调，core 就自动起一个 <code>ESP_</code> + MAC 后三字节的默认热点。旧版只改了 <code>W_AP</code> 分支，所以 ESP-NOW 模式下 飞机广播的是 core 默认名，现场认不出是谁家的。<strong>两条路径都要调 <code>WiFi.softAP()</code> 覆盖， 且必须在 <code>mode(WIFI_AP)</code> 之后调</strong>，否则会被模式切换冲掉。</p>
+<p><strong>关键坑 2：热点名后缀要读 eFuse 的 STA MAC（v1.1 已修）。</strong> 旧版用 <code>WiFi.macAddress()</code>，在 AP/ESP-NOW 上下文里返回的是 <strong>AP 接口 MAC</strong>：1 号机 <code>wifi</code> 显示 <code>本机 MAC：80:65:99:DF:F2:24</code>（STA），而 AP MAC 末两字节是 <code>62:02</code>， 于是热点名成了 <code>YaoKun_6202</code>，与 <code>wifi</code> 输出对不上，现场没法靠 MAC 认机。 现改用 <code>esp_read_mac(ESP_MAC_WIFI_STA)</code> 直接读熔丝位 → 恒为 <code>YaoKun_F224</code>， <strong>现在可以放心用 <code>wifi</code> 的 MAC 末四位去对应热点名</strong>。</p>
+<p><strong>关键坑 3：NVS 里可能有占位符热点名。</strong> 1 号机实测发现 NVS 的 <code>WIFI_AP_SSID</code> 存着字面 <code>"&lt;热点名&gt;"</code>（当年照文档把占位符 当参数敲进了 <code>ap &lt;热点名&gt; &lt;密码&gt;</code>），导致自动命名被跳过、热点真的叫 <code>&lt;热点名&gt;</code>。 v1.1 增加校验：名字含 <code>&lt;</code> <code>&gt;</code> 或超过 32 字符即判脏值，自动清除并恢复自动命名。</p>
+<hr>
+<h3>🔴 真 bug：<code>help</code> 只显示品牌条，命令菜单整个不见</h3>
+<p><strong>不是"代码里没写菜单"，是输出被截断。</strong> 三步凑一起才炸：</p>
+<ol><li><code>motd</code> 是一整条 C 字符串，<strong>1718 字节</strong>（品牌条 + 30 行命令），<code>print()</code> 里一次 <code>Serial.print(buf)</code> 整体写出；</li><li>ESP32-S3 原生 USB 走 HWCDC，发送环形缓冲<strong>默认只有 256 字节</strong>（core <code>HWCDC.cpp</code> 的 <code>setTxBufferSize(256)</code>）；</li><li>本项目设了 <code>setTxTimeoutMs(0)</code>，<code>HWCDC::write()</code> 里 <code>xRingbufferSend</code> 以 0 tick 超时，装不下的部分<strong>当场 break 静默丢弃</strong>。</li></ol>
+<p>⇒ 只有前 ~256 字节能进缓冲，丢弃点正好落在品牌条末尾，所以看起来像"菜单丢了"而不是"打印断在半行"。</p>
+<p><strong>修法</strong>（<code>console.ino</code>，两处配合）：</p>
+<ul><li><code>setupConsole()</code> 加 <code>Serial.setTxBufferSize(4096)</code>，整份 motd 一次塞进缓冲，USB 中断异步搬走，主循环仍零阻塞；</li><li><code>handleConsole()</code> 命令收尾调 <code>consoleFlushTail(150, ' ')</code>——补写一个空格重新使能 USB 中断，把滞留的尾部数据带走。</li></ul>
+<p><strong>踩坑警告</strong>：</p>
+<ul><li>❌ 不要用 <code>Serial.flush()</code>：<code>setTxTimeoutMs(0)</code> 时它会走 <code>flushTXBuffer(NULL, 0)</code>，<strong>丢弃整个发送缓冲</strong>并自标"未连接"；</li><li>❌ 排空判定不要写 <code>&gt;= 4096</code>：TX 环形缓冲是 <code>BYTEBUF</code> 类型，可用空间最大值是"容量 − 1"，该条件<strong>永远不成立</strong>。</li></ul>
+<h3>怎么用 <code>mot</code> 复位被污染的校准</h3>
+<pre><code class="lang-bash">p IMU_ACC_SCALE_X 1
+p IMU_ACC_SCALE_Y 1
+p IMU_ACC_SCALE_Z 1
+p IMU_ACC_BIAS_X 0
+p IMU_ACC_BIAS_Y 0
+p IMU_ACC_BIAS_Z 0</code></pre>
+<p>执行后 <code>st</code> 应显示 横滚≈0° / 俯仰≈0°（实测 0.015° / −0.004°）。</p>
+<hr>
+<h2>0. 准备工作</h2>
+<table><thead><tr><th>项</th><th>内容</th></tr></thead><tbody><tr><td>固件</td><td><code>release固件v1.1/YaoKunS_耀坤S3无人机_Flix整理版_v1.1_耀坤智联_20261106_merged.bin</code>（2026-11-06 修订，SHA-256 见同目录《发布说明》）</td></tr><tr><td>烧写地址</td><td><code>0x0</code>（单文件整体刷）</td></tr><tr><td>串口</td><td><strong>原生 USB-CDC 口</strong>（<code>CDCOnBoot=cdc</code>），115200，打开时须置 DTR</td></tr><tr><td>遥控器</td><td>耀坤<strong>中文版</strong>遥控（<code>ESP32-DJI-Dev-Yaokun20260815</code>）</td></tr><tr><td>其他</td><td><strong>另一台飞机断电</strong>（同频互相干扰，否则无法归因）</td></tr></tbody></table>
+<blockquote class="warn"><p>⚠️ 若板子 NVS 里已有标定数据，请用<strong>分片写</strong>保住 <code>0x9000~0xE000</code>。</p></blockquote>
+<hr>
+<h2>1. 遥控器正确操作（★最容易被忽略）</h2>
+<p>实测确认：中文版遥控<strong>默认不使能控制输出</strong>，不使能就只发中位值。完整步骤：</p>
+<ol><li><strong>开机</strong> 遥控器</li><li>进「<strong>对端发现</strong>」页，等飞机出现在列表里（扫描跨信道，能看到 ≠ 能通）</li><li><strong>点选</strong> 那台飞机 → 建立连接</li><li><strong>按「左按钮（辅助按钮）」</strong> → 使能控制输出（<code>enabled = !enabled</code>）</li></ol>
+<blockquote class="warn"><p>⚠️ <strong>界面上没有这个开关，是纯物理按键。</strong> 按一次开、再按一次关。</p><p>⚠️ <strong>飞机重启后必须重新连接 + 重新使能</strong>（ESP-NOW 会话已清）。</p></blockquote>
+<h3>信道必须一致</h3>
+<table><thead><tr><th>遥控器</th><th>信道</th></tr></thead><tbody><tr><td>中文版（<code>ESP32-DJI-Dev-Yaokun20260815</code>）</td><td><strong>1</strong>（Wi-Fi 默认，代码里没设）</td></tr><tr><td>英文版（<code>ESP32-YKRC-Firmware</code>）</td><td>6（<code>Control.hpp</code> 里 <code>esp_wifi_set_channel(6)</code>）</td></tr></tbody></table>
+<p>固件默认 <code>espnowChannel = 1</code>。换遥控器时用 <code>ch &lt;1-13&gt;</code> 改飞机端：</p>
+<pre><code>&gt; ch          → 信道：1
+&gt; ch 6        → ESP-NOW 信道已设为 6（遥控器必须一致），重启后生效</code></pre>
+<hr>
+<h2>2. 上电横幅（3 个指纹串）</h2>
+<pre><code>耀坤S3 飞控（Flix 整理版）启动中…
+YaoKunS | 耀坤S3无人机 | Flix | 耀坤智联
+固件版本：v1.1（耀坤整理版）</code></pre>
+<ul class="check"><li class=""><span class="box"></span>三行齐全（<strong>中文横幅是区分本版与英文版最快的方式</strong>）</li><li class=""><span class="box"></span><code>信道：1</code></li><li class=""><span class="box"></span><code>原生 ESP-NOW 接收已就绪</code></li></ul>
+<hr>
+<h2>3. IMU 识别（<code>imu</code>）</h2>
+<p>1 号机（立创板 + MPU6500 SPI）：</p>
+<pre><code>型号：MPU-6500
+芯片标识（WHO_AM_I）：0x70
+总线：SPI　识别依据：SPI id　可用：1
+引脚：SCK=38 MISO=21 MOSI=18 CS=17 INT=-1
+状态：正常</code></pre>
+<p>2 号机（淘宝板 + MPU6050 I2C）：</p>
+<pre><code>型号：MPU6050
+芯片标识（WHO_AM_I）：0x68
+总线：I2C0　识别依据：I2C id　可用：1
+引脚：SDA=9 SCL=8 INT=-1
+状态：正常</code></pre>
+<ul class="check"><li class=""><span class="box"></span>型号与实物一致</li><li class=""><span class="box"></span>状态：正常</li><li class=""><span class="box"></span>芯片温度是真实值（≈40°C，为 0.0 说明没通）</li></ul>
+<hr>
+<h2>4. IMU 校准（<code>ca</code>）与朝向（<code>st</code>）</h2>
+<pre><code>&gt; ca      → 六步中文提示，8 秒/步，末行「校准完成！」
+&gt; st      → 机身右侧压低，横滚为正</code></pre>
+<ul class="check"><li class=""><span class="box"></span><code>ca</code> 顺利走完</li><li class=""><span class="box"></span><strong>右侧压低 → <code>横滚</code> 为正</strong>（朝向唯一判据，不要用原始加速度）</li><li class=""><span class="box"></span>静止平放时横滚/俯仰在 ±2° 内</li></ul>
+<hr>
+<h2>5. ESP-NOW 链路诊断（<code>wifi</code>）</h2>
+<pre><code>&gt; wifi</code></pre>
+<p>关键输出：</p>
+<pre><code>接收包数：7674                          ← ① 物理层收到几个包
+接收字节数：16933                       ← ②
+最近发包方 MAC：30:76:F5:EF:FE:08       ← ③ 应为遥控器 MAC
+已解析 MAVLink 帧数：7674               ← ④
+最近一帧消息 ID：69（MANUAL_CONTROL=69） ← ⑤
+最近一帧来源 sysid：127                 ← ⑥ 耀坤遥控 = 127
+MAVLink 链路在线：1
+原生接收通道：1
+接收队列积压：0 字节</code></pre>
+<p><strong>判读流程</strong>：</p>
+<table><thead><tr><th>现象</th><th>结论</th></tr></thead><tbody><tr><td>包数 = 0</td><td>物理层没通 → 查信道、遥控器是否使能、peer 是否登记</td></tr><tr><td>包数 &gt; 0，帧数 = 0</td><td>收到字节但组不成 MAVLink 帧 → 遥控器在 Raw 协议模式</td></tr><tr><td>帧数 &gt; 0，msgid ≠ 69</td><td>遥控器只发 HEARTBEAT（未使能 / 不在控制页）</td></tr><tr><td>msgid = 69，rc 全 0</td><td>遥控器未使能（按左按钮），或 target 与 <code>mavlinkSysId</code> 不匹配</td></tr></tbody></table>
+<hr>
+<h2>6. 油门量程（★首飞前必查）</h2>
+<p><code>MANUAL_CONTROL</code> 满量程 <strong>±1000</strong>，本工程 <code>controlThrottle = m.z / 1000.0f</code>。</p>
+<table><thead><tr><th>摇杆位置</th><th>期望</th><th>实测</th></tr></thead><tbody><tr><td>最低</td><td>≈ <strong>−1.0</strong></td><td>✅ 观测到 −0.603（快速下拉采样点）</td></tr><tr><td>中位</td><td>≈ <strong>0.0</strong></td><td>✅ +0.010</td></tr><tr><td>最高</td><td>≈ <strong>+1.0</strong></td><td>✅ <strong>+1.000</strong></td></tr></tbody></table>
+<p><strong>结论：±1000 全量程，无 0~1000 映射问题。</strong></p>
+<p>❌ 若实测是 <code>0 / +0.5 / +1.0</code>（只有正半程），<strong>不要起飞</strong>。</p>
+<hr>
+<h2>7. 电机与解锁</h2>
+<pre><code>&gt; mfr 0.1   → 右前      &gt; mfl 0.1  → 左前
+&gt; mrr 0.1   → 右后      &gt; mrl 0.1  → 左后</code></pre>
+<ul class="check"><li class=""><span class="box"></span>四个电机都能转，<strong>位置对应正确</strong>（<code>mfr</code> 转的是右前那个）</li><li class=""><span class="box"></span>转向符合四轴 X 型布局</li><li class=""><span class="box"></span><code>mot</code> 未推油门时四路全 0</li></ul>
+<p>解锁：</p>
+<ul class="check"><li class=""><span class="box"></span>油门拉到最低 → <code>arm</code> 或遥控器解锁 → <code>rc</code> 中 <code>解锁状态</code> = 1</li><li class=""><span class="box"></span>三短鸣 + 绿灯闪</li><li class=""><span class="box"></span>油门不在低位时尝试 <code>arm</code> → 打印「拒绝解锁：油门不在最低位」</li></ul>
+<hr>
+<h2>8. 失联保护</h2>
+<ul class="check"><li class=""><span class="box"></span>拔掉遥控器电源</li><li class=""><span class="box"></span>1 秒内长鸣 + 红灯慢闪</li><li class=""><span class="box"></span>10 秒后油门归零并自动上锁</li></ul>
+<hr>
+<h2>9. 长跑验证（R1 回绕修复的现场证明）</h2>
+<p><code>time</code> 命令：</p>
+<pre><code>&gt; time
+运行时间：3371.271729 秒
+主循环频率：1000 Hz
+单步耗时：0.001000 秒
+微秒计数器回绕次数：0（已吸收，不影响运行）</code></pre>
+<ul class="check"><li class=""><span class="box"></span>连续运行 <strong>&gt; 72 分钟</strong>，确认 <code>t</code> 单调递增、遥测不停</li><li class=""><span class="box"></span><code>微秒计数器回绕次数</code> 即使 &gt; 0，<code>运行时间</code> 也<strong>绝不回退</strong></li></ul>
+<blockquote><p>旧版每 71.58 分钟必挂（遥测全停、终端仍回显）。本项是修复有效性的最终证明。</p></blockquote>
+<hr>
+<h2>10. 出问题怎么查</h2>
+<table><thead><tr><th>现象</th><th>先看什么</th></tr></thead><tbody><tr><td>遥控毫无反应</td><td><code>wifi</code> 的 <code>接收包数</code>；为 0 → 查信道（1 vs 6）</td></tr><tr><td>遥控器显示已连接但飞机不动</td><td><strong>按左按钮使能</strong>（<code>enabled</code> 默认 false）</td></tr><tr><td>收包正常但 rc 全 0</td><td><code>wifi</code> 的 msgid 是否 69；是 69 就按左按钮使能</td></tr><tr><td>飞机重启后遥控失效</td><td>需重新「对端发现 → 点选 → 按左按钮」，会话已清</td></tr><tr><td>油门前半程无反应</td><td>第 6 节量程问题，<strong>不要起飞</strong></td></tr><tr><td>IMU 识别不出</td><td><code>2 号机</code> 查 SDA=9/SCL=8；接头是否插到底</td></tr><tr><td>界面出现英文</td><td>烧了英文版或上游原版，看开机第一行</td></tr><tr><td>烧完停在下载模式</td><td><code>esptool --after watchdog-reset run</code>，或拔插 USB</td></tr></tbody></table>
+<hr>
+<h2>11. 通关后</h2>
+<p>全部勾选 → 推送到 <code>github.com/YaoKunS/flix</code> 的 <code>yaokun-organized</code> 分支。</p>
+<p>任何一项 ❌ → 把该项串口原始输出发我，定位后再改。</p>
+<div class="foot">本页由 <code>耀坤S3版台架实测清单_v1.1.md</code> 自动生成 —— 要改内容请改 Markdown 源文件后重跑 <code>python Firmware/tools/md2html.py</code>，直接改 HTML 会被覆盖。<br>耀坤智联 / YaoKunSmart · <a href="https://github.com/YaoKunS/flix">github.com/YaoKunS/flix</a> · 内核 (C) Oleg Kalachev</div>
+</div>
+</body>
+</html>

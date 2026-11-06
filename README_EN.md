@@ -106,8 +106,11 @@ flix/                          # ← repo root: docs + forwarding Makefile
 │   ├── YaoKunS3_Adaptation_Notes_EN.md  # ★ Change list / root causes / verification
 │   ├── Flix_Technical_Manual_EN.html    # ★ Illustrated technical manual (styled, open in a browser)
 │   ├── Flix_Technical_Manual_EN.md      # ★ Same content in Markdown (readable directly on GitHub)
-│   ├── Bench_Test_Checklist_EN.md       # ★ Bench test checklist (20 boxes, props off)
-│   ├── 台架实测清单_v1.1.md             #   same, Chinese
+│   ├── Bench_Test_Checklist_EN.md       # ★ Bench test checklist (props off); same-name .html = illustrated version
+│   ├── 耀坤S3版台架实测清单_v1.1.md     #   same, Chinese (YaoKun S3 board)
+│   ├── 火龙果版台架实测清单V1.1.md      #   MildlySpicyDragon 2.0 board checklist, Chinese (different pins/flashing — not interchangeable)
+│   ├── MildlySpicyDragon_Bench_Test_Checklist_EN.md  # ★ MildlySpicyDragon 2.0 board checklist, English
+│   │                                    #   (both Chinese and English checklists also ship .html versions)
 │   ├── assembly.md            #   Assembly instructions
 │   ├── usage.md               #   Build, debug, fly
 │   ├── firmware.md            #   Firmware architecture (read this first)
@@ -146,10 +149,11 @@ The full change list, root-cause analysis and
 verification records are in [Docs/YaoKunS3_Adaptation_Notes_EN.md](Docs/YaoKunS3_Adaptation_Notes_EN.md)
 (technical manual: [Markdown](Docs/Flix_Technical_Manual_EN.md) — readable on GitHub — or
 [illustrated HTML](Docs/Flix_Technical_Manual_EN.html);
-bench test checklist: [Docs/Bench_Test_Checklist_EN.md](Docs/Bench_Test_Checklist_EN.md);
+bench test checklist: [Docs/Bench_Test_Checklist_EN.md](Docs/Bench_Test_Checklist_EN.md)
+(MildlySpicyDragon 2.0 board: [`火龙果版台架实测清单V1.1.md`](Docs/火龙果版台架实测清单V1.1.md), Chinese);
 Chinese originals: [`耀坤S3适配说明.md`](Docs/耀坤S3适配说明.md) /
 [`flix技术说明书.md`](Docs/flix技术说明书.md) /
-[`台架实测清单_v1.1.md`](Docs/台架实测清单_v1.1.md)).
+[`耀坤S3版台架实测清单_v1.1.md`](Docs/耀坤S3版台架实测清单_v1.1.md)).
 
 > 🔴 **Why the board is never auto-detected:** motor pins carry no identity on the hardware.
 > A runtime guess that lands on the wrong board spins all four motors in the wrong order the

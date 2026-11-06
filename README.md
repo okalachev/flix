@@ -102,7 +102,8 @@ flix/                          # ← 仓库根：说明文档 + 转发用 Makefi
 │   ├── tools/                 #   ★ 发布打包脚本
 │   │   ├── pack_flix_release.py   # 耀坤S3：合并四段 + 脱敏 + 重算校验字节与 SHA-256 + 生成中英说明
 │   │   ├── gen_hlg_note.py        # 火龙果：只读整片 bin，现场生成中英说明（哈希/大小/编译时间现测）
-│   │   └── check_i18n.py          # 中英文案配对自检（含板型横幅块的双语分支）
+│   │   ├── check_i18n.py          # 中英文案配对自检（含板型横幅块的双语分支）
+│   │   └── md2html.py             # 台架清单 md → 自包含图文版 html（改完 md 重跑一次）
 │   ├── release固件v1.1/        #   ★ 发布产物（双板整片 bin + 中英指纹与烧录说明 + 发布说明）
 │   └── gazebo/                #   Gazebo 仿真器（跑同一份 .ino 源码）
 │       ├── flix.world         #     仿真世界
@@ -115,8 +116,12 @@ flix/                          # ← 仓库根：说明文档 + 转发用 Makefi
 │   ├── flix技术说明书.md       #   ★ 同内容 Markdown 版（GitHub 上可直接在线阅读）
 │   ├── Flix_Technical_Manual_EN.html    #   同上，英文版（图文）
 │   ├── Flix_Technical_Manual_EN.md      #   同上，英文版（Markdown）
-│   ├── 台架实测清单_v1.1.md    #   ★ 接板后照着做（20 个勾选项，全程拆桨）
-│   ├── Bench_Test_Checklist_EN.md       #   同上，英文版
+│   ├── 耀坤S3版台架实测清单_v1.1.md  #   ★ S3 板接板后照着做（全程拆桨）
+│   ├── 耀坤S3版台架实测清单_v1.1.html   #   同上图文版（浏览器直接打开 / 可打印）
+│   ├── 火龙果版台架实测清单V1.1.md   #   ★ 微辣火龙果 2.0 板对应清单（烧录地址 / 引脚与 S3 不同，不能混用）
+│   ├── 火龙果版台架实测清单V1.1.html    #   同上图文版
+│   ├── Bench_Test_Checklist_EN.md       #   S3 清单英文版（另有同名 .html 图文版）
+│   ├── MildlySpicyDragon_Bench_Test_Checklist_EN.md   # 火龙果清单英文版（另有同名 .html）
 │   ├── assembly.md            #   组装说明
 │   ├── usage.md               #   编译 / 调试 / 飞行
 │   ├── firmware.md            #   固件架构总览（强烈推荐先读）

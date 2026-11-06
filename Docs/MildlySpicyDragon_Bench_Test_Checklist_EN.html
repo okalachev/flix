@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MildlySpicyDragon 2.0 · Flix YaoKun Organised Edition v1.1 — Bench Test Checklist</title>
+<style>
+  :root{
+    --brand:#c8102e; --brand-dark:#8f0c22; --ink:#0f172a; --ink2:#334155;
+    --ink3:#64748b; --line:#e2e8f0; --bg:#ffffff; --bg2:#f8fafc; --code-bg:#0f172a;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0; background:var(--bg2); color:var(--ink); font-size:15px; line-height:1.85;
+       font-family:"Microsoft YaHei","PingFang SC","Hiragino Sans GB","Source Han Sans SC",
+                   -apple-system,"Segoe UI",sans-serif; -webkit-font-smoothing:antialiased;}
+  .wrap{max-width:1000px; margin:0 auto; padding:0 26px 70px; background:var(--bg);
+        box-shadow:0 0 40px rgba(15,23,42,.06);}
+
+  /* 顶部品牌条 */
+  .topbar{display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap;
+          margin:0 -26px; padding:12px 26px; background:linear-gradient(90deg,#0f172a,#7f1d1d 130%);
+          color:#e2e8f0; font-size:12.5px; letter-spacing:.4px;}
+  .topbar b{color:#fff;}
+  .topbar .tag{background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.22);
+               padding:2px 10px; border-radius:12px;}
+
+  h1{font-size:29px; font-weight:800; line-height:1.35; margin:34px 0 6px; color:var(--ink);
+     padding-bottom:16px; border-bottom:4px solid var(--brand); letter-spacing:.3px;}
+  h2{font-size:22px; font-weight:700; color:var(--brand); margin:46px 0 16px;
+     padding-bottom:10px; border-bottom:2px solid var(--brand);}
+  h3{font-size:17.5px; font-weight:700; color:var(--ink); margin:30px 0 12px;
+     padding-left:12px; border-left:5px solid var(--brand);}
+  p{margin:11px 0;}
+  hr{border:0; border-top:1px dashed var(--line); margin:34px 0;}
+
+  code{background:#f1f5f9; color:#b91c1c; padding:2px 6px; border-radius:4px; font-size:13.5px;
+       font-family:"Cascadia Mono","Consolas","Courier New",monospace;}
+  pre{background:var(--code-bg); color:#e2e8f0; padding:16px 20px; border-radius:10px;
+      overflow-x:auto; font-size:13px; line-height:1.7; margin:16px 0;
+      font-family:"Cascadia Mono","Consolas","Courier New",monospace;}
+  pre code{background:none; color:inherit; padding:0; font-size:13px;}
+
+  table{border-collapse:collapse; width:100%; margin:18px 0; font-size:13.8px;
+        background:#fff; border:1px solid var(--line); border-radius:8px; overflow:hidden;}
+  th,td{border:1px solid var(--line); padding:9px 12px; text-align:left; vertical-align:top;}
+  th{background:var(--bg2); color:var(--ink2); font-weight:700; white-space:nowrap;}
+  tr:nth-child(even) td{background:#fcfdff;}
+
+  ul,ol{margin:12px 0; padding-left:26px;}
+  li{margin:5px 0;}
+  ul.check{list-style:none; padding-left:6px;}
+  ul.check li{position:relative; padding-left:28px; margin:7px 0;}
+  ul.check li .box{position:absolute; left:2px; top:1px; width:16px; height:16px;
+        border:1.6px solid var(--ink3); border-radius:3px; display:inline-block;
+        text-align:center; line-height:14px; font-size:12px; color:#fff;}
+  ul.check li.done .box{background:#16a34a; border-color:#16a34a;}
+  ul.check li.done{color:var(--ink3);}
+
+  blockquote{margin:16px 0; padding:13px 18px; border-radius:0 8px 8px 0;
+             background:#eff6ff; border-left:5px solid #2563eb; color:var(--ink2);}
+  blockquote p{margin:6px 0;}
+  blockquote.warn{background:#fff7ed; border-left-color:#ea580c;}
+  blockquote.danger{background:#fef2f2; border-left-color:var(--brand);}
+  blockquote.ok{background:#f0fdf4; border-left-color:#16a34a;}
+
+  .foot{margin-top:56px; padding-top:18px; border-top:1px solid var(--line);
+        font-size:12.5px; color:var(--ink3);}
+  .foot a{color:var(--brand); text-decoration:none;}
+  @media print{
+    body{background:#fff;} .wrap{box-shadow:none; max-width:none;}
+    .topbar{background:none; color:var(--ink3);}
+    h2{page-break-after:avoid;} pre,table,blockquote{page-break-inside:avoid;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="topbar"><span><b>耀坤智联 / YaoKunSmart</b> · Flix 整理版 v1.1</span><span class="tag">台架实测清单 · Bench Checklist</span></div>
+<h1>MildlySpicyDragon 2.0 · Flix YaoKun Organised Edition v1.1 — Bench Test Checklist</h1>
+<blockquote><p>Goal: verify four things — "it flashes and boots", "the IMU is auto-detected correctly",</p><p>"both RC links (ESP-NOW / SBUS) work", "motor positions map correctly".</p><p><strong>Props off for the entire procedure.</strong> Passing this checklist is the gate for shipping a board / pushing to</p><p>the <code>yaokun-organized</code> branch.</p><p>⚠️ <strong>This is a classic ESP32 (not an S3)</strong>: flashing addresses, USB-serial chip, pinout and IMU bus</p><p>all differ from the YaoKun S3 board. <strong>Do not reuse the S3 checklist or pin table</strong> — wrong motor pins</p><p>mean all four motors spin up out of order at power-on.</p><p>🌐 中文版：<a href="火龙果版台架实测清单V1.1.md">火龙果版台架实测清单V1.1.md</a> ·</p><p>Sister checklist for the YaoKun S3 board: <a href="Bench_Test_Checklist_EN.md">Bench_Test_Checklist_EN.md</a></p><p>🖨️ Illustrated HTML (open in a browser / print): <a href="MildlySpicyDragon_Bench_Test_Checklist_EN.html">MildlySpicyDragon_Bench_Test_Checklist_EN.html</a></p><p>Pin definitions live in <code>Firmware/flix/board.h</code> (<code>BOARD_HLG_V2</code> branch); if this document ever disagrees</p><p>with the source, the source wins.</p></blockquote>
+<hr>
+<h2>✅ Test status (2026-11-06, COM30 on real hardware + serial capture)</h2>
+<table><thead><tr><th>Item</th><th>Status</th><th>Result</th></tr></thead><tbody><tr><td>Full-image flash</td><td>✅</td><td><code>MildlySpicyDragon_…_v1.1_20261106_整片4MB.bin</code> (SHA-256 <code>A3738D46…DC71A413</code>), bootloader checksum passed, boots normally</td></tr><tr><td>Chinese boot banner</td><td>✅</td><td>All three fingerprint lines + OSHWHub / Bilibili / Taobao lines complete</td></tr><tr><td>IMU auto-detection</td><td>✅</td><td>I2C socket empty → automatic fallback to SPI → <strong>MPU-6500 detected</strong> (SCK=18 MISO=19 MOSI=23 CS=5, orientation offset −1.5708)</td></tr><tr><td>Voltage sense parameters</td><td>✅</td><td>Boot log: <code>battery sense: GPIO35, divider 2</code></td></tr><tr><td>Hotspot name</td><td>✅</td><td><code>current SSID: YaoKun_2DD4</code> (chip MAC <code>f4:65:0b:49:2d:d4</code>)</td></tr><tr><td>ESP-NOW ready</td><td>✅</td><td><code>native ESP-NOW receiver ready</code>, <code>channel: 1</code></td></tr><tr><td>ESP-NOW packets / throttle range</td><td>⬜ TODO</td><td>Needs the Chinese remote — section 5</td></tr><tr><td>SBUS RC (GPIO4)</td><td>⬜ TODO</td><td>Needs an SBUS receiver — section 6</td></tr><tr><td>Motor mapping / arming</td><td>⬜ TODO</td><td>Section 7 (<strong>props off</strong>)</td></tr><tr><td>RC-loss failsafe</td><td>⬜ TODO</td><td>Section 8</td></tr><tr><td>Long-run wrap-around test</td><td>⬜ TODO</td><td>Continuous run &gt; 72 minutes</td></tr></tbody></table>
+<hr>
+<h2>⚠️ Key differences vs the YaoKun S3 board (read this first)</h2>
+<table><thead><tr><th>Item</th><th>MildlySpicyDragon 2.0</th><th>YaoKun S3</th></tr></thead><tbody><tr><td>Chip</td><td>classic ESP32 (DevKit V1, 30-pin)</td><td>ESP32-S3</td></tr><tr><td>Flash / partition scheme</td><td>4 MB / <code>default</code></td><td>8 MB / <code>default_8MB</code></td></tr><tr><td>bootloader address</td><td><strong><code>0x1000</code></strong> (classic-ESP32 rule)</td><td><code>0x0</code></td></tr><tr><td>app address</td><td><code>0x10000</code></td><td><code>0x10000</code></td></tr><tr><td>Build flags</td><td><code>esp32:esp32:esp32:FlashSize=4M,PartitionScheme=default</code> + <code>-DFLIX_BOARD=2</code></td><td><code>esp32s3</code> + <code>8M,default_8MB</code> (default board, no macro)</td></tr><tr><td>Serial link</td><td>USB-UART bridge (virtual COM)</td><td>native USB-CDC (HWCDC)</td></tr><tr><td>Motor GPIOs</td><td>RL=26 / RR=27 / FR=33 / FL=32</td><td>RL=15 / RR=5 / FR=6 / FL=16</td></tr><tr><td>IMU</td><td>socketed: MPU6500 on <strong>SPI</strong> (18/19/23/CS5) or MPU6050 on <strong>I2C</strong> (SDA21/SCL22)</td><td>on-board MPU6500 (SPI, CS=17/42) or MPU6050 (I2C, SDA9/SCL8)</td></tr><tr><td>LED</td><td><strong>single LED GPIO2</strong> (three channels OR-ed into one lamp, state shown by blink rate)</td><td>RGB 41/7/14</td></tr><tr><td>Voltage ADC</td><td>GPIO35 (input-only, ADC1_CH7), divider ratio 2</td><td>GPIO2</td></tr><tr><td>SBUS</td><td><strong>GPIO4, enabled by default at the factory</strong></td><td>GPIO1, disabled by default (<code>p RC_RX_PIN 1</code> to enable)</td></tr><tr><td>Buzzer</td><td>GPIO25</td><td>GPIO39</td></tr></tbody></table>
+<hr>
+<h2>0. Preparation</h2>
+<table><thead><tr><th>Item</th><th>Detail</th></tr></thead><tbody><tr><td>Firmware</td><td><code>release固件v1.1/MildlySpicyDragon_火龙果2.0_Flix整理版_v1.1_20261106_整片4MB.bin</code> (SHA-256 and fingerprints in the flashing guide shipped alongside)</td></tr><tr><td>Serial</td><td>virtual COM port from the USB-UART bridge, 115200. <strong>Do not toggle DTR/RTS manually in a serial tool</strong> — on some USB-UART chips <code>DTR=1,RTS=0</code> is exactly "hold reset" and the board will sit there doing nothing</td></tr><tr><td>Remote</td><td>either the Chinese ESP-NOW remote, or an SBUS receiver wired to GPIO4</td></tr><tr><td>Other</td><td><strong>the other aircraft powered off</strong> (same-band interference ruins attribution); <strong>props off</strong></td></tr></tbody></table>
+<h3>Flashing quick reference</h3>
+<p><strong>Option A: Flash Download Tool (GUI, recommended)</strong> — chip <strong>ESP32</strong> (⚠️ not ESP32-S3), mode Develop, add only the full-image bin, address <strong><code>0x0</code></strong>.</p>
+<p><strong>Option B: esptool</strong></p>
+<pre><code class="lang-bash"># Full image (wipes NVS calibration / parameters — new board or intentional reset)
+esptool --port COMx --baud 460800 --before default-reset --after hard-reset \
+  write-flash 0x0 MildlySpicyDragon_火龙果2.0_Flix整理版_v1.1_20261106_整片4MB.bin
+
+# app region only (0x10000) — keeps NVS calibration, SSID and channel (normal upgrade path)
+esptool --port COMx --baud 460800 --before default-reset --after hard-reset \
+  write-flash 0x10000 flix.ino.bin</code></pre>
+<blockquote class="danger"><p>🔴 When flashing the bootloader on its own, the address is <code>0x1000</code>, not <code>0x0</code> as on the S3</p><p>(copying the S3 address gives "verified" but the chip never boots).</p><p>The board often stays in download mode afterwards: <code>esptool --after watchdog-reset run</code>, or replug USB.</p></blockquote>
+<hr>
+<h2>1. Boot banner (three fingerprint lines)</h2>
+<pre><code>MildlySpicyDragon 2.0 (based on Flix YaoKun edition) booting...
+MildlySpicyDragon | 微辣火龙果 | 2025星火计划获奖项目 ESP32迷你无人机 | Flix
+Firmware version: v1.1 (YaoKun organized edition, MildlySpicyDragon 2.0)</code></pre>
+<blockquote><p>The default build is the <strong>Chinese</strong> UI. Switching to English requires <code>-DFLIX_LANG_EN</code> at compile time;</p><p>the fingerprint and version lines above are the English variants.</p></blockquote>
+<ul class="check"><li class=""><span class="box"></span>All three lines present (the second half of the banner must show OSHWHub / Bilibili / <strong>Taobao (YaoKunSmart)</strong> — that is the MildlySpicyDragon-specific banner. Seeing the YaoKun S3 banner means the wrong firmware was flashed)</li><li class=""><span class="box"></span><code>channel: 1</code></li><li class=""><span class="box"></span><code>native ESP-NOW receiver ready</code></li><li class=""><span class="box"></span><code>battery sense: GPIO35, divider 2</code></li><li class=""><span class="box"></span><code>current SSID: YaoKun_2DD4</code> (prefix <code>YaoKun_</code> + last two MAC bytes; this board's MAC ends <code>2d:d4</code>)</li></ul>
+<h3>Hotspot quick reference</h3>
+<table><thead><tr><th>Item</th><th>Value</th></tr></thead><tbody><tr><td>Prefix</td><td><code>YaoKun_</code></td></tr><tr><td>Suffix</td><td>last two bytes of the factory STA MAC; this board = <code>YaoKun_2DD4</code></td></tr><tr><td>Default password</td><td><strong><code>1-2-3-4-5-6-7-8</code></strong> (hyphens are separators only — type the eight digits; digit by digit: one, two, three, four, five, six, seven, eight)</td></tr><tr><td>Rename</td><td><code>ap &lt;ssid&gt; &lt;password&gt;</code> + <code>reboot</code> (⚠️ the angle brackets are placeholders — never type the literal words <code>&lt;ssid&gt;</code>, or NVS stores the placeholder and auto-naming stops working)</td></tr></tbody></table>
+<hr>
+<h2>2. IMU auto-detection (<code>imu</code>)</h2>
+<p>The firmware probes <strong>I2C (socket) first, then SPI</strong>. Real capture, 2026-11-06 (empty I2C socket, SPI module fitted):</p>
+<pre><code>auto-detecting IMU...
+detected MPU6050 family (I2C) SDA=21 SCL=22
+  WHO_AM_I = 0xFF
+  mounting offset: +1.5708 rad about Z  [I2C id]
+Incorrect device ID: 0x00
+first attempt failed (model 3 / total 1 / status 1), retrying with other models
+detected MPU6500 family (SPI) SCK=18 MISO=19 MOSI=23 CS=5
+  mounting offset: -1.5708 rad about Z  [fallback]
+IMU: MPU-6500 detected
+IMU ready: MPU-6500, bus SPI</code></pre>
+<p><strong>Interpretation</strong></p>
+<table><thead><tr><th>Module fitted</th><th>Expected detection</th><th>Bus / pins</th></tr></thead><tbody><tr><td>MPU6050 (socket)</td><td><code>MPU6050 … I2C0</code>, WHO=0x68</td><td>SDA=21 SCL=22</td></tr><tr><td>MPU6500 (socket)</td><td><code>MPU-6500 … SPI</code>, WHO=0x70</td><td>SCK=18 MISO=19 MOSI=23 CS=5</td></tr></tbody></table>
+<ul class="check"><li class=""><span class="box"></span><code>imu</code> model / WHO_AM_I / bus match the physical module</li><li class=""><span class="box"></span><strong>Lower the right side → <code>st</code> roll is positive</strong> (the only orientation criterion; I2C offset +1.5708, SPI offset −1.5708, selected automatically — do not hand-edit)</li><li class=""><span class="box"></span>Level and still: roll / pitch within ±2°</li><li class=""><span class="box"></span>Chip temperature is a real value (≈40 °C; 0.0 means no communication)</li><li class=""><span class="box"></span>After swapping IMU modules, <strong>re-run <code>ca</code></strong> (bias differs per module)</li></ul>
+<hr>
+<h2>3. Voltage sensing (<code>pw</code>)</h2>
+<ul class="check"><li class=""><span class="box"></span><code>pw</code> voltage matches a multimeter (±0.05 V; divider ratio 2 is already configured for GPIO35 with 100K+100K or 10K+10K)</li><li class=""><span class="box"></span>Unplugging the battery drops the reading to ~0 (not frozen at the last value)</li></ul>
+<blockquote class="danger"><p>🔴 GPIO35 is an <strong>input-only ADC1</strong> pin. ADC2 is mutually exclusive with Wi-Fi (this firmware keeps the</p><p>hotspot on), so a voltage sense wired to ADC2 reads a constant 0 ⇒ false low-battery ⇒ the buzzer screams</p><p>forever. The board definition pins it to ADC1 for exactly this reason.</p></blockquote>
+<hr>
+<h2>4. Wi-Fi mode (<code>wifi</code>)</h2>
+<ul class="check"><li class=""><span class="box"></span>Default <code>WIFI_MODE=4</code> (AP + ESP-NOW together): the remote can reach it over ESP-NOW <em>and</em> the hotspot <code>YaoKun_2DD4</code> is visible</li><li class=""><span class="box"></span><code>wifi espnow</code> / <code>wifi ap</code> switches to a pure mode and the choice survives a reboot</li></ul>
+<hr>
+<h2>5. ESP-NOW RC (Chinese remote)</h2>
+<p>Same procedure as the S3 board:</p>
+<ol><li>Power on the remote → open the "peer discovery" page → <strong>select</strong> the aircraft to connect</li><li><strong>Press the "left button" (aux button) to enable control output</strong> — ⚠️ there is no on-screen switch, it is a physical button: press once to enable, again to disable</li><li>⚠️ <strong>After the aircraft reboots you must reconnect and re-enable</strong> (the ESP-NOW session is gone)</li></ol>
+<pre><code>&gt; wifi</code></pre>
+<table><thead><tr><th>Symptom</th><th>Conclusion</th></tr></thead><tbody><tr><td><code>packets received</code> = 0</td><td>physical link dead → check channel (must be 1) and whether the remote is enabled</td></tr><tr><td>packets &gt; 0, frames = 0</td><td>bytes arrive but no MAVLink frame → remote is in Raw protocol mode</td></tr><tr><td>frames &gt; 0, msgid ≠ 69</td><td>remote only sends HEARTBEAT (not enabled / not on the control page)</td></tr><tr><td>msgid = 69, rc all zero</td><td>left button not pressed (not enabled)</td></tr></tbody></table>
+<ul class="check"><li class=""><span class="box"></span>Packet count / parsed frame count keep increasing</li><li class=""><span class="box"></span><code>last msg ID: 69 (MANUAL_CONTROL)</code>, <code>source sysid: 127</code></li><li class=""><span class="box"></span>Throttle range: minimum ≈ <strong>−1.0</strong> / centre ≈ <strong>0.0</strong> / maximum ≈ <strong>+1.0</strong> (❌ if you only get <code>0 / +0.5 / +1.0</code>, <strong>do not fly</strong>)</li></ul>
+<hr>
+<h2>6. SBUS RC (MildlySpicyDragon-specific, GPIO4 enabled by default)</h2>
+<blockquote><p>On this board SBUS is enabled at the factory (<code>PIN_RC_RX=4</code>) — unlike the S3, which needs <code>p RC_RX_PIN 1</code>.</p><p>SBUS and ESP-NOW do not mix into one value stream: if an SBUS receiver is present, SBUS drives the controls;</p><p>the ESP-NOW <code>MANUAL_CONTROL</code> path is handled separately.</p></blockquote>
+<ul class="check"><li class=""><span class="box"></span>Receiver signal wire to <strong>GPIO4</strong> (+ 3.3 V/5 V and GND)</li><li class=""><span class="box"></span><code>rc</code> shows channel values moving with stick input (with no receiver attached, <code>rc</code> prints the SBUS pin number and the values stay put — that is normal)</li><li class=""><span class="box"></span><strong><code>cr</code> RC calibration</strong> (8 Chinese prompts, 3 s each): throttle / yaw / pitch / roll / mode switch in order as prompted — <strong>the mode switch must be held at each of its two extreme positions</strong> during its step, otherwise the channel is not detected</li><li class=""><span class="box"></span>Calibration ends with "detected N / 5" — only N = 5 passes</li><li class=""><span class="box"></span><code>rc</code> shows distinct values for each of the three mode-switch positions</li><li class=""><span class="box"></span>Throttle range: down ≈ −1.0 side, up ≈ +1.0 side (check with <code>rc</code> after <code>cr</code>)</li><li class=""><span class="box"></span>Arming / disarming via the remote switch works</li></ul>
+<blockquote class="danger"><p>🔴 <strong>Calibration from a different transmitter must not be reused</strong> (full-stick values differ) — re-run <code>cr</code></p><p>whenever you change the transmitter.</p><p>🔴 <strong>Never use <code>preset</code> to wipe parameters</strong> (it takes IMU calibration with it); re-run <code>cr</code> to reset RC only.</p></blockquote>
+<hr>
+<h2>7. Motors and arming (★props off)</h2>
+<pre><code>&gt; mfr 0.1   → front-right (GPIO33)   &gt; mfl 0.1  → front-left  (GPIO32)
+&gt; mrr 0.1   → rear-right  (GPIO27)   &gt; mrl 0.1  → rear-left   (GPIO26)</code></pre>
+<ul class="check"><li class=""><span class="box"></span>All four motors spin, <strong>in the right positions</strong> (<code>mfr</code> must spin the front-right one; cross-check GPIO)</li><li class=""><span class="box"></span>Directions match a quad-X layout</li><li class=""><span class="box"></span><code>mot</code> shows all four at 0 with the throttle down</li></ul>
+<blockquote class="danger"><p>🔴 <strong>"Watch the battery voltage sag to tell whether a motor spins" is a false criterion</strong> — on the bench with</p><p>USB plugged in the motors are fed from USB 5 V via the LDO, so the battery terminal does not sag.</p><p>Real criteria: listen / look / read <code>mot</code>. To check current draw, unplug USB and run on battery only.</p></blockquote>
+<p>Arming:</p>
+<ul class="check"><li class=""><span class="box"></span>Throttle to minimum → <code>arm</code> or the remote switch → <code>rc</code> shows armed = 1</li><li class=""><span class="box"></span>Three short beeps (GPIO25 active buzzer)</li><li class=""><span class="box"></span>Arming with the throttle not at minimum → prints "arming refused: throttle not at minimum"</li></ul>
+<hr>
+<h2>8. RC-loss failsafe</h2>
+<p>Firmware logic (<code>safety.ino</code>): while armed, <strong>no control input for 1 second</strong> → smooth descent (AUTO mode, throttle ramps down); <strong>10 seconds later the throttle hits 0 and the aircraft disarms</strong>.</p>
+<ul class="check"><li class=""><span class="box"></span>Cut power to the remote (or switch the receiver off)</li><li class=""><span class="box"></span>After ~1 s the aircraft enters the descent logic (buzzer sounds; the single LED switches to the corresponding blink pattern — on this board state is conveyed by blink rate only, so record the actual pattern back into this table once measured)</li><li class=""><span class="box"></span>After ~10 s the throttle reaches 0 and the aircraft disarms</li></ul>
+<blockquote class="warn"><p>⚠️ Test both links: pull the SBUS wire when SBUS is in use, and switch the remote off when ESP-NOW is in use</p><p>(<code>controlTime</code> is refreshed by whichever link is actually active).</p></blockquote>
+<hr>
+<h2>9. Long-run test (proof that the R1 wrap-around fix holds)</h2>
+<pre><code>&gt; time</code></pre>
+<ul class="check"><li class=""><span class="box"></span>Continuous run <strong>&gt; 72 minutes</strong>: telemetry never stops, <code>uptime</code> increases monotonically</li><li class=""><span class="box"></span>Even if <code>microsecond counter wrap count</code> &gt; 0, <code>uptime</code> <strong>never goes backwards</strong></li></ul>
+<blockquote><p>The old build died every 71.58 minutes (telemetry stopped, console still echoed). This item is the final</p><p>proof that the fix works.</p></blockquote>
+<hr>
+<h2>10. "Fake bugs" hit during bench testing (do not re-investigate)</h2>
+<table><thead><tr><th>Symptom</th><th>Truth</th></tr></thead><tbody><tr><td><code>sample rate</code> shows 20 Hz / 1 Hz</td><td>it is <strong><code>loopRate</code> (main-loop frequency)</strong>, not the IMU ODR. Normal during calibration and idle — <strong>do not touch <code>configureIMU()</code></strong></td></tr><tr><td>Boot log reports an I2C failure, then succeeds on SPI</td><td><strong>normal fallback</strong>: empty I2C socket reads WHO 0xFF, so it probes SPI and hits. Not a fault</td></tr><tr><td><code>mot</code> values asymmetric, containing 0 and 1</td><td><code>desaturate()</code> <strong>clipping</strong> — the four channels are no longer comparable. Verify mixer signs offline with <code>Firmware/tools/mixer_sign_check.py</code></td></tr><tr><td>Attitude is nonsense after <code>ca</code></td><td><code>ca</code> runs 48 s with no input waits; a human cannot flip six faces in time, so the scale collapses. Rescue: <code>p IMU_ACC_SCALE_X/Y/Z 1</code> + <code>p IMU_ACC_BIAS_X/Y/Z 0</code>; <code>st</code> should return to ±2°</td></tr><tr><td>Bench: "motors spin but battery voltage does not drop"</td><td>with USB plugged in the motors run off USB 5 V; the battery terminal genuinely does not sag (see section 7)</td></tr><tr><td>Serial port will not open / board silent</td><td>first make sure nobody manually pulled DTR/RTS (that can hold the chip in reset); then check the USB-UART driver</td></tr></tbody></table>
+<hr>
+<h2>11. Troubleshooting</h2>
+<table><thead><tr><th>Symptom</th><th>Check first</th></tr></thead><tbody><tr><td>Flash reports "verified" but the board never boots</td><td>chip selected as ESP32-S3 by mistake? bootloader flashed at 0x0 instead of 0x1000? Flashing the full image at 0x0 avoids both</td></tr><tr><td>Banner shows YaoKun S3 content</td><td>wrong firmware — reflash the MildlySpicyDragon full image</td></tr><tr><td>No RC response (ESP-NOW)</td><td><code>packets received</code> in <code>wifi</code>; 0 → channel (must be 1), remote enable state</td></tr><tr><td>Remote says connected but the aircraft does not move</td><td><strong>press the left button</strong> (<code>enabled</code> defaults to false)</td></tr><tr><td>SBUS sticks do nothing</td><td>check <code>rc</code>; if uncalibrated re-run <code>cr</code>; check the GPIO4 wiring</td></tr><tr><td>Mode switch does not change flight mode</td><td><code>cr</code> step 8 did not see both extreme positions → re-run <code>cr</code></td></tr><tr><td>Motors do not spin</td><td>rule out the section-7 false criterion, then test each motor with <code>mfr 0.1</code>; if none spin check arm state</td></tr><tr><td>IMU not detected</td><td>follow the table in section 2 (I2C=21/22, SPI=18/19/23/CS5); seat the header fully</td></tr><tr><td>Voltage stuck at 0</td><td>wiring must land on GPIO35; see the ADC1 note in section 3</td></tr><tr><td>UI comes up in English</td><td>English build or upstream original — check the first banner line</td></tr></tbody></table>
+<hr>
+<h2>12. After passing</h2>
+<p>Everything ticked → clear the board for shipping. If code or docs changed → push to <code>github.com/YaoKunS/flix</code>, branch <code>yaokun-organized</code>.</p>
+<p>Any ❌ → send me the raw serial output for that item and I will localise it before changing anything.</p>
+<div class="foot">本页由 <code>MildlySpicyDragon_Bench_Test_Checklist_EN.md</code> 自动生成 —— 要改内容请改 Markdown 源文件后重跑 <code>python Firmware/tools/md2html.py</code>，直接改 HTML 会被覆盖。<br>耀坤智联 / YaoKunSmart · <a href="https://github.com/YaoKunS/flix">github.com/YaoKunS/flix</a> · 内核 (C) Oleg Kalachev</div>
+</div>
+</body>
+</html>

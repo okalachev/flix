@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>微辣火龙果 2.0 · Flix 耀坤整理版 v1.1 —— 台架实测清单（接板后照着做）</title>
+<style>
+  :root{
+    --brand:#c8102e; --brand-dark:#8f0c22; --ink:#0f172a; --ink2:#334155;
+    --ink3:#64748b; --line:#e2e8f0; --bg:#ffffff; --bg2:#f8fafc; --code-bg:#0f172a;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0; background:var(--bg2); color:var(--ink); font-size:15px; line-height:1.85;
+       font-family:"Microsoft YaHei","PingFang SC","Hiragino Sans GB","Source Han Sans SC",
+                   -apple-system,"Segoe UI",sans-serif; -webkit-font-smoothing:antialiased;}
+  .wrap{max-width:1000px; margin:0 auto; padding:0 26px 70px; background:var(--bg);
+        box-shadow:0 0 40px rgba(15,23,42,.06);}
+
+  /* 顶部品牌条 */
+  .topbar{display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap;
+          margin:0 -26px; padding:12px 26px; background:linear-gradient(90deg,#0f172a,#7f1d1d 130%);
+          color:#e2e8f0; font-size:12.5px; letter-spacing:.4px;}
+  .topbar b{color:#fff;}
+  .topbar .tag{background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.22);
+               padding:2px 10px; border-radius:12px;}
+
+  h1{font-size:29px; font-weight:800; line-height:1.35; margin:34px 0 6px; color:var(--ink);
+     padding-bottom:16px; border-bottom:4px solid var(--brand); letter-spacing:.3px;}
+  h2{font-size:22px; font-weight:700; color:var(--brand); margin:46px 0 16px;
+     padding-bottom:10px; border-bottom:2px solid var(--brand);}
+  h3{font-size:17.5px; font-weight:700; color:var(--ink); margin:30px 0 12px;
+     padding-left:12px; border-left:5px solid var(--brand);}
+  p{margin:11px 0;}
+  hr{border:0; border-top:1px dashed var(--line); margin:34px 0;}
+
+  code{background:#f1f5f9; color:#b91c1c; padding:2px 6px; border-radius:4px; font-size:13.5px;
+       font-family:"Cascadia Mono","Consolas","Courier New",monospace;}
+  pre{background:var(--code-bg); color:#e2e8f0; padding:16px 20px; border-radius:10px;
+      overflow-x:auto; font-size:13px; line-height:1.7; margin:16px 0;
+      font-family:"Cascadia Mono","Consolas","Courier New",monospace;}
+  pre code{background:none; color:inherit; padding:0; font-size:13px;}
+
+  table{border-collapse:collapse; width:100%; margin:18px 0; font-size:13.8px;
+        background:#fff; border:1px solid var(--line); border-radius:8px; overflow:hidden;}
+  th,td{border:1px solid var(--line); padding:9px 12px; text-align:left; vertical-align:top;}
+  th{background:var(--bg2); color:var(--ink2); font-weight:700; white-space:nowrap;}
+  tr:nth-child(even) td{background:#fcfdff;}
+
+  ul,ol{margin:12px 0; padding-left:26px;}
+  li{margin:5px 0;}
+  ul.check{list-style:none; padding-left:6px;}
+  ul.check li{position:relative; padding-left:28px; margin:7px 0;}
+  ul.check li .box{position:absolute; left:2px; top:1px; width:16px; height:16px;
+        border:1.6px solid var(--ink3); border-radius:3px; display:inline-block;
+        text-align:center; line-height:14px; font-size:12px; color:#fff;}
+  ul.check li.done .box{background:#16a34a; border-color:#16a34a;}
+  ul.check li.done{color:var(--ink3);}
+
+  blockquote{margin:16px 0; padding:13px 18px; border-radius:0 8px 8px 0;
+             background:#eff6ff; border-left:5px solid #2563eb; color:var(--ink2);}
+  blockquote p{margin:6px 0;}
+  blockquote.warn{background:#fff7ed; border-left-color:#ea580c;}
+  blockquote.danger{background:#fef2f2; border-left-color:var(--brand);}
+  blockquote.ok{background:#f0fdf4; border-left-color:#16a34a;}
+
+  .foot{margin-top:56px; padding-top:18px; border-top:1px solid var(--line);
+        font-size:12.5px; color:var(--ink3);}
+  .foot a{color:var(--brand); text-decoration:none;}
+  @media print{
+    body{background:#fff;} .wrap{box-shadow:none; max-width:none;}
+    .topbar{background:none; color:var(--ink3);}
+    h2{page-break-after:avoid;} pre,table,blockquote{page-break-inside:avoid;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="topbar"><span><b>耀坤智联 / YaoKunSmart</b> · Flix 整理版 v1.1</span><span class="tag">台架实测清单 · Bench Checklist</span></div>
+<h1>微辣火龙果 2.0 · Flix 耀坤整理版 v1.1 —— 台架实测清单（接板后照着做）</h1>
+<blockquote><p>目的：验证「烧录能启动」「IMU 自动识别正确」「遥控（ESP-NOW / SBUS）能用」「电机位置对应」四项。</p><p><strong>全程必须拆桨。</strong> 本清单通过 = 放行发货 / 推送到 <code>yaokun-organized</code> 分支。</p><p>⚠️ <strong>这是 ESP32 经典片（不是 S3）</strong>：烧录地址、串口芯片、引脚、IMU 总线都与耀坤 S3 完全不同，</p><p><strong>不要拿 S3 的清单或引脚表套用</strong>（电机脚接错 = 上电乱序起转）。</p><p>🌐 English version: <a href="MildlySpicyDragon_Bench_Test_Checklist_EN.md">MildlySpicyDragon_Bench_Test_Checklist_EN.md</a></p><p>🛩️ 姊妹篇（耀坤 S3 板）：<a href="耀坤S3版台架实测清单_v1.1.md">耀坤S3版台架实测清单_v1.1.md</a></p><p>🖨️ 图文版（浏览器直接打开 / 可打印）：<a href="火龙果版台架实测清单V1.1.html">火龙果版台架实测清单V1.1.html</a></p><p>引脚的权威定义在 <code>Firmware/flix/board.h</code> 的 <code>BOARD_HLG_V2</code> 分支；本文与其不一致时以源码为准。</p></blockquote>
+<hr>
+<h2>✅ 实测进度（2026-11-06，COM30 实机 + 串口截图）</h2>
+<table><thead><tr><th>项</th><th>状态</th><th>结果</th></tr></thead><tbody><tr><td>整片固件烧录</td><td>✅</td><td><code>MildlySpicyDragon_…_v1.1_20261106_整片4MB.bin</code>（SHA-256 <code>A3738D46…DC71A413</code>），bootloader 校验通过、正常启动</td></tr><tr><td>开机中文横幅</td><td>✅</td><td>三行指纹齐全 + 立创 / B站 / 淘宝行完整</td></tr><tr><td>IMU 自动识别</td><td>✅</td><td>I2C 排母为空 → 自动回退 SPI → <strong>MPU-6500 detected</strong>（SCK=18 MISO=19 MOSI=23 CS=5，朝向补偿 −1.5708）</td></tr><tr><td>电压检测参数</td><td>✅</td><td>开机日志 <code>电池电压检测：GPIO35，分压系数 2</code></td></tr><tr><td>热点名</td><td>✅</td><td><code>当前热点名：YaoKun_2DD4</code>（本机 MAC <code>f4:65:0b:49:2d:d4</code>）</td></tr><tr><td>ESP-NOW 就绪</td><td>✅</td><td><code>原生 ESP-NOW 接收已就绪</code>、<code>信道：1</code></td></tr><tr><td>ESP-NOW 收包 / 油门量程</td><td>⬜ 待测</td><td>接中文遥控器后按第 5 节做</td></tr><tr><td>SBUS 遥控（GPIO4）</td><td>⬜ 待测</td><td>接 SBUS 接收机后按第 6 节做</td></tr><tr><td>电机位置对应 / 解锁</td><td>⬜ 待测</td><td>第 7 节（<strong>必须拆桨</strong>）</td></tr><tr><td>失联保护</td><td>⬜ 待测</td><td>第 8 节</td></tr><tr><td>长跑回绕验证</td><td>⬜ 待测</td><td>连续运行 &gt; 72 分钟</td></tr></tbody></table>
+<hr>
+<h2>⚠️ 与耀坤 S3 的关键差异（先读这个，别跳过）</h2>
+<table><thead><tr><th>项</th><th>火龙果 2.0</th><th>耀坤 S3</th></tr></thead><tbody><tr><td>芯片</td><td>ESP32 经典片（DevKit V1，30 针）</td><td>ESP32-S3</td></tr><tr><td>Flash / 分区</td><td>4MB / <code>default</code></td><td>8MB / <code>default_8MB</code></td></tr><tr><td>bootloader 地址</td><td><strong><code>0x1000</code></strong>（经典片规则）</td><td><code>0x0</code></td></tr><tr><td>app 地址</td><td><code>0x10000</code></td><td><code>0x10000</code></td></tr><tr><td>编译参数</td><td><code>esp32:esp32:esp32:FlashSize=4M,PartitionScheme=default</code> + <code>-DFLIX_BOARD=2</code></td><td><code>esp32s3</code> + <code>8M,default_8MB</code>（默认板型，无需宏）</td></tr><tr><td>串口芯片</td><td>USB-UART 桥（虚拟 COM）</td><td>原生 USB-CDC（HWCDC）</td></tr><tr><td>电机 GPIO</td><td>RL=26 / RR=27 / FR=33 / FL=32</td><td>RL=15 / RR=5 / FR=6 / FL=16</td></tr><tr><td>IMU</td><td>排母插拔：MPU6500 走 <strong>SPI</strong>（18/19/23/CS5）或 MPU6050 走 <strong>I2C</strong>（SDA21/SCL22）</td><td>板载 MPU6500（SPI，CS=17/42）或 MPU6050（I2C，SDA9/SCL8）</td></tr><tr><td>LED</td><td><strong>单灯 GPIO2</strong>（三路语义 OR 到一颗灯，用闪频表达）</td><td>三色灯 41/7/14</td></tr><tr><td>电压 ADC</td><td>GPIO35（input-only，ADC1_CH7），分压系数 2</td><td>GPIO2</td></tr><tr><td>SBUS</td><td><strong>GPIO4，出厂默认启用</strong></td><td>GPIO1，出厂默认关闭（<code>p RC_RX_PIN 1</code> 打开）</td></tr><tr><td>蜂鸣器</td><td>GPIO25</td><td>GPIO39</td></tr></tbody></table>
+<hr>
+<h2>0. 准备工作</h2>
+<table><thead><tr><th>项</th><th>内容</th></tr></thead><tbody><tr><td>固件</td><td><code>release固件v1.1/MildlySpicyDragon_火龙果2.0_Flix整理版_v1.1_20261106_整片4MB.bin</code>（SHA-256 与指纹见同目录《指纹与烧录说明》）</td></tr><tr><td>串口</td><td>USB-UART 虚拟 COM 口，115200。<strong>别在串口助手里手动拉 DTR/RTS</strong>——某些 USB-UART 芯片 <code>DTR=1,RTS=0</code> 恰好是「按住复位」，板子会一动不动</td></tr><tr><td>遥控</td><td>二选一：中文版 ESP-NOW 遥控，或 SBUS 接收机（接 GPIO4）</td></tr><tr><td>其他</td><td><strong>另一台飞机断电</strong>（同频互相干扰，否则无法归因）；<strong>拆桨</strong></td></tr></tbody></table>
+<h3>烧录速查（两种方式）</h3>
+<p><strong>方式 A：Flash Download Tool（图形界面，推荐）</strong> —— 芯片选 <strong>ESP32</strong>（⚠️ 不是 ESP32-S3），Develop 模式，只添加整片 bin，地址填 <strong><code>0x0</code></strong>。</p>
+<p><strong>方式 B：esptool</strong></p>
+<pre><code class="lang-bash"># 整片烧（会清掉 NVS 里的标定 / 参数，新板或想重置时用）
+esptool --port COMx --baud 460800 --before default-reset --after hard-reset \
+  write-flash 0x0 MildlySpicyDragon_火龙果2.0_Flix整理版_v1.1_20261106_整片4MB.bin
+
+# 只更新 app 区（0x10000），NVS 里的标定 / 热点名 / 信道全保留（日常升级用这个）
+esptool --port COMx --baud 460800 --before default-reset --after hard-reset \
+  write-flash 0x10000 flix.ino.bin</code></pre>
+<blockquote class="danger"><p>🔴 单独烧 bootloader 时地址是 <code>0x1000</code>，不是 S3 的 <code>0x0</code>（照抄会烧成「verified 但不启动」）。</p><p>烧完常停在下载模式：<code>esptool --after watchdog-reset run</code>，或拔插 USB。</p></blockquote>
+<hr>
+<h2>1. 上电横幅（3 个指纹串）</h2>
+<pre><code>微辣火龙果 2.0 飞控（基于 Flix 耀坤版）启动中…
+MildlySpicyDragon | 微辣火龙果 | 2025星火计划获奖项目 ESP32迷你无人机 | Flix
+固件版本：v1.1（耀坤整理版 · 微辣火龙果 2.0）</code></pre>
+<ul class="check"><li class=""><span class="box"></span>三行齐全（横幅后半段应出现立创开源 / B站 / <strong>淘宝：耀坤智联</strong> 行——这是火龙果专属品牌横幅，看到耀坤 S3 的横幅说明烧错了固件）</li><li class=""><span class="box"></span><code>信道：1</code></li><li class=""><span class="box"></span><code>原生 ESP-NOW 接收已就绪</code></li><li class=""><span class="box"></span><code>电池电压检测：GPIO35，分压系数 2</code></li><li class=""><span class="box"></span><code>当前热点名：YaoKun_2DD4</code>（前缀 <code>YaoKun_</code> + MAC 末两字节；本机 MAC 末两字节 <code>2d:d4</code>）</li></ul>
+<h3>热点速查</h3>
+<table><thead><tr><th>项</th><th>值</th></tr></thead><tbody><tr><td>前缀</td><td><code>YaoKun_</code>（Y、K 大写）</td></tr><tr><td>后缀</td><td>芯片出厂 STA MAC 末两字节，本机 = <code>YaoKun_2DD4</code></td></tr><tr><td>默认密码</td><td><strong><code>1-2-3-4-5-6-7-8</code></strong>（连字符只是分隔，输入时不带；逐位：一、二、三、四、五、六、七、八）</td></tr><tr><td>改名字</td><td><code>ap &lt;热点名&gt; &lt;密码&gt;</code> + <code>reboot</code>（⚠️ 尖括号是占位符写法，实际敲的时候只写真值，别把 <code>&lt;热点名&gt;</code> 三个字敲进去——NVS 会存下字面占位符导致自动命名失效）</td></tr></tbody></table>
+<hr>
+<h2>2. IMU 自动识别（<code>imu</code>）</h2>
+<p>固件按总线自动识别，<strong>先探 I2C（排母）、再探 SPI</strong>。2026-11-06 实拍（排母空、SPI 模块在位）：</p>
+<pre><code>正在自动识别惯性测量单元…
+识别为 MPU6050 系（I2C）SDA=21 SCL=22
+  芯片标识（WHO_AM_I）= 0xFF
+  安装朝向补偿：绕 Z 轴 +1.5708 弧度  [I2C id]
+Incorrect device ID: 0x00
+首次识别失败（型号 3 / 总数 1 / 状态 1），换型号重试
+识别为 MPU6500 系（SPI）SCK=18 MISO=19 MOSI=23 CS=5
+  安装朝向补偿：绕 Z 轴 -1.5708 弧度  [fallback]
+IMU: MPU-6500 detected
+惯性测量单元就绪：MPU-6500，总线 SPI</code></pre>
+<p><strong>判读</strong>：</p>
+<table><thead><tr><th>你插的模块</th><th>期望识别</th><th>总线 / 引脚</th></tr></thead><tbody><tr><td>MPU6050（排母）</td><td><code>MPU6050 … I2C0</code>，WHO=0x68</td><td>SDA=21 SCL=22</td></tr><tr><td>MPU6500（排母）</td><td><code>MPU-6500 … SPI</code>，WHO=0x70</td><td>SCK=18 MISO=19 MOSI=23 CS=5</td></tr></tbody></table>
+<ul class="check"><li class=""><span class="box"></span><code>imu</code> 显示的型号 / WHO_AM_I / 总线与实物一致</li><li class=""><span class="box"></span><strong>右侧压低 → <code>st</code> 横滚为正</strong>（朝向唯一判据；I2C 补偿 +1.5708、SPI 补偿 −1.5708，固件自动选，不用手改）</li><li class=""><span class="box"></span>静止平放时横滚 / 俯仰在 ±2° 内</li><li class=""><span class="box"></span>芯片温度是真实值（≈40°C，为 0.0 说明没通）</li><li class=""><span class="box"></span>换过 IMU 模块后<strong>必须重跑 <code>ca</code></strong>（不同模块零偏不同）</li></ul>
+<hr>
+<h2>3. 电压检测（<code>pw</code>）</h2>
+<ul class="check"><li class=""><span class="box"></span><code>pw</code> 显示的电压与万用表实测一致（±0.05V 内；分压系数 2 已按 GPIO35 的 100K+100K / 10K+10K 配好）</li><li class=""><span class="box"></span>拔电池后读数掉到 0 附近（不会卡在旧值）</li></ul>
+<blockquote class="danger"><p>🔴 GPIO35 是 <strong>input-only + ADC1</strong> 引脚。ADC2 与 Wi-Fi 互斥（本固件热点常开），</p><p>电压检测若落 ADC2 读数会恒 0 ⇒ 误判低电 ⇒ 蜂鸣器无限急鸣。板型定义已固定在 ADC1，改接其他脚前先确认这一点。</p></blockquote>
+<hr>
+<h2>4. 无线模式（<code>wifi</code>）</h2>
+<ul class="check"><li class=""><span class="box"></span>默认 <code>WIFI_MODE=4</code>（AP + ESP-NOW 并存）：既能被遥控器 ESP-NOW 直连，又能搜到热点 <code>YaoKun_2DD4</code></li><li class=""><span class="box"></span><code>wifi espnow</code> / <code>wifi ap</code> 切换后重启保持纯模式</li></ul>
+<hr>
+<h2>5. ESP-NOW 遥控（中文版遥控器）</h2>
+<p>与 S3 完全同流程，要点：</p>
+<ol><li><strong>开机</strong>遥控器 → 进「对端发现」页 → <strong>点选</strong>那台飞机建立连接</li><li><strong>按「左按钮（辅助按钮）」使能控制输出</strong> —— ⚠️ 界面上没有这个开关，是纯物理按键；按一次开、再按一次关</li><li>⚠️ <strong>飞机重启后必须重新连接 + 重新使能</strong>（ESP-NOW 会话已清）</li></ol>
+<pre><code>&gt; wifi</code></pre>
+<table><thead><tr><th>现象</th><th>结论</th></tr></thead><tbody><tr><td>接收包数 = 0</td><td>物理层没通 → 查信道（必须同为 1）、遥控器是否使能</td></tr><tr><td>包数 &gt; 0，帧数 = 0</td><td>收到字节组不成 MAVLink 帧 → 遥控器在 Raw 协议模式</td></tr><tr><td>帧数 &gt; 0，msgid ≠ 69</td><td>遥控器只发 HEARTBEAT（未使能 / 不在控制页）</td></tr><tr><td>msgid = 69，rc 全 0</td><td>未按左按钮使能</td></tr></tbody></table>
+<ul class="check"><li class=""><span class="box"></span>接收包数 / 解析帧数持续增长</li><li class=""><span class="box"></span><code>最近一帧消息 ID：69（MANUAL_CONTROL）</code>、<code>来源 sysid：127</code></li><li class=""><span class="box"></span>油门量程：最低 ≈ <strong>−1.0</strong> / 中位 ≈ <strong>0.0</strong> / 最高 ≈ <strong>+1.0</strong>（❌ 若只有 <code>0 / +0.5 / +1.0</code> 正半程，<strong>不要起飞</strong>）</li></ul>
+<hr>
+<h2>6. SBUS 遥控（火龙果特有，出厂默认启用 GPIO4）</h2>
+<blockquote><p>火龙果的 SBUS 出厂就是开的（<code>PIN_RC_RX=4</code>），不像 S3 要先 <code>p RC_RX_PIN 1</code>。</p><p>SBUS 与 ESP-NOW 两路互不叠加：SBUS 接了接收机就用 SBUS 的值，ESP-NOW 遥控的 MANUAL_CONTROL 各走各的分支。</p></blockquote>
+<ul class="check"><li class=""><span class="box"></span>接收机接 <strong>GPIO4</strong>（信号）、3.3V/5V、GND</li><li class=""><span class="box"></span><code>rc</code> 能看到通道数值随打杆变化（SBUS 未接时 <code>rc</code> 会提示 SBUS 引脚号且数据不动，属正常）</li><li class=""><span class="box"></span><strong><code>cr</code> 校准遥控行程</strong>（8 步中文提示，每步 3 秒）：油门 / 偏航 / 俯仰 / 横滚 / 模式开关依次按提示打满——<strong>模式开关（<code>cr</code> 第 8 步）必须放在两个极端档各停一次</strong>，只放中间档会识别不到</li><li class=""><span class="box"></span>校准结束打印「成功 N / 5」，N = 5 才算过</li><li class=""><span class="box"></span><code>rc</code> 输出里模式开关数值随档位变化（三档 → 三档各不相同）</li><li class=""><span class="box"></span>油门量程：最低 ≈ −1.0 侧、最高 ≈ +1.0 侧（<code>cr</code> 后 <code>rc</code> 实测）</li><li class=""><span class="box"></span>解锁 / 上锁随遥控器开关正常</li></ul>
+<blockquote class="danger"><p>🔴 <strong>不同遥控器的标定不能混用</strong>（满杆值不同）——换遥控器必重跑 <code>cr</code>。</p><p>🔴 <strong>别用 <code>preset</code> 全清参数</strong>（会连 IMU 标定一起清）；只重置遥控就直接重跑 <code>cr</code>。</p></blockquote>
+<hr>
+<h2>7. 电机与解锁（★必须拆桨）</h2>
+<pre><code>&gt; mfr 0.1   → 右前（GPIO33）    &gt; mfl 0.1  → 左前（GPIO32）
+&gt; mrr 0.1   → 右后（GPIO27）    &gt; mrl 0.1  → 左后（GPIO26）</code></pre>
+<ul class="check"><li class=""><span class="box"></span>四个电机都能转，<strong>位置对应正确</strong>（<code>mfr</code> 转的是右前那个；对照上表 GPIO 号）</li><li class=""><span class="box"></span>转向符合四轴 X 型布局</li><li class=""><span class="box"></span><code>mot</code> 未推油门时四路全 0</li></ul>
+<blockquote class="danger"><p>🔴 <strong>「看电池电压压降判断电机转不转」是假判据</strong>——台架插 USB 时电机吃的是 USB 5V→LDO，</p><p>电池端不掉压。真判据：耳朵听 / 看电机 / <code>mot</code> 输出值；要看电先拔 USB 只留电池。</p></blockquote>
+<p>解锁：</p>
+<ul class="check"><li class=""><span class="box"></span>油门拉到最低 → <code>arm</code> 或遥控器解锁 → <code>rc</code> 中解锁状态 = 1</li><li class=""><span class="box"></span>蜂鸣器三短鸣（GPIO25 有源蜂鸣器）</li><li class=""><span class="box"></span>油门不在低位时尝试 <code>arm</code> → 打印「拒绝解锁：油门不在最低位」</li></ul>
+<hr>
+<h2>8. 失联保护</h2>
+<p>固件逻辑（<code>safety.ino</code>）：解锁状态下 <strong>1 秒收不到任何控制输入</strong> → 进入缓降（AUTO 模式，油门线性下降）；<strong>10 秒后油门归零并自动上锁</strong>。</p>
+<ul class="check"><li class=""><span class="box"></span>拔掉遥控器电源（或关接收机）</li><li class=""><span class="box"></span>约 1 秒后飞机进入缓降逻辑（蜂鸣器提示，单灯转入对应闪频——火龙果是单灯，状态靠闪频区分，具体灯语以实测为准并回填到本表）</li><li class=""><span class="box"></span>约 10 秒后油门归零并自动上锁</li></ul>
+<blockquote class="warn"><p>⚠️ SBUS 在用时拔 SBUS 线、ESP-NOW 在用时关遥控器，两种链路都要各测一次（controlTime 由实际在用的那路刷新）。</p></blockquote>
+<hr>
+<h2>9. 长跑验证（R1 回绕修复的现场证明）</h2>
+<pre><code>&gt; time</code></pre>
+<ul class="check"><li class=""><span class="box"></span>连续运行 <strong>&gt; 72 分钟</strong>，确认遥测不停、<code>运行时间</code> 单调递增</li><li class=""><span class="box"></span><code>微秒计数器回绕次数</code> 即使 &gt; 0，<code>运行时间</code> 也<strong>绝不回退</strong></li></ul>
+<blockquote><p>旧版每 71.58 分钟必挂（遥测全停、终端仍回显）。本项是修复有效性的最终证明。</p></blockquote>
+<hr>
+<h2>10. 实测中踩到的「假 bug」（别重复排查）</h2>
+<table><thead><tr><th>现象</th><th>真相</th></tr></thead><tbody><tr><td><code>采样频率</code> 显示 20 Hz / 1 Hz</td><td>它是 <strong><code>loopRate</code>（主循环频率）</strong>，不是 IMU ODR。校准期、空闲期都正常，<strong>不要改 <code>configureIMU()</code></strong></td></tr><tr><td>启动日志先报 I2C 识别失败再报 SPI 成功</td><td><strong>正常回退流程</strong>：I2C 排母为空 → WHO 读到 0xFF → 换 SPI 探测命中。不是故障</td></tr><tr><td><code>mot</code> 读数左右不对称、有 0 和 1</td><td>是 <code>desaturate()</code> <strong>削顶</strong>，四路失去可比性。验混控方向用 <code>Firmware/tools/mixer_sign_check.py</code> 离线算</td></tr><tr><td>执行 <code>ca</code> 后姿态彻底失真</td><td><code>ca</code> 是 48 秒连跑、无输入等待，人手跟不上六面翻滚 ⇒ 比例系数塌掉。救急：<code>p IMU_ACC_SCALE_X/Y/Z 1</code> + <code>p IMU_ACC_BIAS_X/Y/Z 0</code>，复位后 <code>st</code> 应回 ±2° 内</td></tr><tr><td>台架上「电机转了但电池电压没掉」</td><td>插 USB 时电机吃 USB 5V，电池端本来就不掉压（见第 7 节）</td></tr><tr><td>串口打不开 / 板子没输出</td><td>先确认没在串口助手里手动拉 DTR/RTS（可能把芯片按进复位）；再查 USB-UART 驱动</td></tr></tbody></table>
+<hr>
+<h2>11. 出问题怎么查</h2>
+<table><thead><tr><th>现象</th><th>先看什么</th></tr></thead><tbody><tr><td>烧录 verified 但不启动</td><td>芯片是不是选错成 ESP32-S3 / bootloader 是不是烧到 0x0（应在 0x1000）；整片 bin 从 0x0 烧就不会错</td></tr><tr><td>横幅显示耀坤 S3 的内容</td><td>烧错固件了——这是火龙果整片 bin，重烧</td></tr><tr><td>遥控毫无反应（ESP-NOW）</td><td><code>wifi</code> 的 <code>接收包数</code>；为 0 → 查信道（必须 1）、遥控器是否使能</td></tr><tr><td>遥控器显示已连接但飞机不动</td><td><strong>按左按钮使能</strong>（<code>enabled</code> 默认 false）</td></tr><tr><td>SBUS 打杆无反应</td><td><code>rc</code> 看通道；没校准 → 重跑 <code>cr</code>；接线查 GPIO4</td></tr><tr><td>模式开关切不了飞行模式</td><td><code>cr</code> 第 8 步没把开关打到两个极端档 → 重跑 <code>cr</code></td></tr><tr><td>电机不转</td><td>第 7 节假判据排除后，查 <code>mfr 0.1</code> 单测；都不转查解锁状态</td></tr><tr><td>IMU 识别不出</td><td>对照第 2 节判读表查引脚（I2C=21/22，SPI=18/19/23/CS5）；接头插到底</td></tr><tr><td>电压恒 0</td><td>接线是否落在 GPIO35；见第 3 节 ADC1 说明</td></tr><tr><td>界面出现英文</td><td>烧了英文版或上游原版，看开机第一行</td></tr></tbody></table>
+<hr>
+<h2>12. 通关后</h2>
+<p>全部勾选 → 放行发货；涉及代码 / 文档改动 → 推送到 <code>github.com/YaoKunS/flix</code> 的 <code>yaokun-organized</code> 分支。</p>
+<p>任何一项 ❌ → 把该项串口原始输出发我，定位后再改。</p>
+<div class="foot">本页由 <code>火龙果版台架实测清单V1.1.md</code> 自动生成 —— 要改内容请改 Markdown 源文件后重跑 <code>python Firmware/tools/md2html.py</code>，直接改 HTML 会被覆盖。<br>耀坤智联 / YaoKunSmart · <a href="https://github.com/YaoKunS/flix">github.com/YaoKunS/flix</a> · 内核 (C) Oleg Kalachev</div>
+</div>
+</body>
+</html>
