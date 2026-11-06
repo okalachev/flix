@@ -201,6 +201,18 @@ ESP32 ADC can measure only up to 3.3 V, so you need to use a voltage divider to 
 
 After this setup, you should see the battery voltage in QGroundControl top panel or using `pw` command in the console.
 
+### RGB LED strip (optional)
+
+Flix can indicate its current state using an RGB LED strip. To use it connect its **+** and **-** inputs to the battery, and its signal line to any available GPIO pin. Set the following parameters:
+
+1. `LED_TYPE` — set to *1* to enable WS2812 LED strip.
+2. `LED_PIN` — GPIO pin number where the LED strip signal line is connected.
+3. `LED_COUNT` — number of LEDs in the strip.
+
+By default, Flix will show rainbow animation when the drone is ready, and the mode color when you switch flight modes. When the battery voltage is lower than `PWR_VOLT_LOW`, it will start blinking red.
+
+You can control the LED manually using `led` command in the console or using the [pyflix](../tools/pyflix/) Python library.
+
 ### Important: check everything works
 
 1. Check the IMU is working: perform `imu` command in the console and check the output:
