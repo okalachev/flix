@@ -11,7 +11,7 @@ extern int rollChannel, pitchChannel, throttleChannel, yawChannel, armedChannel,
 extern int rcRxPin, voltagePin;
 extern int wifiMode, wifiLongRange, wifiBroadcast, udpLocalPort, udpRemotePort, espnowChannel;
 extern float rcLossTimeout, descendTime, disarmTilt;
-extern float voltageScale;
+extern float voltageScale, voltageLow;
 extern LowPassFilter<float> voltageFilter;
 extern float modeAnimation[4];
 
@@ -150,6 +150,7 @@ Parameter parameters[] = {
 	{"PWR_VOLT_PIN", &voltagePin, setupPower},
 	{"PWR_VOLT_SCALE", &voltageScale},
 	{"PWR_VOLT_LPF_A", &voltageFilter.alpha},
+	{"PWR_VOLT_LOW", &voltageLow},
 	// safety
 	{"SF_RC_LOSS_TIME", &rcLossTimeout},
 	{"SF_DESCEND_TIME", &descendTime},
@@ -158,11 +159,9 @@ Parameter parameters[] = {
 	{"LED_TYPE", &ledType, setupLED},
 	{"LED_PIN", &ledPin, setupLED},
 	{"LED_COUNT", &ledCount, setupLED},
-	{"LED_BRIGHTNESS", &ledBrightness, setupLED},
-	{"LED_ANIM_RAW", &modeAnimation[0], setupLED},
-	{"LED_ANIM_ACRO", &modeAnimation[1], setupLED},
-	{"LED_ANIM_STAB", &modeAnimation[2], setupLED},
-	{"LED_ANIM_AUTO", &modeAnimation[3], setupLED},
+	{"LED_BRIGHT", &ledBrightness, setupLED},
+	{"LED_BRIGHT_ARM", &ledBrightnessArmed, setupLED},
+	{"LED_SHOW_MODE", &ledShowMode},
 };
 
 void setupParameters() {

@@ -310,8 +310,8 @@ int handleCommand(const mavlink_command_long_t& m) {
 	if (m.command == MAV_CMD_REQUEST_MESSAGE && m.param1 == MAVLINK_MSG_ID_COMPONENT_METADATA) {
 		mavlink_message_t response;
 		mavlink_msg_component_metadata_pack(mavlinkSysId, MAV_COMP_ID_AUTOPILOT1, &response, t * 1000,
-		1453394476, // crc
-		"https://quadcopter.dev/meta/1453394476/general.json");
+		4188813663, // crc
+		"https://quadcopter.dev/meta/4188813663/general.json");
 		sendMessage(response);
 		return MAV_RESULT_ACCEPTED;
 	}

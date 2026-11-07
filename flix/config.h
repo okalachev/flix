@@ -37,6 +37,7 @@ void setDefaults() {
 	#endif
 
 	#ifdef RGB_BUILTIN
+		// all boards with built-in RGB LED
 		ledType = 1; // WS2812
 		ledPin = RGB_BUILTIN;
 	#endif
@@ -53,11 +54,4 @@ void setDefaults() {
 		motorPins[MOT_FL] = 7;
 	#endif
 
-	if (ledType == 1) {
-		// Default animations for LED strip
-		modeAnimation[RAW] = packAnimation(FILL, 255, 0, 0);
-		modeAnimation[ACRO] = packAnimation(BLINK, 0, 255, 0);
-		modeAnimation[STAB] = packAnimation(RAINBOW, 0, 0, 255);
-		modeAnimation[AUTO] = packAnimation(FILL, 255, 255, 255);
-	}
 }
