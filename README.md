@@ -20,6 +20,10 @@
 
 </div>
 
+![立创开源](https://img.shields.io/badge/%E7%AB%8B%E5%88%9B%E5%BC%80%E6%BA%90-%E6%98%9F%E7%81%AB%E8%AE%A1%E5%88%922026-ff6b35)
+
+[**🛠 硬件开源工程页（PCB / BOM / 固件下载）→**](https://oshwhub.com/lindahe/project_sulkgarf)
+
 ---
 
 > 📌 **本仓库是 [okalachev/flix](https://github.com/okalachev/flix) 的中文整理版 + 双板硬件适配版。**  
