@@ -1,0 +1,50 @@
+Topic #0 (inf Hz):
+  t
+Topic #1 (inf Hz):
+  armed
+Topic #2 (inf Hz):
+  mode
+Topic #3 (1 Hz):
+  loopRate
+Topic #4 (inf Hz):
+  gyro.x
+  gyro.y
+  gyro.z
+Topic #5 (50 Hz):
+  acc.x
+  acc.y
+  acc.z
+Topic #6 (10 Hz):
+  gyroBias.x
+  gyroBias.y
+  gyroBias.z
+Topic #7 (50 Hz):
+  rates.x
+  rates.y
+  rates.z
+  attitude.roll
+  attitude.pitch
+  attitude.yaw
+Topic #8 (10 Hz):
+  controlTime
+  controlRoll
+  controlPitch
+  controlYaw
+  controlThrottle
+Topic #9 (10 Hz):
+  ratesTarget.x
+  ratesTarget.y
+  ratesTarget.z
+  attitudeTarget.roll
+  attitudeTarget.pitch
+  attitudeTarget.yaw
+  thrustTarget
+Topic #10 (1 Hz):
+  motors[0]
+  motors[1]
+  motors[2]
+  motors[3]
+Topic #11 (5 Hz):
+  voltage
+  temp
+  imuTemp

@@ -3,6 +3,7 @@
 build/
 dist/
 tools/log/
+!tools/log/header.txt
 tools/dist/
 *.egg-info/
 .core
