@@ -29,6 +29,8 @@ jobs:
       run: make TARGET=esp32s3.opi
     - name: Build firmware for Flix2
       run: make TARGET=flix2
+    - name: Build firmware for Axel
+      run: make TARGET=axel
     - name: Upload binaries
       uses: actions/upload-artifact@v7
       with:

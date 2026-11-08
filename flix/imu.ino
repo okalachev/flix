@@ -11,7 +11,7 @@
 #include "util.h"
 
 IMU *imu;
-int imuModel = -1; // 1 - MPU9250, 2 - ICM20948, 3 - MPU6050, 4 - ICM40609D
+int imuModel = -1; // 1 - MPU9250/MPU6500, 2 - ICM20948, 3 - MPU6050, 4 - ICM40609D
 int imuBus = 0; // 0 - SPI, 1 - I2C
 int imuSckPin = SCK, imuMisoPin = MISO, imuMosiPin = MOSI, imuCsPin = SS, imuIntPin = -1;
 int imuSdaPin = SDA, imuSclPin = SCL;

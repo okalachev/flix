@@ -29,6 +29,7 @@ int effect = -1; // current effect
 RGB effectColor;
 
 const int FILL = 0, BLINK = 1, RAINBOW = 2;
+const int EFFECT_AXEL = 100;
 
 void setupLED() {
 	led.clear();
@@ -82,6 +83,14 @@ void startEffect(int e, uint8_t r, uint8_t g, uint8_t b) {
 
 	if (effect == FILL) {
 		std::fill_n(led.begin(), led.size(), effectColor);
+	}
+
+	if (effect == EFFECT_AXEL && led.size() >= 68) {
+		std::fill_n(led.begin(), 14, RGB(255, 0, 0));
+		std::fill_n(led.begin() + 54, 14, RGB(255, 0, 0));
+		std::fill_n(led.begin() + 14, 6, RGB(0, 0, 255));
+		std::fill_n(led.begin() + 48, 6, RGB(0, 0, 255));
+		std::fill_n(led.begin() + 20, 28, RGB(255, 255, 255));
 	}
 }
 

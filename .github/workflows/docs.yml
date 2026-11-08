@@ -92,8 +92,8 @@ jobs:
         tree -a -I .git
         ls index.html gyro.html geometry.html firmware.html \
         flix.esp32.merged.bin flix.esp32c3.merged.bin flix.esp32s3.merged.bin flix.esp32s3.opi.merged.bin flix.esp32s3.qspi.merged.bin flix.flix2.merged.bin \
-        flix.esp32.zip flix.esp32c3.zip flix.esp32s3.zip flix.esp32s3.opi.zip flix.esp32s3.qspi.zip flix.flix2.zip \
-        flix.esp32/ flix.esp32c3/ flix.esp32s3/ flix.esp32s3.opi/ flix.esp32s3.qspi/ flix.flix2/ \
+        flix.esp32.zip flix.esp32c3.zip flix.esp32s3.zip flix.esp32s3.opi.zip flix.esp32s3.qspi.zip flix.flix2.zip flix.axel.zip \
+        flix.esp32/ flix.esp32c3/ flix.esp32s3/ flix.esp32s3.opi/ flix.esp32s3.qspi/ flix.flix2/ flix.axel/ \
         meta/general.json meta/parameters.json version.txt
         grep ${GITHUB_SHA:0:7} flix.esp32.bin
     - name: Upload artifact
