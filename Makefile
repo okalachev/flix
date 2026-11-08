@@ -9,6 +9,7 @@ esp32s3 = esp32:esp32:esp32s3:DebugLevel=error,CDCOnBoot=cdc
 esp32s3.qspi = esp32:esp32:esp32s3:DebugLevel=error,CDCOnBoot=cdc,PSRAM=enabled
 esp32s3.opi = esp32:esp32:esp32s3:DebugLevel=error,CDCOnBoot=cdc,PSRAM=opi
 flix2 = esp32:esp32:esp32s3:DebugLevel=error,CDCOnBoot=cdc,PSRAM=opi
+axel = esp32:esp32:esp32s3:DebugLevel=error,CDCOnBoot=cdc,PSRAM=enabled
 
 ifdef TARGET
 FQBN = $($(TARGET))

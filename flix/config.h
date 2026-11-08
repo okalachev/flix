@@ -7,6 +7,7 @@
 
 // Uncomment to build for certain target in Arduino IDE:
 // #define FLIX2
+// #define AXEL
 
 #ifdef FLIX2
 #define RGB_BUILTIN 21
@@ -54,4 +55,11 @@ void setDefaults() {
 		motorPins[MOT_FL] = 7;
 	#endif
 
+	#ifdef AXEL
+		imuModel = 1; // MPU-6500
+		ledType = 1; // WS2812
+		ledPin = 6;
+		ledCount = 68;
+		standbyEffect = EFFECT_AXEL;
+	#endif
 }
