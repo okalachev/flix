@@ -13,7 +13,10 @@ jobs:
     steps:
     - uses: actions/checkout@v7
     - name: Install Arduino CLI
-      run: curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | BINDIR=/usr/local/bin sh
+      run: |
+        # curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | BINDIR=/usr/local/bin sh
+        curl -fL https://downloads.arduino.cc/arduino-cli/arduino-cli_latest_Linux_64bit.tar.gz -o arduino-cli.tar.gz
+        tar -xzf arduino-cli.tar.gz -C /usr/local/bin arduino-cli
     - name: Build firmware for ESP32
       run: make TARGET=esp32
     - name: Build firmware for ESP32-C3
