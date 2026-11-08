@@ -11,7 +11,7 @@ extern int rollChannel, pitchChannel, throttleChannel, yawChannel, armedChannel,
 extern int rcRxPin, voltagePin;
 extern int wifiMode, wifiLongRange, wifiBroadcast, udpLocalPort, udpRemotePort, espnowChannel;
 extern float rcLossTimeout, descendTime, disarmTilt;
-extern float voltageScale;
+extern float voltageScale, voltageLow;
 extern LowPassFilter<float> voltageFilter;
 
 #include "config.h"
@@ -146,10 +146,18 @@ Parameter parameters[] = {
 	{"PWR_VOLT_PIN", &voltagePin, setupPower},
 	{"PWR_VOLT_SCALE", &voltageScale},
 	{"PWR_VOLT_LPF_A", &voltageFilter.alpha},
+	{"PWR_VOLT_LOW", &voltageLow},
 	// safety
 	{"SF_RC_LOSS_TIME", &rcLossTimeout},
 	{"SF_DESCEND_TIME", &descendTime},
 	{"SF_DISARM_TILT", &disarmTilt},
+	// led
+	{"LED_TYPE", &ledType, setupLED},
+	{"LED_PIN", &ledPin, setupLED},
+	{"LED_COUNT", &ledCount, setupLED},
+	{"LED_BRIGHT", &ledBrightness, setupLED},
+	{"LED_BRIGHT_ARM", &ledBrightnessArmed, setupLED},
+	{"LED_SHOW_MODE", &ledShowMode},
 };
 
 void setupParameters() {

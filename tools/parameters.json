@@ -184,9 +184,27 @@
 		{ "name": "PWR_VOLT_PIN", "type": "Float", "group": "Power", "shortDesc": "Voltage ADC input pin (-1 for disabled)", "min": -1, "increment": 1, "decimalPlaces": 0 },
 		{ "name": "PWR_VOLT_SCALE", "type": "Float", "group": "Power", "shortDesc": "Voltage divider scale factor" },
 		{ "name": "PWR_VOLT_LPF_A", "type": "Float", "group": "Power", "shortDesc": "Low-pass filter alpha for battery voltage" },
+		{ "name": "PWR_VOLT_LOW", "type": "Float", "group": "Power", "shortDesc": "Low voltage threshold", "min": 0 },
 
 		{ "name": "SF_RC_LOSS_TIME", "type": "Float", "group": "Safety", "units": "s", "shortDesc": "RC signal loss timeout in seconds", "min": 0, "decimalPlaces": 1 },
 		{ "name": "SF_DESCEND_TIME", "type": "Float", "group": "Safety", "units": "s", "shortDesc": "Automatic descent timeout in seconds", "min": 0, "decimalPlaces": 1 },
-		{ "name": "SF_DISARM_TILT", "type": "Float", "group": "Safety", "units": "radians", "shortDesc": "Tilt angle above which auto-disarm triggers" }
+		{ "name": "SF_DISARM_TILT", "type": "Float", "group": "Safety", "units": "radians", "shortDesc": "Tilt angle above which auto-disarm triggers" },
+
+		{
+			"name": "LED_TYPE",
+			"type": "Float",
+			"group": "LED",
+			"shortDesc": "LED type",
+			"values": [
+				{ "value": -1, "description": "Disabled" },
+				{ "value": 0, "description": "Single LED" },
+				{ "value": 1, "description": "WS2812" }
+			]
+		},
+		{ "name": "LED_PIN", "type": "Float", "group": "LED", "shortDesc": "LED control pin", "min": -1, "increment": 1, "decimalPlaces": 0 },
+		{ "name": "LED_COUNT", "type": "Float", "group": "LED", "shortDesc": "Number of LEDs in the strip", "min": 1, "increment": 1, "decimalPlaces": 0 },
+		{ "name": "LED_BRIGHT", "type": "Float", "group": "LED", "shortDesc": "Default LED brightness", "units": "norm" },
+		{ "name": "LED_BRIGHT_ARM", "type": "Float", "group": "LED", "shortDesc": "LED brightness when armed", "units": "norm" },
+		{ "name": "LED_SHOW_MODE", "type": "Bool", "group": "LED", "shortDesc": "Indicate current flight mode with LEDs" }
 	]
 }

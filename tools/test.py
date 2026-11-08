@@ -34,6 +34,12 @@ def test():
     assert isfinite(flix.get_param('CTL_ATT_P_P'))
     flix.set_param('CTL_ATT_P_P', 10.0)
 
+    print('=== Check methods')
+    flix.set_led(True)
+    flix.set_led(False)
+    flix.set_led((255, 0, 0))
+    flix.set_led(((0, 255, 0, 0), (1, 0, 255, 0), (2, 0, 0, 255)))
+
     print('=== Additional checks')
     assert flix.wait('gyro') == approx((0, 0, 0), abs=0.01)
     flix.wait('armed', False)

@@ -81,9 +81,11 @@ float getParameter(const char *name);
 bool setParameter(const char *name, const float value);
 void printParameters(const char *filter);
 void resetParameters();
+void selectEffect();
+void startEffect(int, uint8_t, uint8_t, uint8_t);
+void loopEffect();
 
 // mocks
-void setLED(bool on) {};
 void calibrateAccel() { print("Skip accel calibrating\n"); };
 void printIMUCalibration() { print("cal: N/A\n"); };
 void printIMUInfo() {};

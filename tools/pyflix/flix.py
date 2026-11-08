@@ -372,6 +372,23 @@ class Flix:
             raise ValueError('throttle must be in range [0, 1]')
         self.mavlink.manual_control_send(self.system_id, int(pitch * 1000), int(roll * 1000), int(throttle * 1000), int(yaw * 1000), 0)  # type: ignore
 
+    def set_led(self, led: Union[bool, Sequence[Union[int, Sequence[int]]]]):
+        if isinstance(led, bool):  # set_led(True) - single led on/off
+            led = [0, 255, 255, 255]
+        elif len(led) == 3 and type(led[0]) == int:  # set_led([r, g, b]) - single led color
+            led = [0, led[0], led[1], led[2]]
+        elif len(led[0]) == 4:  # set_led([[index, r, g, b], ...]) - multiple led colors  # type: ignore
+            led = [value for led in led for value in led]  # type: ignore
+
+        TUNNEL_PAYLOAD_LEN = mavlink.MAVLink_tunnel_message.lengths[mavlink.MAVLink_tunnel_message.fieldnames.index('payload')]
+        PAYLOAD_TYPE_LED = 789  # custom payload type
+
+        # send by chunks
+        for i in range(0, len(led), TUNNEL_PAYLOAD_LEN):
+            chunk = bytes(led[i:i + TUNNEL_PAYLOAD_LEN])  # type: ignore
+            payload = chunk.ljust(TUNNEL_PAYLOAD_LEN, b'\0')
+            self.mavlink.tunnel_send(self.system_id, 0, PAYLOAD_TYPE_LED, len(chunk), payload)  # type: ignore
+
     def cli(self, cmd: str, wait_response: bool = True) -> str:
         cmd = cmd.strip()
         if cmd == 'reboot':

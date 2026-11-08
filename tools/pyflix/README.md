@@ -192,6 +192,22 @@ The following methods are in development and are not functional yet:
 
 To exit *AUTO* mode move control sticks and the drone will switch to *STAB* mode.
 
+### Additional methods
+
+#### LED control
+
+You can control the onboard LED (and the connected RGB LED strip) using `set_led` method:
+
+```python
+flix.set_led(True)  # turn on single onboard LED
+flix.set_led(False)  # turn off single onboard LED
+flix.set_led((255, 0, 0))  # control single RGB LED
+flix.set_led(((0, 255, 0, 0), (1, 0, 255, 0), (2, 0, 0, 255))) # control multiple RGB LEDs
+flix.cli('led rainbow')  # control LED strip using console command
+```
+
+See the [`led.py`](../led.py) script as an example of RGB LED strip control.
+
 ## Usage alongside QGroundControl
 
 You can use the Flix library alongside the QGroundControl app, using proxy mode. To do that:

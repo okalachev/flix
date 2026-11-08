@@ -12,6 +12,7 @@ float voltage = NAN;
 LowPassFilter<float> voltageFilter(1);
 int voltagePin = -1;
 float voltageScale = 2;
+float voltageLow = 2.7;
 
 void setupPower() {
 	REG_CLR_BIT(RTC_CNTL_BROWN_OUT_REG, RTC_CNTL_BROWN_OUT_ENA); // disable reset on low voltage

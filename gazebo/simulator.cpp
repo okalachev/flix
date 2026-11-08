@@ -22,6 +22,7 @@
 #include "control.ino"
 #include "estimate.ino"
 #include "safety.ino"
+#include "led.ino"
 #include "log.ino"
 #include "filter.h"
 #include "mavlink.ino"

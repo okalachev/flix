@@ -21,13 +21,11 @@ void setup() {
 	setupParameters();
 	setupPower();
 	setupLED();
-	setLED(true);
 	setupMotors();
 	setupWiFi();
 	setupIMU();
 	setupRC();
 	setupLog();
-	setLED(false);
 	print("Initializing complete\n");
 	printHelp();
 }
@@ -42,6 +40,7 @@ void loop() {
 	loopConsole();
 	loopMavlink();
 	loopPower();
+	loopLED();
 	loopLog();
 	syncParameters();
 }

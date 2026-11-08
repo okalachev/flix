@@ -9,7 +9,7 @@
 // #define FLIX2
 
 #ifdef FLIX2
-#define RGB_BUILTIN 21
+#define RGB_BUILTIN 21 + SOC_GPIO_PIN_COUNT
 #ifndef CONFIG_IDF_TARGET_ESP32S3
 #error "Set Tools -> Board to ESP32S3 Dev Module for Flix2 board"
 #endif
@@ -33,6 +33,12 @@ void setDefaults() {
 		motorPins[MOT_RR] = 13;
 		motorPins[MOT_FR] = 14;
 		motorPins[MOT_FL] = 15;
+	#endif
+
+	#ifdef RGB_BUILTIN
+		// all boards with built-in RGB LED
+		ledType = 1; // WS2812
+		ledPin = RGB_BUILTIN - SOC_GPIO_PIN_COUNT;
 	#endif
 
 	#ifdef FLIX2
