@@ -250,6 +250,10 @@ void doCommand(String str, bool echo = false) {
 		}
 		print(TXT_RC_CONTROLS, controlRoll, controlPitch, controlYaw, controlThrottle, controlMode);
 		print(TXT_RC_TIME, controlTime);
+		// 【v1.2】三路共存后，"这组杆值到底是谁给的"成了排查第一问：
+		//   接上 SBUS 没反应？先看这一行是 SBUS 还是 ESP-NOW。
+		//   rcSourceLabel() 在 rc.ino，按 RC_SRC + sbusActive() 实时判定。
+		print(TXT_RC_SRC_LABEL, rcSourceLabel());
 		print(TXT_RC_MODE, getModeName());
 		print(TXT_RC_ARMED, armed);
 	} else if (command == "pw") {

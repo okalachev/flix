@@ -1,0 +1,170 @@
+# YaoKunS3 Drone / Flix Organized Edition — Firmware Fingerprint & Flashing Guide
+
+## 1. What this firmware is
+
+This is the **YaoKun organized edition** of the open-source flight controller **Flix** (original author: Oleg Kalachev). The upstream code structure and all GPL obligations are preserved; what was added is support for the YaoKun S3 airframe and for our own ESP-NOW remote.
+
+- **Upstream**: <https://github.com/okalachev/flix> (`(C) Oleg Kalachev` — upstream ships no separate LICENSE file, copyright stays with the original author)
+- **Organized-edition repo**: <https://github.com/YaoKunS/flix> (branch `yaokun-organized`; `master` is kept identical to upstream)
+- **Hardware**: YaoKun S3 drone (ESP32-S3, 8 MB flash), four brushed motors on GPIO 15/5/6/16
+- **IMU**: MPU6050 (I2C, WHO_AM_I=0x70) **or** MPU-6500 (SPI) — **auto-detected at boot**, no rebuild needed
+- **Control**: attitude loop → rate loop → quad mixer (cascaded PID); modes RAW / ACRO / STAB / AUTO
+- **RC link**: YaoKun ESP-NOW remote (channel 1); SBUS receivers and Wi-Fi/UDP ground stations also work
+- **Ground station**: MAVLink v2 (QGC / MAVProxy)
+- **New in v1.1**: (1) **ESP-NOW + hotspot coexistence is the factory default** (older builds had mutually exclusive modes; boards carrying an old NVS value are migrated automatically on first boot); (2) the hotspot name suffix is now read from the **eFuse factory STA MAC** (e.g. `YaoKun_F224`, matching the last two bytes of the MAC printed by the `wifi` command); (3) the hotspot passphrase now has **three layers of validation** (dirty NVS value is cleaned on read / illegal writes are rejected / factory passphrase is built from a byte table)
+- **About the hotspot**: it only carries **MAVLink over UDP 14550**. There is **no web UI** — a browser hitting 192.168.4.1 will show nothing, which is expected
+- **LEDs & buzzer**: RGB LEDs on GPIO 41/7/14 plus an active buzzer on GPIO 39, driven by a non-blocking state machine
+- **UI language**: **Chinese by default** (console, `help` menu, IMU calibration, boot messages). Define `FLIX_LANG_EN` to build the English UI
+
+> ★ This firmware is **attitude stabilization only, with a manual throttle**: there is no GPS, barometer, rangefinder or optical flow.
+> **Releasing the sticks does not hold position** — the attitude levels out but the aircraft keeps drifting at its current horizontal velocity. **Releasing the throttle means losing altitude.**
+> For the first flight use open space, stay low, and fit propeller guards.
+
+## 2. Version and provenance
+
+| Item | Value |
+| --- | --- |
+| Firmware version | **v1.2** (YaoKun organized edition) |
+| Brand | YaoKunS / YaoKunSmart / YaoKun Drone |
+| Build time | Nov  9 2026 21:47:18 |
+| Toolchain | arduino-cli 1.5.1 + esp32 core 3.3.8 |
+| Build flags | `esp32:esp32:esp32s3:FlashSize=8M,PartitionScheme=default_8MB` (USB CDC on by default) |
+| Third-party libs | FlixPeriph, ESP32_NOW_Serial (ships with esp32 core), MAVLink |
+| Footprint | application 1055248 B (0x101A10) |
+
+> ⚠️ **How to read the version number**: the `esp_app_desc_t` at `0x10020` inside an Arduino-built image is written by the precompiled ESP32 core library, so its `version` field identifies the *core*, not this project. The authoritative version is the one printed on the **boot banner**: `Firmware version: v1.2 (YaoKun organized edition)`.
+
+## 3. How to flash (single file — the simple way)
+
+### Option A: Flash Download Tool (GUI)
+
+1. Open Flash Download Tool, select chip **ESP32-S3**, work mode **Develop**.
+2. Add only this one file at address **`0x0`**: `YaoKunS_耀坤S3无人机_Flix整理版_v1.2_耀坤智联_20261109_merged.bin`
+3. Settings: **SPI SPEED = 80 MHz, SPI MODE = DIO, FLASH SIZE = 8 MB**; pick the COM port; BAUD 921600 (drop to 115200 if unstable).
+4. ⚠️ **Tick DoNotChgBin.** The image header already declares SPI mode / speed / size and the trailing SHA-256; if the tool rewrites the header the checksum breaks and the board will not boot.
+5. Press START, then RST or power-cycle when it finishes.
+
+### Option B: one esptool command
+
+
+esptool --chip esp32s3 --port COMx --baud 921600 write_flash 0x0 "YaoKunS_耀坤S3无人机_Flix整理版_v1.2_耀坤智联_20261109_merged.bin"
+
+
+If the board stays in download mode afterwards (log shows `waiting for download`), GPIO0 is still held low. Connect once with `--after no-reset` to confirm the image is readable, then run `esptool --after watchdog-reset run`, or simply replug USB / press RST.
+
+## 4. Verifying that you flashed *this* build (fingerprints)
+
+**1) Compare the file hash** (most reliable, no power-up needed):
+
+
+certutil -hashfile "YaoKunS_耀坤S3无人机_Flix整理版_v1.2_耀坤智联_20261109_merged.bin" SHA256
+
+
+→ should be `b17b3c8f5a904a65faf9f00f268e9df333d766170d5044e336f6fa80fa4a5418`
+
+**2) Serial boot banner** (115200 baud, over the **native USB-CDC port**). The first screen should read:
+
+
+耀坤S3 飞控（Flix 整理版）启动中…
+YaoKunS | 耀坤S3无人机 | Flix | 耀坤智联
+固件版本：v1.2（耀坤整理版）
+初始化参数存储
+初始化电源检测
+初始化无线通信
+ESP-NOW 信道：1
+…（IMU 自动识别输出）…
+惯性测量单元就绪：MPU6500，总线 SPI
+初始化完成
+
+
+> The banner text is Chinese in this build (the Chinese UI is the default). An English-language build prints `Firmware version: v1.2 (YaoKun organized edition)` instead — see §8 for how to build one.
+
+Three key fingerprints: the **product string**, the **version line**, and **ESP-NOW channel 1**. All three together identify this build.
+
+**3) Search the bin for plain-text strings** (confirms it is the organized edition without any hardware):
+
+- Search for `耀坤S3 飞控（Flix 整理版）启动中` → found (the Chinese boot banner; the English build does not contain it)
+- Search for `YaoKunS | 耀坤S3无人机 | Flix | 耀坤智联` → found exactly once (the fingerprint string)
+- Instead of hunting for `esp_now_register_recv_cb`, search for `接收丢弃字节数` → found (the native ESP-NOW receive counter)
+
+**4) Read the image header out of flash** (read-only, changes nothing):
+
+
+esptool --chip esp32s3 --port COMx read_flash 0x10000 0x200 app_hdr.bin
+
+
+→ the first byte must be `E9` (the ESP image magic).
+
+## 5. Artifacts and checksums (SHA-256)
+
+| Artifact | Flash address | SHA-256 | Size |
+| **merged single-file firmware** | `0x0` (whole chip) | `b17b3c8f5a904a65faf9f00f268e9df333d766170d5044e336f6fa80fa4a5418` | 1120784 B (0x111A10) |
+| Bootloader | `0x0` | `6f232c4aafe7d21239a1c59404723ca2cfdca063ef73501a21126a8cef39f432` | 19984 B (0x4E10) |
+| Partition table | `0x8000` | `1d9cca96de0fe07ad7fc0648b9878ddecd9ce565e38b589ad20fea698ed4c80c` | 3072 B (0xC00) |
+| boot_app0 | `0xE000` | provided by esp32 core 3.3.8 (points otadata at app0; without it the board will not boot) | 8192 B (0x2000) |
+| Application | `0x10000` | `69ef48b6fd97a28b6057bf6c5c4cd217edb5bf6e5591827c832b646754ecb3bf` | 1055248 B (0x101A10) |
+
+- Merge layout: `0x0 bootloader + 0x8000 partition table + 0xE000 boot_app0 + 0x10000 application` (gaps are filled with 0xFF)
+- Application image header: `E9 06 02 3F` → SPI mode **DIO**, speed **80MHz**, flash size **8MB**, segments **6**, entry **0x40379E20**
+- ⚠️ This package is built for **8MB flash** (`PartitionScheme=default_8MB`). **It will not fit a 4 MB board** — rebuild from source with `FlashSize=4M,PartitionScheme=default`
+- Flash size: **8MB**, taken from the high nibble of header byte 3 (low nibble is the SPI speed). Cross-check with `esptool image-info <bin>` if you like
+- Bootloader image header: `E9 03 02 3F` → SPI mode **DIO**, speed **80MHz**, flash size **8MB**
+
+## 6. Segmented flashing (keeps the calibration data in NVS)
+
+**Flashing the single file from 0x0 overwrites the nvs partition at `0x9000~0xE000` with 0xFF, i.e. it erases it.**
+That means: Wi-Fi hotspot name/passphrase, the auto-detected IMU result, and the RC endpoint calibration are all gone.
+
+On a blank board that does not matter; on **a machine you have already calibrated**, flash the segments instead and skip nvs:
+
+
+esptool --chip esp32s3 --port COMx --baud 921600 write_flash \
+  0x0 "flix.ino.bootloader.bin" \
+  0x8000 "flix.ino.partitions.bin" \
+  0x10000 "flix.ino.bin" \
+
+
+(`boot_app0.bin` lives under the esp32 core's `tools/partitions/`; not reflashing it is normally fine.)
+
+## 7. Six things you should know
+
+1. **After the first whole-chip flash, re-run `cal` (IMU calibration) and the RC calibration** — the NVS was erased, so the IMU biases must be measured again.
+2. The console runs over the **native USB port** (`CDCOnBoot=cdc`). Seeing no log when you only connect the board's UART header is expected.
+3. A home router and the aircraft hotspot on the **same channel** interfere with each other. The AP channel is derived from `espnowChannel` (default 1); change it with `p ESPNOW_CHANNEL <1-13>`, but **the remote must be changed to the same channel**, otherwise ESP-NOW receives nothing.
+4. Two aircraft powered at the same time interfere over Wi-Fi. Unplug the other one while testing, otherwise you cannot attribute a fault.
+5. PID and calibration changes are persisted to NVS automatically. `preset` restores factory defaults (it also wipes the RC calibration); use `rcdef` if you only want to reset the RC.
+6. This project **depends on the FlixPeriph and ESP32_NOW_Serial libraries**; when rebuilding, match the versions listed in §2, or you may end up with "it compiles but ESP-NOW receives nothing".
+
+## 8. Connecting to the aircraft hotspot (AP)
+
+Hotspot name = `YaoKun_` + the last two bytes of the chip's factory STA MAC (e.g. `YaoKun_F224`). Trust the **`当前热点名：`** line in the boot log.
+
+Factory passphrase: **`1-2-3-4-5-6-7-8`** — eight digits, position *n* holds digit *n*.
+
+> 🔑 **The hyphens are separators only — do not type them.** The real passphrase is 8 characters:
+
+| Position | 1st | 2nd | 3rd | 4th | 5th | 6th | 7th | 8th |
+| --- | --- | --- | --- | --- | Character | `1` | `2` | `3` | `4` | `5` | `6` | `7` | `8` |
+
+> ⚠️ Every document writes it with hyphens on purpose: contiguous digit runs get rewritten by some transfer/render paths — we have hit this repeatedly on this project, and it is exactly how the v1.0 docs ended up publishing a wrong passphrase, which locked every replicator out of the hotspot.
+> Type the 8 characters one by one; no spaces or symbols in between.
+>
+> The firmware builds the default from the ASCII byte table `{49,50,51,52,53,54,55,56,0}` — no plaintext passphrase string exists anywhere in the repository.
+
+The hotspot only carries **MAVLink over UDP 14550** (for QGC / MAVProxy). **There is no web page**: a blank page or a refused connection at `192.168.4.1` is **normal** and does not mean you failed to connect.
+To check the link, look at `已连设备数` (connected stations) in the `wifi` command output — 1 or more means the AP side has registered your device.
+
+> ⚠️ **Do not enable QGC's on-screen virtual joystick** while the ESP-NOW remote is in use. Both send `MANUAL_CONTROL`, and the aircraft does not validate the source, so the two will fight over the sticks (jerky or jumping control). QGC is safe for telemetry, parameters and maps.
+>
+> **Building an English UI**: add `#define FLIX_LANG_EN` at the very top of `flix.ino` (before the first `#include`), or pass `--build-property "compiler.cpp.extra_flags=-DFLIX_LANG_EN"` to arduino-cli. No source edits required.
+
+## 9. Find us
+
+- Bilibili: [耀坤智联](https://space.bilibili.com/3707011699050767)
+- OSHWHub (open-source hardware): [耀坤无人机](https://oshwhub.com/lindahe)
+- GitHub: <https://github.com/YaoKunS>
+- Taobao store: [耀坤智联](https://shop35432590.taobao.com/)
+
+---
+
+This document is generated by `tools/pack_flix_release.py`. Every hash, segment layout, image header and build time is extracted from the firmware image at generation time, so it always matches the bin exactly.

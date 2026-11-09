@@ -108,7 +108,7 @@ flix/                          # ← 仓库根：说明文档 + 转发用 Makefi
 │   │   ├── gen_hlg_note.py        # 火龙果：只读整片 bin，现场生成中英说明（哈希/大小/编译时间现测）
 │   │   ├── check_i18n.py          # 中英文案配对自检（含板型横幅块的双语分支）
 │   │   └── md2html.py             # 台架清单 md → 自包含图文版 html（改完 md 重跑一次）
-│   ├── release固件v1.1/        #   ★ 发布产物（双板整片 bin + 中英指纹与烧录说明 + 发布说明）
+│   ├── release固件v1.2/        #   ★ 最新发布产物（v1.2 三路遥控共存；v1.1 保留在 release固件v1.1/）
 │   └── gazebo/                #   Gazebo 仿真器（跑同一份 .ino 源码）
 │       ├── flix.world         #     仿真世界
 │       ├── simulator.cpp      #     仿真主程序
@@ -120,8 +120,8 @@ flix/                          # ← 仓库根：说明文档 + 转发用 Makefi
 │   ├── flix技术说明书.md       #   ★ 同内容 Markdown 版（GitHub 上可直接在线阅读）
 │   ├── Flix_Technical_Manual_EN.html    #   同上，英文版（图文）
 │   ├── Flix_Technical_Manual_EN.md      #   同上，英文版（Markdown）
-│   ├── 耀坤S3版台架实测清单_v1.1.md  #   ★ S3 板接板后照着做（全程拆桨）
-│   ├── 耀坤S3版台架实测清单_v1.1.html   #   同上图文版（浏览器直接打开 / 可打印）
+│   ├── 耀坤S3版台架实测清单_v1.2.md  #   ★ S3 板接板后照着做（全程拆桨，含三路遥控验证）
+│   ├── 耀坤S3版台架实测清单_v1.2.html   #   同上图文版（浏览器直接打开 / 可打印）
 │   ├── 火龙果版台架实测清单V1.1.md   #   ★ 微辣火龙果 2.0 板对应清单（烧录地址 / 引脚与 S3 不同，不能混用）
 │   ├── 火龙果版台架实测清单V1.1.html    #   同上图文版
 │   ├── Bench_Test_Checklist_EN.md       #   S3 清单英文版（另有同名 .html 图文版）
@@ -252,10 +252,10 @@ arduino-cli compile \
 python Firmware/tools/pack_flix_release.py --version 1.1 --date-tag 20261106
 
 # 火龙果 2.0（只读整片 bin，现场生成中英说明）
-python Firmware/tools/gen_hlg_note.py --bin "release固件v1.1/xxx_整片4MB.bin" --version 1.1 --date-tag 20261106
+python Firmware/tools/gen_hlg_note.py --bin "release固件v1.2/xxx_整片4MB.bin" --version 1.2 --date-tag 20261109
 ```
 
-产物在 `release固件v1.1/`：`*_merged.bin` / `*_整片*.bin`（烧 `0x0`）+ 中英双语《指纹与烧录说明》。  
+产物在 `release固件v1.2/`：`*_merged.bin` / `*_整片*.bin`（烧 `0x0`）+ 中英双语《指纹与烧录说明》。  
 🔴 打包前务必确认 `build/` 就是**本次**编译产物 —— 拿旧构建目录打包会生成"版本号对、内容却是旧固件"的错件（v1.1 发布时就踩过）。
 
 ### 控制台命令（中文版实际显示）

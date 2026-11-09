@@ -1,4 +1,4 @@
-> 开源飞控 Flix · 耀坤 S3 硬件适配版 v1.1
+> 开源飞控 Flix · 耀坤 S3 硬件适配版 v1.2
 
 # 耀坤S3无人机 · Flix 整理版
 
@@ -64,7 +64,7 @@ Flix 是一款**专为教育与科研设计**的开源四轴飞控固件，全�
 | IMU SPI SCK / MISO / MOSI / CS | 38 / 21 / 18 / 17 | MPU-6500，片选有自动探测（实际布线可能是 42 / 17） |
 | IMU I2C SDA / SCL | 9 / 8 | MPU6050 模块（8P 排母） |
 | 电压检测 | 2 | ADC2_CH1，分压比 1:2 |
-| SBUS 接收 | 1 | 出厂默认禁用（走 ESP-NOW）；接 SBUS 才需改 `RC_RX_PIN` |
+| SBUS 接收 | 1 | **v1.2 起出厂默认启用**；不接线不影响 ESP-NOW，接上自动接管（见 4.11） |
 | 红灯 / 绿灯 / 蓝灯 | 41 / 7 / 14 | 低电与失联 / 已连接与解锁 / 初始化 |
 | 蜂鸣器 | 39 | 有源蜂鸣器，高电平触发（S8050 驱动） |
 
@@ -92,7 +92,7 @@ Flix 是一款**专为教育与科研设计**的开源四轴飞控固件，全�
 | `estimate.ino` | 姿态解算（互补滤波） | — |
 | `control.ino` | 三层控制环 + 混控 | — |
 | `motors.ino` | 电机 PWM 输出 | 引脚 + 20 kHz |
-| `rc.ino` | SBUS 遥控输入 | 默认禁用 |
+| `rc.ino` | SBUS 遥控输入 | ★ v1.2 默认启用 + 输入源仲裁 |
 | `wifi.ino` | Wi-Fi / UDP / ESP-NOW | ★ 原生接收回调 |
 | `mavlink.ino` | MAVLink v2 收发 | 统一 ACK |
 | `console.ino` | 命令行控制台 | 中文 + `ch` 命令 |
@@ -107,7 +107,7 @@ Flix 是一款**专为教育与科研设计**的开源四轴飞控固件，全�
 
 1. `readIMU()` —— 必须最先：所有控制都基于本帧数据 ★
 2. `step()` —— 更新时间与 dt，紧跟 IMU 让 dt 与数据新鲜度对应 ★
-3. `readRC()` —— SBUS 输入（ESP-NOW 输入在 processMavlink 里）
+3. `readRC()` —— SBUS 输入（与 ESP-NOW 按「SBUS 优先」仲裁，见 4.11）
 4. `estimate()` —— 姿态解算（gyro/acc + dt）
 5. `control()` —— 三层环 + 失效保护
 6. `sendMotors()` —— 输出 PWM，越早越好，减少控制延迟 ★
@@ -342,6 +342,36 @@ ESP-NOW 的接收回调**只对已登记在 peer 表里的 MAC 触发**，未登
 >
 > **⚠️ 别在 QGC 里开虚拟摇杆**
 > `handleMavlink()` 对 `MANUAL_CONTROL` 不校验来源。共存模式下 QGC 与实体遥控 可能同时发该消息，表现为「遥控打杆没反应」或「杆量乱跳」。
+
+### 4.11 三路遥控共存：AP + ESP-NOW + SBUS（v1.2 新增）
+
+v1.2 起，同一块板子上**三路同时可用**：WiFi 热点 + UDP 地面站常开、ESP-NOW 遥控常开、SBUS 接收机**插上就用**。出厂不需要敲任何命令 —— 目标用户是没有 Arduino IDE、只会烧录的人。
+
+**v1.1 为什么做不到**：SBUS 的开关是参数 `RC_RX_PIN`，S3 板出厂是 `-1`（关闭），现场得自己敲 `p RC_RX_PIN 1`。更关键的是：即使把 SBUS 打开了，`readRC()`（SBUS）和 `processMavlink()` 里的 `MANUAL_CONTROL`（ESP-NOW）会写**同一组** `controlRoll/Pitch/Yaw/Throttle`，两者没有任何仲裁，而主循环里 `processMavlink()` 排在 `readRC()` 之后 ⇒ ESP-NOW 每轮后写，杆量在两个源之间交替覆盖。这种状态只能叫「打架」，不能叫「共存」。
+
+#### 仲裁规则
+
+| RC_SRC | 含义 | 行为 |
+|---|---|---|
+| 0（出厂默认） | 自动 | SBUS 最近 0.3 s 内有有效帧 → SBUS 说了算；否则交回 ESP-NOW。插上自动接管、拔掉 0.3 s 内回落。 |
+| 1 | 强制 ESP-NOW | `readRC()` 直接 return，连 SBUS 都不读 —— 排查「是不是 SBUS 干扰」用。 |
+| 2 | 强制 SBUS | 即使 SBUS 无帧也不回落（`MANUAL_CONTROL` 一律忽略）—— 确认「到底是不是 SBUS 的问题」，代价是没接线时飞不了。 |
+
+为什么是「SBUS 优先」：ESP-NOW 是常开的，让它优先会让 SBUS 永远抢不到；而「插上线」本身就是操作者的明确意图，优先它才符合直觉。掉线判据取 0.3 s ≈ 21 帧（SBUS 14 ms 一帧），既不会因丢一两帧就抢走控制权，也不会出现「拔了线还在等」的僵局。
+
+#### 🔴 配套的安全修复：未标定的 SBUS 会满油
+
+`channelZero[] / channelMax[]` 是全局零初始化，全新板（NVS 空）两者都是 0。`normalizeRC()` 里的 `mapf(x, 0, 0, 0, 1)` 会**除零得到 ±inf**，而 `control.ino` 是 `thrustTarget = controlThrottle;`（**没有 clamp**）⇒ 一推杆就满油或 NaN。v1.2 因此加了两层保护：
+
+- **除零保护**：通道行程小于 100（量程 1639 的 6%）一律输出 0，并在串口提示一次 `⚠ 通道 n 未标定（零位=… 满量程=…），该通道已按 0 处理` —— 宁可不动，也不能满油。
+- **出厂预置标定**（仅 S3 板）：按 S.BUS 规范值 172 / 992 / 1811 预置通道映射 （AETR + 模式开关第 5 通道）与零位/满量程，把「没校准」退化成「能动但方向可能反」，而不是炸机。预置写在 `setDefaults()` 里，而参数加载顺序是「先默认值、再读 NVS」，所以跑过 `cr` 的板子（NVS 已有实测值）不会被覆盖。
+
+> **💡 说明**
+>
+> **⚠️ 预置值只保证量程，不保证方向**
+> 各家遥控器的通道正反向不同，AT9S Pro 实测满杆到过 1982（超出 S.BUS 规范值）。**第一次用 SBUS 仍建议跑一次 `cr`**；方向反了就把 `p RC_MAX_x` 与 `p RC_ZERO_x` 对调（未标定提示里已经把你需要的那两个数打出来了）。
+
+**怎么看当前是谁在控制**：串口 `rc` 命令新增一行「当前输入源：SBUS / ESP-NOW / 无」；启动日志也会打印「遥控：已启用 SBUS，接收脚 GPIO1（不接接收机也不影响 ESP-NOW）」。
 
 ## 五、时间基准修复：71.6 分钟之谜
 
@@ -634,7 +664,7 @@ sendMessage(&ack);   // ← accepted / denied / unsupported 都发
 const bool connected = valid(controlTime) && (t - controlTime < 1.0f);
 ```
 
-`controlTime` **只在 MANUAL_CONTROL（遥控摇杆帧）到达时更新**，语义上才是真正的"遥控在线"。若启用了 SBUS，`readRC()` 也会更新它，两条路径都对。
+`controlTime` **只在 MANUAL_CONTROL（遥控摇杆帧）到达时更新**，语义上才是真正的"遥控在线"。v1.2 起 SBUS 默认启用，`readRC()` 也会更新它，两条路径都对；两路的仲裁见 4.11（SBUS 在线时 ESP-NOW 的 `MANUAL_CONTROL` 被忽略）。
 
 ## 十、中文界面体系
 
@@ -787,7 +817,7 @@ esptool --after watchdog-reset run
 
 | 步骤 | 操作 | 期望结果 |
 |---|---|---|
-| 1 | 上电看首屏 | 中文横幅 + 指纹串 + `固件版本：v1.1` |
+| 1 | 上电看首屏 | 中文横幅 + 指纹串 + `固件版本：v1.2` |
 | 2 | `imu` | 型号/总线/WHO_AM_I/朝向正确，`状态：正常` |
 | 3 | `ca` | 六步中文提示，8 秒/步，末行 `校准完成！` |
 | 4 | `st` 倾斜机身 | 右侧压低 → `横滚` 为正（**朝向唯一判据**） |
@@ -892,7 +922,7 @@ esptool --after watchdog-reset run
 | **R10** | `parameters.ino` | 新增 8 个参数 | ✨ 新增 |
 | — | `flix.ino` | 开机指纹横幅；初始化灯音反馈 | ✨ 新增 |
 | — | `console.ino` | 中文 motd + 品牌横幅 + `ch` 命令 | ✨ 新增 |
-| — | `rc.ino` | 默认禁用 SBUS；中文校准提示 | 🔧 硬件适配 |
+| — | `rc.ino` | v1.2 默认启用 SBUS + 输入源仲裁 + 未标定保护；中文校准提示 | 🔧 硬件适配 |
 | — | `tools/pack_flix_release.py` | 单文件固件 + 指纹说明自动生成 | 🛠 发布工具 |
 
 > **💡 说明**
@@ -913,7 +943,7 @@ esptool --after watchdog-reset run
 | 电池电压 ADC | GPIO 35 | 分压比 2.0（与耀坤一致） |
 | 蜂鸣器 | GPIO 25 | 有源，电平驱动 |
 | LED 指示灯 | GPIO 2（板载单灯） | 三色灯语义不变，由 `led_map.h` 把三路 OR 到一个灯，改用**闪烁频率**表达状态 |
-| SBUS 接收机 | GPIO 4 | 串口 2 |
+| SBUS 接收机 | GPIO 4（耀坤 S3 为 GPIO 1） | 串口 1（内部反相，无需外部反相器） |
 | 光流（预留） | MOS 13 / CLK 14 / MIS 12 / CS 15 | PMW3901，乐鑫 ESP-Drone 方案 |
 | 激光（预留） | SCL1 16 / SDA1 17 | VL53L1X，第 2 组 I2C（I2C1） |
 
@@ -926,4 +956,4 @@ B站：[耀坤智联] https://space.bilibili.com/3707011699050767 · 立创开�
 GitHub：https://github.com/YaoKunS · 淘宝：https://shop35432590.taobao.com/
 
 内核版权 (C) Oleg Kalachev · https://github.com/okalachev/flix  
-本固件由耀坤智联二次开发（目录整理 / 中文界面 / 硬件适配）· 版本 v1.1
+本固件由耀坤智联二次开发（目录整理 / 中文界面 / 硬件适配）· 版本 v1.2

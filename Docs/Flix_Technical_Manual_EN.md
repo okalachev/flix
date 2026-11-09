@@ -1,4 +1,4 @@
-> Open-source flight controller Flix · YaoKun S3 hardware adaptation, v1.1
+> Open-source flight controller Flix · YaoKun S3 hardware adaptation, v1.2
 
 # YaoKun S3 Drone · Flix Organized Edition
 
@@ -64,7 +64,7 @@ File layout, main-loop order, PID structure and the MAVLink implementation are a
 | IMU SPI SCK / MISO / MOSI / CS | 38 / 21 / 18 / 17 | MPU-6500; the chip select is auto-probed (actual wiring may be 42 or 17) |
 | IMU I2C SDA / SCL | 9 / 8 | MPU6050 module (8-pin socket) |
 | Voltage sense | 2 | ADC2_CH1, divider ratio 1:2 |
-| SBUS input | 1 | Disabled by default (ESP-NOW is used); change `RC_RX_PIN` only if you wire an SBUS receiver |
+| SBUS input | 1 | **Enabled by default since v1.2**; leaving it unconnected does not affect ESP-NOW, a connected receiver takes over (see 4.11) |
 | Red / green / blue LED | 41 / 7 / 14 | low battery and link loss / connected and armed / initialising |
 | Buzzer | 39 | Active buzzer, high-level trigger (driven through an S8050) |
 
@@ -92,7 +92,7 @@ File layout, main-loop order, PID structure and the MAVLink implementation are a
 | `estimate.ino` | Attitude estimation (complementary filter) | — |
 | `control.ino` | Three cascaded loops + mixer | — |
 | `motors.ino` | Motor PWM output | pins + 20 kHz |
-| `rc.ino` | SBUS RC input | disabled by default |
+| `rc.ino` | SBUS RC input | ★ enabled by default since v1.2 + input-source arbitration |
 | `wifi.ino` | Wi-Fi / UDP / ESP-NOW | ★ native receive callback |
 | `mavlink.ino` | MAVLink v2 send/receive | unconditional ACK |
 | `console.ino` | Command-line console | Chinese + the `ch` command |
@@ -107,7 +107,7 @@ File layout, main-loop order, PID structure and the MAVLink implementation are a
 
 1. `readIMU()` —— Must be first: every control decision uses this frame's data ★
 2. `step()` —— Updates time and dt; keep it next to the IMU read so dt matches data freshness ★
-3. `readRC()` —— SBUS input (ESP-NOW input arrives via processMavlink)
+3. `readRC()` —— SBUS input (arbitrated against ESP-NOW, SBUS wins — see 4.11)
 4. `estimate()` —— Attitude estimation (gyro/acc + dt)
 5. `control()` —— Three loops + failsafe
 6. `sendMotors()` —— Output PWM as early as possible to cut control latency ★
@@ -342,6 +342,36 @@ The target user is a newcomer following the docs: assemble it and you should get
 >
 > **⚠️ Do not enable QGC's virtual joystick**
 > `handleMavlink()` does not validate the source of `MANUAL_CONTROL`. In coexistence mode QGC and the physical remote can both send it, which shows up as "the sticks do nothing" or "the sticks jump around".
+
+### 4.11 Three RC links at once: AP + ESP-NOW + SBUS (new in v1.2)
+
+Since v1.2 a single board runs **all three links simultaneously**: the Wi-Fi hotspot with the UDP ground station is always up, the ESP-NOW remote is always up, and an SBUS receiver **works as soon as it is plugged in**. No console command is required out of the box — the target user has no Arduino IDE and only knows how to flash a binary.
+
+**Why v1.1 could not do this**: the SBUS switch is the parameter `RC_RX_PIN`, which ships as `-1` (off) on the S3 board, so users had to type `p RC_RX_PIN 1` themselves. More importantly, even with SBUS enabled, `readRC()` (SBUS) and the `MANUAL_CONTROL` branch of `processMavlink()` (ESP-NOW) write **the same** `controlRoll/Pitch/Yaw/Throttle` variables with no arbitration at all, and the main loop runs `processMavlink()` *after* `readRC()` — so ESP-NOW overwrites every iteration and the stick values alternate between the two sources. That is a fight, not coexistence.
+
+#### Arbitration rules
+
+| RC_SRC | Meaning | Behaviour |
+|---|---|---|
+| 0 (factory default) | auto | If SBUS produced a valid frame within the last 0.3 s, SBUS wins; otherwise control returns to ESP-NOW. Plug in → takes over; unplug → falls back within 0.3 s. |
+| 1 | force ESP-NOW | `readRC()` returns immediately and never reads SBUS — use it to rule out SBUS interference. |
+| 2 | force SBUS | No fallback even without frames (`MANUAL_CONTROL` is always ignored) — use it to confirm whether the SBUS path is the problem; the cost is that the aircraft cannot be flown without a receiver. |
+
+Why SBUS wins: ESP-NOW is always on, so giving it priority would starve SBUS forever; while plugging a cable in is an explicit intent by the operator. The 0.3 s window is about 21 SBUS frames (14 ms each): long enough not to steal control over one or two lost frames, short enough not to hang after an unplug.
+
+#### 🔴 The safety fix that comes with it: an uncalibrated SBUS means full throttle
+
+`channelZero[] / channelMax[]` are zero-initialised, so on a fresh board (empty NVS) both are 0. `normalizeRC()` then computes `mapf(x, 0, 0, 0, 1)`, which is **a division by zero yielding ±inf**, and `control.ino` does `thrustTarget = controlThrottle;` with **no clamp** ⇒ the first stick movement is full throttle or NaN. v1.2 therefore adds two layers:
+
+- **Divide-by-zero guard**: any channel whose span is below 100 (6% of the 1639 full range) outputs 0 and prints a one-shot warning `ch n not calibrated …` — better idle than full throttle.
+- **Factory pre-set calibration** (S3 board only): channel map (AETR + mode on channel 5) and zero/full values pre-set to the S.BUS specification (172 / 992 / 1811), degrading "not calibrated" into "moves, direction possibly reversed" instead of a crash. It lives in `setDefaults()`, and parameters load as "defaults first, then NVS", so a board that has already run `cr` keeps its measured values.
+
+> **💡 说明**
+>
+> **⚠️ Pre-sets guarantee the range, not the direction**
+> Manufacturers differ in channel reversing; an AT9S Pro measured 1982 at full stick (beyond the S.BUS spec value). **Still run `cr` once the first time you use SBUS**; if a direction is reversed, swap `p RC_MAX_x` and `p RC_ZERO_x` (the warning prints exactly those two numbers).
+
+**Seeing who is in control**: the `rc` command now prints an "input source" line (SBUS / ESP-NOW / none), and the boot log prints "RC: SBUS enabled on GPIO1 (leave it unconnected and ESP-NOW still works)".
 
 ## 5. Time base fix: the 71.6-minute mystery
 
@@ -636,7 +666,7 @@ This edition uses `controlTime`:
 const bool connected = valid(controlTime) && (t - controlTime < 1.0f);
 ```
 
-`controlTime` is **only updated when MANUAL_CONTROL (a stick frame) arrives**, which is the true meaning of "remote online". If SBUS is enabled, `readRC()` updates it as well, so both paths are correct.
+`controlTime` is **only updated when MANUAL_CONTROL (a stick frame) arrives**, which is the true meaning of "remote online". Since v1.2 SBUS is enabled by default and `readRC()` updates it as well, so both paths are correct; arbitration is described in 4.11 (while SBUS is live, ESP-NOW `MANUAL_CONTROL` is ignored).
 
 ## 10. The i18n system
 
@@ -821,7 +851,7 @@ Or simply replug USB / press RST.
 
 | Step | Action | Expected result |
 |---|---|---|
-| 1 | power up, read the first screen | Chinese banner + fingerprint string + `固件版本：v1.1` |
+| 1 | power up, read the first screen | Chinese banner + fingerprint string + `固件版本：v1.2` |
 | 2 | `imu` | model / bus / WHO_AM_I / orientation correct, `状态：正常` |
 | 3 | `ca` | six Chinese prompts, 8 s each, last line `校准完成！` |
 | 4 | `st` while tilting | right side down → `横滚` positive (**the only orientation criterion**) |
@@ -928,7 +958,7 @@ green flashing = armed, red flashing = link lost, fast red = low battery.
 | **R12** | `wifi.ino` / `i18n.h` | three-layer passphrase validation (sanitise NVS / reject bad writes / byte-table factory value) | 🐞 bug fix |
 | — | `flix.ino` | boot fingerprint banner; LED/buzzer init feedback | ✨ new |
 | — | `console.ino` | Chinese motd + brand banner + `ch` command | ✨ new |
-| — | `rc.ino` | SBUS disabled by default; Chinese calibration prompts | 🔧 hardware adaptation |
+| — | `rc.ino` | SBUS enabled by default since v1.2 + input arbitration + uncalibrated guard; Chinese calibration prompts | 🔧 hardware adaptation |
 | — | `tools/pack_flix_release.py` | single-file firmware + automatic fingerprint documents (Chinese and English) | 🛠 release tooling |
 
 > **💡 说明**
@@ -949,7 +979,7 @@ Since v1.1, a single source tree supports two PCBs through a **compile-time boar
 | Battery voltage ADC | GPIO 35 | divider ratio 2.0 (same as YaoKun S3) |
 | Buzzer | GPIO 25 | active type, level-driven |
 | LED indicator | GPIO 2 (on-board, single) | RGB semantics unchanged — `led_map.h` ORs the three channels into one LED; state is expressed by **blink frequency** |
-| SBUS receiver | GPIO 4 | Serial 2 |
+| SBUS receiver | GPIO 4 (GPIO 1 on the YaoKun S3) | Serial 1 (internally inverted, no external inverter needed) |
 | Optical flow (reserved) | MOS 13 / CLK 14 / MIS 12 / CS 15 | PMW3901, Espressif ESP-Drone scheme |
 | Laser (reserved) | SCL1 16 / SDA1 17 | VL53L1X, second bus (I2C1) |
 
@@ -962,4 +992,4 @@ Bilibili: https://space.bilibili.com/3707011699050767 · OSHWHub: https://oshwhu
 GitHub: https://github.com/YaoKunS · Taobao: https://shop35432590.taobao.com/
 
 Kernel copyright (C) Oleg Kalachev · https://github.com/okalachev/flix  
-Second-stage development by YaoKunSmart (directory organisation / Chinese UI / hardware adaptation) · version v1.1
+Second-stage development by YaoKunSmart (directory organisation / Chinese UI / hardware adaptation) · version v1.2

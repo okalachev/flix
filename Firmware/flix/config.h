@@ -66,4 +66,49 @@ void setDefaults() {
 		motorPins[MOT_FR] = 18;
 		motorPins[MOT_FL] = 38;
 	#endif
+
+	// -----------------------------------------------------------------------
+	// 【v1.2】耀坤 S3 板：SBUS 出厂标定（"烧完接线就能用"）
+	// -----------------------------------------------------------------------
+	// 背景：v1.2 起 S3 板的 PIN_RC_RX 默认 = 1（SBUS 打开），但全新板 NVS 里
+	//   没有任何遥控标定 —— channelZero / channelMax 全 0、通道映射全 -1。
+	//   于是接上 SBUS 后有两种坏结果：
+	//     ① 通道映射是 -1 ⇒ normalizeRC() 里 `rollChannel < 0 ? 0 : ...` 输出恒 0，
+	//        摇杆完全没反应（用户会以为"SBUS 不支持"）；
+	//     ② 若映射碰巧有值，mapf(x, 0, 0, 0, 1) 会除零得到 ±inf，而
+	//        control.ino:55 是 `thrustTarget = controlThrottle;`（无 clamp）⇒ 满油。
+	//   所以必须给一套出厂预置值，让没有串口环境的用户接上就能用。
+	//
+	// 预置值来源：S.BUS 协议规范 —— 通道值 172~1811，中位 992。
+	// ⚠️ 只保证量程，**不保证方向**：各家遥控器的通道正反向不同，
+	//    第一次用 SBUS 仍建议跑一次 `cr`。预置的作用是把"除零满油"降级成
+	//    "能动但方向可能反"；方向反了就把对应的 RC_MAX_x 与 RC_ZERO_x 对调。
+	//
+	// 标定语义（由 rc.ino 的 calibrateRCChannel() 反推，别想当然）：
+	//   油门            ：zero=最低值、max=最高值   ⇒ 映射得 0~1（thrustTarget 要 0~1）
+	//   模式开关        ：zero=低端、  max=高端     ⇒ 映射得 0~1（interpretControls 按 0.25/0.75 分三档）
+	//   横滚/俯仰/偏航  ：zero=中位、  max=端点     ⇒ 中位映射成 0、端点 1，反向自然得负值
+	//                                              （正好是 control.ino 里乘 tiltMax 要的 -1~+1）
+	//
+	// 生效条件：只在 NVS **没有**对应键时起作用 —— setupParameters() 的顺序是
+	//   "先 setDefaults() 再读 NVS"，所以跑过 cr 的板子（例如 1 号机）保留实测值，
+	//   不会被这套预置值覆盖。
+	//
+	// 🔴 只给 S3 板预置：火龙果 2.0 出厂 PIN_RC_RX=4 已开，但它的实测标定由作者现场
+	//    跑过 cr 决定，这边不擅自改它的默认标定（改动面越小越好回归）。
+	#if FLIX_BOARD == BOARD_YAOKUN_S3
+		// 通道映射：AETR + 模式开关在第 5 通道（与 1 号机 AT9S Pro 实测一致）
+		rollChannel = 0;
+		pitchChannel = 1;
+		throttleChannel = 2;
+		yawChannel = 3;
+		modeChannel = 4;
+		// 标定值（S.BUS 规范值）
+		const int sbusLow = 172, sbusMid = 992, sbusHigh = 1811;
+		channelZero[throttleChannel] = sbusLow;  channelMax[throttleChannel] = sbusHigh;
+		channelZero[modeChannel]     = sbusLow;  channelMax[modeChannel]     = sbusHigh;
+		channelZero[rollChannel]     = sbusMid;  channelMax[rollChannel]     = sbusHigh;
+		channelZero[pitchChannel]    = sbusMid;  channelMax[pitchChannel]    = sbusHigh;
+		channelZero[yawChannel]      = sbusMid;  channelMax[yawChannel]      = sbusHigh;
+	#endif
 }

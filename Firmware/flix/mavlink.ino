@@ -38,6 +38,10 @@
 extern float controlTime;
 extern float voltage;
 
+// 【v1.2 三路共存】SBUS 侧的仲裁状态（定义在 rc.ino）
+extern int rcSrc;            // 0=自动 1=强制 ESP-NOW 2=强制 SBUS（宏见 board.h）
+extern bool sbusActive();    // SBUS 最近 0.3 s 内是否有有效帧
+
 int mavlinkSysId = 1;
 
 Rate telemetrySlow(2);
@@ -154,6 +158,17 @@ void handleMavlink(const void *_msg) {
 	const mavlink_message_t& msg = *(mavlink_message_t *)_msg;
 
 	if (msg.msgid == MAVLINK_MSG_ID_MANUAL_CONTROL) {
+		// 【v1.2 三路仲裁】SBUS 优先 —— 这一句是"共存"能不能成立的关键。
+		//   为什么必须在解码之前判断：省一次解码是次要的，主要是让"被忽略"这件事
+		//   对所有来源表现一致 —— 忽略就是完全不碰 controlRoll/Pitch/Yaw/Throttle/
+		//   controlTime，而不是"解出来再丢掉"（后者一旦漏掉某个字段就会留下半套值）。
+		//   后果对照：
+		//     RC_SRC=1（强制 ESP-NOW）：永不忽略，SBUS 那边 readRC() 也直接 return。
+		//     RC_SRC=2（强制 SBUS）   ：永远忽略 ESP-NOW，即使 SBUS 没接线（排查用）。
+		//     RC_SRC=0（自动）        ：SBUS 在线就让位；拔线 0.3 s 后自动交回 ESP-NOW。
+		if (rcSrc == RC_SRC_SBUS) return;
+		if (rcSrc == RC_SRC_AUTO && sbusActive()) return;
+
 		mavlink_manual_control_t m;
 		mavlink_msg_manual_control_decode(&msg, &m);
 		if (m.target && m.target != mavlinkSysId) return; // 0 means broadcast

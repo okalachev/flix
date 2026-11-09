@@ -39,6 +39,7 @@
 extern int channelZero[16], channelMax[16];
 extern int rollChannel, pitchChannel, throttleChannel, yawChannel, armedChannel, modeChannel;
 extern int rcRxPin, voltagePin;
+extern int rcSrc;   // 【v1.2】遥控输入源仲裁：0=自动 1=强制 ESP-NOW 2=强制 SBUS（宏在 board.h）
 extern int wifiMode, wifiLongRange, wifiBroadcast, udpLocalPort, udpRemotePort, espnowChannel;
 extern float rcLossTimeout, descendTime, disarmTilt;
 extern float voltageScale;
@@ -137,6 +138,12 @@ Parameter parameters[] = {
 	{"MOT_PWM_MAX", &pwmMax},
 	// rc
 	{"RC_RX_PIN", &rcRxPin, setupRC},
+	// 【v1.2】遥控输入源仲裁（三路共存：AP + ESP-NOW + SBUS）
+	//   0 = 自动（出厂）：SBUS 最近 0.3 s 有有效帧就用 SBUS，否则用 ESP-NOW
+	//   1 = 强制 ESP-NOW：连 SBUS 都不读 —— 现场怀疑 SBUS 干扰时一句 `p RC_SRC 1` 隔离
+	//   2 = 强制 SBUS    ：无帧也不回落 —— 用来确认"到底是不是 SBUS 这一路的问题"
+	// 改完立即生效（仲裁是每次循环读这个变量），不需要重启；syncParameters() 会存 NVS。
+	{"RC_SRC", &rcSrc},
 	{"RC_ZERO_0", &channelZero[0]},
 	{"RC_ZERO_1", &channelZero[1]},
 	{"RC_ZERO_2", &channelZero[2]},

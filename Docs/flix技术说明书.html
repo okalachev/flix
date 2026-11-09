@@ -114,7 +114,7 @@
 <div class="wrap">
 
 <div class="cover">
-  <span class="badge">开源飞控 Flix · 耀坤 S3 硬件适配版 v1.1</span>
+  <span class="badge">开源飞控 Flix · 耀坤 S3 硬件适配版 v1.2</span>
   <h1>耀坤S3无人机 · Flix 整理版</h1>
   <div class="sub">不足 2000 行的教学级飞控内核　·　ESP-NOW 原生接收改造　·　全中文控制台</div>
   <div class="facts">
@@ -191,7 +191,7 @@
 <tr><td>IMU SPI SCK / MISO / MOSI / CS</td><td>38 / 21 / 18 / 17</td><td>MPU-6500，片选有自动探测（实际布线可能是 42 / 17）</td></tr>
 <tr><td>IMU I2C SDA / SCL</td><td>9 / 8</td><td>MPU6050 模块（8P 排母）</td></tr>
 <tr><td>电压检测</td><td>2</td><td>ADC2_CH1，分压比 1:2</td></tr>
-<tr><td>SBUS 接收</td><td>1</td><td>出厂默认禁用（走 ESP-NOW）；接 SBUS 才需改 <code>RC_RX_PIN</code></td></tr>
+<tr><td>SBUS 接收</td><td>1</td><td><b>v1.2 起出厂默认启用</b>；不接线不影响 ESP-NOW，接上自动接管（见 4.11）</td></tr>
 <tr><td>红灯 / 绿灯 / 蓝灯</td><td>41 / 7 / 14</td><td>低电与失联 / 已连接与解锁 / 初始化</td></tr>
 <tr><td>蜂鸣器</td><td>39</td><td>有源蜂鸣器，高电平触发（S8050 驱动）</td></tr>
 </tbody>
@@ -226,7 +226,7 @@
 <tr><td><code>estimate.ino</code></td><td>姿态解算（互补滤波）</td><td>—</td></tr>
 <tr><td><code>control.ino</code></td><td>三层控制环 + 混控</td><td>—</td></tr>
 <tr><td><code>motors.ino</code></td><td>电机 PWM 输出</td><td>引脚 + 20 kHz</td></tr>
-<tr><td><code>rc.ino</code></td><td>SBUS 遥控输入</td><td>默认禁用</td></tr>
+<tr><td><code>rc.ino</code></td><td>SBUS 遥控输入</td><td>★ v1.2 默认启用 + 输入源仲裁</td></tr>
 <tr><td><code>wifi.ino</code></td><td>Wi-Fi / UDP / ESP-NOW</td><td>★ 原生接收回调</td></tr>
 <tr><td><code>mavlink.ino</code></td><td>MAVLink v2 收发</td><td>统一 ACK</td></tr>
 <tr><td><code>console.ino</code></td><td>命令行控制台</td><td>中文 + <code>ch</code> 命令</td></tr>
@@ -246,7 +246,7 @@
   <div class="farrow">↓</div>
   <div class="fnode hl"><span class="tag">2</span><span class="ttl">step()</span><span class="desc">更新时间与 dt，紧跟 IMU 让 dt 与数据新鲜度对应</span></div>
   <div class="farrow">↓</div>
-  <div class="fnode"><span class="tag">3</span><span class="ttl">readRC()</span><span class="desc">SBUS 输入（ESP-NOW 输入在 processMavlink 里）</span></div>
+  <div class="fnode"><span class="tag">3</span><span class="ttl">readRC()</span><span class="desc">SBUS 输入（与 ESP-NOW 按「SBUS 优先」仲裁，见 4.11）</span></div>
   <div class="farrow">↓</div>
   <div class="fnode"><span class="tag">4</span><span class="ttl">estimate()</span><span class="desc">姿态解算（gyro/acc + dt）</span></div>
   <div class="farrow">↓</div>
@@ -520,6 +520,56 @@ v1.1 起出厂默认 <code>WIFI_MODE=4</code>（<code>W_BOTH</code>），两种�
 <code>handleMavlink()</code> 对 <code>MANUAL_CONTROL</code> 不校验来源。共存模式下 QGC 与实体遥控
 可能同时发该消息，表现为「遥控打杆没反应」或「杆量乱跳」。
 </div>
+
+<h3 id="s4-11">4.11 三路遥控共存：AP + ESP-NOW + SBUS（v1.2 新增）</h3>
+
+<p>v1.2 起，同一块板子上<b>三路同时可用</b>：WiFi 热点 + UDP 地面站常开、ESP-NOW 遥控常开、
+SBUS 接收机<b>插上就用</b>。出厂不需要敲任何命令 —— 目标用户是没有 Arduino IDE、只会烧录的人。</p>
+
+<p><b>v1.1 为什么做不到</b>：SBUS 的开关是参数 <code>RC_RX_PIN</code>，S3 板出厂是 <code>-1</code>（关闭），
+现场得自己敲 <code>p RC_RX_PIN 1</code>。更关键的是：即使把 SBUS 打开了，
+<code>readRC()</code>（SBUS）和 <code>processMavlink()</code> 里的 <code>MANUAL_CONTROL</code>（ESP-NOW）
+会写<b>同一组</b> <code>controlRoll/Pitch/Yaw/Throttle</code>，两者没有任何仲裁，
+而主循环里 <code>processMavlink()</code> 排在 <code>readRC()</code> 之后 ⇒ ESP-NOW 每轮后写，
+杆量在两个源之间交替覆盖。这种状态只能叫「打架」，不能叫「共存」。</p>
+
+<h4>仲裁规则</h4>
+<table>
+<thead><tr><th>RC_SRC</th><th>含义</th><th>行为</th></tr></thead>
+<tbody>
+<tr><td>0（出厂默认）</td><td>自动</td><td>SBUS 最近 0.3 s 内有有效帧 → SBUS 说了算；否则交回 ESP-NOW。插上自动接管、拔掉 0.3 s 内回落。</td></tr>
+<tr><td>1</td><td>强制 ESP-NOW</td><td><code>readRC()</code> 直接 return，连 SBUS 都不读 —— 排查「是不是 SBUS 干扰」用。</td></tr>
+<tr><td>2</td><td>强制 SBUS</td><td>即使 SBUS 无帧也不回落（<code>MANUAL_CONTROL</code> 一律忽略）—— 确认「到底是不是 SBUS 的问题」，代价是没接线时飞不了。</td></tr>
+</tbody>
+</table>
+
+<p>为什么是「SBUS 优先」：ESP-NOW 是常开的，让它优先会让 SBUS 永远抢不到；
+而「插上线」本身就是操作者的明确意图，优先它才符合直觉。掉线判据取 0.3 s ≈ 21 帧（SBUS 14 ms 一帧），
+既不会因丢一两帧就抢走控制权，也不会出现「拔了线还在等」的僵局。</p>
+
+<h4>🔴 配套的安全修复：未标定的 SBUS 会满油</h4>
+<p><code>channelZero[] / channelMax[]</code> 是全局零初始化，全新板（NVS 空）两者都是 0。
+<code>normalizeRC()</code> 里的 <code>mapf(x, 0, 0, 0, 1)</code> 会<b>除零得到 ±inf</b>，
+而 <code>control.ino</code> 是 <code>thrustTarget = controlThrottle;</code>（<b>没有 clamp</b>）
+⇒ 一推杆就满油或 NaN。v1.2 因此加了两层保护：</p>
+<ul>
+  <li><b>除零保护</b>：通道行程小于 100（量程 1639 的 6%）一律输出 0，并在串口提示一次
+      <code>⚠ 通道 n 未标定（零位=… 满量程=…），该通道已按 0 处理</code> —— 宁可不动，也不能满油。</li>
+  <li><b>出厂预置标定</b>（仅 S3 板）：按 S.BUS 规范值 172 / 992 / 1811 预置通道映射
+      （AETR + 模式开关第 5 通道）与零位/满量程，把「没校准」退化成「能动但方向可能反」，
+      而不是炸机。预置写在 <code>setDefaults()</code> 里，而参数加载顺序是「先默认值、再读 NVS」，
+      所以跑过 <code>cr</code> 的板子（NVS 已有实测值）不会被覆盖。</li>
+</ul>
+
+<div class="note">
+<b>⚠️ 预置值只保证量程，不保证方向</b><br>
+各家遥控器的通道正反向不同，AT9S Pro 实测满杆到过 1982（超出 S.BUS 规范值）。
+<b>第一次用 SBUS 仍建议跑一次 <code>cr</code></b>；方向反了就把 <code>p RC_MAX_x</code> 与
+<code>p RC_ZERO_x</code> 对调（未标定提示里已经把你需要的那两个数打出来了）。
+</div>
+
+<p><b>怎么看当前是谁在控制</b>：串口 <code>rc</code> 命令新增一行「当前输入源：SBUS / ESP-NOW / 无」；
+启动日志也会打印「遥控：已启用 SBUS，接收脚 GPIO1（不接接收机也不影响 ESP-NOW）」。</p>
 
 <!-- ============ 5 ============ -->
 <h2 id="s5">五、时间基准修复：71.6 分钟之谜</h2>
@@ -844,7 +894,7 @@ sendMessage(&amp;ack);   // ← accepted / denied / unsupported 都发</code></p
 
 <pre><code>const bool connected = valid(controlTime) &amp;&amp; (t - controlTime &lt; 1.0f);</code></pre>
 
-<p><code>controlTime</code> <strong>只在 MANUAL_CONTROL（遥控摇杆帧）到达时更新</strong>，语义上才是真正的"遥控在线"。若启用了 SBUS，<code>readRC()</code> 也会更新它，两条路径都对。</p>
+<p><code>controlTime</code> <strong>只在 MANUAL_CONTROL（遥控摇杆帧）到达时更新</strong>，语义上才是真正的"遥控在线"。v1.2 起 SBUS 默认启用，<code>readRC()</code> 也会更新它，两条路径都对；两路的仲裁见 4.11（SBUS 在线时 ESP-NOW 的 <code>MANUAL_CONTROL</code> 被忽略）。</p>
 
 <!-- ============ 10 ============ -->
 <h2 id="s10">十、中文界面体系</h2>
@@ -1007,7 +1057,7 @@ arduino-cli compile \
 <table class="tight">
 <thead><tr><th>步骤</th><th>操作</th><th>期望结果</th></tr></thead>
 <tbody>
-<tr><td>1</td><td>上电看首屏</td><td>中文横幅 + 指纹串 + <code>固件版本：v1.1</code></td></tr>
+<tr><td>1</td><td>上电看首屏</td><td>中文横幅 + 指纹串 + <code>固件版本：v1.2</code></td></tr>
 <tr><td>2</td><td><code>imu</code></td><td>型号/总线/WHO_AM_I/朝向正确，<code>状态：正常</code></td></tr>
 <tr><td>3</td><td><code>ca</code></td><td>六步中文提示，8 秒/步，末行 <code>校准完成！</code></td></tr>
 <tr><td>4</td><td><code>st</code> 倾斜机身</td><td>右侧压低 → <code>横滚</code> 为正（<b>朝向唯一判据</b>）</td></tr>
@@ -1135,7 +1185,7 @@ arduino-cli compile \
 <tr><td><b>R10</b></td><td><code>parameters.ino</code></td><td>新增 8 个参数</td><td>✨ 新增</td></tr>
 <tr><td>—</td><td><code>flix.ino</code></td><td>开机指纹横幅；初始化灯音反馈</td><td>✨ 新增</td></tr>
 <tr><td>—</td><td><code>console.ino</code></td><td>中文 motd + 品牌横幅 + <code>ch</code> 命令</td><td>✨ 新增</td></tr>
-<tr><td>—</td><td><code>rc.ino</code></td><td>默认禁用 SBUS；中文校准提示</td><td>🔧 硬件适配</td></tr>
+<tr><td>—</td><td><code>rc.ino</code></td><td>v1.2 默认启用 SBUS + 输入源仲裁 + 未标定保护；中文校准提示</td><td>🔧 硬件适配</td></tr>
 <tr><td>—</td><td><code>tools/pack_flix_release.py</code></td><td>单文件固件 + 指纹说明自动生成</td><td>🛠 发布工具</td></tr>
 </tbody>
 </table>
@@ -1160,7 +1210,7 @@ arduino-cli compile \
 <tr><td>电池电压 ADC</td><td>GPIO 35</td><td>分压比 2.0（与耀坤一致）</td></tr>
 <tr><td>蜂鸣器</td><td>GPIO 25</td><td>有源，电平驱动</td></tr>
 <tr><td>LED 指示灯</td><td>GPIO 2（板载单灯）</td><td>三色灯语义不变，由 <code>led_map.h</code> 把三路 OR 到一个灯，改用<b>闪烁频率</b>表达状态</td></tr>
-<tr><td>SBUS 接收机</td><td>GPIO 4</td><td>串口 2</td></tr>
+<tr><td>SBUS 接收机</td><td>GPIO 4（耀坤 S3 为 GPIO 1）</td><td>串口 1（内部反相，无需外部反相器）</td></tr>
 <tr><td>光流（预留）</td><td>MOS 13 / CLK 14 / MIS 12 / CS 15</td><td>PMW3901，乐鑫 ESP-Drone 方案</td></tr>
 <tr><td>激光（预留）</td><td>SCL1 16 / SDA1 17</td><td>VL53L1X，第 2 组 I2C（I2C1）</td></tr>
 </tbody>
@@ -1179,7 +1229,7 @@ arduino-cli compile \
   淘宝：https://shop35432590.taobao.com/
   <div style="margin-top:18px; font-size:12px; color:#94a3b8;">
     内核版权 (C) Oleg Kalachev · https://github.com/okalachev/flix<br>
-    本固件由耀坤智联二次开发（目录整理 / 中文界面 / 硬件适配）· 版本 v1.1
+    本固件由耀坤智联二次开发（目录整理 / 中文界面 / 硬件适配）· 版本 v1.2
   </div>
 </footer>
 

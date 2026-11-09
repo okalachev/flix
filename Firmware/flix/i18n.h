@@ -40,7 +40,7 @@
 
 // ---- 开机 / 通用 ----
 #define TXT_BOOT_START          "Initializing Flix\n"
-#define TXT_BOOT_VERSION        "Firmware version: v1.1 (YaoKun organized edition)\n"
+#define TXT_BOOT_VERSION        "Firmware version: v1.2 (YaoKun organized edition)\n"
 #define TXT_BOOT_DONE           "Initializing complete\n"
 #define TXT_SETUP_PARAMS        "Setup parameters\n"
 #define TXT_SETUP_POWER         "Setup power\n"
@@ -71,7 +71,7 @@
 #define TXT_HELP_ST             "st - show attitude estimation\n"
 #define TXT_HELP_ARM            "arm / disarm - arm or disarm the drone\n"
 #define TXT_HELP_MODE           "raw/stab/acro/auto - set flight mode\n"
-#define TXT_HELP_RC             "rc - show RC (ESP-NOW) data\n"
+#define TXT_HELP_RC             "rc - show RC data (ESP-NOW / SBUS, with active source)\n"
 #define TXT_HELP_CR             "cr - calibrate RC\n"
 #define TXT_HELP_PW             "pw - show power info\n"
 #define TXT_HELP_WIFI           "wifi - show Wi-Fi info\n"
@@ -180,6 +180,13 @@
 #define TXT_WIFI_QFAIL          "Failed to create RX queue\n"
 #define TXT_WIFI_CBFAIL         "Failed to register ESP-NOW RX callback\n"
 #define TXT_RC_SBUS_OFF         "RC: SBUS disabled (using ESP-NOW), rcRxPin = %d\n"
+// 【v1.2 三路共存】SBUS 默认打开后新增的提示
+#define TXT_RC_SBUS_ON          "RC: SBUS enabled on GPIO%d (leave it unconnected and ESP-NOW still works)\n"
+#define TXT_RC_SRC_LABEL        "input source: %s\n"
+#define TXT_RC_SRC_SBUS         "SBUS"
+#define TXT_RC_SRC_ESPNOW       "ESP-NOW"
+#define TXT_RC_SRC_NONE         "none (no RC input)"
+#define TXT_RC_UNCAL            "!! ch%d not calibrated (zero=%d max=%d), forced to 0. Run `cr`, or p RC_ZERO_%d / p RC_MAX_%d\n"
 #define TXT_RC_ESPNOW_NOCAL     "Note: ESP-NOW RC needs no calibration (stick range is +/-1000 on the remote side).\n"
 #define TXT_WIFI_NATIVE         "Native recv active: %d\n"
 #define TXT_WIFI_RXPACKETS      "RX packets: %u\n"
@@ -238,7 +245,7 @@
 
 // ---- 开机 / 通用 ----
 #define TXT_BOOT_START          "耀坤S3 飞控（Flix 整理版）启动中…\n"
-#define TXT_BOOT_VERSION        "固件版本：v1.1（耀坤整理版）\n"
+#define TXT_BOOT_VERSION        "固件版本：v1.2（耀坤整理版）\n"
 #define TXT_BOOT_DONE           "初始化完成\n"
 #define TXT_SETUP_PARAMS        "初始化参数存储\n"
 #define TXT_SETUP_POWER         "初始化电源检测\n"
@@ -269,7 +276,7 @@
 #define TXT_HELP_ST             "st - 显示姿态估计结果\n"
 #define TXT_HELP_ARM            "arm / disarm - 解锁 / 上锁\n"
 #define TXT_HELP_MODE           "raw/stab/acro/auto - 切换飞行模式\n"
-#define TXT_HELP_RC             "rc - 显示遥控（ESP-NOW）数据\n"
+#define TXT_HELP_RC             "rc - 显示遥控数据（ESP-NOW / SBUS，含当前生效源）\n"
 #define TXT_HELP_CR             "cr - 校准遥控行程\n"
 #define TXT_HELP_PW             "pw - 显示电源与电压\n"
 #define TXT_HELP_WIFI           "wifi - 显示无线连接信息\n"
@@ -378,6 +385,17 @@
 #define TXT_WIFI_QFAIL          "接收队列创建失败\n"
 #define TXT_WIFI_CBFAIL         "注册 ESP-NOW 接收回调失败\n"
 #define TXT_RC_SBUS_OFF         "遥控：未启用 SBUS（走 ESP-NOW），rcRxPin = %d\n"
+// 【v1.2 三路共存】SBUS 默认打开后新增的提示
+// 【为什么 TXT_RC_SBUS_ON 要强调"不接也能用"】默认打开 SBUS 后，用户看到这句
+//   很容易误以为"必须插接收机才能飞"。写明这点能省掉一轮"我的遥控怎么没反应"的排查。
+#define TXT_RC_SBUS_ON          "遥控：已启用 SBUS，接收脚 GPIO%d（不接接收机也不影响 ESP-NOW）\n"
+#define TXT_RC_SRC_LABEL        "当前输入源：%s\n"
+#define TXT_RC_SRC_SBUS         "SBUS"
+#define TXT_RC_SRC_ESPNOW       "ESP-NOW"
+#define TXT_RC_SRC_NONE         "无（没收到任何遥控输入）"
+// 【未标定警告】为什么要把 zero/max 都打出来：用户拿这两个数就能直接
+//   `p RC_ZERO_x` / `p RC_MAX_x` 手改，不必走 cr 的交互流程（远程指导时特别有用）。
+#define TXT_RC_UNCAL            "⚠ 通道 %d 未标定（零位=%d 满量程=%d），该通道已按 0 处理；请跑 `cr`，或 p RC_ZERO_%d / p RC_MAX_%d\n"
 #define TXT_RC_ESPNOW_NOCAL     "提示：ESP-NOW 遥控无需校准（摇杆量程由遥控器固件保证 ±1000）。\n"
 #define TXT_WIFI_NATIVE         "原生接收通道：%d\n"
 #define TXT_WIFI_RXPACKETS      "接收包数：%u\n"
@@ -442,7 +460,8 @@
 //   集中在末尾覆盖，语言段保持原样，加板型只动这一块。
 //
 // 【🔴 硬性要求：耀坤 S3 的这几条字符串一个字节都不能变】
-//   S3 板 v1.1 已在飞，开机首屏是现场判断"烧的哪个固件"的依据。下面的默认值
+//   S3 板 v1.1 已在飞，开机首屏是现场判断"烧的哪个固件"的依据。v1.2 只改了两处
+//   与版本相关的字样（版本号 v1.1→v1.2、遥控一栏补「+ SBUS」），其余原样。下面的默认值
 //   是从 V1.1 的 console.ino / flix.ino 里**原样搬运**过来的（连换行位置都没改），
 //   火龙果只在 #if 分支里覆盖。改完必须用 .flash.rodata 段逐字节比对来证明。
 //
@@ -478,7 +497,7 @@
 		"\n" \
 		"==============================================================\n" \
 		"  YaoKun S3 Flight Controller (Flix YaoKun Edition)\n" \
-		"  Hardware: ESP32-S3 + MPU6500/MPU6050   RC: ESP-NOW\n" \
+		"  Hardware: ESP32-S3 + MPU6500/MPU6050   RC: ESP-NOW + SBUS\n" \
 		"--------------------------------------------------------------\n" \
 		"  Source: https://github.com/YaoKunS/flix\n" \
 		"  Taobao: YaoKunSmart  https://shop35432590.taobao.com/\n" \
@@ -493,7 +512,7 @@
 		"\n" \
 		"==============================================================\n" \
 		"  耀坤S3 飞控（Flix 整理版）   YaoKunS Flight Controller\n" \
-		"  硬件：立创 ESP32-S3 + MPU6500/MPU6050   遥控：ESP-NOW\n" \
+		"  硬件：立创 ESP32-S3 + MPU6500/MPU6050   遥控：ESP-NOW + SBUS\n" \
 		"--------------------------------------------------------------\n" \
 		"  开源：https://github.com/YaoKunS/flix\n" \
 		"  淘宝：耀坤智联  https://shop35432590.taobao.com/\n" \
@@ -524,7 +543,7 @@
 		// 品牌名按作者本人的定义用 MildlySpicyDragon（"a slightly spicy dragon fruit"，
 		// 是作者的用户名，不是真实水果名）——不要意译成 Hylocereus。
 		#define TXT_BOOT_START   "MildlySpicyDragon 2.0 (based on Flix YaoKun edition) booting...\n"
-		#define TXT_BOOT_VERSION "Firmware version: v1.1 (YaoKun organized edition, MildlySpicyDragon 2.0)\n"
+		#define TXT_BOOT_VERSION "Firmware version: v1.2 (YaoKun organized edition, MildlySpicyDragon 2.0)\n"
 		#define TXT_IDENTITY     "MildlySpicyDragon | 微辣火龙果 | 2025 Spark Program Award ESP32 mini drone | Flix"
 		#define MOTD_BANNER \
 			"\n" \
@@ -547,7 +566,7 @@
 		// 横幅前 4 行由作者 2026-11-06 逐行给定，不要自行改写措辞；
 		// 淘宝行是同日追加的耀坤署名行（用户明确指定位置）。
 		#define TXT_BOOT_START   "微辣火龙果 2.0 飞控（基于 Flix 耀坤版）启动中…\n"
-		#define TXT_BOOT_VERSION "固件版本：v1.1（耀坤整理版 · 微辣火龙果 2.0）\n"
+		#define TXT_BOOT_VERSION "固件版本：v1.2（耀坤整理版 · 微辣火龙果 2.0）\n"
 		#define TXT_IDENTITY     "MildlySpicyDragon | 微辣火龙果 | 2025星火计划获奖项目 ESP32迷你无人机 | Flix"
 		#define MOTD_BANNER \
 			"\n" \
