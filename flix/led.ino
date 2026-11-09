@@ -33,6 +33,7 @@ const int EFFECT_AXEL = 100;
 
 void setupLED() {
 	led.clear();
+	if (ledPin < 0) return;
 
 	if (ledType == 0) {
 		pinMode(ledPin, OUTPUT);
@@ -44,7 +45,7 @@ void setupLED() {
 }
 
 void loopLED() {
-	if (ledType == -1) return;
+	if (led.empty()) return;
 
 	static Rate rate(30);
 	if (!rate) return;
