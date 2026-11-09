@@ -35,7 +35,7 @@
 #include "vector.h"
 
 // Declare configuration variables
-extern int imuModel, imuIntPin, imuCsPin, ledType, ledPin, ledCount;
+extern int imuModel, imuIntPin, imuCsPin, ledType, ledPin, ledCount, standbyEffect;
 extern Vector imuRotation;
 extern int motorPins[4];
 extern int pwmFrequency, pwmResolution, pwmStop, pwmMin, pwmMax;
@@ -45,8 +45,8 @@ extern int rcRxPin, voltagePin;
 extern int wifiMode, wifiLongRange, wifiBroadcast, udpLocalPort, udpRemotePort, espnowChannel;
 extern float rcLossTimeout, descendTime, disarmTilt, voltageScale, voltageLow;
 extern LowPassFilter<float> voltageFilter;
-extern const int MOT_RL, MOT_RR, MOT_FR, MOT_FL;
-extern const int W_AP, W_STA, W_ESPNOW;
+extern const int MOT_RL, MOT_RR, MOT_FR, MOT_FL, W_AP, W_STA, W_ESPNOW;
+extern const int FILL, BLINK, RAINBOW, EFFECT_AXEL;
 
 void setupConfig() {
 	#if defined(CONFIG_IDF_TARGET_ESP32S3) || defined(CONFIG_IDF_TARGET_ESP32C3)
