@@ -67,13 +67,14 @@ void setupConsole() {
 }
 
 void print(const char* format, ...) {
-	char buf[3000];
+	char *buf = new char[3000];
 	va_list args;
 	va_start(args, format);
-	vsnprintf(buf, sizeof(buf), format, args);
+	vsnprintf(buf, 3000, format, args);
 	va_end(args);
 	Serial.print(buf);
 	mavlinkPrint(buf);
+	delete[] buf;
 }
 
 void pause(float duration) {
