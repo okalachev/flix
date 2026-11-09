@@ -16,7 +16,7 @@ bool armed = false;
 Quaternion attitudeTarget;
 Vector ratesTarget;
 Vector ratesExtra; // feedforward rates
-Vector torqueTarget;
+Vector torqueTarget; // 0 - no torque, 1 - maximum torque
 float thrustTarget;
 
 PID rollRatePID(0.05, 0.2, 0.001, 0.3, 0.2);

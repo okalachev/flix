@@ -13,6 +13,8 @@ public:
 
 	Vector(float x, float y, float z): x(x), y(y), z(z) {};
 
+	Vector(float v): x(v), y(v), z(v) {};
+
 	bool zero() const {
 		return x == 0 && y == 0 && z == 0;
 	}
