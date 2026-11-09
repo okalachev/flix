@@ -280,7 +280,10 @@ void handleMessage(const mavlink_message_t& msg) {
 		if (m.target_system && m.target_system != mavlinkSysId) return;
 
 		if (m.payload_type == 789) { // 789 is led control
+			if (m.payload_length > sizeof(m.payload)) return;
 			for (int i = 0; i < m.payload_length; i += 4) {
+				if (m.payload_length < i + 4) break;
+				if (m.payload[i] >= led.size()) continue;
 				led[m.payload[i]] = RGB(m.payload[i + 1], m.payload[i + 2], m.payload[i + 3]);
 			}
 		}

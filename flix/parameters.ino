@@ -13,7 +13,6 @@ extern int wifiMode, wifiLongRange, wifiBroadcast, udpLocalPort, udpRemotePort, 
 extern float rcLossTimeout, descendTime, disarmTilt;
 extern float voltageScale, voltageLow;
 extern LowPassFilter<float> voltageFilter;
-extern float modeAnimation[4];
 
 #include "config.h"
 

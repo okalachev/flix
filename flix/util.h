@@ -67,7 +67,7 @@ public:
 	}
 };
 
-// Simple variant type for logging and parameters
+// Variant type for logging and parameters
 struct Value {
 	enum { EMPTY, FLOAT, INT, BOOL, FLOAT_FN, INT_FN, BOOL_FN } type;
 	union {

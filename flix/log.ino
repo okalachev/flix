@@ -116,7 +116,6 @@ void setupLog() {
 
 void loopLog() {
 	if (logBuffer == nullptr || !armed) return;
-
 	if (!logLength) resetLog(); // reset state on first log write
 
 	static Rate sync(2);

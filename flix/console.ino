@@ -237,7 +237,6 @@ void doCommand(String str, bool echo = false) {
 }
 
 void loopConsole() {
-
 	static String input;
 
 	while (Serial.available()) {

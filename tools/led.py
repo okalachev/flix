@@ -7,6 +7,7 @@ from pyflix import Flix
 
 flix = Flix()
 led_count = int(flix.get_param('LED_COUNT'))
+print('LED count:', led_count)
 flix.cli('led off')  # turn off current effect
 
 colors = [

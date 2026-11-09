@@ -201,8 +201,8 @@ You can control the onboard LED (and the connected RGB LED strip) using `set_led
 ```python
 flix.set_led(True)  # turn on single onboard LED
 flix.set_led(False)  # turn off single onboard LED
-flix.set_led(255, 0, 0)  # control single RGB LED
-flix.set_led((0, (255, 0, 0)), (1, (0, 255, 0)), (2, (0, 0, 255)))  # control multiple RGB LEDs
+flix.set_led((255, 0, 0))  # control single RGB LED
+flix.set_led(((0, 255, 0, 0), (1, 0, 255, 0), (2, 0, 0, 255))) # control multiple RGB LEDs
 flix.cli('led rainbow')  # control LED strip using console command
 ```
 

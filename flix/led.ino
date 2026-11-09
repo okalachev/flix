@@ -4,6 +4,7 @@
 // LED control
 
 #include <algorithm>
+#include <vector>
 #include <FlixPeriph.h>
 #include "util.h"
 
@@ -22,7 +23,7 @@ bool ledShowMode = true;
 int standbyEffect = RAINBOW;
 
 WS2812 ws2812;
-RGB *led; // array of RGB values
+std::vector<RGB> led; // vector of RGB values
 
 int effect = -1; // current effect
 RGB effectColor;
@@ -31,13 +32,13 @@ const int FILL = 0, BLINK = 1, RAINBOW = 2;
 const int EFFECT_AXEL = 100;
 
 void setupLED() {
-	delete[] led;
+	led.clear();
 
 	if (ledType == 0) {
 		pinMode(ledPin, OUTPUT);
-		led = new RGB[1];
+		led.resize(1);
 	} else if (ledType == 1) {
-		led = new RGB[ledCount];
+		led.resize(ledCount);
 		ws2812.begin(ledPin, ledCount);
 	}
 }
@@ -55,7 +56,7 @@ void loopLED() {
 		digitalWrite(ledPin, effectColor.r || effectColor.g || effectColor.b ? HIGH : LOW);
 	} else if (ledType == 1) {
 		ws2812.setBrightness(armed ? ledBrightnessArmed : ledBrightness);
-		ws2812.write(led);
+		ws2812.write(led.data());
 	}
 }
 
@@ -81,15 +82,15 @@ void startEffect(int e, uint8_t r, uint8_t g, uint8_t b) {
 	effectColor = RGB(r, g, b);
 
 	if (effect == FILL) {
-		std::fill_n(led, ledCount, effectColor);
+		std::fill_n(led.begin(), led.size(), effectColor);
 	}
 
-	if (effect == EFFECT_AXEL && ledCount >= 68) {
-		std::fill_n(led, 14, RGB(255, 0, 0));
-		std::fill_n(led + 54, 14, RGB(255, 0, 0));
-		std::fill_n(led + 14, 6, RGB(0, 0, 255));
-		std::fill_n(led + 48, 6, RGB(0, 0, 255));
-		std::fill_n(led + 20, 28, RGB(255, 255, 255));
+	if (effect == EFFECT_AXEL && led.size() >= 68) {
+		std::fill_n(led.begin(), 14, RGB(255, 0, 0));
+		std::fill_n(led.begin() + 54, 14, RGB(255, 0, 0));
+		std::fill_n(led.begin() + 14, 6, RGB(0, 0, 255));
+		std::fill_n(led.begin() + 48, 6, RGB(0, 0, 255));
+		std::fill_n(led.begin() + 20, 28, RGB(255, 255, 255));
 	}
 }
 

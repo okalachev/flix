@@ -1,6 +1,6 @@
 [project]
 name = "pyflix"
-version = "1.0.0"
+version = "1.1.0"
 description = "Python API for Flix drone"
 authors = [{ name="Oleg Kalachev", email="okalachev@gmail.com" }]
 license = "MIT"

@@ -10,7 +10,7 @@
 // #define AXEL
 
 #ifdef FLIX2
-#define RGB_BUILTIN 21
+#define RGB_BUILTIN 21 + SOC_GPIO_PIN_COUNT
 #ifndef CONFIG_IDF_TARGET_ESP32S3
 #error "Set Tools -> Board to ESP32S3 Dev Module for Flix2 board"
 #endif
@@ -22,7 +22,6 @@
 #if CONFIG_IDF_TARGET_ESP32S3 && !defined(ARDUINO_USB_CDC_ON_BOOT)
 #error "Set Tools -> USB CDC on Boot to Enabled"
 #endif
-extern const int RAW, ACRO, STAB, AUTO;
 
 void setDefaults() {
 	#if defined(CONFIG_IDF_TARGET_ESP32S3) || defined(CONFIG_IDF_TARGET_ESP32C3)
@@ -40,7 +39,7 @@ void setDefaults() {
 	#ifdef RGB_BUILTIN
 		// all boards with built-in RGB LED
 		ledType = 1; // WS2812
-		ledPin = RGB_BUILTIN;
+		ledPin = RGB_BUILTIN - SOC_GPIO_PIN_COUNT;
 	#endif
 
 	#ifdef FLIX2
@@ -57,6 +56,12 @@ void setDefaults() {
 
 	#ifdef AXEL
 		imuModel = 1; // MPU-6500
+		imuRotation = Vector(0, 0, 0);
+		motorPins[MOT_RL] = 10;
+		motorPins[MOT_RR] = 11;
+		motorPins[MOT_FR] = 12;
+		motorPins[MOT_FL] = 13;
+		voltagePin = 5;
 		ledType = 1; // WS2812
 		ledPin = 6;
 		ledCount = 68;
