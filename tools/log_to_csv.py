@@ -13,7 +13,7 @@ import struct
 import csv
 
 DIR = os.path.dirname(os.path.realpath(__file__))
-HEADER_FILE = os.path.join(DIR, 'log/log_header.txt')
+HEADER_FILE = os.path.join(DIR, 'log/header.txt')
 
 # Read log header
 try:
