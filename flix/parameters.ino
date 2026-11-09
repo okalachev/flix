@@ -6,16 +6,6 @@
 #include <Preferences.h>
 #include "util.h"
 
-extern int channelZero[16], channelMax[16];
-extern int rollChannel, pitchChannel, throttleChannel, yawChannel, armedChannel, modeChannel;
-extern int rcRxPin, voltagePin;
-extern int wifiMode, wifiLongRange, wifiBroadcast, udpLocalPort, udpRemotePort, espnowChannel;
-extern float rcLossTimeout, descendTime, disarmTilt;
-extern float voltageScale, voltageLow;
-extern LowPassFilter<float> voltageFilter;
-
-#include "config.h"
-
 Preferences storage;
 
 struct Parameter {
@@ -165,7 +155,6 @@ Parameter parameters[] = {
 
 void setupParameters() {
 	print("Setup parameters\n");
-	setDefaults();
 	storage.begin("flix");
 	// Read parameters from storage
 	for (auto &parameter : parameters) {

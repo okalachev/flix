@@ -4,7 +4,6 @@
 // Fail-safe functions
 
 extern float controlTime;
-extern float controlRoll, controlPitch, controlThrottle, controlYaw;
 
 float rcLossTimeout = 1;
 float descendTime = 10;

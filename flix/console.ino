@@ -8,9 +8,7 @@
 #include "util.h"
 #include "filter.h"
 
-extern const int MOT_RL, MOT_RR, MOT_FR, MOT_FL;
 extern const int RAW, ACRO, STAB, AUTO;
-extern const int W_AP, W_STA, W_ESPNOW;
 extern const int FILL, BLINK, RAINBOW;
 extern float t, dt, loopRate, controlTime;
 extern uint16_t channels[16];
@@ -208,9 +206,7 @@ void doCommand(String str, bool echo = false) {
 		print("PSRAM: %d KB\n", ESP.getPsramSize() / 1024);
 		print("Free PSRAM: %d KB\n", ESP.getFreePsram() / 1024);
 		print("Reset reason: %d\n", esp_reset_reason());
-#ifdef VERSION
 		print("Version: %s\n", STRINGIFY(VERSION));
-#endif
 		print("Build date: " __DATE__ " " __TIME__ "\n");
 		// Print tasks table
 		print("Num  Task                MinSt  Prio  Core  CPU%%\n");

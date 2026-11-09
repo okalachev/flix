@@ -8,7 +8,6 @@
 
 extern float controlTime;
 extern float voltage;
-extern int voltagePin, rcRxPin;
 
 int mavlinkSysId = 1;
 
