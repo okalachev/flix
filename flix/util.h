@@ -7,6 +7,7 @@
 
 #include <math.h>
 #include <ESP32_NOW_Serial.h>
+#include <Preferences.h>
 
 const float ONE_G = 9.80665;
 extern float t;
@@ -54,6 +55,12 @@ void splitString(String& str, String& token0, String& token1, String& token2) {
 	token2 = strtok(NULL, "");
 	if (token1.c_str() == NULL) token1 = "";
 	if (token2.c_str() == NULL) token2 = "";
+}
+
+// Read a string from Preferences without printing error if the key doesn't exist
+String getString(Preferences& preferences, const char* key, const char* default_) {
+	if (!preferences.isKey(key)) return default_;
+	return preferences.getString(key, default_);
 }
 
 // Simplified ESP-NOW Serial without resends

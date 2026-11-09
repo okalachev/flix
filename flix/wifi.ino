@@ -32,20 +32,20 @@ void setupWiFi() {
 	WiFi.enableLongRange(wifiLongRange);
 
 	if (wifiMode == W_AP) {
-		WiFi.softAP(storage.getString("WIFI_AP_SSID", "flix").c_str(), storage.getString("WIFI_AP_PASS", "flixwifi").c_str());
+		WiFi.softAP(getString(storage, "WIFI_AP_SSID", "flix").c_str(), getString(storage, "WIFI_AP_PASS", "flixwifi").c_str());
 		udp.begin(udpLocalPort);
 	}
 
 	if (wifiMode == W_STA) {
-		WiFi.begin(storage.getString("WIFI_STA_SSID", "").c_str(), storage.getString("WIFI_STA_PASS", "").c_str());
+		WiFi.begin(getString(storage, "WIFI_STA_SSID", "").c_str(), getString(storage, "WIFI_STA_PASS", "").c_str());
 		udp.begin(udpLocalPort);
 	}
 
 	if (wifiMode == W_ESPNOW) {
 		WiFi.mode(WIFI_AP);
 		WiFi.setChannel(espnowChannel);
-		espnow.addr(MacAddress(storage.getString("ESPNOW_PEER_MAC", "FF:FF:FF:FF:FF:FF").c_str()));
-		String key = storage.getString("ESPNOW_PEER_KEY", "");
+		espnow.addr(MacAddress(getString(storage, "ESPNOW_PEER_MAC", "FF:FF:FF:FF:FF:FF").c_str()));
+		String key = getString(storage, "ESPNOW_PEER_KEY", "");
 		espnow.setKey(key.isEmpty() ? nullptr : (const uint8_t *)key.c_str());
 		espnow.begin();
 		espnowBroadcast.begin();
