@@ -13,7 +13,7 @@
 #define VERSION "unknown"
 #endif
 
-#if CONFIG_IDF_TARGET_ESP32 && !defined(LED_BUILTIN)
+#ifndef LED_BUILTIN
 #define LED_BUILTIN 2 // use most common LED pin for ESP32 boards
 #endif
 

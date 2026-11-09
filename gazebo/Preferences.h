@@ -54,6 +54,10 @@ public:
 		return storage[key];
 	}
 
+	String getString(const char *key, const String defaultValue) {
+		return String(); // mock
+	}
+
 	bool clear() {
 		storage.clear();
 		writeToFile();
