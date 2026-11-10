@@ -3,6 +3,7 @@
 
 // Main firmware file
 
+#include "config.h"
 #include "vector.h"
 #include "quaternion.h"
 #include "util.h"
@@ -16,6 +17,7 @@ extern bool landed;
 extern float motors[4];
 
 void setup() {
+	setupConfig();
 	setupConsole();
 	print("Initializing Flix\n");
 	setupParameters();

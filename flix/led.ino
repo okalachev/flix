@@ -8,12 +8,6 @@
 #include <FlixPeriph.h>
 #include "util.h"
 
-#ifndef LED_BUILTIN
-#define LED_BUILTIN 2 // for ESP32 Dev Module
-#endif
-
-extern float voltageLow;
-
 int ledType = 0; // 0 - single LED, 1 - WS2812, -1 - disabled
 int ledPin = LED_BUILTIN;
 int ledCount = 1;

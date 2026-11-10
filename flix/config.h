@@ -9,6 +9,14 @@
 // #define FLIX2
 // #define AXEL
 
+#ifndef VERSION
+#define VERSION "unknown"
+#endif
+
+#ifndef LED_BUILTIN
+#define LED_BUILTIN 2 // use most common LED pin for ESP32 boards
+#endif
+
 #ifdef FLIX2
 #define RGB_BUILTIN 21 + SOC_GPIO_PIN_COUNT
 #ifndef CONFIG_IDF_TARGET_ESP32S3
@@ -23,7 +31,24 @@
 #error "Set Tools -> USB CDC on Boot to Enabled"
 #endif
 
-void setDefaults() {
+#include "filter.h"
+#include "vector.h"
+
+// Declare configuration variables
+extern int imuModel, imuIntPin, imuCsPin, ledType, ledPin, ledCount, standbyEffect;
+extern Vector imuRotation;
+extern int motorPins[4];
+extern int pwmFrequency, pwmResolution, pwmStop, pwmMin, pwmMax;
+extern int rollChannel, pitchChannel, throttleChannel, yawChannel, armedChannel, modeChannel;
+extern int channelZero[16], channelMax[16];
+extern int rcRxPin, voltagePin;
+extern int wifiMode, wifiLongRange, wifiBroadcast, udpLocalPort, udpRemotePort, espnowChannel;
+extern float rcLossTimeout, descendTime, disarmTilt, voltageScale, voltageLow;
+extern LowPassFilter<float> voltageFilter;
+extern const int MOT_RL, MOT_RR, MOT_FR, MOT_FL, W_AP, W_STA, W_ESPNOW;
+extern const int FILL, BLINK, RAINBOW, EFFECT_AXEL;
+
+void setupConfig() {
 	#if defined(CONFIG_IDF_TARGET_ESP32S3) || defined(CONFIG_IDF_TARGET_ESP32C3)
 		pwmFrequency = 38000;
 	#endif
