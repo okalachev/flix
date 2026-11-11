@@ -201,6 +201,8 @@ ESP32 ADC can measure only up to 3.3 V, so you need to use a voltage divider to 
 
 After this setup, you should see the battery voltage in QGroundControl top panel or using `pw` command in the console.
 
+When the voltage is measured, the drone refuses to arm with the battery below `PWR_VOLT_LOW`, and lands if the voltage stays below it for several seconds in flight.
+
 ### RGB LED strip (optional)
 
 Flix can indicate its current state using an RGB LED strip. To use it connect its **+** and **-** inputs to the battery, and its signal line to any available GPIO pin. Set the following parameters:
@@ -247,6 +249,61 @@ You can control the LED manually using `led` command in the console or using the
 There are several ways to control the drone's flight: using **smartphone** (Wi-Fi), using **SBUS remote control**, or using **USB remote control** (Wi-Fi/ESP-NOW).
 
 ### Control with a smartphone
+
+#### Using the web remote
+
+<img src="img/web-remote.png" width="600" alt="Flix web remote">
+
+The firmware serves a remote control page, so no app is needed:
+
+1. Power the drone using the battery.
+2. Connect your smartphone to the appeared `flix` Wi-Fi network (password: `flixwifi`).
+3. Open `http://192.168.4.1/` in the browser. Landscape orientation is recommended.
+4. Lower the throttle (left stick), press *ARM* and fly. Press *STOP* to disarm the motors immediately.
+
+The page only displays telemetry until you touch a stick, press *ARM* or switch on *TILT*, so it doesn't interfere with another remote control. If the page stops sending the controls (the browser is closed or the connection is lost), the drone descends and disarms, as on any other remote control loss.
+
+What is on the page:
+
+* **Status bar** — connection, armed state, flight mode, battery voltage, link latency and packet loss, control loop rate.
+* **Left stick** — throttle and yaw. The throttle stays where you release it, the yaw returns to the center.
+* **Right stick** — pitch and roll.
+* **Attitude indicator and motor outputs** in the center.
+* ***ARM*** and ***STOP*** buttons. Arming requires the throttle to be down.
+* ***STAB* / *ACRO* / *RAW*** — flight mode switch.
+* **Sensitivity button** (*40%–100%*) — scales the pitch and roll commands.
+* ***TILT*** and ***CONSOLE*** buttons, see below.
+
+##### Stick control
+
+The default mode: both sticks work as on a regular remote control. Use the sensitivity button to make the drone calmer or more agile.
+
+##### Tilt control
+
+<img src="img/web-remote-tilt.png" width="600" alt="Flix web remote in the tilt control mode">
+
+Press *TILT* to control the drone by tilting the phone:
+
+* The pose of the phone at the moment you press *TILT* is the neutral one. Tilt the phone forward, backward, left or right from this pose to command pitch and roll. The right stick turns green and shows the current command.
+* The throttle and yaw stay on the left stick.
+* *Tilt gain* slider sets the sensitivity: at 100% the full command corresponds to 30° of tilt.
+
+A typical flight: press *TILT*, lower the throttle, press *ARM*, set the throttle with the left stick and steer the drone by tilting the phone.
+
+> [!NOTE]
+> Browsers provide the motion sensors data to secure (HTTPS) pages only, so the tilt control needs a one-time setup. In Chrome on Android open `chrome://flags`, find *Insecure origins treated as secure*, add `http://192.168.4.1` there, set it to *Enabled* and relaunch the browser.
+
+##### Lift control (experimental)
+
+In the tilt control mode, press *LIFT* under the left stick to control the throttle by raising and lowering the phone: at 100% gain the full throttle range corresponds to about 23 cm of travel. The slider next to the button sets the gain.
+
+The height is estimated from the accelerometer, so it is approximate. A finger on the left stick always has priority, and the lift control continues from the throttle you set. Try it without the propellers first.
+
+##### Console and telemetry log
+
+<img src="img/web-remote-console.png" width="600" alt="Flix web remote console">
+
+*CONSOLE* opens the drone's console: the log, the command input with history (arrow keys), and buttons for the frequent commands. *save log* downloads the telemetry received by the page (attitude, motor outputs, voltage, sticks, latency at 20 Hz) as a CSV file.
 
 #### Using Mavlink Joystick app (Android)
 

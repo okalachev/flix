@@ -73,6 +73,7 @@ void print(const char* format, ...) {
 	va_end(args);
 	Serial.print(buf);
 	mavlinkPrint(buf);
+	webrcPrint(buf);
 }
 
 void pause(float duration) {
