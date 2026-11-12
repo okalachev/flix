@@ -78,6 +78,9 @@ public:
 		this->append(reinterpret_cast<const char*>(cstr), length);
 		return true;
 	}
+	String substring(unsigned int left, unsigned int right) const {
+		return String(this->substr(left, right - left).c_str());
+	}
 };
 
 class Print;

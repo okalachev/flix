@@ -89,8 +89,9 @@ void pause(float duration) {
 
 void doCommand(String str, bool echo = false) {
 	// parse command
-	String command, arg0, arg1;
-	splitString(str, command, arg0, arg1);
+	String arg[5];
+	split(str, arg);
+	String command = arg[0];
 	if (command.isEmpty()) return;
 
 	// echo command
@@ -103,14 +104,15 @@ void doCommand(String str, bool echo = false) {
 	// execute command
 	if (command == "help") {
 		printHelp();
-	} else if (command == "p" && arg1 == "") {
-		printParameters(arg0.c_str());
+	} else if (command == "p" && arg[2] == "") {
+		printParameters(arg[1].c_str());
 	} else if (command == "p") {
-		bool success = setParameter(arg0.c_str(), arg1.toFloat());
+		bool success = setParameter(arg[1].c_str(), arg[2].toFloat());
 		if (success) {
-			print("%s = %g\n", arg0.c_str(), getParameter(arg0.c_str()));
+			arg[1].toUpperCase();
+			print("%s = %g\n", arg[1].c_str(), getParameter(arg[1].c_str()));
 		} else {
-			print("Cannot set parameter: %s\n", arg0.c_str());
+			print("Cannot set parameter: %s\n", arg[1].c_str());
 		}
 	} else if (command == "preset") {
 		resetParameters();
@@ -151,52 +153,53 @@ void doCommand(String str, bool echo = false) {
 		print("armed: %d\n", armed);
 	} else if (command == "pw") {
 		print("Voltage: %.1f V\n", voltage);
-	} else if (command == "wifi" && arg0 == "") {
+	} else if (command == "wifi" && arg[1] == "") {
 		printWiFiInfo();
 	} else if (command == "wifi") {
-		setWiFiMode(arg0);
+		setWiFiMode(arg[1]);
 	} else if (command == "ap") {
-		configWiFi(W_AP, arg0.c_str(), arg1.c_str());
+		configWiFi(W_AP, arg[1].c_str(), arg[2].c_str());
 	} else if (command == "sta") {
-		configWiFi(W_STA, arg0.c_str(), arg1.c_str());
+		configWiFi(W_STA, arg[1].c_str(), arg[2].c_str());
 	} else if (command == "espnow") {
-		configWiFi(W_ESPNOW, arg0.c_str(), arg1.c_str());
+		configWiFi(W_ESPNOW, arg[1].c_str(), arg[2].c_str());
 	} else if (command == "mot") {
 		print("front-right %g front-left %g rear-right %g rear-left %g\n",
 			motors[MOT_FR], motors[MOT_FL], motors[MOT_RR], motors[MOT_RL]);
-	} else if (command == "log" && arg0 == "") {
+	} else if (command == "log" && arg[1] == "") {
 		printLogInfo();
-	} else if (command == "log" && arg0 == "header") {
+	} else if (command == "log" && arg[1] == "header") {
 		printLogHeader();
-	} else if (command == "log" && arg0 == "reset") {
+	} else if (command == "log" && arg[1] == "reset") {
 		resetLog();
-	} else if (command == "log" && arg0 == "expose" && arg1 != "") {
-		exposeLogValue(arg1.c_str());
+	} else if (command == "log" && arg[1] == "expose" && arg[2] != "") {
+		exposeLogValue(arg[2].c_str());
 	} else if (command == "l") {
-		printLogValues(arg0.c_str());
+		printLogValues(arg[1].c_str());
 	} else if (command == "cr") {
 		calibrateRC();
 	} else if (command == "ca") {
 		calibrateAccel();
 	} else if (command == "mfr") {
-		testMotor(MOT_FR, arg0.isEmpty() ? 0.2 : arg0.toFloat());
+		testMotor(MOT_FR, arg[1].isEmpty() ? 0.2 : arg[1].toFloat());
 	} else if (command == "mfl") {
-		testMotor(MOT_FL, arg0.isEmpty() ? 0.2 : arg0.toFloat());
+		testMotor(MOT_FL, arg[1].isEmpty() ? 0.2 : arg[1].toFloat());
 	} else if (command == "mrr") {
-		testMotor(MOT_RR, arg0.isEmpty() ? 0.2 : arg0.toFloat());
+		testMotor(MOT_RR, arg[1].isEmpty() ? 0.2 : arg[1].toFloat());
 	} else if (command == "mrl") {
-		testMotor(MOT_RL, arg0.isEmpty() ? 0.2 : arg0.toFloat());
+		testMotor(MOT_RL, arg[1].isEmpty() ? 0.2 : arg[1].toFloat());
 	} else if (command == "led") {
 		// parse effect
 		int effect;
-		if (arg0 == "off" || arg0 == "fill") effect = FILL;
-		else if (arg0 == "blink") effect = BLINK;
-		else if (arg0 == "rainbow") effect = RAINBOW;
-		else effect = arg0.toInt();
+		if (arg[1] == "off" || arg[1] == "fill") effect = FILL;
+		else if (arg[1] == "blink") effect = BLINK;
+		else if (arg[1] == "rainbow") effect = RAINBOW;
+		else effect = arg[1].toInt();
 		// parse color
-		int r = 255, g = 255, b = 255; // assume white color by default
-		sscanf(arg1.c_str(), "%d %d %d", &r, &g, &b);
-		if (arg0 == "off") r = g = b = 0;
+		int r = arg[2].length() > 0 ? arg[2].toInt() : 255; // use white by default
+		int g = arg[3].length() > 0 ? arg[3].toInt() : 255;
+		int b = arg[4].length() > 0 ? arg[4].toInt() : 255;
+		if (arg[1] == "off") r = g = b = 0;
 		startEffect(effect, r, g, b);
 	} else if (command == "sys") {
 #ifdef ESP32
