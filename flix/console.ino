@@ -47,7 +47,7 @@ const char* help =
 "wifi ap/sta/espnow/off - set Wi-Fi mode\n"
 "ap <ssid> <password> - configure Wi-Fi access point\n"
 "sta <ssid> <password> - configure Wi-Fi client mode\n"
-"espnow <mac> [<key>] - configure ESP-NOW peer\n"
+"espnow <channel> <mac> [<key>] - configure ESP-NOW\n"
 "mot - show motor output\n"
 "mfr/mfl/mrr/mrl [<thrust>] - test motor (remove props)\n"
 "led off/fill/blink/rainbow/<number> [<r> <g> <b>] - set LED\n"
@@ -162,7 +162,8 @@ void doCommand(String str, bool echo = false) {
 	} else if (command == "sta") {
 		configWiFi(W_STA, arg[1].c_str(), arg[2].c_str());
 	} else if (command == "espnow") {
-		configWiFi(W_ESPNOW, arg[1].c_str(), arg[2].c_str());
+		espnowChannel = arg[1].toInt();
+		configWiFi(W_ESPNOW, arg[2].c_str(), arg[3].c_str());
 	} else if (command == "mot") {
 		print("front-right %g front-left %g rear-right %g rear-left %g\n",
 			motors[MOT_FR], motors[MOT_FL], motors[MOT_RR], motors[MOT_RL]);

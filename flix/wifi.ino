@@ -23,8 +23,8 @@ int udpRemotePort = 14550;
 IPAddress udpRemoteIP = "255.255.255.255";
 WiFiUDP udp;
 
-ESPNOWSerial espnow(NULL, 0, WIFI_IF_AP);
-ESPNOWSerial espnowBroadcast(ESP_NOW.BROADCAST_ADDR, 0, WIFI_IF_AP);
+ESPNOWSerial espnow(NULL, 0, WIFI_IF_STA);
+ESPNOWSerial espnowBroadcast(ESP_NOW.BROADCAST_ADDR, 0, WIFI_IF_STA); // unencrypted broadcast peer
 int espnowChannel = 6;
 
 void setupWiFi() {
@@ -42,7 +42,7 @@ void setupWiFi() {
 	}
 
 	if (wifiMode == W_ESPNOW) {
-		WiFi.mode(WIFI_AP);
+		WiFi.mode(WIFI_STA);
 		WiFi.setChannel(espnowChannel);
 		espnow.addr(MacAddress(getString(storage, "ESPNOW_PEER_MAC", "FF:FF:FF:FF:FF:FF").c_str()));
 		String key = getString(storage, "ESPNOW_PEER_KEY", "");
@@ -59,7 +59,10 @@ void sendWiFi(const uint8_t *buf, int len) {
 		espnow.write(buf, len);
 
 		static Rate discovery(2);
-		if (espnow.isEncrypted() && discovery) espnowBroadcast.write((const uint8_t *)"flix", 4); // broadcast message to help finding this device
+		if (espnow.isEncrypted() && discovery) {
+			String discoveryString = "flix " + MacAddress(espnow.addr()).toString();
+			espnowBroadcast.write((const uint8_t *)discoveryString.c_str(), discoveryString.length());
+		}
 		return;
 	}
 
@@ -88,10 +91,10 @@ void printWiFiInfo() {
 		print("Mode: ESP-NOW\n");
 		print("ESP-NOW version: %d\n", ESP_NOW.getVersion());
 		print("Max packet size: %d\n", ESP_NOW.getMaxDataLen());
-		print("MAC: %s\n", WiFi.softAPmacAddress().c_str());
+		print("MAC: %s\n", WiFi.macAddress().c_str());
 		print("Peer MAC: %s\n", MacAddress(espnow.addr()).toString().c_str());
 		print("Encrypted: %d\n", espnow.isEncrypted());
-		print("Channel: %d\n", espnow.getChannel());
+		print("Channel: %d\n", WiFi.channel());
 		print("Lost packets: %d\n", espnow.lost);
 	} else if (WiFi.getMode() == WIFI_MODE_AP) {
 		print("Mode: Access Point (AP)\n");

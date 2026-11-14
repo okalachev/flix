@@ -9,57 +9,85 @@
 #include <MacAddress.h>
 #include <MAVLink.h>
 #include <Preferences.h>
+#include <freertos/semphr.h>
 #include "../../flix/util.h"
 
-const int CHANNEL = 6;
-char key[ESP_NOW_KEY_LEN + 1] = {0}; // with trailing null
-
 Preferences storage;
-
-std::vector<ESPNOWSerial *> peers;
+String key; // may be empty
+String discoveryString;
+int channel;
+bool broadcast = false; // broadcast mode, use only one broadcast peer
+std::vector<ESPNOWSerial *> peers; // list of peers to send data to
+ESPNOWSerial *broadcastPeer;
+xSemaphoreHandle peersMutex;
 
 void onNewPeer(const esp_now_recv_info_t *info, const uint8_t *data, int len, void *arg) {
-	if (len != 4 || memcmp(data, "flix", 4) != 0) return; // check if discovery message
+	if (len != discoveryString.length() || memcmp(data, discoveryString.c_str(), discoveryString.length()) != 0) {
+		return; // not a discovery message
+	}
 
 	Serial.printf("New peer: " MACSTR "\n", MAC2STR(info->src_addr));
-	ESPNOWSerial *link = new ESPNOWSerial(info->src_addr, CHANNEL, WIFI_IF_AP);
+	ESPNOWSerial *link = new ESPNOWSerial(info->src_addr, channel, WIFI_IF_STA, (const uint8_t *)key.c_str());
 	link->begin();
-	link->setKey((const uint8_t *)key);
+
+	xSemaphoreTake(peersMutex, portMAX_DELAY);
 	peers.push_back(link);
+	xSemaphoreGive(peersMutex);
 }
 
 void setup() {
-	Serial.begin(115200);
-	WiFi.mode(WIFI_AP);
-	WiFi.setSleep(false);
-	WiFi.setChannel(CHANNEL);
-
-	ESP_NOW.onNewPeer(onNewPeer, NULL);
-	ESP_NOW.begin();
-
+	peersMutex = xSemaphoreCreateMutex();
 	storage.begin("espnow-proxy");
+
+	// Generate or retrieve the key
 	if (!storage.isKey("key")) {
 		generateRandomKey();
 		storage.putString("key", key);
 	}
-	strcpy(key, storage.getString("key").c_str());
+	key = storage.getString("key");
 
-	// Discover the first peer
+	// Generate or retrieve the channel
+	if (!storage.isKey("channel")) {
+		channel = random(1, 14); // WiFi channels 1-13
+		storage.putInt("channel", channel);
+	}
+	channel = storage.getInt("channel");
+
+	Serial.begin(115200);
+	WiFi.mode(WIFI_STA);
+	WiFi.setSleep(false);
+	WiFi.setChannel(channel);
+	WiFi.STA.begin(false);
+
+	MacAddress mac = WiFi.macAddress();
+	discoveryString = "flix " + mac.toString();
+
+	if (broadcast) {
+		ESPNOWSerial *peer = new ESPNOWSerial(ESP_NOW.BROADCAST_ADDR, channel, WIFI_IF_STA);
+		peer->begin();
+		peers.push_back(peer);
+	}
+
+	ESP_NOW.onNewPeer(onNewPeer, NULL);
+	ESP_NOW.begin();
+
+	// Print setup command until at least one peer is available
 	while (peers.empty()) {
-		Serial.printf("espnow %s %s\n", WiFi.softAPmacAddress().c_str(), key);
+		Serial.printf("espnow %d %s %s\n", channel, mac.toString().c_str(), key.c_str());
 		delay(500);
 	}
 }
 
 void generateRandomKey() {
+	key.clear();
 	const char chars[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*-_+=";
 	for (int i = 0; i < ESP_NOW_KEY_LEN; i++) {
-		key[i] = chars[random(0, strlen(chars))];
+		key += chars[random(0, strlen(chars))];
 	}
 }
 
 void loop() {
-	uint8_t buf[5000];
+	static uint8_t buf[5000];
 
 	// Send from Serial to ESP-NOW
 	while (Serial.available() > 0) {
@@ -72,9 +100,13 @@ void loop() {
 		mavlink_status_t status;
 		if (mavlink_parse_char(MAVLINK_COMM_0, (uint8_t)b, &msg, &status)) {
 			int len = mavlink_msg_to_send_buffer(buf, &msg);
+
+			// Send to registered peers
+			xSemaphoreTake(peersMutex, portMAX_DELAY);
 			for (ESPNOWSerial *link : peers) {
 				link->write(buf, len);
 			}
+			xSemaphoreGive(peersMutex);
 		}
 	}
 
