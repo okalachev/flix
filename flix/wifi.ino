@@ -133,7 +133,8 @@ void configWiFi(int mode, const char *first, const char *second) {
 		print("Invalid configuration\n");
 		return;
 	}
-	print("✓ Reboot to apply new settings\n");
+	wifiMode = mode;
+	print("✓ Wi-Fi configuration is changed, reboot to apply\n");
 }
 
 void setWiFiMode(const String& mode) {
