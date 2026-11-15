@@ -10,6 +10,7 @@
 #include <MAVLink.h>
 #include <Preferences.h>
 #include <freertos/semphr.h>
+#include <CRSF.h>
 #include "../../flix/util.h"
 
 Preferences storage;
@@ -20,6 +21,9 @@ bool broadcast = false; // broadcast mode, use only one broadcast peer
 std::vector<ESPNOWSerial *> peers; // list of peers to send data to
 ESPNOWSerial *broadcastPeer;
 xSemaphoreHandle peersMutex;
+int crsfRxPin = 26;
+
+CRSF crsf(Serial1);
 
 void onNewPeer(const esp_now_recv_info_t *info, const uint8_t *data, int len, void *arg) {
 	if (len != discoveryString.length() || memcmp(data, discoveryString.c_str(), discoveryString.length()) != 0) {
@@ -71,6 +75,8 @@ void setup() {
 	ESP_NOW.onNewPeer(onNewPeer, NULL);
 	ESP_NOW.begin();
 
+	crsf.begin(crsfRxPin, -1, true, 400000);
+
 	// Print setup command until at least one peer is available
 	while (peers.empty()) {
 		Serial.printf("espnow %d %s %s\n", channel, mac.toString().c_str(), key.c_str());
@@ -116,5 +122,21 @@ void loop() {
 		if (len > 0) {
 			Serial.write(buf, len);
 		}
+	}
+
+	// Read channels from CRSF
+	if (crsf.read()) {
+		uint16_t channels[16];
+		crsf.getChannels(channels);
+		mavlink_message_t msg;
+		mavlink_msg_rc_channels_override_pack(255, MAV_COMP_ID_UART_BRIDGE, &msg, 0, 0,
+			channels[0], channels[1], channels[2], channels[3], channels[4], channels[5],
+			channels[6], channels[7], channels[8], channels[9], channels[10], channels[11],
+			channels[12], channels[13], channels[14], channels[15], 0, 0);
+		int len = mavlink_msg_to_send_buffer(buf, &msg);
+		for (ESPNOWSerial *link : peers) {
+			link->write(buf, len);
+		}
+		Serial.write(buf, len);
 	}
 }
