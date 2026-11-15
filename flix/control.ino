@@ -10,7 +10,7 @@
 #include "util.h"
 
 const int RAW = 0, ACRO = 1, STAB = 2, AUTO = 3; // flight modes
-int mode = STAB;
+int mode;
 bool armed = false;
 
 Quaternion attitudeTarget;
@@ -31,6 +31,10 @@ int flightModes[] = {STAB, STAB, STAB}; // map for rc mode switch
 
 extern const int MOT_RL, MOT_RR, MOT_FR, MOT_FL;
 extern float controlRoll, controlPitch, controlThrottle, controlYaw, controlMode;
+
+void setupControl() {
+	mode = flightModes[0]; // use flight mode 0 by default
+}
 
 void control() {
 	interpretControls();

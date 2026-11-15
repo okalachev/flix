@@ -28,6 +28,7 @@ void setup() {
 	setupIMU();
 	setupRC();
 	setupEstimate();
+	setupControl();
 	setupLog();
 	print("Initializing complete\n");
 	printHelp();

@@ -56,6 +56,7 @@ public:
 		this->resetConnection = event::Events::ConnectWorldReset(std::bind(&ModelFlix::OnReset, this));
 		initNode();
 		Serial.begin(0);
+		setupControl();
 		setupParameters();
 		setupLog();
 		rcRxPin = 1; // set rc pin to enable rc reading
