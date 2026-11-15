@@ -13,6 +13,10 @@
 #include <CRSF.h>
 #include "../../flix/util.h"
 
+#ifndef LED_BUILTIN
+#define LED_BUILTIN 2 // most common LED pin for ESP32 boards
+#endif
+
 Preferences storage;
 String key; // may be empty
 String discoveryString;
@@ -37,11 +41,15 @@ void onNewPeer(const esp_now_recv_info_t *info, const uint8_t *data, int len, vo
 	xSemaphoreTake(peersMutex, portMAX_DELAY);
 	peers.push_back(link);
 	xSemaphoreGive(peersMutex);
+
+	digitalWrite(LED_BUILTIN, HIGH);
 }
 
 void setup() {
 	peersMutex = xSemaphoreCreateMutex();
 	storage.begin("espnow-proxy");
+
+	pinMode(LED_BUILTIN, OUTPUT);
 
 	// Generate or retrieve the key
 	if (!storage.isKey("key")) {
