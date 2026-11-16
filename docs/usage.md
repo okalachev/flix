@@ -370,9 +370,7 @@ p WIFI_MODE 0
 
 ### Using ESP-NOW
 
-[ESP-NOW](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/network/esp_now.html) is a low level wireless communication protocol. It can provide lower latency, better reliability, and longer range than Wi-Fi. However, it requires a second ESP32 board to be used as a proxy for the computer.
-
-<img src="img/espnow-connection.jpg" width="600">
+[ESP-NOW](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/network/esp_now.html) is a low level wireless communication protocol. It can provide lower latency, better reliability, and longer range than Wi-Fi. However, it requires a second ESP32 board to be used as a proxy.
 
 To setup ESP-NOW communication:
 
@@ -386,12 +384,43 @@ To setup ESP-NOW communication:
 
    Copy and run this line as a console command on each drone you want to bind to this proxy board. [The maximum number](https://github.com/espressif/esp-idf/blob/e95cab4be8fd293e3f3323181e7a2280874da6f7/components/esp_wifi/include/esp_now.h#L32-L33) of simultaneously connected drones is 20 (unencrypted) or 6 (encrypted).
 
-3. Go to the QGroundControl menu ⇒ *Application Settings* ⇒ *Comm Links*, add new link with the following settings:
+#### Using a computer as a remote control host
+
+<img src="img/espnow-connection.jpg" width="600">
+
+1. Go to the QGroundControl menu ⇒ *Application Settings* ⇒ *Comm Links*, add new link with the following settings:
    * Name: ESP32.
    * Type: Serial.
    * Serial Port: choose the port of the proxy ESP32 board, e. g. `/dev/cu.usbserial-0001`.
    * Baud Rate: 115200.
-4. Click *Save*, click *Connect*. QGroundControl should connect to the drone using ESP-NOW and begin showing the telemetry.
+2. Click *Save*, click *Connect*. QGroundControl should connect to the drone using ESP-NOW and begin showing the telemetry.
+3. Connect your USB remote control to the computer and fly the drone!
 
 > [!TIP]
 > Make sure Arduino IDE is not running when using ESP-NOW proxy board, as it may block the serial port.
+
+#### Without a computer (Crossfire protocol)
+
+<img src="img/espnow-crsf.jpg" width="300">
+
+> [!NOTE]
+> This setup has been tested with a Radiomaster TX12 MKII transmitter (works) and BetaFPV LiteRadio 3 (**didn't work, requires additional investigation**).
+
+1. Connect your ESP32 board to the external radio module interface of your remote control:
+
+   |ESP32 DevKit pin|Remote control pin|
+   |-|-|
+   |VIN|VBAT|
+   |GND|GND|
+   |GPIO26|S.PORT|
+
+2. Configure your remote control to use the CRSF (Crossfire) protocol for the external radio with baud rate 400000.
+3. The proxy firmware should detect the connected remote and start transmitting the control signals to the drone.
+4. Calibrate your remote control using `cr` command in the console.
+
+Example of DevKit board placement in the Radiomaster TX12 transmitter:
+
+<img src="img/tx12-crsf.jpg" width="300">
+
+> [!Warning]
+> If using a remote control with 2S battery or more, make sure the voltage levels are compatible with the ESP32 board or use a DC-DC 5V step-down voltage regulator.
