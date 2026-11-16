@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>微辣火龙果 2.0 · Flix 耀坤整理版 v1.1 —— 台架实测清单（接板后照着做）</title>
+<title>微辣火龙果 2.0 · Flix 耀坤整理版 v1.2.1 —— 台架实测清单（接板后照着做）</title>
 <style>
   :root{
     --brand:#c8102e; --brand-dark:#8f0c22; --ink:#0f172a; --ink2:#334155;
@@ -76,8 +76,14 @@
 <body>
 <div class="wrap">
 <div class="topbar"><span><b>耀坤智联 / YaoKunSmart</b> · Flix 整理版 v1.1</span><span class="tag">台架实测清单 · Bench Checklist</span></div>
-<h1>微辣火龙果 2.0 · Flix 耀坤整理版 v1.1 —— 台架实测清单（接板后照着做）</h1>
-<blockquote><p>目的：验证「烧录能启动」「IMU 自动识别正确」「遥控（ESP-NOW / SBUS）能用」「电机位置对应」四项。</p><p><strong>全程必须拆桨。</strong> 本清单通过 = 放行发货 / 推送到 <code>yaokun-organized</code> 分支。</p><p>⚠️ <strong>这是 ESP32 经典片（不是 S3）</strong>：烧录地址、串口芯片、引脚、IMU 总线都与耀坤 S3 完全不同，</p><p><strong>不要拿 S3 的清单或引脚表套用</strong>（电机脚接错 = 上电乱序起转）。</p><p>🌐 English version: <a href="MildlySpicyDragon_Bench_Test_Checklist_EN.md">MildlySpicyDragon_Bench_Test_Checklist_EN.md</a></p><p>🛩️ 姊妹篇（耀坤 S3 板）：<a href="耀坤S3版台架实测清单_v1.1.md">耀坤S3版台架实测清单_v1.1.md</a></p><p>🖨️ 图文版（浏览器直接打开 / 可打印）：<a href="火龙果版台架实测清单V1.1.html">火龙果版台架实测清单V1.1.html</a></p><p>引脚的权威定义在 <code>Firmware/flix/board.h</code> 的 <code>BOARD_HLG_V2</code> 分支；本文与其不一致时以源码为准。</p></blockquote>
+<h1>微辣火龙果 2.0 · Flix 耀坤整理版 v1.2.1 —— 台架实测清单（接板后照着做）</h1>
+<blockquote><p>文档版本 <strong>v1.2.1</strong>（2026-11-16 修订）· 对应固件 <strong>v1.2</strong>（本次只改文档，固件未变）</p></blockquote>
+<blockquote><p>目的：验证「烧录能启动」「IMU 自动识别正确」「遥控（ESP-NOW / SBUS）能用」「电机位置对应」四项。</p><p><strong>全程必须拆桨。</strong> 本清单通过 = 放行发货 / 推送到 <code>yaokun-organized</code> 分支。</p><p>⚠️ <strong>这是 ESP32 经典片（不是 S3）</strong>：烧录地址、串口芯片、引脚、IMU 总线都与耀坤 S3 完全不同，</p><p><strong>不要拿 S3 的清单或引脚表套用</strong>（电机脚接错 = 上电乱序起转）。</p><p>🌐 English version: <a href="MildlySpicyDragon_Bench_Test_Checklist_EN.md">MildlySpicyDragon_Bench_Test_Checklist_EN.md</a></p><p>🛩️ 姊妹篇（耀坤 S3 板）：<a href="耀坤S3版台架实测清单_v1.2.md">耀坤S3版台架实测清单_v1.2.md</a></p><p>🖨️ 图文版（浏览器直接打开 / 可打印）：<a href="火龙果版台架实测清单V1.2.1.html">火龙果版台架实测清单V1.2.1.html</a></p><p>引脚的权威定义在 <code>Firmware/flix/board.h</code> 的 <code>BOARD_HLG_V2</code> 分支；本文与其不一致时以源码为准。</p></blockquote>
+<hr>
+<h2>🔴 起飞前必查三件事（网友侧翻 / 解不开锁，都出在这）</h2>
+<p>固件放出后反馈的「一起飞就翻」和「QGC 点解锁弹报错」，几乎全集中在这三条。<strong>默认参数可以直接飞，但必须逐条在串口里确认</strong>：</p>
+<table><thead><tr><th>#</th><th>查什么</th><th>怎么查</th><th>通过标准</th></tr></thead><tbody><tr><td>1</td><td><strong>IMU 参数与朝向</strong></td><td><code>imu</code>、<code>p IMU_ACC_SCALE</code>、<code>p IMU_ACC_BIAS</code>、<code>st</code>（第 2 节）</td><td>状态正常；比例系数三轴 <strong>1.000</strong>、零偏三轴 <strong>0.000</strong>；平放 ≈0°、右侧压低横滚为正</td></tr><tr><td>2</td><td><strong>电机位置 + 桨叶方向</strong></td><td>拆桨 <code>mfr</code>/<code>mrr</code>/<code>mrl</code>/<code>mfl</code>；装桨后手放桨下低速试（第 7 节）</td><td>只有对应角转；<strong>四只桨都向下吹风</strong></td></tr><tr><td>3</td><td><strong>解锁前油门必须归零</strong></td><td>QGC 点 Arm / 遥控手势（第 7 节）</td><td>油门拉到底再解锁；否则飞控拒绝并打印「拒绝解锁：油门不在最低位」</td></tr></tbody></table>
+<blockquote><p>1、2 全过 = <strong>默认参数就能飞，不必做六面校准</strong>。只有确认桨叶电机无误、仍然侧翻时，才做 <code>ca</code>（第 2 节末）。</p></blockquote>
 <hr>
 <h2>✅ 实测进度（2026-11-06，COM30 实机 + 串口截图）</h2>
 <table><thead><tr><th>项</th><th>状态</th><th>结果</th></tr></thead><tbody><tr><td>整片固件烧录</td><td>✅</td><td><code>MildlySpicyDragon_…_v1.1_20261106_整片4MB.bin</code>（SHA-256 <code>A3738D46…DC71A413</code>），bootloader 校验通过、正常启动</td></tr><tr><td>开机中文横幅</td><td>✅</td><td>三行指纹齐全 + 立创 / B站 / 淘宝行完整</td></tr><tr><td>IMU 自动识别</td><td>✅</td><td>I2C 排母为空 → 自动回退 SPI → <strong>MPU-6500 detected</strong>（SCK=18 MISO=19 MOSI=23 CS=5，朝向补偿 −1.5708）</td></tr><tr><td>电压检测参数</td><td>✅</td><td>开机日志 <code>电池电压检测：GPIO35，分压系数 2</code></td></tr><tr><td>热点名</td><td>✅</td><td><code>当前热点名：YaoKun_2DD4</code>（本机 MAC <code>f4:65:0b:49:2d:d4</code>）</td></tr><tr><td>ESP-NOW 就绪</td><td>✅</td><td><code>原生 ESP-NOW 接收已就绪</code>、<code>信道：1</code></td></tr><tr><td>ESP-NOW 收包 / 油门量程</td><td>⬜ 待测</td><td>接中文遥控器后按第 5 节做</td></tr><tr><td>SBUS 遥控（GPIO4）</td><td>⬜ 待测</td><td>接 SBUS 接收机后按第 6 节做</td></tr><tr><td>电机位置对应 / 解锁</td><td>⬜ 待测</td><td>第 7 节（<strong>必须拆桨</strong>）</td></tr><tr><td>失联保护</td><td>⬜ 待测</td><td>第 8 节</td></tr><tr><td>长跑回绕验证</td><td>⬜ 待测</td><td>连续运行 &gt; 72 分钟</td></tr></tbody></table>
@@ -121,7 +127,12 @@ IMU: MPU-6500 detected
 惯性测量单元就绪：MPU-6500，总线 SPI</code></pre>
 <p><strong>判读</strong>：</p>
 <table><thead><tr><th>你插的模块</th><th>期望识别</th><th>总线 / 引脚</th></tr></thead><tbody><tr><td>MPU6050（排母）</td><td><code>MPU6050 … I2C0</code>，WHO=0x68</td><td>SDA=21 SCL=22</td></tr><tr><td>MPU6500（排母）</td><td><code>MPU-6500 … SPI</code>，WHO=0x70</td><td>SCK=18 MISO=19 MOSI=23 CS=5</td></tr></tbody></table>
-<ul class="check"><li class=""><span class="box"></span><code>imu</code> 显示的型号 / WHO_AM_I / 总线与实物一致</li><li class=""><span class="box"></span><strong>右侧压低 → <code>st</code> 横滚为正</strong>（朝向唯一判据；I2C 补偿 +1.5708、SPI 补偿 −1.5708，固件自动选，不用手改）</li><li class=""><span class="box"></span>静止平放时横滚 / 俯仰在 ±2° 内</li><li class=""><span class="box"></span>芯片温度是真实值（≈40°C，为 0.0 说明没通）</li><li class=""><span class="box"></span>换过 IMU 模块后<strong>必须重跑 <code>ca</code></strong>（不同模块零偏不同）</li></ul>
+<ul class="check"><li class=""><span class="box"></span><code>imu</code> 显示的型号 / WHO_AM_I / 总线与实物一致</li><li class=""><span class="box"></span><strong>右侧压低 → <code>st</code> 横滚为正</strong>（朝向唯一判据；I2C 补偿 +1.5708、SPI 补偿 −1.5708，固件自动选，不用手改）</li><li class=""><span class="box"></span>静止平放时横滚 / 俯仰在 ±2° 内</li><li class=""><span class="box"></span>芯片温度是真实值（≈40°C，为 0.0 说明没通）</li><li class=""><span class="box"></span>换过 IMU 模块后：先按下面核对参数（不同模块零偏不同，读数不干净时再校准）</li></ul>
+<p><strong>加速度计参数核对（默认参数优先，别盲目跑 <code>ca</code>）：</strong></p>
+<pre><code>&gt; p IMU_ACC_SCALE   → 三轴都应是 1.000（出厂默认）
+&gt; p IMU_ACC_BIAS    → 三轴都应是 0.000（出厂默认）</code></pre>
+<ul class="check"><li class=""><span class="box"></span>比例系数三轴 <strong>1.000</strong>、零偏三轴 <strong>0.000</strong>（被改坏过：<code>p IMU_ACC_SCALE_X/Y/Z 1</code> + <code>p IMU_ACC_BIAS_X/Y/Z 0</code> 复位）</li><li class=""><span class="box"></span>只有「<code>st</code> 平放偏差 &gt; ±2°」或「确认桨叶电机无误、起飞仍每次朝同一侧翻」时才做 <code>ca</code></li></ul>
+<blockquote class="warn"><p>⚠️ <code>ca</code> 是 48 秒连跑、全程不等人：<strong>先摆好第 1 个姿态（水平）再敲 <code>ca</code>，看到下一条提示立刻翻，2 秒内到位</strong>。六面采成同一姿态会让 <code>accScale</code> 塌到 1e-2，<strong>比不做更糟</strong>。验收：<code>IMU_ACC_SCALE</code> 三轴 0.85~1.15、<code>IMU_ACC_BIAS</code> 三轴 |x| &lt; 0.5。</p></blockquote>
 <hr>
 <h2>3. 电压检测（<code>pw</code>）</h2>
 <ul class="check"><li class=""><span class="box"></span><code>pw</code> 显示的电压与万用表实测一致（±0.05V 内；分压系数 2 已按 GPIO35 的 100K+100K / 10K+10K 配好）</li><li class=""><span class="box"></span>拔电池后读数掉到 0 附近（不会卡在旧值）</li></ul>
@@ -145,10 +156,14 @@ IMU: MPU-6500 detected
 <h2>7. 电机与解锁（★必须拆桨）</h2>
 <pre><code>&gt; mfr 0.1   → 右前（GPIO33）    &gt; mfl 0.1  → 左前（GPIO32）
 &gt; mrr 0.1   → 右后（GPIO27）    &gt; mrl 0.1  → 左后（GPIO26）</code></pre>
-<ul class="check"><li class=""><span class="box"></span>四个电机都能转，<strong>位置对应正确</strong>（<code>mfr</code> 转的是右前那个；对照上表 GPIO 号）</li><li class=""><span class="box"></span>转向符合四轴 X 型布局</li><li class=""><span class="box"></span><code>mot</code> 未推油门时四路全 0</li></ul>
+<ul class="check"><li class=""><span class="box"></span>四个电机都能转，<strong>位置对应正确</strong>（<code>mfr</code> 转的是右前那个，回显「正在测试电机 2」；对照上表 GPIO 号）</li><li class=""><span class="box"></span>转向符合四轴 X 型布局（对角同向、相邻反向）</li><li class=""><span class="box"></span><code>mot</code> 未推油门时四路全 0</li></ul>
+<p><strong>装桨后验风向（唯一可靠判据，手托机架低速试）：</strong></p>
+<pre><code>&gt; mfr 0.15  → 手放该桨下方，应明显向下吹风（四只逐个过）</code></pre>
+<ul class="check"><li class=""><span class="box"></span>四只桨<strong>都向下吹风</strong>；任一只向上 ⇒ 桨装反（换另一片）或电机极性反（两根线对调）</li><li class=""><span class="box"></span>手拨桨：桨叶前缘朝旋转方向，能「切」风不「兜」风</li></ul>
 <blockquote class="danger"><p>🔴 <strong>「看电池电压压降判断电机转不转」是假判据</strong>——台架插 USB 时电机吃的是 USB 5V→LDO，</p><p>电池端不掉压。真判据：耳朵听 / 看电机 / <code>mot</code> 输出值；要看电先拔 USB 只留电池。</p></blockquote>
 <p>解锁：</p>
 <ul class="check"><li class=""><span class="box"></span>油门拉到最低 → <code>arm</code> 或遥控器解锁 → <code>rc</code> 中解锁状态 = 1</li><li class=""><span class="box"></span>蜂鸣器三短鸣（GPIO25 有源蜂鸣器）</li><li class=""><span class="box"></span>油门不在低位时尝试 <code>arm</code> → 打印「拒绝解锁：油门不在最低位」</li></ul>
+<blockquote class="danger"><p>🔴 <strong>QGC 点解锁弹报错（<code>Command denied</code> / 一直解不开）—— 九成是油门没归零。</strong></p><p>飞控在解锁前检查油门归一化值，<strong>&gt; 0.05 直接拒绝</strong>（<code>mavlink.ino</code>，注释说明了这是炸机头号原因）。</p><p>关键点：这个油门量是<strong>遥控器和地面站共用的同一个变量</strong> —— 只要遥控器油门停在中间或以上，</p><p>QGC 点一百次也解不开。正确做法：<strong>先把遥控器油门拉到最低，再点 QGC 的 Arm</strong>。</p><p>纯遥控器解锁手势是 <strong>油门最低 + 偏航推最右</strong>（推到底保持约 1 秒）；上锁手势 = 油门最低 + 偏航推最左。</p><p>另外两个拒绝原因：IMU 不可用（开机红灯常亮 + 长鸣）、机身倾角超过阈值（放平再解锁）。</p></blockquote>
 <hr>
 <h2>8. 失联保护</h2>
 <p>固件逻辑（<code>safety.ino</code>）：解锁状态下 <strong>1 秒收不到任何控制输入</strong> → 进入缓降（AUTO 模式，油门线性下降）；<strong>10 秒后油门归零并自动上锁</strong>。</p>
@@ -169,7 +184,7 @@ IMU: MPU-6500 detected
 <h2>12. 通关后</h2>
 <p>全部勾选 → 放行发货；涉及代码 / 文档改动 → 推送到 <code>github.com/YaoKunS/flix</code> 的 <code>yaokun-organized</code> 分支。</p>
 <p>任何一项 ❌ → 把该项串口原始输出发我，定位后再改。</p>
-<div class="foot">本页由 <code>火龙果版台架实测清单V1.1.md</code> 自动生成 —— 要改内容请改 Markdown 源文件后重跑 <code>python Firmware/tools/md2html.py</code>，直接改 HTML 会被覆盖。<br>耀坤智联 / YaoKunSmart · <a href="https://github.com/YaoKunS/flix">github.com/YaoKunS/flix</a> · 内核 (C) Oleg Kalachev</div>
+<div class="foot">本页由 <code>火龙果版台架实测清单V1.2.1.md</code> 自动生成 —— 要改内容请改 Markdown 源文件后重跑 <code>python Firmware/tools/md2html.py</code>，直接改 HTML 会被覆盖。<br>耀坤智联 / YaoKunSmart · <a href="https://github.com/YaoKunS/flix">github.com/YaoKunS/flix</a> · 内核 (C) Oleg Kalachev</div>
 </div>
 </body>
 </html>

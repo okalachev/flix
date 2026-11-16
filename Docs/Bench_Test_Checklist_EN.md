@@ -6,7 +6,7 @@
 > `yaokun-organized` branch.
 >
 > 🌐 中文版：[耀坤S3版台架实测清单_v1.1.md](耀坤S3版台架实测清单_v1.1.md)
-> 🛩️ MildlySpicyDragon 2.0 board checklist: [MildlySpicyDragon_Bench_Test_Checklist_EN.md](MildlySpicyDragon_Bench_Test_Checklist_EN.md) (English) / [火龙果版台架实测清单V1.1.md](火龙果版台架实测清单V1.1.md) (Chinese) — flashing addresses, pins and IMU buses differ; **the two checklists are not interchangeable**.
+> 🛩️ MildlySpicyDragon 2.0 board checklist: [MildlySpicyDragon_Bench_Test_Checklist_EN.md](MildlySpicyDragon_Bench_Test_Checklist_EN.md) (English) / [火龙果版台架实测清单V1.2.1.md](火龙果版台架实测清单V1.2.1.md) (Chinese) — flashing addresses, pins and IMU buses differ; **the two checklists are not interchangeable**.
 > 🖨️ Illustrated HTML (open in a browser / print): [Bench_Test_Checklist_EN.html](Bench_Test_Checklist_EN.html)
 
 ---

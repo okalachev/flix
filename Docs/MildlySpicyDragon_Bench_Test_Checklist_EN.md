@@ -8,7 +8,7 @@
 > ⚠️ **This is a classic ESP32 (not an S3)**: flashing addresses, USB-serial chip, pinout and IMU bus
 > all differ from the YaoKun S3 board. **Do not reuse the S3 checklist or pin table** — wrong motor pins
 > mean all four motors spin up out of order at power-on.
-> 🌐 中文版：[火龙果版台架实测清单V1.1.md](火龙果版台架实测清单V1.1.md) ·
+> 🌐 中文版：[火龙果版台架实测清单V1.2.1.md](火龙果版台架实测清单V1.2.1.md) ·
 > Sister checklist for the YaoKun S3 board: [Bench_Test_Checklist_EN.md](Bench_Test_Checklist_EN.md)
 > 🖨️ Illustrated HTML (open in a browser / print): [MildlySpicyDragon_Bench_Test_Checklist_EN.html](MildlySpicyDragon_Bench_Test_Checklist_EN.html)
 >

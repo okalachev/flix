@@ -27,6 +27,20 @@
 > (default board) and the **MildlySpicyDragon 2.0** "ESP32 mini drone" (build with `-DFLIX_BOARD=2`).  
 > Upstream author: [Oleg Kalachev](https://github.com/okalachev) · Project site: [quadcopter.dev](https://quadcopter.dev)
 
+---
+
+## 🔴 Pre-flight must-checks (flips and refused arming both come from these three)
+
+> **① Propeller and motor orientation**　With the propellers off, type `mfr`/`mrr`/`mrl`/`mfl` and confirm the matching corner spins; with the propellers on, hold the frame and spin slowly — **all four must blow downwards**. Reversed = upward thrust = it flips on lift-off.
+>
+> **② Accelerometer parameters**　`p IMU_ACC_SCALE` should read **1.000** on all three axes and `p IMU_ACC_BIAS` **0.000**; `st` reads 0° when level and a positive roll when the right side is down. **The defaults fly as they are** — run the six-face `ca` calibration only when the propellers and motors are confirmed correct and it still flips.
+>
+> **③ Zero the throttle before arming**　If QGC shows `Command denied` and arming never succeeds, nine times out of ten the throttle is not at minimum (the firmware requires a normalised value ≤ 0.05). **Pull the transmitter throttle all the way down, then press Arm in QGC.** Stick gesture for a pure-RC arm: **throttle at minimum + yaw pushed fully right**.
+
+📖 Full procedure, pass criteria, recovery: [Manual · chapter 0, Pre-flight check](Docs/Flix_Technical_Manual_EN.md#0-pre-flight-check-fly-on-default-parameters-first-calibrate-only-if-it-flips)　·　[S3 bench checklist](Docs/Bench_Test_Checklist_EN.md)　·　[Dragon bench checklist](Docs/MildlySpicyDragon_Bench_Test_Checklist_EN.md)
+
+---
+
 ## 📌 What is it
 
 Flix is an **open-source quadcopter firmware designed for education and research**, running on ESP32.
@@ -108,7 +122,7 @@ flix/                          # ← repo root: docs + forwarding Makefile
 │   ├── Flix_Technical_Manual_EN.md      # ★ Same content in Markdown (readable directly on GitHub)
 │   ├── Bench_Test_Checklist_EN.md       # ★ Bench test checklist (props off); same-name .html = illustrated version
 │   ├── 耀坤S3版台架实测清单_v1.1.md     #   same, Chinese (YaoKun S3 board)
-│   ├── 火龙果版台架实测清单V1.1.md      #   MildlySpicyDragon 2.0 board checklist, Chinese (different pins/flashing — not interchangeable)
+│   ├── 火龙果版台架实测清单V1.2.1.md      #   MildlySpicyDragon 2.0 board checklist, Chinese (different pins/flashing — not interchangeable)
 │   ├── MildlySpicyDragon_Bench_Test_Checklist_EN.md  # ★ MildlySpicyDragon 2.0 board checklist, English
 │   │                                    #   (both Chinese and English checklists also ship .html versions)
 │   ├── assembly.md            #   Assembly instructions
@@ -150,7 +164,7 @@ verification records are in [Docs/YaoKunS3_Adaptation_Notes_EN.md](Docs/YaoKunS3
 (technical manual: [Markdown](Docs/Flix_Technical_Manual_EN.md) — readable on GitHub — or
 [illustrated HTML](Docs/Flix_Technical_Manual_EN.html);
 bench test checklist: [Docs/Bench_Test_Checklist_EN.md](Docs/Bench_Test_Checklist_EN.md)
-(MildlySpicyDragon 2.0 board: [`火龙果版台架实测清单V1.1.md`](Docs/火龙果版台架实测清单V1.1.md), Chinese);
+(MildlySpicyDragon 2.0 board: [`火龙果版台架实测清单V1.2.1.md`](Docs/火龙果版台架实测清单V1.2.1.md), Chinese);
 Chinese originals: [`耀坤S3适配说明.md`](Docs/耀坤S3适配说明.md) /
 [`flix技术说明书.md`](Docs/flix技术说明书.md) /
 [`耀坤S3版台架实测清单_v1.1.md`](Docs/耀坤S3版台架实测清单_v1.1.md)).

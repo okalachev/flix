@@ -29,6 +29,17 @@
   .cover .facts{display:flex; flex-wrap:wrap; gap:10px 30px; font-size:13.5px; color:#e2e8f0;
          border-top:1px solid rgba(255,255,255,.16); padding-top:20px;}
   .cover .facts b{color:#fff; font-weight:600;}
+  /* Cover "pre-flight" block: white card with a red bar, so it reads as a warning on the dark cover */
+  .cover-warn{background:#fff; border-left:6px solid var(--brand); border-radius:0 10px 10px 0;
+         padding:16px 20px; margin:24px 0 0; color:#7f1d1d; font-size:13.8px; line-height:1.75;}
+  .cover-warn b{color:var(--brand);}
+  .cover-warn .t{display:block; font-size:14.5px; font-weight:800; color:#fff; background:var(--brand);
+         margin:-16px -20px 12px; padding:9px 20px; border-radius:0 10px 0 0; letter-spacing:.5px;}
+  .cover-warn ol{margin:6px 0 0; padding-left:22px;}
+  .cover-warn li{margin:4px 0;}
+  /* Keep document version and firmware version separate, otherwise readers hunt for a v1.2.1 binary */
+  .verline{font-size:12.5px; color:#cbd5e1; margin-top:18px; letter-spacing:.3px;}
+  .verline b{color:#fff;}
 
   /* ── 目录 ── */
   .toc{background:var(--bg2); border:1px solid var(--line); border-radius:12px;
@@ -114,7 +125,7 @@
 <div class="wrap">
 
 <div class="cover">
-  <span class="badge">Open-source flight controller Flix · YaoKun S3 hardware adaptation, v1.2</span>
+  <span class="badge">Open-source flight controller Flix · YaoKun S3 hardware adaptation　v1.2.1</span>
   <h1>YaoKun S3 Drone · Flix Organized Edition</h1>
   <div class="sub">A teaching-grade flight controller kernel in under 2000 lines　·　native ESP-NOW receive rework　·　fully Chinese console</div>
   <div class="facts">
@@ -125,7 +136,29 @@
     <span>UI　<b>Chinese</b> by default (English build available)</span>
     <span>Repo　<b>github.com/YaoKunS/flix</b></span>
   </div>
-  <div class="langsw" style="margin-top:22px; font-size:13.5px;">
+  <div class="cover-warn">
+    <span class="t">🔴 Two pre-flight checks — but do not calibrate blindly first</span>
+    <b>The factory-default parameters fly as they are</b> (the MPU-6500 / MPU-6050 is accurate enough out of the box).
+    Prepare the maiden flight on the defaults, but confirm the two items below by hand in the console —
+    they cause the vast majority of "it flips right after take-off", and <b>the arming gate cannot catch them</b>
+    (it only knows whether an IMU exists, whether the throttle is low and whether the tilt is within limits;
+    it cannot tell whether the attitude is correct or whether the propellers push down or up).
+    <ol>
+      <li><b>Four parameter checks</b>　<code>imu</code> shows 状态：正常; <code>p IMU_ACC_SCALE</code> all three axes 1.000;
+          <code>p IMU_ACC_BIAS</code> all three axes 0.000; <code>st</code> reads 0° when level and a positive roll when the right side is down.<br>
+          All four pass = <b>fly on the defaults, no six-face calibration required</b>.</li>
+      <li><b>Motor position + propeller direction</b>　with propellers off, type <code>mfr</code>/<code>mrr</code>/<code>mrl</code>/<code>mfl</code>
+          and confirm the matching corner spins; with propellers on, hold the frame and spin slowly — <b>all four must blow downwards</b>.
+          A reversed propeller = upward thrust = instant flip.</li>
+    </ol>
+    <b>Only if the propellers and motors are confirmed correct and it still flips, run the six-face calibration <code>ca</code></b> —
+    that step has a trap (48 s straight through, never waits). How to run it, how to verify, how to restore after a failed run:
+    see <a href="#s0" style="color:var(--brand); font-weight:700;">chapter 0, Pre-flight check</a>, section 0.5.
+  </div>
+  <div class="verline">
+    Document version <b>v1.2.1</b> (revised 2026-11-16)　·　corresponds to firmware <b>v1.2</b> — <span style="color:#fca5a5;">documentation-only change; the firmware is unchanged, the Release still ships v1.2</span>
+  </div>
+  <div class="langsw" style="margin-top:14px; font-size:13.5px;">
     🌐 <a href="flix技术说明书.html" style="color:#fca5a5;">中文版</a> &nbsp;·&nbsp;
     <span style="color:#94a3b8;">English (this page)</span>
   </div>
@@ -134,6 +167,7 @@
 <div class="toc">
   <h2>Contents</h2>
   <ol>
+    <li><a href="#s0" style="color:var(--brand); font-weight:700;">★ Pre-flight check</a><span class="d">defaults + parameter checks + propellers/motors (calibrate if it flips)</span></li>
     <li><a href="#s1">What this project is</a><span class="d">What it is, and how it relates to upstream</span></li>
     <li><a href="#s2">Hardware</a><span class="d">Pinout and peripherals</span></li>
     <li><a href="#s3">Software architecture</a><span class="d">File responsibilities and the main loop</span></li>
@@ -152,6 +186,193 @@
     <li><a href="#s16">Differences from upstream</a><span class="d">R1~R12 change summary</span></li>
     <li><a href="#s17">MildlySpicyDragon 2.0 board</a><span class="d">second PCB &amp; maintenance statement</span></li>
   </ol>
+</div>
+
+<!-- ============ 0 ============ -->
+<h2 id="s0">0. Pre-flight check (fly on default parameters first, calibrate only if it flips)</h2>
+
+<div class="note">
+<b>v1.2.1 scope change — read this first, it saves a lot of guessing:</b><br><br>
+After v1.2 was released, users reported a number of "it flips right after take-off". Case by case, the overwhelming majority turned out to be <b>propellers or motors mounted wrong / reversed</b>, not an inaccurate accelerometer.
+The factory zero-g bias and sensitivity of the MPU-6500 / MPU-6050 are good enough — <b>the factory-default parameters (<code>accScale = 1</code>, <code>accBias = 0</code>) fly fine as they are</b>.<br><br>
+So the correct order is three steps:<br>
+<b>① Prepare for the maiden flight on factory defaults; ② before flying, verify the IMU status, parameter values, attitude readings and the motors/propellers with the console commands; ③ only if the propellers and motors are confirmed correct and it still flips, run the six-face calibration.</b><br><br>
+<b>Do not run <code>ca</code> blindly on the first flight.</b> It has a built-in flaw — 48 seconds straight through, never waiting for input (see 0.5) — and a botched run collapses <code>accScale</code> to 1e-2, which is <b>worse than not calibrating at all</b>.
+</div>
+
+<h3>0.1 Default parameters are fine, but these 4 checks are not optional (2 minutes)</h3>
+
+<p>The factory parameters are the IMU's own factory values and are usable directly. What "ready to fly" really requires is <strong>clean readings and a correct attitude direction</strong>, so the four checks below must all be done:</p>
+
+<table>
+<thead><tr><th>Check</th><th>Command</th><th>Pass criterion</th><th>If it fails</th></tr></thead>
+<tbody>
+<tr><td><b>IMU present</b></td><td><code>imu</code></td><td>model / bus / WHO_AM_I match the actual chip; <code>状态：正常</code> (status OK)</td><td>see chapter 14; a solid red LED plus a long beep at boot means this one failed</td></tr>
+<tr><td><b>Scale factors</b></td><td><code>p IMU_ACC_SCALE</code></td><td>X / Y / Z <b>all exactly 1.000</b></td><td>altered (a botched <code>ca</code>) ⇒ restore with <code>p IMU_ACC_SCALE_X 1</code>, <code>_Y 1</code>, <code>_Z 1</code></td></tr>
+<tr><td><b>Bias</b></td><td><code>p IMU_ACC_BIAS</code></td><td>X / Y / Z <b>all exactly 0.000</b></td><td>non-zero ⇒ restore with <code>p IMU_ACC_BIAS_X 0</code>, <code>_Y 0</code>, <code>_Z 0</code></td></tr>
+<tr><td><b>Attitude and orientation</b></td><td><code>st</code></td><td>level: <code>横滚</code> / <code>俯仰</code> ≈ 0° (±2°); <b>right side down must give a positive <code>横滚</code></b></td><td>sign inverted ⇒ wrong IMU orientation bracket (chapters 6, 14); off by 2°~8° ⇒ run one <code>ca</code> (0.5)</td></tr>
+</tbody>
+</table>
+
+<div class="ok">
+<b>All four pass = fly on the default parameters, no six-face calibration needed.</b> The bench procedure in 13.2 follows the same rule.
+</div>
+
+<p>Why the level reading of <code>st</code> still matters: if roll/pitch are clearly non-zero while the aircraft sits level (say 5°), the IMU is soldered on with a slight tilt or the chip has residual bias. Small offsets are absorbed by the attitude loop (the aircraft drifts a little on take-off); only larger ones justify a six-face calibration to compensate for that mounting tilt — that is the real value of <code>ca</code>, not "it is unsafe without it".</p>
+
+<h3>0.2 Motor position and propeller direction — this one is mandatory</h3>
+
+<p>Two steps: <b>propellers off to check the motor positions, propellers on to check the airflow</b>. Conventions: nose towards you, <b>front-right FR / rear-right RR / front-left FL / rear-left RL</b> (in the command name the first letter <code>f</code>/<code>b</code> is front/rear, the second <code>r</code>/<code>l</code> is right/left).</p>
+
+<h4>Step one: propellers off, spin one motor at a time (4 commands)</h4>
+
+<pre><code>mfr        # expect 正在测试电机 2, only the front-right spins
+mrr        # expect 正在测试电机 1, only the rear-right spins
+mrl        # expect 正在测试电机 0, only the rear-left spins
+mfl        # expect 正在测试电机 3, only the front-left spins</code></pre>
+
+<p>With no argument the default is <b>0.2 throttle for about 2 s</b>; a value can be given, e.g. <code>mfr 0.15</code>. <b>Always with the propellers removed.</b></p>
+
+<div class="danger">
+<b>🔴 Pass criterion: the command must spin exactly that corner.</b> A wrong corner means the motor is plugged into the wrong socket, or the wrong board variant was flashed (<b>the YaoKun S3 firmware on a MildlySpicyDragon board spins all four in the wrong order</b>, and vice versa). If this step is wrong, nothing downstream can be right.
+</div>
+
+<h4>Step two: propellers on, check the airflow (the only reliable criterion)</h4>
+
+<p>Two hard constraints on the propellers:</p>
+<ul>
+<li><b>Diagonally the same, adjacent opposite</b> — FL turns the same way as RR; FR turns the same way as RL. (Dictated by the yaw term of the mixer, see the four <code>motors[]</code> lines in <code>control.ino</code>.)</li>
+<li><b>Never mix CW and CCW propellers</b> — a set normally contains two of each, marked <code>CW</code>/<code>CCW</code> (or <code>R</code>/<code>L</code>) on the hub or blade. Mix up the whole bag and all four end up reversed.</li>
+</ul>
+
+<div class="warn">
+<b>Criterion (no instruments needed — your hand is the sensor):</b><br><br>
+Hold the frame in your hand (or clamp it down, and remove the other three propellers leaving one) → type <code>mfr 0.15</code> for a slow spin → <b>put your hand under that propeller: you must feel clear downward airflow</b>; above it you should feel suction.<br><br>
+<b>Go through all four corners. All four must blow downwards to pass.</b><br>
+One corner blowing upwards leaves exactly two possibilities — check both until it is right:<br>
+① <b>the propeller is mounted the wrong way round</b> (try the other propeller); ② <b>the motor polarity is reversed</b> (swap the two wires — on a brushed motor, reversing the plug reverses the rotation).<br>
+<b>All four blowing upwards</b> ⇒ the whole set of propellers is mixed up; swap them all.
+</div>
+
+<p>One more static check: flick a propeller by hand — <b>the leading edge (the thicker side) should face the direction of rotation</b>, so it slices the air instead of scooping it. A reversed propeller feels "blunt" when flicked.</p>
+
+<h3>0.3 Three-minute pre-flight checklist (copy and type)</h3>
+
+<pre><code># ── 1. propellers off, aircraft level ────────────
+imu                  # model / bus / WHO_AM_I correct, 状态：正常
+p IMU_ACC_SCALE      # all three axes should read 1.000 (factory default)
+p IMU_ACC_BIAS       # all three axes should read 0.000 (factory default)
+st                   # level: roll/pitch ≈ 0; right side down: roll positive
+
+# ── 2. still no propellers, check motor positions ─
+mfr                  # front-right only
+mrr                  # rear-right only
+mrl                  # rear-left only
+mfl                  # front-left only
+
+# ── 3. propellers on, check airflow (hold the frame, low throttle)
+mfr 0.15             # under the propeller: downward airflow
+mrr 0.15             # under the propeller: downward airflow
+mrl 0.15             # under the propeller: downward airflow
+mfl 0.15             # under the propeller: downward airflow
+
+# ── 4. take off ─────────────────────────────────
+arm                  # triple beep + fast green flashing = armed</code></pre>
+
+<h4>Arming refused / QGC throws an error? Nine times out of ten the throttle is not at minimum</h4>
+
+<div class="danger">
+<b>🔴 QGC shows <code>Command denied</code> when you press Arm, or nothing happens — pull the transmitter throttle fully down and try again.</b><br><br>
+Before arming, the firmware checks the normalised throttle and <b>refuses outright if it is &gt; 0.05</b> (returning <code>MAV_RESULT_DENIED</code>), while the console prints 拒绝解锁：油门不在最低位 (arm denied: throttle is not low).<br><br>
+<b>The point that trips people up: this throttle value is one single variable shared by the transmitter and the ground station</b> (<code>controlThrottle</code>). As long as the transmitter throttle is at centre or above, <b>pressing Arm in QGC a hundred times will not work</b> — this is by far the most common "cannot arm" report.
+</div>
+
+<table class="tight">
+<thead><tr><th>How you arm</th><th>What to do</th></tr></thead>
+<tbody>
+<tr><td><b>QGC (ground station)</b></td><td><b>Pull the transmitter throttle fully down</b>, then press Arm in QGC. All the way down — not "released to centre"</td></tr>
+<tr><td><b>Transmitter only</b> (no ground station)</td><td><b>Throttle at minimum + yaw pushed fully right</b> (&gt; 0.95) held for about 1 s = arm; <b>throttle at minimum + yaw fully left</b> = disarm</td></tr>
+<tr><td><b>Console</b></td><td><code>arm</code> / <code>disarm</code> (the throttle must be at minimum here too)</td></tr>
+</tbody>
+</table>
+
+<p>The normalised throttle runs from <b>−1 at minimum through 0 at centre to +1 at maximum</b>. <b>Anything above 0.05 is refused</b> — so "just a little above centre" already blocks arming. The rule is simply: <b>throttle fully down before arming</b>. Type <code>rc</code> to see the current normalised throttle and confirm it really is at minimum.</p>
+
+<p><b>Two other reasons arming is refused</b> (both print a reason on the console): the IMU is unavailable (solid red LED plus a long beep at boot), or the airframe tilt exceeds the threshold (level the aircraft and retry).</p>
+
+<h3>0.4 It already flipped — investigate in this order</h3>
+
+<table>
+<thead><tr><th>Symptom</th><th>Most likely cause</th><th>How to confirm / next step</th></tr></thead>
+<tbody>
+<tr><td><b>It rolls to the same side every time</b></td><td>suspect propellers / motors first (most common); only then the calibration</td><td>run the airflow and position checks in 0.2; if <code>st</code> is clearly off when level ⇒ six-face calibration (0.5)</td></tr>
+<tr><td><b>Violent spin right off the ground, then a flip</b></td><td>CW/CCW propellers mixed up, or a motor with reversed polarity (a propeller pushing up)</td><td>airflow criterion in 0.2 step two, all four corners</td></tr>
+<tr><td>It darts sideways when the throttle comes up</td><td>a motor plugged into the wrong socket</td><td><code>mfr</code>/<code>mrr</code>/<code>mrl</code>/<code>mfl</code> one by one</td></tr>
+<tr><td>Attitude readings jump around / absurd values (88°, −0.86 g)</td><td><code>ca</code> was run but sampled the same face six times; <code>accScale</code> collapsed to 1e-2</td><td><code>p IMU_ACC_SCALE</code> not around 1 ⇒ restore as described in 0.1 / 0.5</td></tr>
+<tr><td>The flip direction is different every time</td><td>not this chapter: remote end-points / parameters / brown-out reset</td><td>see chapter 14, Troubleshooting</td></tr>
+</tbody>
+</table>
+
+<h3>0.5 Six-face calibration (<code>ca</code>) — only when troubleshooting a flip</h3>
+
+<p><b>When to run it:</b> 0.2 has confirmed the propellers and motors are correct, and any one of the following holds —</p>
+<ul>
+<li>it still <strong>rolls to the same side every time</strong> on take-off;</li>
+<li><code>st</code> while level is clearly non-zero (beyond ±2°), meaning a mounting tilt or residual bias in the IMU;</li>
+<li>the IMU, the board or the IMU mounting has been changed, the aircraft has been crashed, or <code>preset</code> has been run.</li>
+</ul>
+
+<p><b>When not to run it:</b> default parameters behave normally and you only want "extra safety" — unnecessary. Factory accuracy is sufficient, and a botched run makes things worse.</p>
+
+<div class="danger">
+<b>🔴 The real flaw of <code>ca</code>: it runs 48 seconds straight through and never waits for you</b><br><br>
+The firmware does "print the prompt → <code>pause(8)</code> → sample", six times back to back, <b>with no input wait anywhere</b>.<br>
+If you fail to get the frame into the required attitude within one of those 8-second windows, <b>all six samples land on the same attitude</b> and <code>accScale</code> collapses to the order of <code>1e-2</code> — the attitude barely responds, and it <b>flips faster than with no calibration at all</b>.<br><br>
+So: <b>either do it properly, or verify immediately afterwards; if it fails the check, restore the factory values.</b>
+</div>
+
+<h4>How to do it (timing is everything: 8 seconds per face)</h4>
+
+<div class="step"><div class="no">1</div><div class="tx"><b>Propellers off, on a level surface</b><span>The motors move briefly during calibration, so the propellers must be off; the surface must be flat and stable, and nothing may press on the wires.</span></div></div>
+<div class="step"><div class="no">2</div><div class="tx"><b>Place the frame in attitude 1 first, then type <code>ca</code></b><span>Console at 115200, <b>native USB port</b>. It immediately prints 第 1/6 步：请水平放置，保持静止 [8 秒] (1/6, place level, keep still, 8 s).</span></div></div>
+<div class="step"><div class="no">3</div><div class="tx"><b>Keep a hand on the frame, turn as soon as the prompt appears</b><span>Start turning <strong>the moment</strong> 第 2/6 步 appears, be in position within 2 s, then hold still for the remaining 6 s. <b>Do not wait for the 8 s to elapse before turning — by then it is already sampling the next face.</b></span></div></div>
+<div class="step"><div class="no">4</div><div class="tx"><b>The last line reads 校准完成！</b><span>Three lines follow: gyro bias, accelerometer bias, accelerometer scale — these are what you verify below.</span></div></div>
+
+<p>The six faces, in order (write them down and keep the note beside you):</p>
+
+<table class="tight">
+<thead><tr><th>Step</th><th>Console prompt (Chinese UI)</th><th>How to place the frame</th></tr></thead>
+<tbody>
+<tr><td>1/6</td><td>请水平放置</td><td>normal, level, nose forward, propeller plane horizontal</td></tr>
+<tr><td>2/6</td><td>请机头朝上立起</td><td>nose straight up, frame standing on its tail</td></tr>
+<tr><td>3/6</td><td>请机头朝下倒立</td><td>nose straight down, frame standing inverted</td></tr>
+<tr><td>4/6</td><td>请右侧朝下侧放</td><td>right side on the table, frame lying on its side</td></tr>
+<tr><td>5/6</td><td>请左侧朝下侧放</td><td>left side on the table (opposite of the previous step)</td></tr>
+<tr><td>6/6</td><td>请底朝天倒置</td><td>rolled 180°, bottom facing up (propeller plane facing down)</td></tr>
+</tbody>
+</table>
+
+<h4>Mandatory verification afterwards (all four, or the run failed)</h4>
+
+<table class="tight">
+<thead><tr><th>Check</th><th>Command</th><th>Pass criterion</th></tr></thead>
+<tbody>
+<tr><td>Run completed</td><td>last console line</td><td><code>校准完成！</code></td></tr>
+<tr><td>Scale factors</td><td><code>p IMU_ACC_SCALE</code></td><td>X / Y / Z <strong>all within 0.85 ~ 1.15</strong></td></tr>
+<tr><td>Bias</td><td><code>p IMU_ACC_BIAS</code></td><td>all three axes <strong>&lt; 0.5 in absolute value</strong> (m/s²)</td></tr>
+<tr><td>Level reading + orientation</td><td><code>st</code></td><td>level: <code>横滚</code> / <code>俯仰</code> ≈ 0° (±2°); <b>right side down: <code>横滚</code> positive</b></td></tr>
+</tbody>
+</table>
+
+<div class="ok">
+<b>Emergency restore after a failed run</b> (no reflash needed — factory accuracy is good enough to fly):<br><br>
+<code>p IMU_ACC_SCALE_X 1</code>　<code>p IMU_ACC_SCALE_Y 1</code>　<code>p IMU_ACC_SCALE_Z 1</code><br>
+<code>p IMU_ACC_BIAS_X 0</code>　<code>p IMU_ACC_BIAS_Y 0</code>　<code>p IMU_ACC_BIAS_Z 0</code><br><br>
+After the six commands the attitude snaps back to zero (measured: roll 0.015°, pitch −0.004°). <b>Parameters are saved automatically and survive a reboot.</b>
+</div>
+
+<div class="note">
+<b>Same procedure on both boards:</b> the YaoKun S3 and the MildlySpicyDragon 2.0 use identical <code>imu</code>, <code>st</code>, <code>mfr</code> and <code>ca</code> commands and identical criteria (motor numbering and pins for the Dragon board are in chapter 17). The only difference is flashing: <b>the Dragon firmware must be compiled with <code>-DFLIX_BOARD=2</code></b>, and the wrong board variant spins all four motors in the wrong order.
 </div>
 
 <!-- ============ 1 ============ -->
@@ -221,7 +442,7 @@
 <tbody>
 <tr><td><code>flix.ino</code></td><td>Main entry: setup / loop</td><td>Fingerprint banner, LED/buzzer init feedback</td></tr>
 <tr><td><code>config.h</code></td><td>Board type and compile-time constants</td><td>YaoKun S3 board type</td></tr>
-<tr><td><code>i18n.h</code></td><td><b>Single source of UI strings</b> (169 entries, Chinese + English)</td><td>★ new</td></tr>
+<tr><td><code>i18n.h</code></td><td><b>Single source of UI strings</b> (176 entries, Chinese + English)</td><td>★ new</td></tr>
 <tr><td><code>imu.ino</code></td><td>IMU driver, detection, calibration</td><td>auto-detect + per-bus orientation + null guard</td></tr>
 <tr><td><code>estimate.ino</code></td><td>Attitude estimation (complementary filter)</td><td>—</td></tr>
 <tr><td><code>control.ino</code></td><td>Three cascaded loops + mixer</td><td>—</td></tr>
@@ -642,6 +863,12 @@ void readIMU() {
 
 <h3>6.5 Six-face accelerometer calibration (<code>ca</code>): a real C++ trap</h3>
 
+<div class="danger">
+<b>🔴 Read this first: use the default parameters first, do not rush into <code>ca</code>.</b><br>
+The MPU-6500 / MPU-6050 is accurate enough out of the box, so <code>accScale = 1</code> / <code>accBias = 0</code> flies as it is; <code>ca</code> has an inherent flaw — 48 seconds straight through, never waiting for input — and a botched run (six samples on the same face) collapses <code>accScale</code> to 1e-2, <b>which is worse than not calibrating</b>.<br>
+Correct order: fly on the defaults first → calibrate only when the propellers and motors are confirmed correct and it still flips. The full decision flow and pass criteria are in <a href="#s0"><b>chapter 0, Pre-flight check</b></a>. This section covers the maths and the bug we actually hit.
+</div>
+
 <p>The maths of six-face calibration is simple: six orientations cover ±1 g on each axis, so</p>
 
 <pre><code>accScale = (accMax − accMin) / 2 / G      // ideal ≈ 1.0
@@ -791,6 +1018,8 @@ On the first bench session confirm: <b>stick at minimum → z ≈ -1000, centre 
   <li>the IMU must be usable (<code>imuOK</code>)</li>
   <li>the throttle must be at minimum (normalised &lt; 0.05), otherwise arming is refused with <code>拒绝解锁：油门不在最低位</code></li>
   <li>the tilt must be within the threshold</li>
+  <li><b>QGC shows <code>Command denied</code> / arming never succeeds</b>: the throttle is not at minimum (normalised &gt; 0.05). That value is <b>shared</b> between transmitter and ground station, so <b>pull the transmitter throttle fully down</b> before pressing Arm; the stick gesture for a pure-RC arm is throttle minimum + yaw fully right (see <a href="#s0">0.3</a>)</li>
+  <li><b>What the software cannot check and a human must</b>: whether the propellers point the right way, whether a motor is plugged into the wrong socket, and whether the IMU parameters have been corrupted. <b>Arming successfully ≠ ready to fly</b> — the gate only confirms an IMU exists and the tilt is small; it cannot tell whether all four propellers push down. Item-by-item pre-flight checks: <a href="#s0"><b>chapter 0, Pre-flight check</b></a></li>
 </ul>
 
 <h3>8.3 Unconditional command ACK (R2)</h3>
@@ -897,7 +1126,7 @@ arduino-cli compile --build-property "compiler.cpp.extra_flags=-DFLIX_LANG_EN" .
 <h3>10.5 Verification result</h3>
 
 <div class="ok">
-<b>169</b> macros in each of the Chinese and English blocks; the script confirms no one-sided entries ("English only" and "Chinese only" are both empty) and no references to undefined macros. Two macros are defined but unreferenced (<code>TXT_NO</code> / <code>TXT_YES</code>), which the checker reports explicitly.
+<b>176</b> macros in each of the Chinese and English blocks; the script confirms no one-sided entries ("English only" and "Chinese only" are both empty) and no references to undefined macros. Two macros are defined but unreferenced (<code>TXT_NO</code> / <code>TXT_YES</code>), which the checker reports explicitly.
 </div>
 
 <!-- ============ 11 ============ -->
@@ -1037,7 +1266,7 @@ On a new board that is fine; <b>on a machine you have already calibrated, flash 
 <thead><tr><th>Check</th><th>Method</th><th>Pass criterion</th></tr></thead>
 <tbody>
 <tr><td>compiles</td><td><code>arduino-cli compile ... --export-binaries</code></td><td>exit code 0, no warnings</td></tr>
-<tr><td>zh/en pairing</td><td>script compares macro counts in both i18n.h blocks</td><td>169 : 169, no one-sided entries</td></tr>
+<tr><td>zh/en pairing</td><td>script compares macro counts in both i18n.h blocks</td><td>176 : 176, no one-sided entries</td></tr>
 <tr><td>English build works</td><td>rebuild with <code>-DFLIX_LANG_EN</code></td><td>exit code 0</td></tr>
 <tr><td>no English leftovers</td><td>scan <code>print("</code> calls not using <code>TXT_</code></td><td>only pure format strings and CSV headers remain</td></tr>
 <tr><td>footprint</td><td>compiler output</td><td>Flash &lt; 90 %, RAM &lt; 60 %</td></tr>
@@ -1046,26 +1275,32 @@ On a new board that is fine; <b>on a machine you have already calibrated, flash 
 
 <h3>13.2 Level 2 · bench (<strong>propellers must be removed</strong>)</h3>
 
+<div class="danger">
+<b>🔴 Steps 2~4 (parameter checks) and steps 9/10 (propellers and motors) must all pass before you enter level 3 — do not "skip ahead and try a quick hop".</b><br>
+Nearly every reported flip comes from taking off before these steps were finished. <b>The six-face calibration <code>ca</code> is deliberately not on this must-pass list</b>: the defaults are accurate enough, so fly on them first; calibrate only when the propellers and motors are confirmed correct and it still flips — see <a href="#s0"><b>chapter 0, Pre-flight check</b></a>, section 0.5, for the criteria and the recovery procedure.
+</div>
+
 <table class="tight">
 <thead><tr><th>Step</th><th>Action</th><th>Expected result</th></tr></thead>
 <tbody>
 <tr><td>1</td><td>power up, read the first screen</td><td>Chinese banner + fingerprint string + <code>固件版本：v1.2</code></td></tr>
 <tr><td>2</td><td><code>imu</code></td><td>model / bus / WHO_AM_I / orientation correct, <code>状态：正常</code></td></tr>
-<tr><td>3</td><td><code>ca</code></td><td>six Chinese prompts, 8 s each, last line <code>校准完成！</code></td></tr>
-<tr><td>4</td><td><code>st</code> while tilting</td><td>right side down → <code>横滚</code> positive (<b>the only orientation criterion</b>)</td></tr>
+<tr><td><b>3</b></td><td><b>verify the accelerometer parameters</b>: <code>p IMU_ACC_SCALE</code> and <code>p IMU_ACC_BIAS</code></td><td>scale factors <b>1.000</b> and bias <b>0.000</b> on all three axes (factory default); restore as in 0.1 if corrupted. <b>Run <code>ca</code> only when troubleshooting a flip</b></td></tr>
+<tr><td>4</td><td><code>st</code> while tilting</td><td>level ≈ 0°; right side down → <code>横滚</code> positive (<b>the only orientation criterion</b>)</td></tr>
 <tr><td>5</td><td>power the remote, <code>rc</code></td><td>raw channels follow the sticks, the timestamp keeps refreshing</td></tr>
 <tr><td>6</td><td><code>ch</code></td><td><code>ESP-NOW 信道：1</code> (must match the remote)</td></tr>
 <tr><td>7</td><td><code>wifi</code></td><td><code>原生接收</code> = 1, dropped bytes barely move</td></tr>
 <tr><td>8</td><td>stick at min / centre / max</td><td>normalised throttle <b>-1 / 0 / +1</b></td></tr>
-<tr><td>9</td><td><code>mfr 0.1</code> motor by motor</td><td>direction and position correct (propellers off!)</td></tr>
-<tr><td>10</td><td><code>arm</code> / <code>disarm</code></td><td>triple beep on arm / LED switches to green flashing</td></tr>
-<tr><td>11</td><td>cut power to the remote</td><td>long beep + slow red flashing after 1 s</td></tr>
+<tr><td><b>9</b></td><td><b>propellers off, <code>mfr</code>/<code>mrr</code>/<code>mrl</code>/<code>mfl</code> one by one</b></td><td>echoes 正在测试电机 2/1/0/3 and <b>only the matching corner spins</b>; a wrong corner = wrong socket or wrong board variant</td></tr>
+<tr><td><b>10</b></td><td><b>propellers on, <code>mfr 0.15</code> etc. one by one</b></td><td>hand under the propeller: <b>all four blow downwards</b>; any one blowing up ⇒ reversed propeller or reversed motor polarity</td></tr>
+<tr><td>11</td><td><code>arm</code> / <code>disarm</code></td><td>triple beep on arm / LED switches to green flashing; <b>if it prints 拒绝解锁：油门不在最低位 or QGC shows <code>Command denied</code> ⇒ pull the throttle fully down first</b></td></tr>
+<tr><td>12</td><td>cut power to the remote</td><td>long beep + slow red flashing after 1 s</td></tr>
 </tbody>
 </table>
 
 <h3>13.3 Level 3 · tethered low hover</h3>
 
-<div class="step"><div class="no">1</div><div class="tx"><b>Prepare</b><span>Fit propeller guards, tether the aircraft, use open space.</span></div></div>
+<div class="step"><div class="no">1</div><div class="tx"><b>Prepare</b><span>Fit propeller guards, tether the aircraft, use open space. <b>Confirm that the four parameter checks in 0.1 and the propeller/motor checks in 0.2 have all passed</b> — that is the line between "can it fly" and "will it flip".</span></div></div>
 <div class="step"><div class="no">2</div><div class="tx"><b>Take off</b><span><code>arm</code>, then raise the throttle slowly until it lifts 10~20 cm.</span></div></div>
 <div class="step"><div class="no">3</div><div class="tx"><b>Verify the correction direction</b><span>Tap roll/pitch and confirm the <strong>correction goes the right way</strong> (tilt right → corrects right).</span></div></div>
 <div class="step"><div class="no">4</div><div class="tx"><b>Release the sticks</b><span>Confirm the attitude re-levels (but <strong>it keeps drifting horizontally</strong> — expected, there is no position sensor).</span></div></div>
@@ -1085,6 +1320,8 @@ On a new board that is fine; <b>on a machine you have already calibrated, flash 
 <tr><td>attitude inverted (tilting right shows left)</td><td>wrong IMU orientation bracket</td><td><code>st</code> while tilting: right side down must give <strong>positive</strong> roll</td></tr>
 <tr><td>arming rejected</td><td>throttle not at minimum</td><td>console prints <code>拒绝解锁：油门不在最低位</code></td></tr>
 <tr><td>phone disconnects, UI freezes</td><td>router and aircraft AP on the same channel</td><td>separate them with <code>ch</code>, change the remote to match</td></tr>
+<tr><td><b>It rolls to the same side right after take-off</b></td><td>① reversed propeller / reversed motor polarity　② motor in the wrong socket　③ IMU mounting tilt or residual bias</td><td>check the airflow and positions in <a href="#s0">chapter 0.2</a> first; only if <code>st</code> is off by more than 2° while level, calibrate as in 0.5</td></tr>
+<tr><td><b>Attitude got worse after calibrating (88°, −0.86 g)</b></td><td><code>ca</code> sampled the same attitude six times and <code>accScale</code> collapsed to 1e-2</td><td><code>p IMU_ACC_SCALE</code> not near 1 ⇒ restore to 1 / 0 with the six commands in 0.1</td></tr>
 <tr><td>packaged firmware is wrong</td><td>compiled without <code>--export-binaries</code></td><td>compare the modification time of the bin in the build directory</td></tr>
 <tr><td><b><code>help</code> shows only the banner, no command list</b></td><td>the HWCDC transmit buffer is only 256 B, so the 1.7 KB motd is truncated on write (see 14.1)</td><td>check whether the output ends with <code>reboot - 重启飞机</code>; fixed in this version (TX buffer raised to 4 KB + tail flush)</td></tr>
 <tr><td>no log when only the UART header is connected</td><td>the console runs over native USB (CDCOnBoot=cdc)</td><td>use the native USB port</td></tr>
@@ -1175,7 +1412,7 @@ This firmware is <strong>attitude stabilization plus a manual throttle</strong>,
 <tr><td><b>R6</b></td><td><code>power.ino</code></td><td>voltage on GPIO 2, divider ratio 2</td><td>🔧 hardware adaptation</td></tr>
 <tr><td><b>R7</b></td><td><code>imu.ino</code></td><td>auto-detect + per-bus orientation + <code>imuOK</code> guard</td><td>🔴 crash fix</td></tr>
 <tr><td><b>R8</b></td><td><code>led.ino</code></td><td>RGB LED + non-blocking buzzer state machine</td><td>✨ new</td></tr>
-<tr><td><b>R9</b></td><td><code>i18n.h</code></td><td>169 strings, Chinese default, English build available</td><td>✨ new</td></tr>
+<tr><td><b>R9</b></td><td><code>i18n.h</code></td><td>176 strings, Chinese default, English build available</td><td>✨ new</td></tr>
 <tr><td><b>R10</b></td><td><code>parameters.ino</code></td><td>8 new parameters</td><td>✨ new</td></tr>
 <tr><td><b>R11</b></td><td><code>wifi.ino</code> / <code>i18n.h</code></td><td>ESP-NOW + hotspot coexistence by default (<code>W_BOTH</code>); SSID suffix from eFuse STA MAC</td><td>✨ new</td></tr>
 <tr><td><b>R12</b></td><td><code>wifi.ino</code> / <code>i18n.h</code></td><td>three-layer passphrase validation (sanitise NVS / reject bad writes / byte-table factory value)</td><td>🐞 bug fix</td></tr>
@@ -1225,7 +1462,7 @@ The item-by-item root-cause analysis and verification methods are in <a href="Ya
   Taobao: https://shop35432590.taobao.com/
   <div style="margin-top:18px; font-size:12px; color:#94a3b8;">
     Kernel copyright (C) Oleg Kalachev · https://github.com/okalachev/flix<br>
-    Second-stage development by YaoKunSmart (directory organisation / Chinese UI / hardware adaptation) · version v1.2
+    Second-stage development by YaoKunSmart (directory organisation / Chinese UI / hardware adaptation) · firmware v1.2 · document v1.2.1 (2026-11-16)
   </div>
 </footer>
 

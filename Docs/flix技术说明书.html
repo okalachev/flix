@@ -29,6 +29,17 @@
   .cover .facts{display:flex; flex-wrap:wrap; gap:10px 30px; font-size:13.5px; color:#e2e8f0;
          border-top:1px solid rgba(255,255,255,.16); padding-top:20px;}
   .cover .facts b{color:#fff; font-weight:600;}
+  /* 封面「起飞前必做」红块：深色封面上用白底红边才够跳，避免被当成装饰忽略 */
+  .cover-warn{background:#fff; border-left:6px solid var(--brand); border-radius:0 10px 10px 0;
+         padding:16px 20px; margin:24px 0 0; color:#7f1d1d; font-size:13.8px; line-height:1.75;}
+  .cover-warn b{color:var(--brand);}
+  .cover-warn .t{display:block; font-size:14.5px; font-weight:800; color:#fff; background:var(--brand);
+         margin:-16px -20px 12px; padding:9px 20px; border-radius:0 10px 0 0; letter-spacing:.5px;}
+  .cover-warn ol{margin:6px 0 0; padding-left:22px;}
+  .cover-warn li{margin:4px 0;}
+  /* 版本行：文档版本与固件版本必须分开写，否则网友会去找不存在的 v1.2.1 固件 */
+  .verline{font-size:12.5px; color:#cbd5e1; margin-top:18px; letter-spacing:.3px;}
+  .verline b{color:#fff;}
 
   /* ── 目录 ── */
   .toc{background:var(--bg2); border:1px solid var(--line); border-radius:12px;
@@ -114,7 +125,7 @@
 <div class="wrap">
 
 <div class="cover">
-  <span class="badge">开源飞控 Flix · 耀坤 S3 硬件适配版 v1.2</span>
+  <span class="badge">开源飞控 Flix · 耀坤 S3 硬件适配版　v1.2.1</span>
   <h1>耀坤S3无人机 · Flix 整理版</h1>
   <div class="sub">不足 2000 行的教学级飞控内核　·　ESP-NOW 原生接收改造　·　全中文控制台</div>
   <div class="facts">
@@ -125,7 +136,25 @@
     <span>界面　<b>全中文</b>（可切英文）</span>
     <span>仓库　<b>github.com/YaoKunS/flix</b></span>
   </div>
-  <div class="langsw" style="margin-top:22px; font-size:13.5px;">
+  <div class="cover-warn">
+    <span class="t">🔴 起飞前必查这两件事 —— 但别一上来就盲目校准</span>
+    <b>出厂默认参数可以直接飞</b>（MPU-6500 / MPU-6050 出厂精度足够）。先按默认参数准备试飞，
+    下面两条必须在串口里亲手确认 —— 它们是网友"一起飞就翻"的绝大多数成因，
+    <b>而解锁闸门查不出来</b>（它只认 IMU 在不在、油门低不低、倾角超没超，判断不了姿态角对不对、桨是往下吹还是往上吹）。
+    <ol>
+      <li><b>四条参数核对</b>　<code>imu</code> 看状态正常；<code>p IMU_ACC_SCALE</code> 三轴应为 1.000；
+          <code>p IMU_ACC_BIAS</code> 三轴应为 0.000；<code>st</code> 平放读 0°、右侧压低横滚为正。<br>
+          四条全过 = <b>默认参数就能飞，不必做六面校准</b>。</li>
+      <li><b>电机位置 + 桨叶方向</b>　拆桨依次敲 <code>mfr</code>/<code>mrr</code>/<code>mrl</code>/<code>mfl</code>
+          确认转的是对应那一角；装桨后手放桨下低速试，<b>四只都必须向下吹风</b>。装反 ⇒ 推力向上 ⇒ 秒翻。</li>
+    </ol>
+    <b>只有在确认桨叶、电机无误、仍然侧翻时，才去做六面校准 <code>ca</code></b> —— 那一步有坑（48 秒连跑、不等人），
+    怎么做、怎么验收、失败怎么复位，见 <a href="#s0" style="color:var(--brand); font-weight:700;">零、起飞前检查</a> 的 0.5 节。
+  </div>
+  <div class="verline">
+    文档版本 <b>v1.2.1</b>（2026-11-16 修订）　·　对应固件版本 <b>v1.2</b> —— <span style="color:#fca5a5;">本次只改文档，固件未变，Release 里仍下 v1.2</span>
+  </div>
+  <div class="langsw" style="margin-top:14px; font-size:13.5px;">
     🌐 中文版（本页） &nbsp;·&nbsp;
     <a href="Flix_Technical_Manual_EN.html" style="color:#fca5a5;">English</a>
   </div>
@@ -134,6 +163,7 @@
 <div class="toc">
   <h2>目录</h2>
   <ol>
+    <li><a href="#s0" style="color:var(--brand); font-weight:700;">★ 起飞前检查</a><span class="d">默认参数 + 参数核对 + 桨叶电机（侧翻再做校准）</span></li>
     <li><a href="#s1">项目定位</a><span class="d">它是什么，与上游什么关系</span></li>
     <li><a href="#s2">硬件规格</a><span class="d">引脚与外围</span></li>
     <li><a href="#s3">软件架构</a><span class="d">文件职责与主循环</span></li>
@@ -152,6 +182,193 @@
     <li><a href="#s16">与原版差异</a><span class="d">R1~R10 改动总表</span></li>
     <li><a href="#s17">火龙果 2.0 板型适配</a><span class="d">第二块 PCB 与维护声明</span></li>
   </ol>
+</div>
+
+<!-- ============ 0 ============ -->
+<h2 id="s0">零、起飞前检查（先用默认参数飞，侧翻再做六面校准）</h2>
+
+<div class="note">
+<b>v1.2.1 口径说明 —— 先看这段，能少走一大段弯路：</b><br><br>
+v1.2 固件放出后，网友反馈了不少"起飞侧翻"。逐例排查下来，<b>绝大多数是桨叶/电机装错装反，不是加速度计不准</b>。
+MPU-6500 / MPU-6050 的出厂零偏与灵敏度精度足够，<b>出厂默认参数（<code>accScale = 1</code>、<code>accBias = 0</code>）可以直接飞</b>。<br><br>
+所以正确的顺序是三段：<br>
+<b>① 按出厂默认参数准备试飞；② 试飞前必须用串口指令核对 IMU 状态、参数值、姿态读数、电机与桨叶；③ 只有在确认桨叶电机无误、仍然侧翻时，才去做六面校准。</b><br><br>
+<b>不要一上来就盲目跑 <code>ca</code>。</b>它有"48 秒连跑、全程不等人"的固有缺陷（见 0.5），做不好反而让 <code>accScale</code> 塌到 1e-2，比不做更糟。
+</div>
+
+<h3>0.1 用默认参数，但这 4 条必须敲（2 分钟）</h3>
+
+<p>出厂参数就是 IMU 的出厂值，可以直接用。但"能飞"的前提是<strong>读数干净、姿态方向对</strong>，所以下面四条是必查项，一条都不能省：</p>
+
+<table>
+<thead><tr><th>检查</th><th>命令</th><th>通过标准</th><th>不通过怎么办</th></tr></thead>
+<tbody>
+<tr><td><b>IMU 在位</b></td><td><code>imu</code></td><td>型号 / 总线 / WHO_AM_I 与实际芯片一致；<code>状态：正常</code></td><td>识别失败看第 14 章；开机红灯常亮 + 长鸣就是这条没过</td></tr>
+<tr><td><b>比例系数</b></td><td><code>p IMU_ACC_SCALE</code></td><td>X / Y / Z <b>三轴都是 1.000</b></td><td>被改过（跑过失败的 <code>ca</code>）⇒ <code>p IMU_ACC_SCALE_X 1</code>、<code>_Y 1</code>、<code>_Z 1</code> 复位</td></tr>
+<tr><td><b>零偏</b></td><td><code>p IMU_ACC_BIAS</code></td><td>X / Y / Z <b>三轴都是 0.000</b></td><td>非 0 ⇒ <code>p IMU_ACC_BIAS_X 0</code>、<code>_Y 0</code>、<code>_Z 0</code> 复位</td></tr>
+<tr><td><b>姿态与朝向</b></td><td><code>st</code></td><td>平放时 <code>横滚</code>、<code>俯仰</code> 均 ≈ 0°（±2°）；<b>右侧压低时 <code>横滚</code> 必须为正</b></td><td>方向反了 ⇒ IMU 朝向档位错（第 6、14 章）；偏 2°~8° ⇒ 跑一次 <code>ca</code>（0.5）</td></tr>
+</tbody>
+</table>
+
+<div class="ok">
+<b>这四条全过 = 默认参数就可以起飞，不需要做六面校准。</b>手册第 13.2 节的台架流程也是这个口径。
+</div>
+
+<p>为什么还要看 <code>st</code> 的平放读数：如果平放时横滚/俯仰明显不为 0（比如 5°），说明 IMU 焊装有点歪，或芯片有残余零偏。小幅偏差自稳环能吃掉（起飞略飘），偏得多的才需要六面校准去补这个装配倾角 —— 这是 <code>ca</code> 真正有价值的地方，而不是"不跑就不安全"。</p>
+
+<h3>0.2 电机位置与桨叶方向 —— 这条是硬性的，必须查</h3>
+
+<p>分两步，<b>先拆桨验位置，再装桨验风向</b>。方向定义：机头朝自己，<b>右前 FR / 右后 RR / 左前 FL / 左后 RL</b>（命令里前一位 <code>f</code>/<code>b</code> = 前/后，后一位 <code>r</code>/<code>l</code> = 右/左）。</p>
+
+<h4>第一步：拆桨，逐只点电机（4 条命令）</h4>
+
+<pre><code>mfr        # 应回显「正在测试电机 2」，只有右前角转
+mrr        # 应回显「正在测试电机 1」，只有右后角转
+mrl        # 应回显「正在测试电机 0」，只有左后角转
+mfl        # 应回显「正在测试电机 3」，只有左前角转</code></pre>
+
+<p>不带参数时默认 <b>0.2 油门、约 2 秒</b>；也可以带数值，如 <code>mfr 0.15</code>。<b>务必拆桨再做这一组。</b></p>
+
+<div class="danger">
+<b>🔴 通过标准：敲哪条，只有对应那个角转。</b>转错角 = 电机插错了口，或者烧错了板型固件（<b>耀坤 S3 固件烧到火龙果板上会四路乱序起转</b>，反之亦然）。这一步不对，后面全白搭。
+</div>
+
+<h4>第二步：装桨，验风向（唯一可靠的判据）</h4>
+
+<p>桨必须满足两条硬约束：</p>
+<ul>
+<li><b>对角同向、相邻反向</b> —— FL 与 RR 同向；FR 与 RL 同向。（由混控的偏航项决定，见 <code>control.ino</code> 里 <code>motors[]</code> 那四行）</li>
+<li><b>正桨 / 反桨不能混</b> —— 同型号桨一般两片正、两片反，桨根或桨面印 <code>CW</code>/<code>CCW</code>（或 <code>R</code>/<code>L</code>）。整包搞混时四片会全反。</li>
+</ul>
+
+<div class="warn">
+<b>判据（不用任何仪器，手就是传感器）：</b><br><br>
+手托住机架（或压牢机架、拔掉另外三片桨只留一片）→ 串口敲 <code>mfr 0.15</code> 低速转 → <b>把手放到该桨下方，应感到明显的向下吹风</b>；放到上方应感到吸风。<br><br>
+<b>四个角逐个过一遍，四只都必须向下吹风才算通过。</b><br>
+某一角向上吹风 ⇒ 只有两种可能，逐个排查到对为止：<br>
+① <b>桨装反了</b>（换另一片桨试试）；② <b>电机极性反了</b>（两根线对调，有刷电机插头反插即反转）。<br>
+<b>四只全向上吹</b> ⇒ 整包桨的正反搞混了，全部换过来。
+</div>
+
+<p>补充一个静态检查：手拨桨，<b>桨叶前缘（较厚的一边）应朝旋转方向</b>，能把空气"切"开而不是"兜"住；装反的桨拨起来手感发"钝"。</p>
+
+<h3>0.3 起飞前 3 分钟清单（照抄照敲）</h3>
+
+<pre><code># ── 1. 拆桨，放水平台面 ──────────────────────────
+imu                  # 型号 / 总线 / WHO_AM_I 正确，状态：正常
+p IMU_ACC_SCALE      # 三轴都应是 1.000（出厂默认）
+p IMU_ACC_BIAS       # 三轴都应是 0.000（出厂默认）
+st                   # 平放 roll/pitch ≈ 0；右侧压低 roll 为正
+
+# ── 2. 仍拆桨，验电机位置 ────────────────────────
+mfr                  # 只有右前转
+mrr                  # 只有右后转
+mrl                  # 只有左后转
+mfl                  # 只有左前转
+
+# ── 3. 装桨，验风向（手托机架，低速）─────────────
+mfr 0.15             # 桨下方：向下吹风
+mrr 0.15             # 桨下方：向下吹风
+mrl 0.15             # 桨下方：向下吹风
+mfl 0.15             # 桨下方：向下吹风
+
+# ── 4. 起飞 ─────────────────────────────────────
+arm                  # 三短鸣 + 绿灯快闪 = 已解锁</code></pre>
+
+<h4>解锁不了 / QGC 弹出报错？九成是油门没归零</h4>
+
+<div class="danger">
+<b>🔴 QGC 点解锁弹出 <code>Command denied</code>、点了没反应 —— 先把遥控器油门拉到最低再试。</b><br><br>
+飞控在解锁前检查油门归一化值，<b>&gt; 0.05 直接拒绝</b>（返回 <code>MAV_RESULT_DENIED</code>），串口同时打印「拒绝解锁：油门不在最低位」。<br><br>
+<b>关键在于：这个油门量是遥控器和地面站共用的同一个变量</b>（<code>controlThrottle</code>）。只要遥控器油门停在中间或以上，<b>QGC 点一百次也解不开</b> —— 这是网友反馈里最高频的"解锁失败"。
+</div>
+
+<table class="tight">
+<thead><tr><th>解锁方式</th><th>正确操作</th></tr></thead>
+<tbody>
+<tr><td><b>QGC 地面站</b></td><td><b>遥控器油门拉到底</b> → 再点 QGC 的 Arm。注意是"拉到最低"，不是"松手回中"</td></tr>
+<tr><td><b>纯遥控器</b>（不开地面站）</td><td><b>油门最低 + 偏航推最右</b>（&gt; 0.95）保持约 1 秒 = 解锁；<b>油门最低 + 偏航推最左</b> = 上锁</td></tr>
+<tr><td><b>串口命令行</b></td><td><code>arm</code> / <code>disarm</code>（同样要求油门在最低位）</td></tr>
+</tbody>
+</table>
+
+<p>油门归一化值的范围是 <b>最低 −1、中位 0、最高 +1</b>。<b>只要大于 0.05 就会被拒</b> —— 也就是说"推过中点一点点"就解不开。所以规矩只有一条：<b>解锁前把油门拉到底</b>。串口敲 <code>rc</code> 可以看到当前油门归一化值，确认它是不是真的在最低位。</p>
+
+<p><b>另外两个拒绝原因</b>（串口都会打印中文原因）：IMU 不可用（开机红灯常亮 + 长鸣）、机身倾角超过阈值（把飞机放平再解锁）。</p>
+
+<h3>0.4 已经侧翻了，按这个顺序反查</h3>
+
+<table>
+<thead><tr><th>现象</th><th>最可能的原因</th><th>怎么确认 / 下一步</th></tr></thead>
+<tbody>
+<tr><td><b>每次都朝同一侧翻</b></td><td>先怀疑桨叶 / 电机（最常见）；都不是才怀疑校准</td><td>先按 0.2 过一遍风向与位置；<code>st</code> 平放偏差大 ⇒ 做六面校准（0.5）</td></tr>
+<tr><td><b>离地瞬间剧烈自旋然后翻</b></td><td>桨叶正反装错，或电机极性反（有桨往上吹）</td><td>0.2 第二步风向判据，四只逐个过</td></tr>
+<tr><td>推油门后往一侧猛冲</td><td>电机插错口（位置对不上）</td><td><code>mfr</code>/<code>mrr</code>/<code>mrl</code>/<code>mfl</code> 逐条点</td></tr>
+<tr><td>姿态读数乱跳 / 数值离谱（如 88°、−0.86 g）</td><td>跑过 <code>ca</code> 但采错了面，<code>accScale</code> 塌到 1e-2</td><td><code>p IMU_ACC_SCALE</code> 不是 1 左右 ⇒ 按 0.1 / 0.5 的救急复位</td></tr>
+<tr><td>翻的方向每次都不一样</td><td>不是本章问题：遥控量程 / 参数 / 低压重启</td><td>转第 14 章「故障排查」</td></tr>
+</tbody>
+</table>
+
+<h3>0.5 六面校准（<code>ca</code>）—— 只在侧翻排查时做</h3>
+
+<p><b>什么时候做：</b>0.2 已确认桨叶与电机无误，且满足下面任一条 ——</p>
+<ul>
+<li>起飞仍然<strong>每次都朝同一侧翻</strong>；</li>
+<li><code>st</code> 平放时横滚/俯仰明显不为 0（超过 ±2°），说明 IMU 存在装配倾角或零偏；</li>
+<li>换过 IMU、换过板、拆装过 IMU、摔过机、执行过 <code>preset</code>。</li>
+</ul>
+
+<p><b>什么时候不要做：</b>默认参数一切正常、只是"想更保险"—— 没必要，出厂精度够用，做不好反而更糟。</p>
+
+<div class="danger">
+<b>🔴 <code>ca</code> 的真实缺陷：48 秒一口气跑完，中途不等人</b><br><br>
+固件执行顺序是"打印提示 → <code>pause(8)</code> → 采样"，六步连着跑完，<b>全程没有任何等待输入的环节</b>。<br>
+如果你没能在每个 8 秒窗口内把机身翻到指定姿态，<b>六次采样会落在同一个姿态上</b>，<code>accScale</code> 会塌到 <code>1e-2</code> 量级 —— 姿态几乎不响应，<b>比不校准翻得更快</b>。<br><br>
+所以：<b>要么做对，要么做完立刻验收；不达标就复位成出厂值。</b>
+</div>
+
+<h4>怎么做（关键在时间：每步只有 8 秒）</h4>
+
+<div class="step"><div class="no">1</div><div class="tx"><b>拆桨、放在水平台面</b><span>校准期间会动电机，必须拆桨；台面要平要稳，机身别压到线。</span></div></div>
+<div class="step"><div class="no">2</div><div class="tx"><b>先把机身摆到第 1 个姿态，再敲 <code>ca</code></b><span>串口 115200、<b>原生 USB 口</b>。敲完立刻打印「第 1/6 步：请水平放置，保持静止 [8 秒]」。</span></div></div>
+<div class="step"><div class="no">3</div><div class="tx"><b>手不离机身，见提示就翻</b><span>看到「第 2/6 步」的<strong>同时</strong>开始翻，2 秒内到位，剩下 6 秒保持静止。<b>别等 8 秒过完再翻 —— 那时已经在采下一个面了。</b></span></div></div>
+<div class="step"><div class="no">4</div><div class="tx"><b>末行出现「校准完成！」</b><span>随后打印陀螺零偏、加速度零偏、加速度比例系数三行数值，用于下面的验收。</span></div></div>
+
+<p>六个面的顺序（抄在纸上放旁边）：</p>
+
+<table class="tight">
+<thead><tr><th>步</th><th>串口中文提示</th><th>机身怎么摆</th></tr></thead>
+<tbody>
+<tr><td>1/6</td><td>请水平放置</td><td>正常平放，机头朝前，桨平面水平</td></tr>
+<tr><td>2/6</td><td>请机头朝上立起</td><td>机头朝天，机身竖立</td></tr>
+<tr><td>3/6</td><td>请机头朝下倒立</td><td>机头朝地，机身竖立倒过来</td></tr>
+<tr><td>4/6</td><td>请右侧朝下侧放</td><td>右侧贴台面，机身侧躺</td></tr>
+<tr><td>5/6</td><td>请左侧朝下侧放</td><td>左侧贴台面，机身侧躺（与上一步相反）</td></tr>
+<tr><td>6/6</td><td>请底朝天倒置</td><td>翻转 180°，底面朝上（桨平面朝下）</td></tr>
+</tbody>
+</table>
+
+<h4>做完必须验收（四条，缺一条就算失败）</h4>
+
+<table class="tight">
+<thead><tr><th>检查</th><th>命令</th><th>通过标准</th></tr></thead>
+<tbody>
+<tr><td>校准跑完</td><td>看串口末行</td><td><code>校准完成！</code></td></tr>
+<tr><td>比例系数</td><td><code>p IMU_ACC_SCALE</code></td><td>X / Y / Z 三轴<strong>都在 0.85 ~ 1.15</strong></td></tr>
+<tr><td>零偏</td><td><code>p IMU_ACC_BIAS</code></td><td>三轴<strong>绝对值都 &lt; 0.5</strong>（m/s²）</td></tr>
+<tr><td>水平读数 + 朝向</td><td><code>st</code></td><td>平放时 <code>横滚</code>、<code>俯仰</code> ≈ 0°（±2°）；<b>右侧压低时 <code>横滚</code> 为正</b></td></tr>
+</tbody>
+</table>
+
+<div class="ok">
+<b>校失败了的救急复位</b>（不用重刷固件，出厂精度足够直接飞）：<br><br>
+<code>p IMU_ACC_SCALE_X 1</code>　<code>p IMU_ACC_SCALE_Y 1</code>　<code>p IMU_ACC_SCALE_Z 1</code><br>
+<code>p IMU_ACC_BIAS_X 0</code>　<code>p IMU_ACC_BIAS_Y 0</code>　<code>p IMU_ACC_BIAS_Z 0</code><br><br>
+六条敲完姿态立刻归零（实测横滚 0.015° / 俯仰 −0.004°）。<b>参数自动存盘，重启不丢。</b>
+</div>
+
+<div class="note">
+<b>两块板同一套流程：</b>耀坤 S3 与微辣火龙果 2.0 用的 <code>imu</code>、<code>st</code>、<code>mfr</code>、<code>ca</code> 命令和判据完全相同（火龙果的电机编号与引脚见 17 章）。区别只在烧录：<b>火龙果固件必须带 <code>-DFLIX_BOARD=2</code> 编译</b>，烧错板型会四路乱序起转。
 </div>
 
 <!-- ============ 1 ============ -->
@@ -221,7 +438,7 @@
 <tbody>
 <tr><td><code>flix.ino</code></td><td>主入口 setup / loop</td><td>指纹横幅、初始化灯音反馈</td></tr>
 <tr><td><code>config.h</code></td><td>板型与编译期常量</td><td>耀坤 S3 板型</td></tr>
-<tr><td><code>i18n.h</code></td><td><b>界面文案唯一数据源</b>（169 条，中英双语）</td><td>★ 新增</td></tr>
+<tr><td><code>i18n.h</code></td><td><b>界面文案唯一数据源</b>（176 条，中英双语）</td><td>★ 新增</td></tr>
 <tr><td><code>imu.ino</code></td><td>IMU 驱动、识别、校准</td><td>自动识别 + 朝向分档 + 空指针防护</td></tr>
 <tr><td><code>estimate.ino</code></td><td>姿态解算（互补滤波）</td><td>—</td></tr>
 <tr><td><code>control.ino</code></td><td>三层控制环 + 混控</td><td>—</td></tr>
@@ -665,6 +882,12 @@ void readIMU() {
 
 <h3>6.5 六面加速度校准（<code>ca</code>）：一个真实的 C++ 陷阱</h3>
 
+<div class="danger">
+<b>🔴 先看这里：默认参数优先，别急着跑 <code>ca</code>。</b><br>
+MPU-6500 / MPU-6050 出厂精度足够，<code>accScale = 1</code> / <code>accBias = 0</code> 的默认参数可以直接飞；<code>ca</code> 有"48 秒连跑、不等人"的缺陷，做不好（六面采成同一姿态）会让 <code>accScale</code> 塌到 1e-2，<b>比不做更糟</b>。<br>
+正确顺序：先按默认参数飞 → 只有确认桨叶电机无误、仍然侧翻时才做六面校准。完整判定流程与验收数值见 <a href="#s0"><b>零、起飞前检查</b></a>。本节讲背后的数学与踩过的 bug。
+</div>
+
 <p>六面校准的数学很简单：六个姿态覆盖每轴的 ±1g，于是</p>
 
 <pre><code>accScale = (accMax − accMin) / 2 / G      // 理想值 ≈ 1.0
@@ -829,6 +1052,8 @@ controlYaw      = m.r / 1000.0f;</code></pre>
   <li>IMU 必须可用（<code>imuOK</code>）</li>
   <li>油门必须在最低位（归一化 &lt; 0.05），否则拒绝并打印 <code>拒绝解锁：油门不在最低位</code></li>
   <li>倾角不能超过阈值</li>
+  <li><b>QGC 点解锁弹 <code>Command denied</code> / 怎么都解不开</b>：油门不在最低位（归一化 &gt; 0.05）。这个量遥控器与地面站<b>共用</b>，所以必须先<b>把遥控器油门拉到底</b>再点 Arm；纯遥控解锁手势 = 油门最低 + 偏航推最右（见 <a href="#s0">0.3 节</a>）</li>
+  <li><b>软件查不出来、必须人工确认的事</b>：桨叶方向对不对、电机有没有插错口、IMU 参数有没有被改坏。<b>解锁通过 ≠ 能飞</b> —— 闸门只能确认 IMU 存在与倾角，判断不了四只桨是往下吹还是往上吹。起飞前逐项核对见 <a href="#s0"><b>零、起飞前检查</b></a></li>
 </ul>
 
 <h3>8.3 指令 ACK 统一（R2）</h3>
@@ -1045,7 +1270,7 @@ arduino-cli compile \
 <thead><tr><th>检查项</th><th>方法</th><th>通过标准</th></tr></thead>
 <tbody>
 <tr><td>编译通过</td><td><code>arduino-cli compile ... --export-binaries</code></td><td>退出码 0，无 warning</td></tr>
-<tr><td>中英配对</td><td>脚本比对 i18n.h 两段宏数量</td><td>169 : 169，无单边缺失</td></tr>
+<tr><td>中英配对</td><td>脚本比对 i18n.h 两段宏数量</td><td>176 : 176，无单边缺失</td></tr>
 <tr><td>英文版可编</td><td>加 <code>-DFLIX_LANG_EN</code> 重编</td><td>退出码 0</td></tr>
 <tr><td>无英文残留</td><td>扫描 <code>print("</code> 非 <code>TXT_</code> 调用</td><td>仅剩纯格式串与 CSV 表头</td></tr>
 <tr><td>资源占用</td><td>编译输出</td><td>Flash &lt; 90%，RAM &lt; 60%</td></tr>
@@ -1054,26 +1279,32 @@ arduino-cli compile \
 
 <h3>13.2 第二级 · 台架（<strong>必须拆桨</strong>）</h3>
 
+<div class="danger">
+<b>🔴 进入第三级（系留低飞）之前，第 2~4 步的参数核对与第 9/10 步的桨叶电机核对必须全部通过 —— 不许"跳过去先飞一下试试"。</b><br>
+网友实测的侧翻，几乎都出在这几步没做完就装桨起飞。<b>六面校准 <code>ca</code> 不在这张必过清单里</b>：默认参数精度足够，先按默认参数飞；只有确认桨叶电机无误、仍然侧翻时，才按 <a href="#s0"><b>零、起飞前检查</b></a> 0.5 节做校准。判据与失败自救同在该章。
+</div>
+
 <table class="tight">
 <thead><tr><th>步骤</th><th>操作</th><th>期望结果</th></tr></thead>
 <tbody>
 <tr><td>1</td><td>上电看首屏</td><td>中文横幅 + 指纹串 + <code>固件版本：v1.2</code></td></tr>
 <tr><td>2</td><td><code>imu</code></td><td>型号/总线/WHO_AM_I/朝向正确，<code>状态：正常</code></td></tr>
-<tr><td>3</td><td><code>ca</code></td><td>六步中文提示，8 秒/步，末行 <code>校准完成！</code></td></tr>
-<tr><td>4</td><td><code>st</code> 倾斜机身</td><td>右侧压低 → <code>横滚</code> 为正（<b>朝向唯一判据</b>）</td></tr>
+<tr><td><b>3</b></td><td><b>核对加速度参数</b>：<code>p IMU_ACC_SCALE</code> 与 <code>p IMU_ACC_BIAS</code></td><td>比例系数三轴 <b>1.000</b>、零偏三轴 <b>0.000</b>（出厂默认）；被改坏过就按 0.1 节复位。<b>侧翻排查时才跑 <code>ca</code></b></td></tr>
+<tr><td>4</td><td><code>st</code> 倾斜机身</td><td>平放 ≈ 0°；右侧压低 → <code>横滚</code> 为正（<b>朝向唯一判据</b>）</td></tr>
 <tr><td>5</td><td>遥控开机，<code>rc</code></td><td>原始通道随摇杆变化，时刻持续刷新</td></tr>
 <tr><td>6</td><td><code>ch</code></td><td><code>ESP-NOW 信道：6</code>（须与遥控器一致）</td></tr>
 <tr><td>7</td><td><code>wifi</code></td><td><code>原生接收</code> = 1，丢弃字节几乎不涨</td></tr>
 <tr><td>8</td><td>摇杆到底/中位/到顶</td><td>油门归一化 <b>-1 / 0 / +1</b></td></tr>
-<tr><td>9</td><td><code>mfr 0.1</code> 逐个试</td><td>转向、位置对应正确（拆桨！）</td></tr>
-<tr><td>10</td><td><code>arm</code> / <code>disarm</code></td><td>三短鸣解锁 / 灯语切绿闪</td></tr>
-<tr><td>11</td><td>断开遥控器电源</td><td>1 秒后长鸣 + 红灯慢闪</td></tr>
+<tr><td><b>9</b></td><td><b>拆桨，<code>mfr</code>/<code>mrr</code>/<code>mrl</code>/<code>mfl</code> 逐条点</b></td><td>回显「正在测试电机 2/1/0/3」，<b>只有对应那一角转</b>；转错角 = 插错口或烧错板型固件</td></tr>
+<tr><td><b>10</b></td><td><b>装桨，<code>mfr 0.15</code> 等逐个低速试</b></td><td>手放桨下方：<b>四只都向下吹风</b>；任一向上 ⇒ 桨装反或电机极性反</td></tr>
+<tr><td>11</td><td><code>arm</code> / <code>disarm</code></td><td>三短鸣解锁 / 灯语切绿闪；<b>报「拒绝解锁：油门不在最低位」或 QGC 弹 <code>Command denied</code> ⇒ 先把油门拉到底</b></td></tr>
+<tr><td>12</td><td>断开遥控器电源</td><td>1 秒后长鸣 + 红灯慢闪</td></tr>
 </tbody>
 </table>
 
 <h3>13.3 第三级 · 系留低飞</h3>
 
-<div class="step"><div class="no">1</div><div class="tx"><b>准备</b><span>装保护圈，系留绳固定，空旷场地。</span></div></div>
+<div class="step"><div class="no">1</div><div class="tx"><b>准备</b><span>装保护圈，系留绳固定，空旷场地。<b>确认零章 0.1 四条参数核对与 0.2 桨叶电机核对已全部通过</b> —— 这是"能不能飞"和"会不会翻"的分界线。</span></div></div>
 <div class="step"><div class="no">2</div><div class="tx"><b>起降</b><span><code>arm</code> 解锁，缓慢推油门离地 10~20 cm。</span></div></div>
 <div class="step"><div class="no">3</div><div class="tx"><b>验证修正方向</b><span>轻点横滚/俯仰，确认<strong>修正方向正确</strong>（右倾 → 向右修正）。</span></div></div>
 <div class="step"><div class="no">4</div><div class="tx"><b>松杆</b><span>确认姿态回平（但<strong>会继续水平飘</strong>，这是正常的，无位置传感器）。</span></div></div>
@@ -1094,6 +1325,8 @@ arduino-cli compile \
 <tr><td>解锁被拒</td><td>油门不在最低位</td><td>串口打印 <code>拒绝解锁：油门不在最低位</code></td></tr>
 <tr><td>手机连上就掉、界面假死</td><td>路由与飞机 AP 同信道</td><td>用 <code>ch</code> 错开，遥控器端同步改</td></tr>
 <tr><td>打包出的固件不对</td><td>编译没带 <code>--export-binaries</code></td><td>对比 build 目录 bin 的修改时间</td></tr>
+<tr><td><b>一起飞就朝同一侧翻</b></td><td>① 桨叶装反 / 电机极性反　② 电机插错口　③ IMU 有装配倾角或残余零偏</td><td>先按 <a href="#s0">零章 0.2</a> 验风向与位置；<code>st</code> 平放偏差 &gt; 2° 再按 0.5 做六面校准</td></tr>
+<tr><td><b>校准后姿态更离谱（88°、−0.86 g）</b></td><td><code>ca</code> 的六面采成了同一姿态，<code>accScale</code> 塌到 1e-2</td><td><code>p IMU_ACC_SCALE</code> 不在 1 附近 ⇒ 按 0.1 节六条复位为 1 / 0</td></tr>
 <tr><td><b>输入 <code>help</code> 只看到开机横幅，没有命令菜单</b></td><td>HWCDC 发送缓冲只有 256 B，1.7 KB 的 motd 一次写出被截断（见 14.1）</td><td>看输出末尾有没有 <code>reboot - 重启飞机</code>；本版已修（TX 缓冲扩到 4 KB + 收尾补推）</td></tr>
 <tr><td>只插 UART 口看不到日志</td><td>控制台走原生 USB（CDCOnBoot=cdc）</td><td>改用原生 USB 口</td></tr>
 </tbody>
@@ -1181,7 +1414,7 @@ arduino-cli compile \
 <tr><td><b>R6</b></td><td><code>power.ino</code></td><td>电压引脚 GPIO 2，分压系数 2</td><td>🔧 硬件适配</td></tr>
 <tr><td><b>R7</b></td><td><code>imu.ino</code></td><td>自动识别 + 朝向分档 + <code>imuOK</code> 防护</td><td>🔴 崩溃修复</td></tr>
 <tr><td><b>R8</b></td><td><code>led.ino</code></td><td>三色灯 + 蜂鸣器非阻塞状态机</td><td>✨ 新增</td></tr>
-<tr><td><b>R9</b></td><td><code>i18n.h</code></td><td>169 条文案，默认中文，可切英文</td><td>✨ 新增</td></tr>
+<tr><td><b>R9</b></td><td><code>i18n.h</code></td><td>176 条文案，默认中文，可切英文</td><td>✨ 新增</td></tr>
 <tr><td><b>R10</b></td><td><code>parameters.ino</code></td><td>新增 8 个参数</td><td>✨ 新增</td></tr>
 <tr><td>—</td><td><code>flix.ino</code></td><td>开机指纹横幅；初始化灯音反馈</td><td>✨ 新增</td></tr>
 <tr><td>—</td><td><code>console.ino</code></td><td>中文 motd + 品牌横幅 + <code>ch</code> 命令</td><td>✨ 新增</td></tr>
@@ -1229,7 +1462,7 @@ arduino-cli compile \
   淘宝：https://shop35432590.taobao.com/
   <div style="margin-top:18px; font-size:12px; color:#94a3b8;">
     内核版权 (C) Oleg Kalachev · https://github.com/okalachev/flix<br>
-    本固件由耀坤智联二次开发（目录整理 / 中文界面 / 硬件适配）· 版本 v1.2
+    本固件由耀坤智联二次开发（目录整理 / 中文界面 / 硬件适配）· 固件版本 v1.2 · 文档版本 v1.2.1（2026-11-16）
   </div>
 </footer>
 
