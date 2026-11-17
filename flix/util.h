@@ -43,17 +43,17 @@ float wrapAngle(float angle) {
 	return angle;
 }
 
-// Trim and split string by spaces
-void splitString(String& str, String& token0, String& token1, String& token2) {
-	str.trim();
-	if (str.isEmpty()) return;
-	char chars[str.length() + 1];
-	str.toCharArray(chars, str.length() + 1);
-	token0 = strtok(chars, " ");
-	token1 = strtok(NULL, " ");
-	token2 = strtok(NULL, "");
-	if (token1.c_str() == NULL) token1 = "";
-	if (token2.c_str() == NULL) token2 = "";
+// Split string by whitespace
+template <size_t TOKENS>
+void split(const String& str, String (&arr)[TOKENS]) {
+	size_t pos = 0;
+	const size_t length = str.length();
+	for (size_t i = 0; i < TOKENS; i++) {
+		while (pos < length && isspace((unsigned char)str[pos])) pos++;
+		size_t start = pos;
+		while (pos < length && !isspace((unsigned char)str[pos])) pos++;
+		arr[i] = str.substring(start, pos);
+	}
 }
 
 // Simplified ESP-NOW Serial without resends
