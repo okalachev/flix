@@ -22,7 +22,7 @@
 * Made from general-purpose components.
 * Simple and clean source code in Arduino (~2k lines firmware).
 * Communication using MAVLink protocol over Wi-Fi or ESP-NOW.
-* Control with USB gamepad, remote control or smartphone.
+* Control with USB gamepad, remote control or smartphone, including the [built-in web remote](docs/usage.md#using-the-web-remote).
 * RGB LED strip support.
 * Wireless command line interface and analyzing.
 * Precise simulation with Gazebo.
