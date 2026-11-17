@@ -130,6 +130,19 @@ void handleMessage(const mavlink_message_t& msg) {
 		controlTime = t;
 	}
 
+	if (msg.msgid == MAVLINK_MSG_ID_RC_CHANNELS_OVERRIDE) {
+		mavlink_rc_channels_override_t m;
+		mavlink_msg_rc_channels_override_decode(&msg, &m);
+		if (m.target_system && m.target_system != mavlinkSysId) return;
+
+		channels[0] = m.chan1_raw; channels[1] = m.chan2_raw; channels[2] = m.chan3_raw; channels[3] = m.chan4_raw;
+		channels[4] = m.chan5_raw; channels[5] = m.chan6_raw; channels[6] = m.chan7_raw; channels[7] = m.chan8_raw;
+		channels[8] = m.chan9_raw; channels[9] = m.chan10_raw; channels[10] = m.chan11_raw; channels[11] = m.chan12_raw;
+		channels[12] = m.chan13_raw; channels[13] = m.chan14_raw; channels[14] = m.chan15_raw; channels[15] = m.chan16_raw;
+		controlTime = t;
+		normalizeRC();
+	}
+
 	if (msg.msgid == MAVLINK_MSG_ID_PARAM_REQUEST_LIST) {
 		mavlink_param_request_list_t m;
 		mavlink_msg_param_request_list_decode(&msg, &m);
