@@ -28,7 +28,7 @@ LowPassFilter<Vector> gyroBiasFilter(0.001);
 
 void setupIMU() {
 	print("Setup IMU\n");
-	free(imu);
+	delete imu;
 	if (imuModel == 3) imuBus = 1; // MPU6050 is I2C only
 
 	if (imuBus == 0) {
