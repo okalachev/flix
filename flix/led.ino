@@ -67,7 +67,7 @@ void selectEffect() {
 	}
 	md = mode;
 
-	if (voltage > 0 && voltage <= voltageLow) {
+	if (voltage > 1.0 && voltage <= voltageLow) {
 		startEffect(BLINK, 255, 0, 0); // blink red on low voltage
 	}
 }
