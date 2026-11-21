@@ -72,6 +72,7 @@ void setupPower();
 void failsafe();
 void rcLossFailsafe();
 void descend();
+void lowBatteryFailsafe();
 void autoFailsafe();
 void tiltFailsafe();
 int parametersCount();
@@ -90,6 +91,7 @@ void calibrateAccel() { print("Skip accel calibrating\n"); };
 void printIMUCalibration() { print("cal: N/A\n"); };
 void printIMUInfo() {};
 void printWiFiInfo() {};
+void webrcPrint(const char*) {};
 void configWiFi(bool, const char*, const char*) { print("Skip WiFi config\n"); };
 void setWiFiMode(const String& mode) { print("Skip WiFi mode set\n"); };
 

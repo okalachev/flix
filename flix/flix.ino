@@ -25,6 +25,7 @@ void setup() {
 	setupLED();
 	setupMotors();
 	setupWiFi();
+	setupWebRC();
 	setupIMU();
 	setupRC();
 	setupLog();
@@ -36,6 +37,7 @@ void loop() {
 	readIMU();
 	step();
 	readRC();
+	loopWebRC();
 	estimate();
 	control();
 	sendMotors();

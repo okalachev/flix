@@ -4,13 +4,17 @@
 // Fail-safe functions
 
 extern float controlTime;
+extern float voltage, voltageLow;
 
 float rcLossTimeout = 1;
 float descendTime = 10;
 float disarmTilt = radians(120);
+float lowBatteryTime = 3; // time the voltage should stay low to trigger landing, s
+bool batteryLow = false; // low battery landing is in progress
 
 void failsafe() {
 	rcLossFailsafe();
+	lowBatteryFailsafe();
 	autoFailsafe();
 	tiltFailsafe();
 }
@@ -23,7 +27,37 @@ void rcLossFailsafe() {
 	}
 }
 
-// Smooth descend on RC lost
+// Refuse arming and land when the battery is low (PWR_VOLT_LOW); inactive if the voltage is not measured
+void lowBatteryFailsafe() {
+	static bool wasArmed = false;
+	static float lowSince = NAN;
+	bool low = voltage > 0 && voltage <= voltageLow;
+
+	if (armed && !wasArmed && low) {
+		armed = false;
+		print("Battery low (%.2f V), arming refused\n", voltage);
+	}
+	wasArmed = armed;
+
+	if (!armed) {
+		batteryLow = false;
+		lowSince = NAN;
+		return;
+	}
+
+	if (!low) {
+		lowSince = NAN; // ignore short voltage sags
+	} else if (isnan(lowSince)) {
+		lowSince = t;
+	} else if (!batteryLow && t - lowSince > lowBatteryTime) {
+		batteryLow = true;
+		print("Battery low (%.2f V), landing\n", voltage);
+	}
+
+	if (batteryLow && !(t - controlTime > rcLossTimeout)) descend(); // RC loss failsafe is already descending otherwise
+}
+
+// Smooth descend on RC loss or low battery
 void descend() {
 	mode = AUTO;
 	attitudeTarget = Quaternion();
