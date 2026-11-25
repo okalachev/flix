@@ -101,6 +101,26 @@ Beginners can [download the sources as a ZIP archive](https://github.com/okalach
 > [!TIP]
 > You can test the firmware on a bare ESP32 board without connecting IMU and other peripherals. The Wi-Fi network `flix` should appear and all the basic functionality including console and QGroundControl connection should work.
 
+#### Command line (PlatformIO)
+
+* Compile the firmware. Arduino dependencies will be installed automatically:
+
+```bash
+pio run
+```
+
+* You can flash the firmware to the board using command:
+
+```bash
+pio run -t upload
+```
+
+* You can also start serial port monitoring using command:
+
+```bash
+pio device monitor
+```
+
 ## Before first flight
 
 ### Connect using QGroundControl
