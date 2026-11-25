@@ -1,5 +1,5 @@
 FQBN = esp32:esp32:esp32
-PORT = $(strip $(wildcard /dev/serial/by-id/usb-Silicon_Labs_CP21* /dev/serial/by-id/usb-1a86_USB_Single_Serial_* /dev/cu.usbserial-* /dev/cu.usbmodem*))
+PORT = $(strip $(wildcard /dev/serial/by-id/usb-Silicon_Labs_CP21* /dev/serial/by-id/usb-1a86_USB_Single_Serial_* /dev/serial/by-id/usb-Espressif_USB_JTAG* /dev/cu.usbserial-* /dev/cu.usbmodem*))
 VERSION = $(shell git describe --always --dirty)
 FLAGS = -DVERSION=$(VERSION)
 

@@ -35,7 +35,8 @@
 #include "vector.h"
 
 // Declare configuration variables
-extern int imuModel, imuIntPin, imuCsPin, ledType, ledPin, ledCount, standbyEffect;
+extern int imuModel, imuIntPin, imuSckPin, imuMisoPin, imuMosiPin, imuCsPin;
+extern int ledType, ledPin, ledCount, standbyEffect;
 extern Vector imuRotation;
 extern int motorPins[4];
 extern int pwmFrequency, pwmResolution, pwmStop, pwmMin, pwmMax;
@@ -43,7 +44,7 @@ extern int rollChannel, pitchChannel, throttleChannel, yawChannel, armedChannel,
 extern int channelZero[16], channelMax[16];
 extern int rcRxPin, voltagePin;
 extern int wifiMode, wifiLongRange, wifiBroadcast, udpLocalPort, udpRemotePort, espnowChannel;
-extern float rcLossTimeout, descendTime, disarmTilt, voltageScale, voltageLow;
+extern float rcLossTimeout, descendTime, disarmTilt, voltageScale, voltageLow, ledBrightnessArmed;
 extern LowPassFilter<float> voltageFilter;
 extern const int MOT_RL, MOT_RR, MOT_FR, MOT_FL, W_AP, W_STA, W_ESPNOW;
 extern const int FILL, BLINK, RAINBOW, EFFECT_AXEL;
@@ -82,6 +83,7 @@ void setupConfig() {
 	#ifdef AXEL
 		imuModel = 1; // MPU-6500
 		imuRotation = Vector(0, 0, 0);
+		imuSckPin = 1, imuMisoPin = 3, imuMosiPin = 2, imuCsPin = 4;
 		motorPins[MOT_RL] = 10;
 		motorPins[MOT_RR] = 11;
 		motorPins[MOT_FR] = 12;
@@ -90,6 +92,7 @@ void setupConfig() {
 		ledType = 1; // WS2812
 		ledPin = 6;
 		ledCount = 68;
+		ledBrightnessArmed = 0.3;
 		standbyEffect = EFFECT_AXEL;
 	#endif
 }
